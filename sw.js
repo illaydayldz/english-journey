@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v3-integrations";
+const CACHE = "english-app-v4-spotify-embed";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
   "./assets/mascot/hero-happy.png",
@@ -27,6 +27,19 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+  // HTML/navigasyon istekleri: önce ağdan taze kopya dene (her deploy hemen yansısın),
+  // sadece çevrimdışıyken önbelleğe düş. Statik varlıklar (ikon/maskot) önbellek-öncelikli kalır.
+  const isNav = e.request.mode === "navigate" || e.request.url.endsWith("/index.html") || e.request.url.endsWith(".webmanifest");
+  if (isNav) {
+    e.respondWith(
+      fetch(e.request).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+        return res;
+      }).catch(() => caches.match(e.request).then((hit) => hit || caches.match("./index.html")))
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then((hit) => hit || fetch(e.request).then((res) => {
       const copy = res.clone();
