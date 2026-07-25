@@ -490,9 +490,10 @@
       <p class="hint">Gerçek çalma için Spotify Premium hesabı ve Profil'de kayıtlı bir Client ID gerekir.</p>
     </div>
     <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Şu an çalıyor</h2>
-      <div id="spotifyNowPlaying" class="spotify-empty">Bağlantı kurulduğunda burada görünecek.</div>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Çalar</h2>
+      <div id="spotifyNowPlaying" class="spotify-empty">Aşağıdan bir sonuca dokun, çalar burada açılsın.</div>
       <div id="spotifyPlayerContainer" style="display:none;"></div>
+      <p class="hint">Tam parça/bölüm dinlemek için widget içinden Spotify hesabınla (Premium) giriş yapman gerekebilir.</p>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Podcast ara</h2>
@@ -870,10 +871,12 @@ document.getElementById("addReading").addEventListener("click",function(){
   save(); src.value=""; tx.value=""; renderReading();
 });
 
-/* ---------- LISTENING (Spotify — PKCE OAuth + Web Playback SDK) ---------- */
+/* ---------- LISTENING (Spotify — PKCE OAuth + search; playback opens the Spotify app) ---------- */
+/* Note: Spotify's Web Playback SDK (in-browser audio) is not supported on mobile browsers
+   (iOS/Android — EME/DRM restriction on Spotify's side, not fixable from here), so play
+   actions open the episode/show directly in the Spotify app instead of playing inline. */
 var SPOTIFY_REDIRECT_URI=location.origin+location.pathname;
-var SPOTIFY_SCOPES="streaming user-read-email user-read-private user-read-playback-state user-modify-playback-state";
-var spotifyPlayer=null, spotifyDeviceId=null;
+var SPOTIFY_SCOPES="user-read-email user-read-private";
 
 function b64url(buf){
   var bytes=new Uint8Array(buf), str="";
@@ -947,46 +950,7 @@ async function spotifyEnsureToken(){
 }
 function spotifyDisconnect(){
   delete S.settings.spotify; save();
-  if(spotifyPlayer){ try{spotifyPlayer.disconnect();}catch(e){} }
-  spotifyPlayer=null; spotifyDeviceId=null;
   renderListening();
-}
-function spotifyLoadSDK(){
-  return new Promise(function(resolve){
-    if(window.Spotify){ resolve(); return; }
-    window.onSpotifyWebPlaybackSDKReady=resolve;
-    var s=document.createElement("script");
-    s.src="https://sdk.scdn.co/spotify-player.js"; s.async=true;
-    document.head.appendChild(s);
-  });
-}
-async function spotifyInitPlayer(){
-  if(spotifyPlayer||!spotifyTokens()) return;
-  await spotifyLoadSDK();
-  spotifyPlayer=new Spotify.Player({
-    name:"Moonie · My English Journey",
-    getOAuthToken:function(cb){ spotifyEnsureToken().then(function(t){ cb(t||""); }); },
-    volume:0.8
-  });
-  spotifyPlayer.addListener("ready",function(e){ spotifyDeviceId=e.device_id; });
-  spotifyPlayer.addListener("not_ready",function(){ spotifyDeviceId=null; });
-  spotifyPlayer.addListener("account_error",function(){
-    var st=document.getElementById("spotifyStatus"); if(st) st.textContent="Spotify Premium hesabı gerekiyor.";
-  });
-  spotifyPlayer.addListener("player_state_changed",function(state){
-    var np=document.getElementById("spotifyNowPlaying"); if(!np) return;
-    if(!state||!state.track_window||!state.track_window.current_track){
-      np.className="spotify-empty"; np.textContent="Bağlantı kurulduğunda burada görünecek."; return;
-    }
-    var t=state.track_window.current_track, artists=t.artists.map(function(a){return a.name;}).join(", ");
-    var img=t.album&&t.album.images&&t.album.images[0]?t.album.images[0].url:"";
-    np.className="";
-    np.innerHTML='<div style="display:flex;align-items:center;gap:12px;">'+
-      (img?'<img src="'+img+'" style="width:52px;height:52px;border-radius:12px;object-fit:cover;flex-shrink:0;">':'')+
-      '<div style="min-width:0;"><div style="font-weight:700;font-size:13.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(t.name)+'</div>'+
-      '<div style="font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(artists)+'</div></div></div>';
-  });
-  try{ await spotifyPlayer.connect(); }catch(e){}
 }
 async function spotifySearch(q){
   var list=document.getElementById("spotifyPodcastList");
@@ -1013,17 +977,16 @@ async function spotifySearch(q){
     });
   }catch(e){ list.className="spotify-empty"; list.textContent="Arama başarısız oldu."; }
 }
-async function spotifyPlayUri(uri){
-  var token=await spotifyEnsureToken(); if(!token) return;
-  if(!spotifyDeviceId) await spotifyInitPlayer();
-  await new Promise(function(r){ setTimeout(r,700); });
-  if(!spotifyDeviceId) return;
-  var body=uri.indexOf(":episode:")>-1?{uris:[uri]}:{context_uri:uri};
-  try{
-    await fetch("https://api.spotify.com/v1/me/player/play?device_id="+spotifyDeviceId,{
-      method:"PUT", headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"}, body:JSON.stringify(body)
-    });
-  }catch(e){}
+function spotifyPlayUri(uri){
+  var parts=uri.split(":"), type=parts[1], id=parts[2];
+  if(!type||!id) return;
+  var np=document.getElementById("spotifyNowPlaying");
+  np.className="";
+  np.innerHTML="";
+  var box=document.getElementById("spotifyPlayerContainer");
+  box.style.display="block";
+  box.innerHTML='<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&autoplay=1" width="100%" height="152" style="border-radius:16px;border:none;display:block;" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+  box.scrollIntoView({behavior:"smooth",block:"center"});
 }
 function renderListening(){
   var st=document.getElementById("spotifyStatus"), btn=document.getElementById("spotifyConnectBtn");
@@ -1291,7 +1254,6 @@ document.querySelectorAll("#progSegTabs .seg").forEach(function(b){
 /* ---------- INIT ---------- */
 syncTarget(); renderToday(); renderVocab();
 spotifyHandleCallback();
-if(spotifyTokens()) spotifyInitPlayer();
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(function(){}); }
 window.go=go;
 </script>
