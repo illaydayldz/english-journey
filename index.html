@@ -2,161 +2,582 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#16a34a">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#7c5cff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Moonie">
+<meta name="format-detection" content="telephone=no">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>My English Journey</title>
+<title>Moonie · My English Journey</title>
 <style>
-  :root{ color-scheme: light; --navy:#1f3a5f; --green:#16a34a; --orange:#f97316; --purple:#7c3aed; --gray:#6b7280; --line:#e5e7eb; --bg:#f5f6f8; }
-  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:#15151f; padding-bottom:76px; line-height:1.5; }
-  header{ background:linear-gradient(135deg,#1f3a5f,#16a34a); color:#fff; padding:18px 18px 16px; }
-  header h1{ font-size:19px; font-weight:800; }
-  header .sub{ font-size:12px; opacity:.85; margin-top:2px; }
-  .wrap{ max-width:560px; margin:0 auto; padding:16px; }
-  .card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:14px; }
-  h2{ font-size:15px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
-  .stats{ display:flex; gap:10px; }
-  .stat{ flex:1; background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px 8px; text-align:center; }
-  .stat .n{ font-size:26px; font-weight:800; line-height:1.1; }
-  .stat .l{ font-size:10px; text-transform:uppercase; letter-spacing:.4px; color:#9ca3af; margin-top:3px; }
-  .s-streak .n{ color:var(--orange); } .s-days .n{ color:#2563eb; } .s-exam .n{ color:#dc2626; font-size:22px; }
-  .check{ display:flex; align-items:center; gap:11px; padding:10px 0; border-bottom:1px solid #f1f2f4; cursor:pointer; }
-  .check:last-child{ border-bottom:none; }
-  .check input{ width:20px; height:20px; accent-color:var(--green); flex-shrink:0; }
-  .check .t{ font-size:14px; } .check .t small{ display:block; color:#9ca3af; font-size:12px; }
-  .check.done .t{ color:#b5bac1; text-decoration:line-through; }
-  .btn{ width:100%; padding:13px; border:none; border-radius:12px; background:var(--green); color:#fff; font-size:15px; font-weight:700; cursor:pointer; }
-  .btn:disabled{ background:#d1d5db; }
-  .btn.sec{ background:#eef2f7; color:var(--navy); }
-  .btn.purple{ background:var(--purple); } .btn.navy{ background:var(--navy); } .btn.orange{ background:var(--orange); }
-  .bar{ height:9px; background:#eceef1; border-radius:99px; overflow:hidden; margin-top:10px; }
-  .bar>div{ height:100%; background:linear-gradient(90deg,#22c55e,#16a34a); transition:width .4s; }
-  .mut{ font-size:12px; color:var(--gray); }
+  :root{
+    color-scheme: light;
+    --purple:#7c5cff;       /* brand — primary buttons, active states */
+    --purple-deep:#5b3fd1;  /* headings on tint, hover/pressed */
+    --ink:#2a2153;          /* body text — purple-biased near-black */
+    --ink-soft:#726a92;     /* secondary text — purple-biased grey */
+    --bg:#f5f3ff;           /* page canvas — lavender-white */
+    --card:#ffffff;
+    --tint:#efe9ff;         /* soft lavender surface / chip bg */
+    --tint-strong:#e2d8ff;
+    --line:rgba(124,92,255,.14);
+    --gold:#f0a422;         /* streak / achievement */
+    --gold-tint:#fff3da;
+    --pink:#ff6f9c;         /* warmth / love */
+    --pink-tint:#ffe3ec;
+    --green:#1fb579;        /* success / known / correct */
+    --green-tint:#e0f8ec;
+    --rust:#ef5b6a;         /* urgent / wrong / exam countdown */
+    --rust-tint:#ffe1e5;
+    --blue:#4f8ef7;         /* neutral info accent */
+    --blue-tint:#e7f0ff;
+    --shadow-sm:0 1px 3px rgba(90,60,180,.09);
+    --shadow-md:0 10px 26px rgba(90,60,180,.14);
+    --font-display:-apple-system,"SF Pro Rounded",ui-rounded,"Segoe UI Rounded",Roboto,sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; min-width:0; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); padding-bottom:112px; line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  .wrap{ max-width:560px; margin:0 auto; padding:max(16px, env(safe-area-inset-top)) 16px 10px; }
+
+  /* ---- icon system ---- */
+  .icon{ width:20px; height:20px; flex-shrink:0; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block; }
+  .icon-sm{ width:15px; height:15px; }
+  .icon-lg{ width:26px; height:26px; }
+
+  /* ---- shared bits ---- */
+  .card{ background:var(--card); border-radius:24px; padding:18px; margin-bottom:13px; box-shadow:var(--shadow-sm); }
+  h2{ font-family:var(--font-display); font-size:15px; font-weight:800; letter-spacing:-.1px; margin-bottom:13px; display:flex; align-items:center; gap:8px; color:var(--ink); }
+  h2 .icon{ color:var(--purple); width:18px; height:18px; }
+  .mut{ font-size:12px; color:var(--ink-soft); }
   .row{ display:flex; gap:8px; }
-  input.f, textarea.f{ width:100%; padding:11px; border:1px solid var(--line); border-radius:10px; font-size:14px; font-family:inherit; margin-bottom:8px; }
-  .word{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid #f1f2f4; }
-  .word:last-child{ border-bottom:none; }
-  .word .en{ font-weight:600; font-size:14px; } .word .tr{ font-size:12px; color:var(--gray); }
-  .word .due{ font-size:10px; background:#fef3c7; color:#92400e; padding:2px 7px; border-radius:99px; }
-  .word .del{ background:none; border:none; color:#cbd0d6; font-size:18px; cursor:pointer; padding:0 4px; }
-  .flash{ text-align:center; padding:24px 12px; }
-  .flash .q{ font-size:13px; color:#9ca3af; margin-bottom:8px; }
-  .flash .big{ font-size:26px; font-weight:800; margin-bottom:6px; }
-  .flash .ex{ font-size:13px; color:var(--gray); font-style:italic; margin-top:10px; }
-  .grade{ display:flex; gap:8px; margin-top:16px; }
-  .grade button{ flex:1; padding:11px 4px; border:none; border-radius:10px; font-weight:700; font-size:13px; color:#fff; cursor:pointer; }
-  .g-again{ background:#ef4444; } .g-good{ background:#16a34a; } .g-easy{ background:#2563eb; }
-  .pron .target{ font-size:20px; font-weight:700; text-align:center; padding:16px 8px; background:#f8fafc; border-radius:12px; margin-bottom:12px; }
-  .pron .result{ margin-top:14px; padding:12px; border-radius:12px; font-size:14px; display:none; }
-  .pron .result.ok{ background:#dcfce7; color:#14532d; } .pron .result.mid{ background:#fef9c3; color:#713f12; } .pron .result.bad{ background:#fee2e2; color:#7f1d1d; }
-  .heard{ font-size:13px; margin-top:6px; }
-  .phase{ padding:10px 0; border-bottom:1px solid #f1f2f4; } .phase:last-child{ border-bottom:none; }
-  .phase .h{ font-weight:700; font-size:14px; } .phase .d{ font-size:13px; color:var(--gray); margin-top:2px; }
-  table.plan{ width:100%; border-collapse:collapse; font-size:12px; }
-  table.plan td, table.plan th{ border:1px solid var(--line); padding:6px 7px; text-align:left; vertical-align:top; }
-  table.plan th{ background:var(--navy); color:#fff; font-weight:600; }
-  nav{ position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--line); display:flex; max-width:560px; margin:0 auto; }
-  nav button{ flex:1; background:none; border:none; padding:9px 0 11px; font-size:11px; color:#9ca3af; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; }
-  nav button .ic{ font-size:20px; }
-  nav button.active{ color:var(--green); font-weight:700; }
+  input.f, textarea.f{ width:100%; padding:12px 13px; border:1.5px solid var(--line); border-radius:14px; font-size:14px; font-family:inherit; margin-bottom:8px; background:#faf9ff; color:var(--ink); }
+  input.f:focus, textarea.f:focus{ outline:none; border-color:var(--purple); background:#fff; }
+  .btn{ width:100%; padding:14px; border:none; border-radius:16px; background:var(--purple); color:#fff; font-family:var(--font-display); font-size:15px; font-weight:700; cursor:pointer; transition:transform .1s; margin-top:4px; }
+  .btn:active{ transform:scale(.97); }
+  .btn:disabled{ background:var(--tint); color:var(--ink-soft); }
+  .btn.sec{ background:var(--tint); color:var(--purple-deep); }
+  .btn.deep{ background:var(--purple-deep); } .btn.gold{ background:var(--gold); }
+  .bar{ height:9px; background:var(--tint); border-radius:99px; overflow:hidden; margin-top:11px; }
+  .bar>div{ height:100%; background:linear-gradient(90deg,#9b7dff,var(--purple)); transition:width .4s; }
+  .empty{ text-align:center; color:var(--ink-soft); font-size:13px; padding:20px 0; }
+  .hint{ font-size:11px; color:var(--ink-soft); margin-top:9px; text-align:center; }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{ outline:2px solid var(--purple); outline-offset:1px; }
   .view{ display:none; } .view.active{ display:block; }
-  .empty{ text-align:center; color:#9ca3af; font-size:13px; padding:18px 0; }
-  .hint{ font-size:11px; color:#9ca3af; margin-top:8px; text-align:center; }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+
+  /* ---- mascot chip (reused header thumbnail across every screen) ---- */
+  .mchip{ width:56px; height:56px; border-radius:18px; overflow:hidden; background:var(--tint); flex-shrink:0; display:flex; }
+  .mchip img{ width:100%; height:130%; object-fit:cover; object-position:50% 0%; display:block; }
+  .mchip.sm{ width:34px; height:34px; border-radius:12px; }
+
+  /* ---- screen sub-header (used by every non-Home screen) ---- */
+  .subhead{ display:flex; align-items:center; gap:12px; margin:8px 2px 16px; }
+  .subhead .back{ background:var(--card); border:none; width:44px; height:44px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .subhead h1{ font-family:var(--font-display); font-size:19px; font-weight:800; color:var(--ink); letter-spacing:-.2px; }
+  .subhead p{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+
+  /* ---- BUGÜN (home) ---- */
+  .topbar{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-top:2px; }
+  .hero-greet{ font-family:var(--font-display); font-size:15.5px; font-weight:800; color:var(--ink); display:flex; align-items:center; gap:6px; }
+  .hero-greet .icon{ color:var(--gold); width:16px; height:16px; }
+  .topbar .mut{ margin-top:3px; }
+  .bell-btn{ width:44px; height:44px; border-radius:50%; border:none; background:var(--card); color:var(--purple-deep); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .hero{ display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--tint) 0%,#fbeaff 100%); border-radius:26px; padding:20px; margin:14px 0 16px; overflow:hidden; }
+  .hero h1{ font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--ink); line-height:1.28; text-wrap:balance; }
+  .hero-img{ width:92px; height:auto; flex-shrink:0; margin-left:auto; filter:drop-shadow(0 10px 16px rgba(124,92,255,.28)); }
+  .stats{ display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .stat{ flex:1; min-width:100px; background:var(--card); border-radius:18px; padding:12px 13px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-sm); }
+  .stat .ic-chip{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .stat .ic-chip .icon{ width:19px; height:19px; }
+  .stat .txt{ min-width:0; }
+  .stat .n{ font-family:var(--font-display); font-size:19px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--ink); }
+  .stat .l{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); margin-top:2px; font-weight:700; white-space:nowrap; }
+  .s-streak .ic-chip{ background:var(--gold-tint); color:var(--gold); } .s-streak .n{ color:var(--gold); }
+  .s-days .ic-chip{ background:var(--green-tint); color:var(--green); } .s-days .n{ color:var(--green); }
+  .s-exam .ic-chip{ background:var(--rust-tint); color:var(--rust); } .s-exam .n{ color:var(--rust); font-size:17px; }
+  .check{ position:relative; display:flex; align-items:center; gap:12px; padding:12px 2px; min-height:44px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .check:last-child{ border-bottom:none; }
+  .check input{ position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
+  .chip-num{ width:30px; height:30px; border-radius:50%; background:var(--tint); color:var(--purple-deep); font-family:var(--font-display); font-size:12.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s,color .2s; }
+  .chip-num .icon{ width:16px; height:16px; stroke-width:2.6; }
+  .check.done .chip-num{ background:var(--purple); color:#fff; }
+  .check .t{ font-size:14px; flex:1; } .check .t small{ display:block; color:var(--ink-soft); font-size:12px; margin-top:1px; }
+  .check.done .t{ color:#c3bbe0; text-decoration:line-through; }
+  .donewrap{ display:flex; align-items:center; gap:10px; background:var(--green-tint); border-radius:14px; padding:10px 12px; margin-top:12px; font-size:13px; font-weight:700; color:#0f7a4e; }
+  .continue-card{ display:flex; align-items:center; gap:12px; cursor:pointer; width:100%; border:none; text-align:left; font-family:inherit; }
+  .continue-card .cc-t{ font-weight:800; font-size:14px; color:var(--ink); font-family:var(--font-display); }
+  .continue-card .cc-s{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .continue-card .cc-arrow{ color:var(--purple); margin-left:auto; flex-shrink:0; }
+  details summary{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); cursor:pointer; list-style:none; display:flex; align-items:center; gap:9px; min-height:22px; }
+  details summary .icon{ color:var(--purple); width:18px; height:18px; }
+  details summary::-webkit-details-marker{ display:none; }
+  details summary::after{ content:""; margin-left:auto; width:9px; height:9px; border-right:2px solid var(--ink-soft); border-bottom:2px solid var(--ink-soft); border-radius:0 0 2px 0; transform:rotate(45deg); transition:transform .2s; flex-shrink:0; }
+  details[open] summary::after{ transform:rotate(225deg); }
+  details .phase{ margin-top:2px; }
+  details .phase:first-of-type{ margin-top:14px; }
+  details .table-wrap{ margin-top:14px; }
+  .phase{ display:flex; gap:11px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line); } .phase:last-child{ border-bottom:none; }
+  .phase .chip-num{ margin-top:1px; }
+  .phase .ph-body{ flex:1; }
+  .phase .h{ font-weight:700; font-size:14px; color:var(--ink); } .phase .d{ font-size:13px; color:var(--ink-soft); margin-top:2px; }
+  .tag{ display:inline-block; background:var(--tint); color:var(--purple-deep); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; padding:2px 8px; border-radius:99px; margin-left:5px; }
+  .table-wrap{ overflow-x:auto; overflow-y:hidden; border:1px solid var(--line); border-radius:16px; }
+  table.plan{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.plan td, table.plan th{ padding:9px 10px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
+  table.plan th{ background:var(--purple); color:#fff; font-weight:700; font-family:var(--font-display); }
+  table.plan tr:last-child td{ border-bottom:none; }
+  table.plan tr:nth-child(even) td{ background:#faf8ff; }
+
+  /* ---- segmented pill tabs (reused: Progress Genel Bakış/Beceriler, etc.) ---- */
+  .segtabs{ display:flex; gap:3px; background:var(--tint); border-radius:14px; padding:4px; margin-bottom:14px; }
+  .segtabs .seg{ flex:1; border:none; background:none; padding:9px 6px; border-radius:11px; font-family:var(--font-display); font-size:12.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; transition:background .18s,color .18s; min-height:44px; }
+  .segtabs .seg.active{ background:var(--purple); color:#fff; box-shadow:0 4px 10px rgba(124,92,255,.35); }
+  .segpanel{ display:none; }
+  .segpanel.active{ display:block; }
+
+  /* ---- İLERLEME (progress) ---- */
+  .ring{ width:148px; height:148px; border-radius:50%; background:conic-gradient(var(--purple) calc(var(--p,0)*1%), var(--tint) 0); display:flex; align-items:center; justify-content:center; margin:4px auto 0; position:relative; }
+  .ring::before{ content:""; position:absolute; inset:12px; background:var(--card); border-radius:50%; box-shadow:inset 0 1px 4px rgba(90,60,180,.08); }
+  .ring-inner{ position:relative; text-align:center; z-index:1; }
+  .ring-inner .pct{ font-family:var(--font-display); font-size:29px; font-weight:800; color:var(--purple-deep); font-variant-numeric:tabular-nums; }
+  .ring-inner .lbl{ font-size:10.5px; color:var(--ink-soft); margin-top:3px; max-width:96px; }
+  .goal-badge{ display:none; align-items:center; gap:10px; background:var(--gold-tint); border-radius:14px; padding:10px 12px; margin-top:16px; font-size:13px; font-weight:700; color:#8a5b12; text-align:left; }
+  .weekchart{ display:flex; gap:9px; align-items:flex-end; height:104px; padding-top:6px; }
+  .wk-bar{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .wk-fill{ width:100%; max-width:22px; background:var(--tint-strong); border-radius:8px 8px 4px 4px; transition:height .4s; min-height:5px; }
+  .wk-bar.is-today .wk-fill{ background:linear-gradient(180deg,#9b7dff,var(--purple)); }
+  .wk-lbl{ font-size:10.5px; color:var(--ink-soft); margin-top:7px; font-weight:700; }
+  .skill{ margin-bottom:15px; } .skill:last-child{ margin-bottom:0; }
+  .skill-top{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .skill-pct{ color:var(--ink-soft); font-weight:700; font-variant-numeric:tabular-nums; }
+  .skill-track{ height:9px; background:var(--tint); border-radius:99px; overflow:hidden; }
+  .skill-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg,#9b7dff,var(--purple)); transition:width .5s; }
+
+  /* ---- ÇALIŞ (learn hub) ---- */
+  .hubgrid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .hubcard{ background:var(--card); border:none; border-radius:20px; padding:18px 14px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; align-items:flex-start; gap:10px; cursor:pointer; text-align:left; font-family:inherit; min-height:118px; }
+  .hub-ic{ width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; }
+  .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); }
+  .hub-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
+  .hub-s{ font-size:11.5px; color:var(--ink-soft); }
+
+  /* ---- KELİME ---- */
+  .searchbar{ position:relative; display:flex; align-items:center; margin-bottom:12px; }
+  .searchbar .icon{ position:absolute; left:14px; color:var(--ink-soft); pointer-events:none; }
+  .searchbar input{ width:100%; padding:12px 14px 12px 40px; border:1.5px solid var(--line); border-radius:99px; font-size:14px; font-family:inherit; background:#faf9ff; color:var(--ink); }
+  .searchbar input:focus{ outline:none; border-color:var(--purple); background:#fff; }
+  .filterchips{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch; }
+  .fchip{ flex-shrink:0; border:none; background:var(--tint); color:var(--purple-deep); font-family:inherit; font-size:12.5px; font-weight:700; padding:9px 14px; border-radius:99px; cursor:pointer; min-height:44px; white-space:nowrap; transition:background .18s,color .18s; }
+  .fchip .cnt{ opacity:.7; font-weight:600; margin-left:2px; }
+  .fchip.active{ background:var(--purple); color:#fff; }
+  .word{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:12px 0; border-bottom:1px solid var(--line); min-height:44px; }
+  .word:last-child{ border-bottom:none; }
+  .word .en{ font-weight:700; font-size:14px; color:var(--ink); } .word .tr{ font-size:12px; color:var(--ink-soft); margin-top:1px; }
+  .word .due{ font-size:10px; font-weight:700; background:var(--gold-tint); color:#8a5115; padding:3px 8px; border-radius:99px; flex-shrink:0; }
+  .word .del{ background:none; border:none; color:#c9c1e8; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
+  .flash{ text-align:center; padding:28px 16px; background:var(--bg); border:1.5px dashed var(--line); border-radius:18px; }
+  .flash .q{ font-size:12.5px; color:var(--ink-soft); margin-bottom:9px; text-transform:uppercase; letter-spacing:.4px; }
+  .flash .big{ font-family:var(--font-display); font-size:25px; font-weight:800; margin-bottom:6px; color:var(--ink); }
+  .flash .ex{ font-size:13px; color:var(--ink-soft); font-style:italic; margin-top:11px; }
+  #studyArea > .btn{ margin-top:12px; }
+  .grade{ display:flex; gap:8px; margin-top:16px; }
+  .grade button{ flex:1; padding:12px 4px; border:none; border-radius:14px; font-weight:700; font-size:12.5px; color:#fff; cursor:pointer; min-height:44px; display:flex; align-items:center; justify-content:center; gap:5px; }
+  .g-again{ background:var(--rust); } .g-good{ background:var(--green); } .g-easy{ background:var(--blue); }
+  .empty-mascot{ text-align:center; padding:14px 0 6px; }
+  .empty-mascot .mchip{ width:64px; height:64px; margin:0 auto 10px; border-radius:20px; }
+
+  /* ---- OKUMA ---- */
+  .read-item{ padding:12px 0; border-bottom:1px solid var(--line); }
+  .read-item:last-child{ border-bottom:none; }
+  .read-top{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .read-date{ font-size:11px; font-weight:800; color:var(--purple-deep); background:var(--tint); padding:4px 10px; border-radius:99px; }
+  .read-src{ font-size:11px; color:var(--ink-soft); font-style:italic; }
+  .read-item .del{ margin-left:auto; background:none; border:none; color:#c9c1e8; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
+  .read-text{ font-size:13.5px; color:var(--ink); line-height:1.55; white-space:pre-wrap; }
+
+  /* ---- KONUŞMA ---- */
+  .pron .target{ font-family:var(--font-display); font-size:19px; font-weight:700; text-align:center; padding:18px 10px; background:var(--tint); border-radius:16px; margin-bottom:13px; color:var(--ink); }
+  .pron .result{ margin-top:14px; padding:13px 14px; border-radius:14px; font-size:14px; display:none; }
+  .pron .result.ok{ background:var(--green-tint); color:#0f7a4e; } .pron .result.mid{ background:var(--gold-tint); color:#7a4413; } .pron .result.bad{ background:var(--rust-tint); color:#8a2c3a; }
+  .heard{ font-size:13px; margin-top:7px; opacity:.85; }
+  .chat-log{ max-height:230px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px 2px 12px; }
+  .chat-msg{ display:flex; gap:8px; align-items:flex-end; }
+  .chat-msg.me{ flex-direction:row-reverse; }
+  .chat-msg .bubble{ max-width:78%; padding:10px 13px; border-radius:16px; font-size:13.5px; line-height:1.45; background:var(--tint); color:var(--ink); }
+  .chat-msg.me .bubble{ background:var(--purple); color:#fff; border-bottom-right-radius:4px; }
+  .chat-msg.bot .bubble{ border-bottom-left-radius:4px; }
+  .chat-input-row{ display:flex; align-items:center; gap:8px; margin-top:6px; }
+  .chat-input-row .chat-input{ margin:0; flex:1; }
+  .chat-ic, .chat-send{ width:44px; height:44px; border-radius:50%; border:none; background:var(--tint); color:var(--purple-deep); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .chat-send{ background:var(--purple); color:#fff; }
+
+  /* ---- DİNLEME ---- */
+  .spotify-empty{ text-align:center; color:var(--ink-soft); font-size:13px; padding:16px 0; }
+
+  /* ---- GÜNLÜK ---- */
+  .datestrip{ display:flex; align-items:center; justify-content:space-between; }
+  .dstep{ width:44px; height:44px; border-radius:50%; border:none; background:var(--tint); color:var(--purple-deep); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .dcenter{ text-align:center; }
+  .dlabel{ font-family:var(--font-display); font-weight:800; font-size:15px; color:var(--ink); }
+  .ddate{ font-size:12px; color:var(--ink-soft); margin-top:1px; }
+  .moodrow{ display:flex; gap:8px; justify-content:space-between; }
+  .mood{ flex:1; background:var(--tint); border:2px solid transparent; border-radius:14px; font-size:22px; padding:10px 0; cursor:pointer; transition:transform .1s,border-color .15s; }
+  .mood.active{ border-color:var(--purple); background:#fff; transform:scale(1.06); }
+  .journal-row{ display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; padding:9px 0; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; }
+  .journal-row:last-child{ border-bottom:none; }
+  .j-mood{ font-size:18px; width:22px; text-align:center; flex-shrink:0; }
+  .j-date{ font-size:11px; color:var(--ink-soft); font-weight:700; flex-shrink:0; width:66px; }
+  .j-notes{ font-size:12.5px; color:var(--ink); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* ---- PROFİL ---- */
+  details + details{ margin-top:0; }
+
+  /* ---- nav ---- */
+  nav{ position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; max-width:560px; margin:0 auto; padding:8px 4px calc(8px + env(safe-area-inset-bottom)); border-radius:28px 28px 0 0; box-shadow:0 -8px 26px rgba(90,60,180,.12); z-index:20; }
+  nav button{ flex:1; background:none; border:none; padding:5px 0 4px; font-size:10.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-family:inherit; min-height:52px; }
+  nav button .ic{ width:36px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:13px; transition:background .2s,color .2s; }
+  nav button .ic .icon{ width:21px; height:21px; }
+  nav button.active{ color:var(--purple); }
+  nav button.active .ic{ background:var(--tint); }
+  nav button.active .ic .icon{ stroke-width:2.3; }
+  nav button.fab{ margin-top:-30px; }
+  nav button.fab .ic{ width:56px; height:56px; border-radius:50%; background:var(--purple); color:#fff; box-shadow:0 10px 20px rgba(124,92,255,.45); border:4px solid var(--bg); }
+  nav button.fab .ic .icon{ width:24px; height:24px; stroke-width:2.4; }
+  nav button.fab.active .ic{ background:var(--purple-deep); }
 </style>
 </head>
 <body>
-<header>
-  <h1>🇬🇧 My English Journey</h1>
-  <div class="sub">A2 → Native · günde 1 saat · 4 beceri</div>
-</header>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
+<defs>
+<symbol id="i-home" viewBox="0 0 24 24"><polyline points="4,11 12,4 20,11"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><line x1="7" y1="20" x2="7" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="17" y1="20" x2="17" y2="15"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><rect x="5" y="3.5" width="13" height="17" rx="1.5"/><line x1="8.5" y1="3.5" x2="8.5" y2="20.5"/></symbol>
+<symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.3-3.6-2-6-2A2 2 0 0 0 4 6.5v11A2 2 0 0 1 6 15.5c2 0 4 .7 6 2"/><path d="M12 6.5c1.6-1.3 3.6-2 6-2A2 2 0 0 1 20 6.5v11a2 2 0 0 0-2-2c-2 0-4 .7-6 2"/><line x1="12" y1="6.5" x2="12" y2="19.5"/></symbol>
+<symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><line x1="20" y1="20" x2="15.8" y2="15.8"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z"/><path d="M10 18.5a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.4 5.2 5.6.6-4.2 3.9 1.2 5.6L12 16l-5 2.8 1.2-5.6-4.2-3.9 5.6-.6Z"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 21c-3.6 0-6-2.3-6-5.5 0-2.7 1.7-4.3 2.6-6.4.5 1.1 1.3 1.9 2.1 2.2-.5-2.7.4-5.1 2.3-6.8-.2 2.1.6 3.5 1.9 4.8 1.6 1.6 2.6 3.1 2.6 5.7 0 3.3-2.4 6-5.5 6Z"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v3.5a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4.5A2.5 2.5 0 0 0 7 9"/><path d="M17 5h2.5A2.5 2.5 0 0 1 17 9"/><line x1="12" y1="12.5" x2="12" y2="16"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="15" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="8" y1="3.5" x2="8" y2="7"/><line x1="16" y1="3.5" x2="16" y2="7"/></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16H9l-4 4v-4H6.5A2.5 2.5 0 0 1 4 13.5Z"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="17.5" x2="12" y2="21"/><line x1="8.5" y1="21" x2="15.5" y2="21"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><polyline points="4,13 9,18 20,6"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><polyline points="9,5 16,12 9,19"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="11,6 5,12 11,18"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20l.9-3.6L15.9 5.4a1.5 1.5 0 0 1 2.1 0l.6.6a1.5 1.5 0 0 1 0 2.1L7.6 19.1 4 20Z"/><line x1="14.5" y1="6.8" x2="17.2" y2="9.5"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" style="fill:currentColor;stroke:none"/></symbol>
+<symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c8-1 13-6 14-14-8 1-13 6-14 14Z"/><path d="M6.5 17.5C9 15 11 12.5 14 8.5"/></symbol>
+<symbol id="i-cards" viewBox="0 0 24 24"><rect x="6" y="7" width="13" height="14" rx="2"/><path d="M9.5 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1.5"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4Z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.8a7.5 7.5 0 0 1 0 10.4"/></symbol>
+<symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.1" style="fill:currentColor;stroke:none"/><circle cx="15" cy="9" r="1.1" style="fill:currentColor;stroke:none"/><circle cx="12" cy="12" r="1.1" style="fill:currentColor;stroke:none"/><circle cx="9" cy="15" r="1.1" style="fill:currentColor;stroke:none"/><circle cx="15" cy="15" r="1.1" style="fill:currentColor;stroke:none"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M4.5 12 20 4.5 15 19.5 12 13Z"/><line x1="12" y1="13" x2="20" y2="4.5"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3.5v2.3M12 18.2v2.3M20.5 12h-2.3M5.8 12H3.5M17.7 6.3l-1.6 1.6M7.9 16.1l-1.6 1.6M17.7 17.7l-1.6-1.6M7.9 7.9 6.3 6.3"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="14.5" r="4"/><path d="M11 11.5 19 3.5"/><path d="M15.5 7 18 9.5"/><path d="M18 4 20.5 6.5"/></symbol>
+<symbol id="i-list-check" viewBox="0 0 24 24"><polyline points="4.5,7 6,8.5 9,5.5"/><line x1="12" y1="7" x2="20" y2="7"/><polyline points="4.5,14 6,15.5 9,12.5"/><line x1="12" y1="14" x2="20" y2="14"/><polyline points="4.5,21 6,22.5 9,19.5"/><line x1="12" y1="21" x2="20" y2="21"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5Z"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12,4 21,9 12,14 3,9"/><polyline points="3,13 12,18 21,13"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M5 11a7 7 0 0 1 12-4.5M19 13a7 7 0 0 1-12 4.5"/><polyline points="17,3.5 17,7 13.5,7"/><polyline points="7,20.5 7,17 10.5,17"/></symbol>
+</defs>
+</svg>
 
 <div class="wrap">
 
   <!-- ===== BUGÜN ===== -->
   <section class="view active" id="v-today">
-    <div class="stats" style="margin-bottom:14px;">
-      <div class="stat s-streak"><div class="n" id="streak">0</div><div class="l">🔥 Streak</div></div>
-      <div class="stat s-days"><div class="n" id="totalDays">0</div><div class="l">Gün</div></div>
-      <div class="stat s-exam"><div class="n" id="examDays">–</div><div class="l">Sınava</div></div>
+    <div class="topbar">
+      <div>
+        <div class="hero-greet">Merhaba, İlayda <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></div>
+        <p class="mut" id="todayDate"></p>
+      </div>
+      <button class="bell-btn" aria-label="Bildirimler"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></button>
     </div>
+    <div class="hero">
+      <div><h1>Bugün öğrenmeye<br>hazır mısın?</h1></div>
+      <img class="hero-img" src="assets/mascot/hero-happy.png" alt="Moonie kitap okuyor">
+    </div>
+
+    <div class="stats">
+      <div class="stat s-streak"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="streak">0</div><div class="l">Seri</div></div></div>
+      <div class="stat s-days"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="totalDays">0</div><div class="l">Gün</div></div></div>
+      <div class="stat s-exam"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg></div><div class="txt"><div class="n" id="examDays">–</div><div class="l">Sınava</div></div></div>
+    </div>
+
     <div class="card">
-      <h2>📅 Bugünün dersi <span class="mut" id="todayDate" style="font-weight:400;"></span></h2>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün hedefi</h2>
       <div id="checklist"></div>
-      <button class="btn" id="completeBtn" style="margin-top:12px;">Bugünü tamamla ✓</button>
+      <button class="btn" id="completeBtn">Bugünü tamamla ✓</button>
+      <div class="donewrap" id="doneWrap" style="display:none;">
+        <div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div>
+        <span>Bugünü tamamladın, harikasın!</span>
+      </div>
       <div class="mut" id="progressLabel" style="text-align:center;margin-top:10px;"></div>
       <div class="bar"><div id="progBar" style="width:0%"></div></div>
     </div>
+
+    <button type="button" class="card continue-card" onclick="go('vocab')">
+      <div class="mchip"><img src="assets/mascot/pose-motivated.png" alt=""></div>
+      <div>
+        <div class="cc-t">Devam et</div>
+        <div class="cc-s" id="continueSub">Kelime kartlarına göz at</div>
+      </div>
+      <span class="cc-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
+    </button>
+
     <div class="card">
-      <h2>🎤 Konuşma pratiği</h2>
-      <p class="mut" style="margin-bottom:10px;">Konuşmayı Cowork'te Claude ile yap. Telaffuz/kelime pratiğini bu app'te yaparsın.</p>
-      <button class="btn sec" onclick="go('pron')">Telaffuz pratiğine git →</button>
+      <details>
+        <summary><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Bugünün 60 dk modülü</summary>
+        <div class="phase"><span class="chip-num">1</span><div class="ph-body"><div class="h">Isınma — 5 dk <span class="tag">Akıcılık</span></div><div class="d">Dünkü dersi İngilizce anlat.</div></div></div>
+        <div class="phase"><span class="chip-num">2</span><div class="ph-body"><div class="h">Kelime — 10 dk <span class="tag">Aralıklı tekrar</span></div><div class="d">Kartları çalış (Kelime), yeni 5-7 kelime ekle.</div></div></div>
+        <div class="phase"><span class="chip-num">3</span><div class="ph-body"><div class="h">Grammar — 10 dk <span class="tag">Dil odaklı</span></div><div class="d">Günün tek kuralı + örnek + mini alıştırma.</div></div></div>
+        <div class="phase"><span class="chip-num">4</span><div class="ph-body"><div class="h">Okuma/Dinleme — 15 dk <span class="tag">Anlaşılır girdi</span></div><div class="d">Okuma'ya bir paragraf ekle + podcast/dizi.</div></div></div>
+        <div class="phase"><span class="chip-num">5</span><div class="ph-body"><div class="h">Üretim — 12 dk <span class="tag">Çıktı</span></div><div class="d">Claude'a anlat ya da 3-4 cümle yaz.</div></div></div>
+        <div class="phase"><span class="chip-num">6</span><div class="ph-body"><div class="h">Telaffuz — 8 dk <span class="tag">Shadowing</span></div><div class="d">Klibi gölge gibi tekrar et (Konuşma'da pratik yap).</div></div></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== İLERLEME ===== -->
+  <section class="view" id="v-progress">
+    <div class="subhead">
+      <div class="mchip"><img src="assets/mascot/pose-greatprogress.png" alt=""></div>
+      <div><h1>İlerleme</h1><p>Alışkanlığın nasıl gidiyor, bir bak.</p></div>
+    </div>
+
+    <div class="segtabs" id="progSegTabs">
+      <button type="button" class="seg active" data-seg="overview">Genel Bakış</button>
+      <button type="button" class="seg" data-seg="skills">Beceriler</button>
+    </div>
+
+    <div class="segpanel active" id="progPanelOverview">
+      <div class="card" style="text-align:center;">
+        <div class="ring" id="progRing"><div class="ring-inner"><div class="pct" id="progRingPct">0%</div><div class="lbl">60 günlük alışkanlık hedefi</div></div></div>
+        <div class="goal-badge" id="progGoalBadge">
+          <div class="mchip sm"><img src="assets/mascot/pose-goalachieved.png" alt=""></div>
+          <span>Hedefe ulaştın, tebrikler! 🎉</span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="ic-chip" style="background:var(--gold-tint);color:var(--gold);"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="progStreak" style="color:var(--gold);">0</div><div class="l">Seri</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--green-tint);color:var(--green);"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="progDays" style="color:var(--green);">0</div><div class="l">Gün</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></div><div class="txt"><div class="n" id="progWords" style="color:var(--purple);">0</div><div class="l">Kelime</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--blue-tint);color:var(--blue);"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div><div class="txt"><div class="n" id="progToday" style="color:var(--blue);font-size:16px;">0/6</div><div class="l">Bugün</div></div></div>
+      </div>
+
+      <div class="card">
+        <h2><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Bu hafta</h2>
+        <div class="weekchart" id="weekChart"></div>
+      </div>
+    </div>
+
+    <div class="segpanel" id="progPanelSkills">
+      <div class="card">
+        <h2><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Beceri dağılımı</h2>
+        <div class="skill" id="skillVocab"><div class="skill-top"><span>Kelime</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
+        <div class="skill" id="skillRead"><div class="skill-top"><span>Okuma</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
+        <div class="skill" id="skillSpeak"><div class="skill-top"><span>Konuşma</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
+        <div class="skill" id="skillJournal"><div class="skill-top"><span>Günlük tutarlılık</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ÇALIŞ (hub) ===== -->
+  <section class="view" id="v-learn">
+    <div class="subhead">
+      <div class="mchip"><img src="assets/mascot/pose-learning.png" alt=""></div>
+      <div><h1>Çalış</h1><p>Bugün hangi beceriyle ilerlemek istersin?</p></div>
+    </div>
+    <div class="hubgrid">
+      <button class="hubcard" onclick="go('vocab')">
+        <span class="hub-ic hub-purple"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></span>
+        <span class="hub-t">Kelime</span>
+        <span class="hub-s" id="hubVocabSub">–</span>
+      </button>
+      <button class="hubcard" onclick="go('reading')">
+        <span class="hub-ic hub-green"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span>
+        <span class="hub-t">Okuma</span>
+        <span class="hub-s" id="hubReadSub">–</span>
+      </button>
+      <button class="hubcard" onclick="go('listening')">
+        <span class="hub-ic hub-blue"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span>
+        <span class="hub-t">Dinleme</span>
+        <span class="hub-s">Spotify</span>
+      </button>
+      <button class="hubcard" onclick="go('speaking')">
+        <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></span>
+        <span class="hub-t">Konuşma</span>
+        <span class="hub-s">Telaffuz + Sohbet</span>
+      </button>
     </div>
   </section>
 
   <!-- ===== KELİME ===== -->
   <section class="view" id="v-vocab">
+    <div class="subhead">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="mchip"><img src="assets/mascot/pose-reading.png" alt=""></div>
+      <div><h1>Kelime</h1><p>Aralıklı tekrar ile kelime dağarcığını büyüt.</p></div>
+    </div>
     <div class="card">
-      <h2>➕ Kelime ekle</h2>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime ekle</h2>
       <input class="f" id="wEn" placeholder="İngilizce (ör. meeting)">
       <input class="f" id="wTr" placeholder="Türkçe (ör. toplantı)">
       <input class="f" id="wEx" placeholder="Örnek cümle (opsiyonel)">
       <button class="btn" id="addWord">Ekle</button>
     </div>
     <div class="card">
-      <h2>🃏 Çalış <span class="mut" id="dueCount"></span></h2>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg>Çalış <span class="mut" id="dueCount"></span></h2>
       <div id="studyArea"><div class="empty">Çalışılacak kart yok. Kelime ekle ya da yarın gel. 🎉</div></div>
     </div>
     <div class="card">
-      <h2>📒 Tüm kelimeler <span class="mut" id="wordCount"></span></h2>
+      <div class="searchbar">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+        <input id="vocabSearch" placeholder="Kelime ara...">
+      </div>
+      <div class="filterchips" id="vocabFilterChips">
+        <button type="button" class="fchip active" data-f="all">Tümü <span class="cnt" id="fCountAll"></span></button>
+        <button type="button" class="fchip" data-f="learning">Öğreniliyor <span class="cnt" id="fCountLearning"></span></button>
+        <button type="button" class="fchip" data-f="known">Biliniyor <span class="cnt" id="fCountKnown"></span></button>
+      </div>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Tüm kelimeler <span class="mut" id="wordCount"></span></h2>
       <div id="wordList"><div class="empty">Henüz kelime yok.</div></div>
     </div>
   </section>
 
-  <!-- ===== TELAFFUZ ===== -->
-  <section class="view" id="v-pron">
-    <div class="card pron">
-      <h2>🎤 Telaffuz pratiği</h2>
-      <p class="mut" style="margin-bottom:10px;">Cümleyi seç ya da yaz → <b>Dinle</b> ile doğrusunu duy → <b>Konuş</b> ile söyle, app ne kadar doğru olduğunu ölçer.</p>
-      <textarea class="f" id="pronText" rows="2" placeholder="Söylemek istediğin cümleyi yaz...">I have an important meeting today.</textarea>
-      <div class="row" style="margin-bottom:8px;">
-        <button class="btn sec" id="pickPhrase" style="flex:1;">🎲 Hazır cümle</button>
-        <button class="btn navy" id="listenBtn" style="flex:1;">🔊 Dinle</button>
+  <!-- ===== OKUMA ===== -->
+  <section class="view" id="v-reading">
+    <div class="subhead">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="mchip"><img src="assets/mascot/pose-writing.png" alt=""></div>
+      <div><h1>Okuma</h1><p>Okuduğun paragrafları ve kaynakları biriktir.</p></div>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Yeni kayıt</h2>
+      <div class="row">
+        <input class="f" type="date" id="rDate" style="flex:1;">
+        <input class="f" id="rSource" placeholder="Kaynak (ör. More to Read)" style="flex:1.4;">
       </div>
-      <div class="target" id="pronTarget">I have an important meeting today.</div>
-      <button class="btn orange" id="speakBtn">🎙️ Konuş</button>
-      <div class="result" id="pronResult"></div>
-      <div class="hint" id="pronSupport"></div>
+      <textarea class="f" id="rText" rows="4" placeholder="Okuduğun paragrafı ya da notlarını yaz..."></textarea>
+      <button class="btn" id="addReading">Kaydet</button>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Kayıtların <span class="mut" id="readingCount"></span></h2>
+      <div id="readingList"><div class="empty">Henüz okuma kaydı yok.</div></div>
     </div>
   </section>
 
-  <!-- ===== PLAN ===== -->
-  <section class="view" id="v-plan">
-    <div class="card">
-      <h2>🧭 Günlük modül — 60 dk</h2>
-      <div class="phase"><div class="h">1 · Isınma — 5 dk <span class="mut">Akıcılık</span></div><div class="d">Dünkü dersi İngilizce anlat.</div></div>
-      <div class="phase"><div class="h">2 · Kelime — 10 dk <span class="mut">Aralıklı tekrar</span></div><div class="d">Kartları çalış (bu app), yeni 5-7 kelime ekle.</div></div>
-      <div class="phase"><div class="h">3 · Grammar — 10 dk <span class="mut">Dil odaklı</span></div><div class="d">Günün tek kuralı + örnek + mini alıştırma.</div></div>
-      <div class="phase"><div class="h">4 · Okuma/Dinleme — 15 dk <span class="mut">Anlaşılır girdi</span></div><div class="d">More to Read paragrafı + podcast/dizi.</div></div>
-      <div class="phase"><div class="h">5 · Üretim — 12 dk <span class="mut">Çıktı</span></div><div class="d">Claude'a anlat ya da 3-4 cümle yaz.</div></div>
-      <div class="phase"><div class="h">6 · Telaffuz — 8 dk <span class="mut">Shadowing</span></div><div class="d">Klibi gölge gibi tekrar et (bu app'te de pratik yap).</div></div>
+  <!-- ===== DİNLEME ===== -->
+  <section class="view" id="v-listening">
+    <div class="subhead">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="mchip"><img src="assets/mascot/pose-listening.png" alt=""></div>
+      <div><h1>Dinleme</h1><p>Podcast'lerini Spotify ile senkronize et.</p></div>
     </div>
     <div class="card">
-      <h2>🗓️ Haftalık odak</h2>
-      <table class="plan">
-        <tr><th>Gün</th><th>Girdi</th><th>Üretim</th></tr>
-        <tr><td>Pzt</td><td>Okuma</td><td>Yazma</td></tr>
-        <tr><td>Sal</td><td>Dinleme</td><td>Konuşma</td></tr>
-        <tr><td>Çar</td><td>İş makalesi</td><td>E-posta</td></tr>
-        <tr><td>Per</td><td>Dizi (EN altyazı)</td><td>Roleplay</td></tr>
-        <tr><td>Cum</td><td>İlgi alanı blog</td><td>Görüş yazısı</td></tr>
-        <tr><td>Cmt</td><td>Serbest izleme</td><td>Haftayı anlat</td></tr>
-        <tr><td>Paz</td><td>Hafif tekrar</td><td>Hataları gözden geçir</td></tr>
-      </table>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify bağlantısı</h2>
+      <p class="mut" id="spotifyStatus" style="margin-bottom:12px;">Henüz bağlı değil.</p>
+      <button class="btn" id="spotifyConnectBtn">Spotify'a bağlan</button>
+      <p class="hint">Gerçek çalma için Spotify Premium hesabı ve Profil'de kayıtlı bir Client ID gerekir.</p>
     </div>
     <div class="card">
-      <h2>⚙️ Veri</h2>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Şu an çalıyor</h2>
+      <div id="spotifyNowPlaying" class="spotify-empty">Bağlantı kurulduğunda burada görünecek.</div>
+      <div id="spotifyPlayerContainer" style="display:none;"></div>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Podcast ara</h2>
+      <div class="searchbar">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+        <input id="spotifySearchInput" placeholder="ör. English learning podcast">
+      </div>
+      <div id="spotifyPodcastList" class="spotify-empty">Aramak için yaz ve Enter'a bas.</div>
+    </div>
+  </section>
+
+  <!-- ===== KONUŞMA ===== -->
+  <section class="view" id="v-speaking">
+    <div class="subhead">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="mchip"><img src="assets/mascot/pose-newword.png" alt=""></div>
+      <div><h1>Konuşma</h1><p>Telaffuzunu ölç, sonra serbest pratik yap.</p></div>
+    </div>
+    <div class="card pron">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Telaffuz pratiği</h2>
+      <p class="mut" style="margin-bottom:10px;">Cümleyi seç ya da yaz → <b>Dinle</b> ile doğrusunu duy → <b>Konuş</b> ile söyle, app ne kadar doğru olduğunu ölçer.</p>
+      <textarea class="f" id="pronText" rows="2" placeholder="Söylemek istediğin cümleyi yaz...">I have an important meeting today.</textarea>
+      <div class="row" style="margin-bottom:8px;">
+        <button class="btn sec" id="pickPhrase" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-dice"></use></svg>Hazır cümle</button>
+        <button class="btn deep" id="listenBtn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-volume"></use></svg>Dinle</button>
+      </div>
+      <div class="target" id="pronTarget">I have an important meeting today.</div>
+      <button class="btn gold" id="speakBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Konuş</button>
+      <div class="result" id="pronResult"></div>
+      <div class="hint" id="pronSupport"></div>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Claude ile konuş</h2>
+      <p class="mut" style="margin-bottom:10px;">Serbest konuşma pratiği için yaz ya da mikrofonla konuş.</p>
+      <div class="chat-log" id="speakingChatLog">
+        <div class="chat-msg bot"><div class="mchip sm"><img src="assets/mascot/pose-newword.png" alt=""></div><div class="bubble">Merhaba! Bugün ne hakkında konuşmak istersin? ✨</div></div>
+      </div>
+      <div class="chat-input-row">
+        <button class="chat-ic" id="speakingMic" title="Mikrofon" aria-label="Mikrofon"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button>
+        <input class="f chat-input" id="speakingInput" placeholder="Bir şeyler yaz...">
+        <button class="chat-send" id="speakingSend" title="Gönder" aria-label="Gönder"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-send"></use></svg></button>
+      </div>
+      <p class="hint">Mikrofona basıp konuşabilir ya da yazabilirsin. Cevaplar sesli de okunur.</p>
+    </div>
+  </section>
+
+  <!-- ===== GÜNLÜK ===== -->
+  <section class="view" id="v-journal">
+    <div class="subhead">
+      <div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div>
+      <div><h1>Günlük</h1><p>Günün özeti — ruh halin ve notların.</p></div>
+    </div>
+    <div class="card">
+      <div class="datestrip">
+        <button class="dstep" id="journalPrev" aria-label="Önceki gün"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+        <div class="dcenter"><div class="dlabel" id="journalDateLabel">Bugün</div><div class="ddate" id="journalDateSub"></div></div>
+        <button class="dstep" id="journalNext" aria-label="Sonraki gün"><svg class="icon icon-sm" aria-hidden="true" style="transform:rotate(180deg);"><use href="#i-arrow-left"></use></svg></button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Bugün nasıl geçti?</h2>
+      <div class="moodrow" id="moodRow">
+        <button type="button" class="mood" data-m="😞">😞</button>
+        <button type="button" class="mood" data-m="😐">😐</button>
+        <button type="button" class="mood" data-m="🙂">🙂</button>
+        <button type="button" class="mood" data-m="😄">😄</button>
+        <button type="button" class="mood" data-m="🤩">🤩</button>
+      </div>
+      <textarea class="f" id="journalNotes" rows="4" placeholder="Bugün ne öğrendin, neler hissettin?" style="margin-top:12px;"></textarea>
+      <button class="btn" id="journalSave">Kaydet</button>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Son kayıtlar</h2>
+      <div id="journalHistory"><div class="empty">Henüz günlük kaydı yok.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== PROFİL ===== -->
+  <section class="view" id="v-profile">
+    <div class="subhead">
+      <div class="mchip"><img src="assets/mascot/pose-proud.png" alt=""></div>
+      <div><h1>Profil</h1><p id="profileSummary">–</p></div>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg>Veri</h2>
       <p class="mut" style="margin-bottom:10px;">Tüm ilerlemen bu cihazda (tarayıcıda) saklanır. Yedeklemek için dışa aktar.</p>
       <div class="row">
         <button class="btn sec" id="exportBtn" style="flex:1;">Dışa aktar</button>
@@ -164,15 +585,59 @@
       </div>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify bağlantısı</h2>
+      <p class="mut" style="margin-bottom:10px;">Dinleme sekmesinde podcast'lerini görebilmek için Client ID'ni gir.</p>
+      <input class="f" id="spotifyClientIdInput" placeholder="Spotify Client ID">
+      <button class="btn sec" id="spotifyClientIdSave">Kaydet</button>
+      <p class="hint" style="text-align:left;">Spotify Developer Dashboard'da app'ine bu adresi Redirect URI olarak ekle:</p>
+      <input class="f" id="spotifyRedirectUriDisplay" readonly style="margin-top:6px;font-size:11.5px;color:var(--ink-soft);">
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg>Claude API</h2>
+      <p class="mut" style="margin-bottom:10px;">Konuşma sekmesindeki sohbet özelliği için API anahtarını gir.</p>
+      <input class="f" id="claudeApiKeyInput" type="password" placeholder="sk-ant-...">
+      <button class="btn sec" id="claudeApiKeySave">Kaydet</button>
+      <p class="hint">Bu anahtar yalnızca bu tarayıcıda (localStorage) saklanır, hiçbir sunucuya gönderilmez.</p>
+    </div>
+    <div class="card">
+      <details>
+        <summary><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Çalışma planım — günlük modül</summary>
+        <div class="phase"><span class="chip-num">1</span><div class="ph-body"><div class="h">Isınma — 5 dk <span class="tag">Akıcılık</span></div><div class="d">Dünkü dersi İngilizce anlat.</div></div></div>
+        <div class="phase"><span class="chip-num">2</span><div class="ph-body"><div class="h">Kelime — 10 dk <span class="tag">Aralıklı tekrar</span></div><div class="d">Kartları çalış, yeni 5-7 kelime ekle.</div></div></div>
+        <div class="phase"><span class="chip-num">3</span><div class="ph-body"><div class="h">Grammar — 10 dk <span class="tag">Dil odaklı</span></div><div class="d">Günün tek kuralı + örnek + mini alıştırma.</div></div></div>
+        <div class="phase"><span class="chip-num">4</span><div class="ph-body"><div class="h">Okuma/Dinleme — 15 dk <span class="tag">Anlaşılır girdi</span></div><div class="d">More to Read paragrafı + podcast/dizi.</div></div></div>
+        <div class="phase"><span class="chip-num">5</span><div class="ph-body"><div class="h">Üretim — 12 dk <span class="tag">Çıktı</span></div><div class="d">Claude'a anlat ya da 3-4 cümle yaz.</div></div></div>
+        <div class="phase"><span class="chip-num">6</span><div class="ph-body"><div class="h">Telaffuz — 8 dk <span class="tag">Shadowing</span></div><div class="d">Klibi gölge gibi tekrar et.</div></div></div>
+      </details>
+    </div>
+    <div class="card">
+      <details>
+        <summary><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Haftalık odak planı</summary>
+        <div class="table-wrap">
+        <table class="plan">
+          <tr><th>Gün</th><th>Girdi</th><th>Üretim</th></tr>
+          <tr><td>Pzt</td><td>Okuma</td><td>Yazma</td></tr>
+          <tr><td>Sal</td><td>Dinleme</td><td>Konuşma</td></tr>
+          <tr><td>Çar</td><td>İş makalesi</td><td>E-posta</td></tr>
+          <tr><td>Per</td><td>Dizi (EN altyazı)</td><td>Roleplay</td></tr>
+          <tr><td>Cum</td><td>İlgi alanı blog</td><td>Görüş yazısı</td></tr>
+          <tr><td>Cmt</td><td>Serbest izleme</td><td>Haftayı anlat</td></tr>
+          <tr><td>Paz</td><td>Hafif tekrar</td><td>Hataları gözden geçir</td></tr>
+        </table>
+        </div>
+      </details>
+    </div>
   </section>
 
 </div>
 
 <nav>
-  <button class="active" data-v="today"><span class="ic">🏠</span>Bugün</button>
-  <button data-v="vocab"><span class="ic">🃏</span>Kelime</button>
-  <button data-v="pron"><span class="ic">🎤</span>Telaffuz</button>
-  <button data-v="plan"><span class="ic">📚</span>Plan</button>
+  <button class="active" data-v="today"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg></span>Bugün</button>
+  <button data-v="progress"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg></span>İlerleme</button>
+  <button class="fab" data-v="learn" aria-label="Çalış"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></button>
+  <button data-v="journal"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span>Günlük</button>
+  <button data-v="profile"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-person"></use></svg></span>Profil</button>
 </nav>
 
 <script>
@@ -180,6 +645,9 @@
 var KEY="my_english_app_v1";
 var EXAM=new Date(2026,8,19);
 var GOAL=60;
+var DAYS_TR=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+var DAYS_TR_SHORT=["Pz","Pt","Sa","Ça","Pe","Cu","Ct"];
+var MONTHS_TR=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 var STEPS=[
   ["Isınma","1 cümle: şu an ne yapıyorsun?"],
   ["Kelime","Kartları çalış + yeni kelime ekle"],
@@ -204,18 +672,40 @@ function save(){ localStorage.setItem(KEY,JSON.stringify(S)); }
 var S=load();
 S.streak=S.streak||0; S.totalDays=S.totalDays||0; S.checks=S.checks||{};
 S.words=S.words||[];
+S.history=S.history||{};
+S.readings=S.readings||[];
+S.journal=S.journal||{};
+S.settings=S.settings||{};
+S.pronCount=S.pronCount||0;
 if(S.checksDate!==dstr(new Date())){ S.checks={}; S.checksDate=dstr(new Date()); }
 
 function dstr(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
 function daysBetween(a,b){ return Math.round((a-b)/86400000); }
 function today0(){ var d=new Date(); d.setHours(0,0,0,0); return d.getTime(); }
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function isoDate(d){ function pad(n){ return (n<10?"0":"")+n; } return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function fmtDate(iso){ if(!iso) return ""; var p=iso.split("-"); if(p.length<3) return iso; return p[2]+"."+p[1]+"."+p[0]; }
+function parseDstr(k){ var p=k.split("-"); return new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10)); }
+function trimHistory(){
+  var keys=Object.keys(S.history);
+  if(keys.length>60){ keys.sort(); keys.slice(0,keys.length-60).forEach(function(k){ delete S.history[k]; }); }
+}
 
 /* ---------- NAV ---------- */
+var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",listening:"learn",speaking:"learn",journal:"journal",profile:"profile"};
 function go(v){
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
-  document.getElementById("v-"+v).classList.add("active");
-  document.querySelectorAll("nav button").forEach(function(b){ b.classList.toggle("active", b.dataset.v===v); });
+  var el=document.getElementById("v-"+v);
+  if(el) el.classList.add("active");
+  var navKey=NAVMAP[v]||v;
+  document.querySelectorAll("nav button").forEach(function(b){ b.classList.toggle("active", b.dataset.v===navKey); });
   if(v==="vocab") renderVocab();
+  if(v==="learn") renderLearnHub();
+  if(v==="progress") renderProgress();
+  if(v==="reading") renderReading();
+  if(v==="listening") renderListening();
+  if(v==="journal") renderJournal();
+  if(v==="profile") renderProfile();
   window.scrollTo(0,0);
 }
 document.querySelectorAll("nav button").forEach(function(b){ b.addEventListener("click",function(){ go(b.dataset.v); }); });
@@ -226,24 +716,30 @@ function renderToday(){
   document.getElementById("totalDays").textContent=S.totalDays;
   var ed=daysBetween(EXAM,new Date());
   document.getElementById("examDays").textContent=ed>0?ed+"g":"🎉";
-  var g=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"], dt=new Date();
-  document.getElementById("todayDate").textContent="· "+g[dt.getDay()]+" "+dt.getDate()+"/"+(dt.getMonth()+1);
+  var dt=new Date();
+  document.getElementById("todayDate").textContent=DAYS_TR[dt.getDay()]+", "+dt.getDate()+" "+MONTHS_TR[dt.getMonth()];
   var cl=document.getElementById("checklist"); cl.innerHTML="";
   STEPS.forEach(function(s,i){
     var done=!!S.checks[i];
     var lab=document.createElement("label"); lab.className="check"+(done?" done":"");
-    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="t">'+s[0]+'<small>'+s[1]+'</small></span>';
+    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+(done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(i+1))+'</span><span class="t">'+s[0]+'<small>'+s[1]+'</small></span>';
     lab.querySelector("input").addEventListener("change",function(e){ S.checks[i]=e.target.checked; save(); renderToday(); });
     cl.appendChild(lab);
   });
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
   var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
   var btn=document.getElementById("completeBtn");
-  if(doneToday){ btn.textContent="Bugün tamamlandı ✓ Aferin!"; btn.disabled=true; btn.style.background="#059669"; }
-  else{ btn.textContent=all?"Bugünü tamamla ✓":("Adımlar: "+doneN+"/"+STEPS.length); btn.disabled=!all; btn.style.background=""; }
+  if(doneToday){ btn.textContent="Bugün tamamlandı ✓ Aferin!"; btn.disabled=true; }
+  else{ btn.textContent=all?"Bugünü tamamla ✓":("Adımlar: "+doneN+"/"+STEPS.length); btn.disabled=!all; }
+  document.getElementById("doneWrap").style.display=doneToday?"flex":"none";
   var pct=Math.min(100,Math.round(S.totalDays/GOAL*100));
   document.getElementById("progBar").style.width=pct+"%";
   document.getElementById("progressLabel").textContent=S.totalDays+" / "+GOAL+" gün · alışkanlık hedefi";
+  var due=dueWords().length;
+  document.getElementById("continueSub").textContent=due?(due+" kart bekliyor"):"Hepsi güncel, harika gidiyorsun";
+  S.history[dstr(new Date())]=doneN;
+  trimHistory();
+  save();
 }
 document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
@@ -266,40 +762,62 @@ document.getElementById("addWord").addEventListener("click",function(){
 });
 function dueWords(){ var t=today0(); return S.words.filter(function(w){return w.due<=t;}); }
 var studyIdx=null, flipped=false;
+var vocabQ="", vocabFilter="all";
+var DEL_ICON='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg>';
 function renderVocab(){
   var due=dueWords();
   document.getElementById("dueCount").textContent=due.length?("· "+due.length+" kart"):"";
   document.getElementById("wordCount").textContent="· "+S.words.length;
   // study
   var sa=document.getElementById("studyArea");
-  if(!due.length){ sa.innerHTML='<div class="empty">Çalışılacak kart yok. 🎉</div>'; studyIdx=null; }
+  if(!due.length){
+    sa.innerHTML='<div class="empty-mascot"><div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div><div class="empty">Çalışılacak kart yok. 🎉</div></div>';
+    studyIdx=null;
+  }
   else{
     if(studyIdx===null||studyIdx>=due.length) studyIdx=0;
     var w=due[studyIdx];
     if(!flipped){
       sa.innerHTML='<div class="flash"><div class="q">Türkçesi — İngilizcesini hatırla</div><div class="big">'+esc(w.tr)+'</div></div>'+
-        '<button class="btn sec" id="flipBtn">Çevir 🔄</button>';
+        '<button class="btn sec" id="flipBtn" style="display:flex;align-items:center;justify-content:center;gap:7px;">Çevir <svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg></button>';
       document.getElementById("flipBtn").addEventListener("click",function(){ flipped=true; renderVocab(); });
     } else {
       sa.innerHTML='<div class="flash"><div class="q">'+esc(w.tr)+'</div><div class="big">'+esc(w.en)+'</div>'+
         (w.ex?'<div class="ex">"'+esc(w.ex)+'"</div>':'')+'</div>'+
-        '<div class="grade"><button class="g-again" data-g="0">Tekrar</button><button class="g-good" data-g="1">Bildim</button><button class="g-easy" data-g="2">Kolay</button></div>';
+        '<div class="grade">'+
+        '<button class="g-again" data-g="0"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg>Tekrar</button>'+
+        '<button class="g-good" data-g="1"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bildim</button>'+
+        '<button class="g-easy" data-g="2"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Kolay</button></div>';
       sa.querySelectorAll(".grade button").forEach(function(b){
         b.addEventListener("click",function(){ gradeCard(w,parseInt(b.dataset.g)); });
       });
     }
   }
-  // list
+  // filter chip counts
+  var learningN=S.words.filter(function(w){return w.box<3;}).length;
+  var knownN=S.words.filter(function(w){return w.box>=3;}).length;
+  document.getElementById("fCountAll").textContent="("+S.words.length+")";
+  document.getElementById("fCountLearning").textContent="("+learningN+")";
+  document.getElementById("fCountKnown").textContent="("+knownN+")";
+  // list (filtered by search + category)
   var wl=document.getElementById("wordList");
+  var q=vocabQ;
+  var filtered=S.words.filter(function(w){
+    if(vocabFilter==="learning"&&w.box>=3) return false;
+    if(vocabFilter==="known"&&w.box<3) return false;
+    if(q&&w.en.toLowerCase().indexOf(q)===-1&&w.tr.toLowerCase().indexOf(q)===-1) return false;
+    return true;
+  });
   if(!S.words.length){ wl.innerHTML='<div class="empty">Henüz kelime yok.</div>'; }
+  else if(!filtered.length){ wl.innerHTML='<div class="empty">Eşleşen kelime yok.</div>'; }
   else{
     wl.innerHTML="";
-    S.words.slice().reverse().forEach(function(w){
+    filtered.slice().reverse().forEach(function(w){
       var idx=S.words.indexOf(w), isDue=w.due<=today0();
       var row=document.createElement("div"); row.className="word";
       row.innerHTML='<div><div class="en">'+esc(w.en)+'</div><div class="tr">'+esc(w.tr)+'</div></div>'+
-        '<div style="display:flex;align-items:center;gap:8px;">'+(isDue?'<span class="due">bugün</span>':'')+
-        '<button class="del" data-i="'+idx+'">×</button></div>';
+        '<div style="display:flex;align-items:center;gap:6px;">'+(isDue?'<span class="due">bugün</span>':'')+
+        '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>';
       row.querySelector(".del").addEventListener("click",function(){
         if(confirm('"'+w.en+'" silinsin mi?')){ S.words.splice(idx,1); save(); renderVocab(); }
       });
@@ -307,6 +825,15 @@ function renderVocab(){
     });
   }
 }
+document.getElementById("vocabSearch").addEventListener("input",function(e){ vocabQ=e.target.value.trim().toLowerCase(); renderVocab(); });
+document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(b){
+  b.addEventListener("click",function(){
+    vocabFilter=b.dataset.f;
+    document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    renderVocab();
+  });
+});
 function gradeCard(w,g){
   if(g===0) w.box=0;
   else if(g===1) w.box=Math.min(SRS.length-1,w.box+1);
@@ -315,7 +842,263 @@ function gradeCard(w,g){
   w.due=d.getTime();
   flipped=false; studyIdx=null; save(); renderVocab();
 }
-function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* ---------- READING ---------- */
+function renderReading(){
+  var dEl=document.getElementById("rDate");
+  if(!dEl.value) dEl.value=isoDate(new Date());
+  document.getElementById("readingCount").textContent=S.readings.length?("· "+S.readings.length):"";
+  var list=document.getElementById("readingList");
+  if(!S.readings.length){ list.innerHTML='<div class="empty">Henüz okuma kaydı yok.</div>'; return; }
+  list.innerHTML="";
+  S.readings.slice().reverse().forEach(function(r){
+    var idx=S.readings.indexOf(r);
+    var row=document.createElement("div"); row.className="read-item";
+    row.innerHTML='<div class="read-top"><span class="read-date">'+fmtDate(r.date)+'</span>'+
+      (r.source?'<span class="read-src">'+esc(r.source)+'</span>':'')+
+      '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div><p class="read-text">'+esc(r.text)+'</p>';
+    row.querySelector(".del").addEventListener("click",function(){
+      if(confirm("Bu okuma kaydı silinsin mi?")){ S.readings.splice(idx,1); save(); renderReading(); }
+    });
+    list.appendChild(row);
+  });
+}
+document.getElementById("addReading").addEventListener("click",function(){
+  var d=document.getElementById("rDate"), src=document.getElementById("rSource"), tx=document.getElementById("rText");
+  var text=tx.value.trim(); if(!text) return;
+  S.readings.push({date:d.value||isoDate(new Date()), text:text, source:src.value.trim()});
+  save(); src.value=""; tx.value=""; renderReading();
+});
+
+/* ---------- LISTENING (Spotify — PKCE OAuth + Web Playback SDK) ---------- */
+var SPOTIFY_REDIRECT_URI=location.origin+location.pathname;
+var SPOTIFY_SCOPES="streaming user-read-email user-read-private user-read-playback-state user-modify-playback-state";
+var spotifyPlayer=null, spotifyDeviceId=null;
+
+function b64url(buf){
+  var bytes=new Uint8Array(buf), str="";
+  for(var i=0;i<bytes.length;i++) str+=String.fromCharCode(bytes[i]);
+  return btoa(str).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function randomVerifier(len){
+  var arr=new Uint8Array(len||64);
+  crypto.getRandomValues(arr);
+  return b64url(arr.buffer);
+}
+function sha256(str){ return crypto.subtle.digest("SHA-256",new TextEncoder().encode(str)); }
+function spotifyClientId(){ return (S.settings.spotifyClientId||"").trim(); }
+function spotifyTokens(){ return S.settings.spotify||null; }
+
+async function spotifyConnect(){
+  var cid=spotifyClientId();
+  if(!cid){ alert("Önce Profil'den Spotify Client ID'ni gir."); go("profile"); return; }
+  try{
+    var verifier=randomVerifier(64);
+    sessionStorage.setItem("spotify_verifier",verifier);
+    var challenge=b64url(await sha256(verifier));
+    var url="https://accounts.spotify.com/authorize"
+      +"?client_id="+encodeURIComponent(cid)
+      +"&response_type=code"
+      +"&redirect_uri="+encodeURIComponent(SPOTIFY_REDIRECT_URI)
+      +"&code_challenge_method=S256&code_challenge="+encodeURIComponent(challenge)
+      +"&scope="+encodeURIComponent(SPOTIFY_SCOPES);
+    location.href=url;
+  }catch(e){ alert("Spotify bağlantısı başlatılamadı: "+e.message); }
+}
+
+async function spotifyHandleCallback(){
+  var params=new URLSearchParams(location.search);
+  if(!params.has("code")&&!params.has("error")) return;
+  var err=params.get("error");
+  history.replaceState({},"",location.pathname);
+  if(err){ alert("Spotify bağlantısı iptal edildi."); return; }
+  var code=params.get("code"), verifier=sessionStorage.getItem("spotify_verifier");
+  if(!verifier) return;
+  try{
+    var res=await fetch("https://accounts.spotify.com/api/token",{
+      method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body:new URLSearchParams({grant_type:"authorization_code",code:code,redirect_uri:SPOTIFY_REDIRECT_URI,client_id:spotifyClientId(),code_verifier:verifier})
+    });
+    var data=await res.json();
+    if(!res.ok) throw new Error(data.error_description||data.error||"token exchange failed");
+    S.settings.spotify={access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Date.now()+data.expires_in*1000};
+    save(); go("listening");
+  }catch(e){ alert("Spotify bağlantısı başarısız: "+e.message); }
+}
+
+async function spotifyRefresh(){
+  var tok=spotifyTokens(); if(!tok||!tok.refresh_token) return null;
+  try{
+    var res=await fetch("https://accounts.spotify.com/api/token",{
+      method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body:new URLSearchParams({grant_type:"refresh_token",refresh_token:tok.refresh_token,client_id:spotifyClientId()})
+    });
+    var data=await res.json(); if(!res.ok) return null;
+    tok.access_token=data.access_token; tok.expires_at=Date.now()+data.expires_in*1000;
+    if(data.refresh_token) tok.refresh_token=data.refresh_token;
+    S.settings.spotify=tok; save();
+    return tok.access_token;
+  }catch(e){ return null; }
+}
+async function spotifyEnsureToken(){
+  var tok=spotifyTokens(); if(!tok) return null;
+  if(Date.now()>tok.expires_at-30000) return await spotifyRefresh();
+  return tok.access_token;
+}
+function spotifyDisconnect(){
+  delete S.settings.spotify; save();
+  if(spotifyPlayer){ try{spotifyPlayer.disconnect();}catch(e){} }
+  spotifyPlayer=null; spotifyDeviceId=null;
+  renderListening();
+}
+function spotifyLoadSDK(){
+  return new Promise(function(resolve){
+    if(window.Spotify){ resolve(); return; }
+    window.onSpotifyWebPlaybackSDKReady=resolve;
+    var s=document.createElement("script");
+    s.src="https://sdk.scdn.co/spotify-player.js"; s.async=true;
+    document.head.appendChild(s);
+  });
+}
+async function spotifyInitPlayer(){
+  if(spotifyPlayer||!spotifyTokens()) return;
+  await spotifyLoadSDK();
+  spotifyPlayer=new Spotify.Player({
+    name:"Moonie · My English Journey",
+    getOAuthToken:function(cb){ spotifyEnsureToken().then(function(t){ cb(t||""); }); },
+    volume:0.8
+  });
+  spotifyPlayer.addListener("ready",function(e){ spotifyDeviceId=e.device_id; });
+  spotifyPlayer.addListener("not_ready",function(){ spotifyDeviceId=null; });
+  spotifyPlayer.addListener("account_error",function(){
+    var st=document.getElementById("spotifyStatus"); if(st) st.textContent="Spotify Premium hesabı gerekiyor.";
+  });
+  spotifyPlayer.addListener("player_state_changed",function(state){
+    var np=document.getElementById("spotifyNowPlaying"); if(!np) return;
+    if(!state||!state.track_window||!state.track_window.current_track){
+      np.className="spotify-empty"; np.textContent="Bağlantı kurulduğunda burada görünecek."; return;
+    }
+    var t=state.track_window.current_track, artists=t.artists.map(function(a){return a.name;}).join(", ");
+    var img=t.album&&t.album.images&&t.album.images[0]?t.album.images[0].url:"";
+    np.className="";
+    np.innerHTML='<div style="display:flex;align-items:center;gap:12px;">'+
+      (img?'<img src="'+img+'" style="width:52px;height:52px;border-radius:12px;object-fit:cover;flex-shrink:0;">':'')+
+      '<div style="min-width:0;"><div style="font-weight:700;font-size:13.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(t.name)+'</div>'+
+      '<div style="font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(artists)+'</div></div></div>';
+  });
+  try{ await spotifyPlayer.connect(); }catch(e){}
+}
+async function spotifySearch(q){
+  var list=document.getElementById("spotifyPodcastList");
+  if(!q){ list.className="spotify-empty"; list.textContent="Aramak için yaz ve Enter'a bas."; return; }
+  var token=await spotifyEnsureToken();
+  if(!token){ list.className="spotify-empty"; list.textContent="Önce Spotify'a bağlan."; return; }
+  list.className="spotify-empty"; list.textContent="Aranıyor...";
+  try{
+    var res=await fetch("https://api.spotify.com/v1/search?type=episode,show&limit=8&q="+encodeURIComponent(q),{headers:{Authorization:"Bearer "+token}});
+    var data=await res.json();
+    var items=[].concat((data.episodes&&data.episodes.items)||[]).concat((data.shows&&data.shows.items)||[]).filter(Boolean);
+    if(!items.length){ list.className="spotify-empty"; list.textContent="Sonuç bulunamadı."; return; }
+    list.className=""; list.innerHTML="";
+    items.forEach(function(item){
+      var img=item.images&&item.images[0]?item.images[0].url:"";
+      var row=document.createElement("div"); row.className="word";
+      row.innerHTML='<div style="display:flex;align-items:center;gap:10px;min-width:0;">'+
+        (img?'<img src="'+img+'" style="width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;">':'')+
+        '<div style="min-width:0;"><div class="en" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(item.name)+'</div>'+
+        '<div class="tr">'+esc(item.publisher||(item.show&&item.show.name)||"")+'</div></div></div>'+
+        '<button class="del" aria-label="Çal"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg></button>';
+      row.querySelector("button").addEventListener("click",function(){ spotifyPlayUri(item.uri); });
+      list.appendChild(row);
+    });
+  }catch(e){ list.className="spotify-empty"; list.textContent="Arama başarısız oldu."; }
+}
+async function spotifyPlayUri(uri){
+  var token=await spotifyEnsureToken(); if(!token) return;
+  if(!spotifyDeviceId) await spotifyInitPlayer();
+  await new Promise(function(r){ setTimeout(r,700); });
+  if(!spotifyDeviceId) return;
+  var body=uri.indexOf(":episode:")>-1?{uris:[uri]}:{context_uri:uri};
+  try{
+    await fetch("https://api.spotify.com/v1/me/player/play?device_id="+spotifyDeviceId,{
+      method:"PUT", headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"}, body:JSON.stringify(body)
+    });
+  }catch(e){}
+}
+function renderListening(){
+  var st=document.getElementById("spotifyStatus"), btn=document.getElementById("spotifyConnectBtn");
+  if(spotifyTokens()){ st.textContent="Spotify'a bağlı ✓"; btn.textContent="Bağlantıyı kes"; }
+  else if(spotifyClientId()){ st.textContent="Client ID kaydedildi, bağlanmaya hazır."; btn.textContent="Spotify'a bağlan"; }
+  else{ st.textContent="Henüz bağlı değil."; btn.textContent="Spotify'a bağlan"; }
+}
+document.getElementById("spotifyConnectBtn").addEventListener("click",function(){
+  if(spotifyTokens()) spotifyDisconnect(); else spotifyConnect();
+});
+document.getElementById("spotifySearchInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter") spotifySearch(e.target.value.trim());
+});
+
+/* ---------- SPEAKING: Claude chat (Anthropic Messages API, owner's own key) ---------- */
+var CLAUDE_MODEL="claude-haiku-4-5-20251001";
+var claudeHistory=[];
+var CLAUDE_SYSTEM="You are a warm, patient English conversation partner. You are helping a Turkish-speaking A2-level learner (İlayda) practice spoken English before an actuarial exam in September 2026. Reply only in simple, clear English (A2-B1 vocabulary and grammar). Keep replies short: 2-4 sentences. If she makes a grammar mistake, gently model the correct form by naturally rephrasing it back into your reply — do not lecture her about the mistake. Always end with a short follow-up question to keep the conversation going. Be encouraging and friendly.";
+
+function addChatBubble(role,text){
+  var log=document.getElementById("speakingChatLog");
+  var row=document.createElement("div"); row.className="chat-msg "+(role==="user"?"me":"bot");
+  var avatar=role==="user"?"":'<div class="mchip sm"><img src="assets/mascot/pose-newword.png" alt=""></div>';
+  row.innerHTML=avatar+'<div class="bubble">'+esc(text)+'</div>';
+  log.appendChild(row); log.scrollTop=log.scrollHeight;
+  return row;
+}
+async function sendSpeakingMsg(){
+  var inp=document.getElementById("speakingInput");
+  var txt=inp.value.trim(); if(!txt) return;
+  var key=(S.settings.claudeApiKey||"").trim();
+  if(!key){ addChatBubble("bot","Sohbet için önce Profil'den Claude API anahtarını girmen gerekiyor."); return; }
+  addChatBubble("user",txt);
+  claudeHistory.push({role:"user",content:txt});
+  inp.value="";
+  var typingRow=addChatBubble("bot","…");
+  var sendBtn=document.getElementById("speakingSend"); sendBtn.disabled=true;
+  try{
+    var res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{
+        "content-type":"application/json",
+        "x-api-key":key,
+        "anthropic-version":"2023-06-01",
+        "anthropic-dangerous-direct-browser-access":"true"
+      },
+      body:JSON.stringify({ model:CLAUDE_MODEL, max_tokens:300, system:CLAUDE_SYSTEM, messages:claudeHistory.slice(-12) })
+    });
+    var data=await res.json();
+    if(!res.ok) throw new Error((data.error&&data.error.message)||"İstek başarısız oldu.");
+    var reply=(data.content&&data.content[0]&&data.content[0].text)||"...";
+    typingRow.querySelector(".bubble").textContent=reply;
+    claudeHistory.push({role:"assistant",content:reply});
+    if("speechSynthesis" in window){
+      var u=new SpeechSynthesisUtterance(reply); u.lang="en-US"; u.rate=.95;
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    }
+  }catch(e){
+    typingRow.querySelector(".bubble").textContent="Bir hata oldu: "+e.message+" (API anahtarını Profil'den kontrol et)";
+  }finally{
+    sendBtn.disabled=false;
+    var log=document.getElementById("speakingChatLog"); log.scrollTop=log.scrollHeight;
+  }
+}
+document.getElementById("speakingSend").addEventListener("click",sendSpeakingMsg);
+document.getElementById("speakingInput").addEventListener("keydown",function(e){ if(e.key==="Enter") sendSpeakingMsg(); });
+document.getElementById("speakingMic").addEventListener("click",function(){
+  if(!SR){ alert("Ses tanıma desteklenmiyor. Chrome kullan."); return; }
+  var rec=new SR(); rec.lang="en-US"; rec.interimResults=false; rec.maxAlternatives=1;
+  var micBtn=document.getElementById("speakingMic"); micBtn.disabled=true;
+  rec.onresult=function(e){ document.getElementById("speakingInput").value=e.results[0][0].transcript; };
+  rec.onerror=function(e){ alert("Hata: "+e.error+" (mikrofon izni gerekli olabilir)"); };
+  rec.onend=function(){ micBtn.disabled=false; };
+  rec.start();
+});
 
 /* ---------- PRONUNCIATION ---------- */
 var pronText=document.getElementById("pronText"), pronTarget=document.getElementById("pronTarget");
@@ -338,19 +1121,21 @@ document.getElementById("speakBtn").addEventListener("click",function(){
   var target=pronText.value.trim(); if(!target) return;
   if(!SR){ alert("Ses tanıma desteklenmiyor. Chrome kullan."); return; }
   var rec=new SR(); rec.lang="en-US"; rec.interimResults=false; rec.maxAlternatives=1;
-  var btn=this; btn.textContent="🎙️ Dinliyorum...";
+  var btn=this, micIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>';
+  btn.innerHTML=micIcon+"Dinliyorum...";
   var res=document.getElementById("pronResult"); res.style.display="none";
   rec.onresult=function(e){
     var said=e.results[0][0].transcript;
     var score=similarity(norm(said),norm(target));
     showPron(score,said);
   };
-  rec.onerror=function(e){ btn.textContent="🎙️ Konuş"; alert("Hata: "+e.error+" (mikrofon izni gerekli olabilir)"); };
-  rec.onend=function(){ btn.textContent="🎙️ Konuş"; };
+  rec.onerror=function(e){ btn.innerHTML=micIcon+"Konuş"; alert("Hata: "+e.error+" (mikrofon izni gerekli olabilir)"); };
+  rec.onend=function(){ btn.innerHTML=micIcon+"Konuş"; };
   rec.start();
 });
 function norm(s){ return s.toLowerCase().replace(/[^a-z0-9\s']/g,"").replace(/\s+/g," ").trim(); }
 function showPron(score,said){
+  S.pronCount=(S.pronCount||0)+1; save();
   var res=document.getElementById("pronResult"); res.style.display="block";
   var pct=Math.round(score*100), cls, msg;
   if(pct>=85){ cls="ok"; msg="🎉 Harika! Çok net."; }
@@ -371,6 +1156,108 @@ function similarity(a,b){
   return 1-d[la][lb]/Math.max(la,lb);
 }
 
+/* ---------- PROGRESS ---------- */
+function setSkill(id,pct){
+  var el=document.getElementById(id); if(!el) return;
+  el.querySelector(".skill-fill").style.width=pct+"%";
+  el.querySelector(".skill-pct").textContent=pct+"%";
+}
+function renderProgress(){
+  var pct=Math.min(100,Math.round(S.totalDays/GOAL*100));
+  document.getElementById("progRingPct").textContent=pct+"%";
+  document.getElementById("progRing").style.setProperty("--p",pct);
+  document.getElementById("progGoalBadge").style.display=pct>=100?"flex":"none";
+  document.getElementById("progStreak").textContent=S.streak;
+  document.getElementById("progDays").textContent=S.totalDays;
+  document.getElementById("progWords").textContent=S.words.length;
+  var doneNToday=STEPS.filter(function(_,i){return S.checks[i];}).length;
+  document.getElementById("progToday").textContent=doneNToday+"/"+STEPS.length;
+
+  var wrap=document.getElementById("weekChart"); wrap.innerHTML="";
+  var maxV=STEPS.length, todayKey=dstr(new Date());
+  for(var i=6;i>=0;i--){
+    var d=new Date(); d.setDate(d.getDate()-i);
+    var key=dstr(d), v=S.history[key]||0, h=Math.round(v/maxV*100);
+    var bar=document.createElement("div"); bar.className="wk-bar"+(key===todayKey?" is-today":"");
+    bar.innerHTML='<div class="wk-fill" style="height:'+Math.max(h,4)+'%"></div><div class="wk-lbl">'+DAYS_TR_SHORT[d.getDay()]+'</div>';
+    wrap.appendChild(bar);
+  }
+
+  var known=S.words.filter(function(w){return w.box>=3;}).length;
+  var vocabPct=S.words.length?Math.round(known/S.words.length*100):0;
+  var readPct=Math.min(100,Math.round(S.readings.length/10*100));
+  var speakPct=Math.min(100,Math.round((S.pronCount||0)/20*100));
+  var journalDays=Object.keys(S.journal).length;
+  var journalPct=Math.min(100,Math.round(journalDays/14*100));
+  setSkill("skillVocab",vocabPct);
+  setSkill("skillRead",readPct);
+  setSkill("skillSpeak",speakPct);
+  setSkill("skillJournal",journalPct);
+}
+
+/* ---------- LEARN HUB ---------- */
+function renderLearnHub(){
+  var due=dueWords().length;
+  document.getElementById("hubVocabSub").textContent=due?(due+" kart bekliyor"):"Hepsi güncel";
+  document.getElementById("hubReadSub").textContent=S.readings.length?(S.readings.length+" kayıt"):"Henüz kayıt yok";
+}
+
+/* ---------- JOURNAL ---------- */
+var journalCursor=new Date();
+function renderJournal(){
+  var key=dstr(journalCursor), isToday=key===dstr(new Date());
+  document.getElementById("journalDateLabel").textContent=isToday?"Bugün":DAYS_TR[journalCursor.getDay()];
+  document.getElementById("journalDateSub").textContent=journalCursor.getDate()+" "+MONTHS_TR[journalCursor.getMonth()]+" "+journalCursor.getFullYear();
+  var entry=S.journal[key]||{mood:"",notes:""};
+  document.querySelectorAll("#moodRow .mood").forEach(function(b){ b.classList.toggle("active", b.dataset.m===entry.mood); });
+  document.getElementById("journalNotes").value=entry.notes||"";
+
+  var keys=Object.keys(S.journal).sort().reverse().slice(0,7);
+  var hist=document.getElementById("journalHistory");
+  if(!keys.length){ hist.innerHTML='<div class="empty">Henüz günlük kaydı yok.</div>'; return; }
+  hist.innerHTML="";
+  keys.forEach(function(k){
+    var e=S.journal[k];
+    var row=document.createElement("button"); row.type="button"; row.className="journal-row";
+    var noteShort=(e.notes||"").slice(0,42)+((e.notes||"").length>42?"…":"");
+    row.innerHTML='<span class="j-mood">'+(e.mood||"—")+'</span><span class="j-date">'+k+'</span><span class="j-notes">'+esc(noteShort)+'</span>';
+    row.addEventListener("click",function(){ journalCursor=parseDstr(k); renderJournal(); });
+    hist.appendChild(row);
+  });
+}
+document.getElementById("journalPrev").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()-1); renderJournal(); });
+document.getElementById("journalNext").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()+1); renderJournal(); });
+document.querySelectorAll("#moodRow .mood").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll("#moodRow .mood").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+  });
+});
+document.getElementById("journalSave").addEventListener("click",function(){
+  var key=dstr(journalCursor);
+  var moodBtn=document.querySelector("#moodRow .mood.active");
+  S.journal[key]={mood:moodBtn?moodBtn.dataset.m:"", notes:document.getElementById("journalNotes").value.trim()};
+  save(); renderJournal();
+});
+
+/* ---------- PROFILE ---------- */
+function renderProfile(){
+  var ed=daysBetween(EXAM,new Date());
+  document.getElementById("profileSummary").textContent=
+    (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi! 🎉")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
+  document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
+  document.getElementById("claudeApiKeyInput").value=S.settings.claudeApiKey||"";
+  document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
+}
+document.getElementById("spotifyClientIdSave").addEventListener("click",function(){
+  S.settings.spotifyClientId=document.getElementById("spotifyClientIdInput").value.trim();
+  save(); alert("Spotify Client ID kaydedildi.");
+});
+document.getElementById("claudeApiKeySave").addEventListener("click",function(){
+  S.settings.claudeApiKey=document.getElementById("claudeApiKeyInput").value.trim();
+  save(); alert("Claude API anahtarı kaydedildi.");
+});
+
 /* ---------- EXPORT / IMPORT ---------- */
 document.getElementById("exportBtn").addEventListener("click",function(){
   var blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
@@ -381,12 +1268,30 @@ document.getElementById("importBtn").addEventListener("click",function(){ docume
 document.getElementById("importFile").addEventListener("change",function(e){
   var f=e.target.files[0]; if(!f) return;
   var r=new FileReader();
-  r.onload=function(){ try{ S=JSON.parse(r.result); save(); renderToday(); renderVocab(); alert("İçe aktarıldı ✓"); }catch(err){ alert("Dosya okunamadı."); } };
+  r.onload=function(){
+    try{
+      S=JSON.parse(r.result);
+      S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
+      save(); renderToday(); renderVocab(); alert("İçe aktarıldı ✓");
+    }catch(err){ alert("Dosya okunamadı."); }
+  };
   r.readAsText(f);
+});
+
+/* ---------- SEGMENTED TABS (İlerleme: Genel Bakış / Beceriler) ---------- */
+document.querySelectorAll("#progSegTabs .seg").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll("#progSegTabs .seg").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    document.querySelectorAll(".segpanel").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById(b.dataset.seg==="overview"?"progPanelOverview":"progPanelSkills").classList.add("active");
+  });
 });
 
 /* ---------- INIT ---------- */
 syncTarget(); renderToday(); renderVocab();
+spotifyHandleCallback();
+if(spotifyTokens()) spotifyInitPlayer();
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(function(){}); }
 window.go=go;
 </script>

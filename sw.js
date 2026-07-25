@@ -1,6 +1,21 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v1";
-const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
+const CACHE = "english-app-v3-integrations";
+const ASSETS = [
+  "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
+  "./assets/mascot/hero-happy.png",
+  "./assets/mascot/pose-motivated.png",
+  "./assets/mascot/pose-goodjob.png",
+  "./assets/mascot/pose-greatprogress.png",
+  "./assets/mascot/pose-goalachieved.png",
+  "./assets/mascot/pose-learning.png",
+  "./assets/mascot/pose-reading.png",
+  "./assets/mascot/pose-sleepy.png",
+  "./assets/mascot/pose-writing.png",
+  "./assets/mascot/pose-listening.png",
+  "./assets/mascot/pose-newword.png",
+  "./assets/mascot/pose-happy2.png",
+  "./assets/mascot/pose-proud.png"
+];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).catch(() => {}));
