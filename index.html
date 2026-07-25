@@ -902,6 +902,7 @@ async function spotifyConnect(){
       +"&redirect_uri="+encodeURIComponent(SPOTIFY_REDIRECT_URI)
       +"&code_challenge_method=S256&code_challenge="+encodeURIComponent(challenge)
       +"&scope="+encodeURIComponent(SPOTIFY_SCOPES);
+    if(!confirm("DEBUG — gönderilecek değerler:\n\nclient_id: |"+cid+"|\nredirect_uri: |"+SPOTIFY_REDIRECT_URI+"|\n\nDevam edip Spotify'a gitmek için Tamam'a bas.")) return;
     location.href=url;
   }catch(e){ alert("Spotify bağlantısı başlatılamadı: "+e.message); }
 }
