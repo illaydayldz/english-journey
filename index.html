@@ -221,6 +221,7 @@
   .read-src{ font-size:11px; color:var(--ink-soft); font-style:italic; }
   .read-item .del{ margin-left:auto; background:none; border:none; color:#c9c1e8; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
   .read-text{ font-size:13.5px; color:var(--ink); line-height:1.55; white-space:pre-wrap; }
+  .read-att{ display:inline-flex; align-items:center; gap:6px; margin-top:8px; background:var(--tint); color:var(--purple-deep); font-size:12.5px; font-weight:700; padding:8px 12px; border-radius:12px; text-decoration:none; min-height:40px; }
 
   /* ---- KONUŞMA ---- */
   .pron .target{ font-family:var(--font-display); font-size:19px; font-weight:700; text-align:center; padding:18px 10px; background:var(--tint); border-radius:16px; margin-bottom:13px; color:var(--ink); }
@@ -363,6 +364,7 @@
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5Z"/></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12,4 21,9 12,14 3,9"/><polyline points="3,13 12,18 21,13"/></symbol>
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M5 11a7 7 0 0 1 12-4.5M19 13a7 7 0 0 1-12 4.5"/><polyline points="17,3.5 17,7 13.5,7"/><polyline points="7,20.5 7,17 10.5,17"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1-2h7l1 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.5" y="11" width="13" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
 <symbol id="i-gift" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="9.5" rx="1.5"/><rect x="3.3" y="7.5" width="17.4" height="4" rx="1"/><line x1="12" y1="7.5" x2="12" y2="20"/><path d="M12 7.5c-.8-2.6-2.7-4-4.3-3.3-1.4.6-1.6 2.4.4 3.3"/><path d="M12 7.5c.8-2.6 2.7-4 4.3-3.3 1.4.6 1.6 2.4-.4 3.3"/></symbol>
 </defs>
@@ -557,8 +559,14 @@
         <input class="f" type="date" id="rDate" style="flex:1;">
         <input class="f" id="rSource" placeholder="Kaynak (ör. More to Read)" style="flex:1.4;">
       </div>
-      <textarea class="f" id="rText" rows="4" placeholder="Okuduğun paragrafı ya da notlarını yaz..."></textarea>
-      <button class="btn" id="addReading">Kaydet</button>
+      <textarea class="f" id="rText" rows="4" placeholder="Okuduğun paragrafı ya da notlarını yaz... (fotoğraf/PDF ekliyorsan boş bırakabilirsin)"></textarea>
+      <label class="btn sec" for="rFile" style="display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-camera"></use></svg>Fotoğraf / PDF ekle
+      </label>
+      <input type="file" id="rFile" accept="image/*,application/pdf" style="display:none;">
+      <div id="rFilePreview" style="display:none;align-items:center;gap:10px;margin-top:10px;"></div>
+      <button class="btn" id="addReading" style="margin-top:10px;">Kaydet</button>
+      <p class="hint">Fotoğraf/PDF ekleri sadece bu cihazda saklanır, "Dışa aktar" yedeğine dahil olmaz.</p>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Kayıtların <span class="mut" id="readingCount"></span></h2>
@@ -989,20 +997,128 @@ function renderReading(){
   S.readings.slice().reverse().forEach(function(r){
     var idx=S.readings.indexOf(r);
     var row=document.createElement("div"); row.className="read-item";
+    var attHtml=r.attachmentId?
+      ('<a class="read-att" href="#" target="_blank" rel="noopener">'+
+        (r.attachmentType==="pdf"
+          ? '<svg class="icon icon-sm" aria-hidden="true"><use href="#i-book"></use></svg>'+esc(r.attachmentName||"PDF")
+          : '<svg class="icon icon-sm" aria-hidden="true"><use href="#i-camera"></use></svg>Fotoğraf')+
+      '</a>') : "";
     row.innerHTML='<div class="read-top"><span class="read-date">'+fmtDate(r.date)+'</span>'+
       (r.source?'<span class="read-src">'+esc(r.source)+'</span>':'')+
-      '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div><p class="read-text">'+esc(r.text)+'</p>';
+      '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>'+
+      (r.text?'<p class="read-text">'+esc(r.text)+'</p>':'')+attHtml;
     row.querySelector(".del").addEventListener("click",function(){
-      if(confirm("Bu okuma kaydı silinsin mi?")){ S.readings.splice(idx,1); save(); renderReading(); }
+      if(confirm("Bu okuma kaydı silinsin mi?")){
+        if(r.attachmentId) idbDelete(r.attachmentId);
+        S.readings.splice(idx,1); save(); renderReading();
+      }
     });
+    var attA=row.querySelector(".read-att");
+    if(attA){
+      idbGet(r.attachmentId).then(function(blob){ if(blob) attA.href=URL.createObjectURL(blob); });
+    }
     list.appendChild(row);
   });
 }
-document.getElementById("addReading").addEventListener("click",function(){
+/* ---------- OKUMA: fotoğraf/PDF eki (IndexedDB — büyük ikili dosyalar localStorage'a sığmaz) ---------- */
+var IDB_NAME="english_journey_files", IDB_STORE="attachments";
+function idbOpen(){
+  return new Promise(function(resolve,reject){
+    var req=indexedDB.open(IDB_NAME,1);
+    req.onupgradeneeded=function(){ req.result.createObjectStore(IDB_STORE); };
+    req.onsuccess=function(){ resolve(req.result); };
+    req.onerror=function(){ reject(req.error); };
+  });
+}
+function idbPut(id,blob){
+  return idbOpen().then(function(db){
+    return new Promise(function(resolve,reject){
+      var tx=db.transaction(IDB_STORE,"readwrite");
+      tx.objectStore(IDB_STORE).put(blob,id);
+      tx.oncomplete=function(){ resolve(); };
+      tx.onerror=function(){ reject(tx.error); };
+    });
+  });
+}
+function idbGet(id){
+  return idbOpen().then(function(db){
+    return new Promise(function(resolve,reject){
+      var tx=db.transaction(IDB_STORE,"readonly");
+      var req=tx.objectStore(IDB_STORE).get(id);
+      req.onsuccess=function(){ resolve(req.result); };
+      req.onerror=function(){ reject(req.error); };
+    });
+  });
+}
+function idbDelete(id){
+  idbOpen().then(function(db){
+    var tx=db.transaction(IDB_STORE,"readwrite");
+    tx.objectStore(IDB_STORE).delete(id);
+  }).catch(function(){});
+}
+function compressImage(file,maxDim,quality){
+  return new Promise(function(resolve,reject){
+    var url=URL.createObjectURL(file);
+    var img=new Image();
+    img.onload=function(){
+      URL.revokeObjectURL(url);
+      var scale=Math.min(1,maxDim/Math.max(img.width,img.height));
+      var cw=Math.round(img.width*scale), ch=Math.round(img.height*scale);
+      var canvas=document.createElement("canvas");
+      canvas.width=cw; canvas.height=ch;
+      canvas.getContext("2d").drawImage(img,0,0,cw,ch);
+      canvas.toBlob(function(blob){ blob?resolve(blob):reject(new Error("toBlob failed")); },"image/jpeg",quality);
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); reject(new Error("image load failed")); };
+    img.src=url;
+  });
+}
+var pendingAttachment=null;
+document.getElementById("rFile").addEventListener("change",function(e){
+  var file=e.target.files[0];
+  var prev=document.getElementById("rFilePreview");
+  if(pendingAttachment&&pendingAttachment.previewUrl) URL.revokeObjectURL(pendingAttachment.previewUrl);
+  if(!file){ pendingAttachment=null; prev.style.display="none"; prev.innerHTML=""; return; }
+  pendingAttachment={file:file};
+  var isImage=file.type.indexOf("image/")===0;
+  prev.style.display="flex";
+  if(isImage){
+    var url=URL.createObjectURL(file);
+    pendingAttachment.previewUrl=url;
+    prev.innerHTML='<img src="'+url+'" style="width:56px;height:56px;object-fit:cover;border-radius:10px;flex-shrink:0;"><span class="mut" style="flex:1;">'+esc(file.name)+'</span><button type="button" class="del" id="rFileRemove">'+DEL_ICON+'</button>';
+  } else {
+    prev.innerHTML='<svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg><span class="mut" style="flex:1;">'+esc(file.name)+'</span><button type="button" class="del" id="rFileRemove">'+DEL_ICON+'</button>';
+  }
+  document.getElementById("rFileRemove").addEventListener("click",function(){
+    if(pendingAttachment&&pendingAttachment.previewUrl) URL.revokeObjectURL(pendingAttachment.previewUrl);
+    pendingAttachment=null;
+    document.getElementById("rFile").value="";
+    prev.style.display="none"; prev.innerHTML="";
+  });
+});
+document.getElementById("addReading").addEventListener("click",async function(){
   var d=document.getElementById("rDate"), src=document.getElementById("rSource"), tx=document.getElementById("rText");
-  var text=tx.value.trim(); if(!text) return;
-  S.readings.push({date:d.value||isoDate(new Date()), text:text, source:src.value.trim()});
-  save(); src.value=""; tx.value=""; renderReading();
+  var text=tx.value.trim();
+  if(!text&&!pendingAttachment) return;
+  var entry={date:d.value||isoDate(new Date()), text:text, source:src.value.trim()};
+  if(pendingAttachment){
+    var file=pendingAttachment.file, isImage=file.type.indexOf("image/")===0;
+    var blob=file;
+    if(isImage){ try{ blob=await compressImage(file,1400,0.75); }catch(e){ blob=file; } }
+    var attId="att-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+    try{
+      await idbPut(attId,blob);
+      entry.attachmentId=attId; entry.attachmentType=isImage?"image":"pdf"; entry.attachmentName=file.name;
+    }catch(e){ alert("Dosya kaydedilemedi: "+e.message); }
+  }
+  S.readings.push(entry);
+  save(); src.value=""; tx.value="";
+  if(pendingAttachment&&pendingAttachment.previewUrl) URL.revokeObjectURL(pendingAttachment.previewUrl);
+  pendingAttachment=null;
+  document.getElementById("rFile").value="";
+  document.getElementById("rFilePreview").style.display="none";
+  document.getElementById("rFilePreview").innerHTML="";
+  renderReading();
 });
 
 /* ---------- LISTENING (Spotify — PKCE OAuth + search; playback opens the Spotify app) ---------- */
@@ -1142,32 +1258,32 @@ document.getElementById("spotifySearchInput").addEventListener("keydown",functio
    Paul Nation's fluency strand + Market Leader-style functional syllabus) ---------- */
 var SPEAK_LEVELS=[
  {cefr:"A2",name:"Temel",cando:"Tanıdık konularda basit bilgi alışverişi yapabiliyorum.",units:[
-  {name:"Kendini Tanıtma & Küçük Sohbet",phrases:["Nice to meet you.","What do you do?","How's your day going?","I'm originally from…"],scenario:"Bir networking etkinliğinde yeni biriyle tanışıyorsun. Kendini, mesleğini ve nereli olduğunu anlat.",topic:"Kendini, işini ve boş zamanlarında ne yaptığını anlat."},
-  {name:"Günlük Rutin Anlatma",phrases:["I usually…","On a typical day, I…","After work, I…"],scenario:"Bir arkadaşın sana normal bir iş gününü soruyor.",topic:"Bir gününü sabahtan akşama anlat."},
-  {name:"Basit Rica & İstekler",phrases:["Could you…?","Would you mind…?","Can I ask you a favor?"],scenario:"İş arkadaşından bir dosyayı sana göndermesini istiyorsun.",topic:"Ofiste birinden 3 farklı şey rica et (dosya, bilgi, yardım)."},
-  {name:"Telefon & E-posta İngilizcesi",phrases:["I'm calling about…","Could I speak to…?","I'll send you an email about…"],scenario:"Bir müşteriyi arayıp bir toplantıyı erteliyorsun.",topic:"Bir telefon görüşmesini canlandır: kendini tanıt, sebebini açıkla, teşekkür et."},
-  {name:"Basit Fikir Belirtme",phrases:["I think…","In my opinion…","I agree, but…"],scenario:"İş arkadaşların yeni bir ofis düzeni öneriyor, ne düşündüğünü soruyorlar.",topic:"Bir konu hakkında (uzaktan çalışma, ofis düzeni vb.) ne düşündüğünü basitçe anlat."}
+  {name:"Kendini Tanıtma & Küçük Sohbet",phrases:[["Nice to meet you.","Tanıştığımıza memnun oldum."],["What do you do?","Ne iş yapıyorsun?"],["How's your day going?","Günün nasıl geçiyor?"],["I'm originally from…","Aslen …'lıyım."]],scenario:"Bir networking etkinliğinde yeni biriyle tanışıyorsun. Kendini, mesleğini ve nereli olduğunu anlat.",topic:"Kendini, işini ve boş zamanlarında ne yaptığını anlat."},
+  {name:"Günlük Rutin Anlatma",phrases:[["I usually…","Genellikle …"],["On a typical day, I…","Normal bir günümde …"],["After work, I…","İşten sonra …"]],scenario:"Bir arkadaşın sana normal bir iş gününü soruyor.",topic:"Bir gününü sabahtan akşama anlat."},
+  {name:"Basit Rica & İstekler",phrases:[["Could you…?","… yapabilir misin?"],["Would you mind…?","… sakıncası var mı?"],["Can I ask you a favor?","Senden bir iyilik isteyebilir miyim?"]],scenario:"İş arkadaşından bir dosyayı sana göndermesini istiyorsun.",topic:"Ofiste birinden 3 farklı şey rica et (dosya, bilgi, yardım)."},
+  {name:"Telefon & E-posta İngilizcesi",phrases:[["I'm calling about…","… hakkında arıyorum."],["Could I speak to…?","… ile görüşebilir miyim?"],["I'll send you an email about…","… hakkında sana e-posta göndereceğim."]],scenario:"Bir müşteriyi arayıp bir toplantıyı erteliyorsun.",topic:"Bir telefon görüşmesini canlandır: kendini tanıt, sebebini açıkla, teşekkür et."},
+  {name:"Basit Fikir Belirtme",phrases:[["I think…","Bence …"],["In my opinion…","Bana kalırsa …"],["I agree, but…","Katılıyorum ama …"]],scenario:"İş arkadaşların yeni bir ofis düzeni öneriyor, ne düşündüğünü soruyorlar.",topic:"Bir konu hakkında (uzaktan çalışma, ofis düzeni vb.) ne düşündüğünü basitçe anlat."}
  ]},
  {cefr:"B1",name:"Orta-Alt",cando:"İlgi alanım ve mesleğimle ilgili konularda biraz güvenle iletişim kurabiliyorum.",units:[
-  {name:"Toplantıda Fikir Paylaşma",phrases:["I'd like to add something.","From my point of view…","That's a good point, but…"],scenario:"Küçük bir ekip toplantısındasın, yeni bir proje hakkında fikrini soruyorlar.",topic:"Bir projeye dair 3 fikir söyle ve gerekçelendir."},
-  {name:"Sorun Açıklama & Çözüm Önerme",phrases:["The problem is that…","One option would be…","We could try…"],scenario:"Bir raporda hata fark ettin, yöneticine açıklıyorsun.",topic:"Karşılaştığın bir sorunu ve önerdiğin 2 çözümü anlat."},
-  {name:"Nazik İtiraz / Aynı Fikirde Olmama",phrases:["I see your point, but…","I'm not sure I agree, because…","Could we look at it differently?"],scenario:"Bir iş arkadaşın önerdiği bir yaklaşıma katılmıyorsun.",topic:"Bir konuda nazikçe aynı fikirde olmadığını, nedenini belirterek anlat."},
-  {name:"Geçmiş Deneyim Anlatma",phrases:["A while ago, I…","That reminds me of a time when…","It turned out that…"],scenario:"Mülakatta geçmişte zorlu bir durumu nasıl çözdüğünü soruyorlar.",topic:"Geçmişte çözdüğün bir problemi anlat (ne oldu, ne yaptın, sonuç)."},
-  {name:"Mini Sunum / Özetleme",phrases:["Today I'll talk about…","To sum up…","The main point is…"],scenario:"5 kişilik bir ekibe kısa bir güncelleme sunuyorsun.",topic:"Son okuduğun bir makaleyi/paragrafı 1 dakikada özetle."}
+  {name:"Toplantıda Fikir Paylaşma",phrases:[["I'd like to add something.","Bir şey eklemek istiyorum."],["From my point of view…","Benim bakış açıma göre …"],["That's a good point, but…","Güzel bir nokta ama …"]],scenario:"Küçük bir ekip toplantısındasın, yeni bir proje hakkında fikrini soruyorlar.",topic:"Bir projeye dair 3 fikir söyle ve gerekçelendir."},
+  {name:"Sorun Açıklama & Çözüm Önerme",phrases:[["The problem is that…","Sorun şu ki …"],["One option would be…","Bir seçenek şu olabilir: …"],["We could try…","Şunu deneyebiliriz: …"]],scenario:"Bir raporda hata fark ettin, yöneticine açıklıyorsun.",topic:"Karşılaştığın bir sorunu ve önerdiğin 2 çözümü anlat."},
+  {name:"Nazik İtiraz / Aynı Fikirde Olmama",phrases:[["I see your point, but…","Ne demek istediğini anlıyorum ama …"],["I'm not sure I agree, because…","Katıldığımdan emin değilim çünkü …"],["Could we look at it differently?","Buna farklı bir açıdan bakabilir miyiz?"]],scenario:"Bir iş arkadaşın önerdiği bir yaklaşıma katılmıyorsun.",topic:"Bir konuda nazikçe aynı fikirde olmadığını, nedenini belirterek anlat."},
+  {name:"Geçmiş Deneyim Anlatma",phrases:[["A while ago, I…","Bir süre önce …"],["That reminds me of a time when…","Bu bana şu zamanı hatırlatıyor: …"],["It turned out that…","Sonunda şu ortaya çıktı: …"]],scenario:"Mülakatta geçmişte zorlu bir durumu nasıl çözdüğünü soruyorlar.",topic:"Geçmişte çözdüğün bir problemi anlat (ne oldu, ne yaptın, sonuç)."},
+  {name:"Mini Sunum / Özetleme",phrases:[["Today I'll talk about…","Bugün şundan bahsedeceğim: …"],["To sum up…","Özetlemek gerekirse …"],["The main point is…","Ana nokta şu ki …"]],scenario:"5 kişilik bir ekibe kısa bir güncelleme sunuyorsun.",topic:"Son okuduğun bir makaleyi/paragrafı 1 dakikada özetle."}
  ]},
  {cefr:"B2",name:"Orta-Üst",cando:"Ana dili İngilizce olan biriyle akıcı ve doğal bir sohbeti gerçekten sürdürebiliyorum.",units:[
-  {name:"Müzakere (Negotiating)",phrases:["What if we…?","I could agree to that if…","Let's find a middle ground."],scenario:"Bir teslim tarihi üzerinde müşteriyle pazarlık ediyorsun.",topic:"Bir konuda (süre, fiyat, kapsam) karşı tarafla nasıl uzlaşacağını anlat."},
-  {name:"Resmi Sunum / Rapor Sunma",phrases:["The data shows that…","This leads us to conclude…","Let's move on to the next point."],scenario:"Aylık bir performans raporunu yönetime sunuyorsun.",topic:"Hayali bir raporu 2 dakikada sun: durum, bulgular, öneri."},
-  {name:"Karşı Argüman & Tartışma",phrases:["I take your point, but consider this…","That's true to some extent, however…","Let me play devil's advocate."],scenario:"Bir strateji tartışmasında karşıt bir görüşü savunuyorsun.",topic:"Bir konuda kasıtlı olarak karşı tarafı savun, en az 2 argümanla."},
-  {name:"Söz Alma & Toplantı Yönetme",phrases:["Can I jump in here?","Let's park that for now.","Can we get back on track?"],scenario:"Kalabalık bir toplantıyı sen yönetiyorsun, konu dağılıyor.",topic:"Hayali bir toplantıyı yönet: birini kes, konuyu geri getir, birine söz ver."},
-  {name:"Aktüerlik/Finans Bağlamında Teknik Anlatım",phrases:["The risk exposure is…","Based on the assumptions…","This model suggests that…"],scenario:"Teknik olmayan bir yöneticiye bir risk modelini basitleştirerek anlatıyorsun.",topic:"Kendi işinden bir kavramı, hiç bilmeyen birine anlatır gibi açıkla."}
+  {name:"Müzakere (Negotiating)",phrases:[["What if we…?","Ya şöyle yapsak …?"],["I could agree to that if…","Şu şartla kabul edebilirim: …"],["Let's find a middle ground.","Ortak bir nokta bulalım."]],scenario:"Bir teslim tarihi üzerinde müşteriyle pazarlık ediyorsun.",topic:"Bir konuda (süre, fiyat, kapsam) karşı tarafla nasıl uzlaşacağını anlat."},
+  {name:"Resmi Sunum / Rapor Sunma",phrases:[["The data shows that…","Veriler şunu gösteriyor: …"],["This leads us to conclude…","Bu bizi şu sonuca götürüyor: …"],["Let's move on to the next point.","Bir sonraki noktaya geçelim."]],scenario:"Aylık bir performans raporunu yönetime sunuyorsun.",topic:"Hayali bir raporu 2 dakikada sun: durum, bulgular, öneri."},
+  {name:"Karşı Argüman & Tartışma",phrases:[["I take your point, but consider this…","Haklısın ama şunu da düşün: …"],["That's true to some extent, however…","Bu bir dereceye kadar doğru, ancak …"],["Let me play devil's advocate.","Şeytanın avukatlığını yapayım."]],scenario:"Bir strateji tartışmasında karşıt bir görüşü savunuyorsun.",topic:"Bir konuda kasıtlı olarak karşı tarafı savun, en az 2 argümanla."},
+  {name:"Söz Alma & Toplantı Yönetme",phrases:[["Can I jump in here?","Buraya bir şey ekleyebilir miyim?"],["Let's park that for now.","Bunu şimdilik askıya alalım."],["Can we get back on track?","Konuya geri dönebilir miyiz?"]],scenario:"Kalabalık bir toplantıyı sen yönetiyorsun, konu dağılıyor.",topic:"Hayali bir toplantıyı yönet: birini kes, konuyu geri getir, birine söz ver."},
+  {name:"Aktüerlik/Finans Bağlamında Teknik Anlatım",phrases:[["The risk exposure is…","Risk maruziyeti şu: …"],["Based on the assumptions…","Varsayımlara dayanarak …"],["This model suggests that…","Bu model şunu öneriyor: …"]],scenario:"Teknik olmayan bir yöneticiye bir risk modelini basitleştirerek anlatıyorsun.",topic:"Kendi işinden bir kavramı, hiç bilmeyen birine anlatır gibi açıkla."}
  ]},
  {cefr:"C1",name:"İleri",cando:"Kendimi akıcı ve doğal bir şekilde, çok fazla kelime aramadan ifade edebiliyorum.",units:[
-  {name:"İkna Edici Konuşma",phrases:["The way I see it…","It's worth considering that…","At the end of the day…"],scenario:"Ekibini yeni bir araca geçmeye ikna etmeye çalışıyorsun.",topic:"Birini bir karara ikna etmeye çalış, en az 3 gerekçe kullan."},
-  {name:"Spontane, Doğal Akış Tartışma",phrases:["Funnily enough…","Now that you mention it…","On second thought…"],scenario:"Gündemdeki bir konu hakkında serbest, hazırlıksız bir sohbet.",topic:"Hazırlıksız, gündemden bir konu hakkında 2 dakika konuş."},
-  {name:"İnce Nüanslar & Deyim Kullanımı",phrases:["That's a bit of a grey area.","I'm on the fence about it.","Let's not beat around the bush."],scenario:"Belirsiz, net olmayan bir konudaki görüşünü ifade ediyorsun.",topic:"Kararsız kaldığın bir konuyu, nüanslarıyla anlat."},
-  {name:"Zor Durum / Kriz Yönetimi",phrases:["Let's not panic, but we need to act fast.","Here's how I'd handle this.","We should communicate this clearly to everyone."],scenario:"Beklenmedik bir sorun yaşanıyor, ekibi yönlendiriyorsun.",topic:"Hayali bir kriz anını yönet: durumu özetle, aksiyon planı ver."},
-  {name:"Profesyonel Sunum Ustalığı",phrases:["Let me paint a picture for you.","The key takeaway here is…","I'll leave you with this thought."],scenario:"Büyük bir konferansta 5 dakikalık bir konuşma yapıyorsun.",topic:"Herhangi bir konuda etkileyici bir açılış ve kapanışla 2 dakikalık konuşma yap."}
+  {name:"İkna Edici Konuşma",phrases:[["The way I see it…","Benim gördüğüm kadarıyla …"],["It's worth considering that…","Şunu düşünmeye değer: …"],["At the end of the day…","Günün sonunda …"]],scenario:"Ekibini yeni bir araca geçmeye ikna etmeye çalışıyorsun.",topic:"Birini bir karara ikna etmeye çalış, en az 3 gerekçe kullan."},
+  {name:"Spontane, Doğal Akış Tartışma",phrases:[["Funnily enough…","İlginçtir ki …"],["Now that you mention it…","Sen söyleyince aklıma geldi …"],["On second thought…","Bir düşününce …"]],scenario:"Gündemdeki bir konu hakkında serbest, hazırlıksız bir sohbet.",topic:"Hazırlıksız, gündemden bir konu hakkında 2 dakika konuş."},
+  {name:"İnce Nüanslar & Deyim Kullanımı",phrases:[["That's a bit of a grey area.","Bu biraz gri bir alan."],["I'm on the fence about it.","Bu konuda kararsızım."],["Let's not beat around the bush.","Lafı dolandırmayalım."]],scenario:"Belirsiz, net olmayan bir konudaki görüşünü ifade ediyorsun.",topic:"Kararsız kaldığın bir konuyu, nüanslarıyla anlat."},
+  {name:"Zor Durum / Kriz Yönetimi",phrases:[["Let's not panic, but we need to act fast.","Panik yapmayalım ama hızlı hareket etmeliyiz."],["Here's how I'd handle this.","Ben olsam şöyle ele alırdım."],["We should communicate this clearly to everyone.","Bunu herkese net şekilde iletmeliyiz."]],scenario:"Beklenmedik bir sorun yaşanıyor, ekibi yönlendiriyorsun.",topic:"Hayali bir kriz anını yönet: durumu özetle, aksiyon planı ver."},
+  {name:"Profesyonel Sunum Ustalığı",phrases:[["Let me paint a picture for you.","Size şunu tasvir edeyim."],["The key takeaway here is…","Buradaki temel çıkarım şu: …"],["I'll leave you with this thought.","Sizi şu düşünceyle baş başa bırakıyorum."]],scenario:"Büyük bir konferansta 5 dakikalık bir konuşma yapıyorsun.",topic:"Herhangi bir konuda etkileyici bir açılış ve kapanışla 2 dakikalık konuşma yap."}
  ]}
 ];
 function unitKey(li,ui){ return li+"-"+ui; }
@@ -1187,13 +1303,52 @@ function speakFrontier(){
   var last=SPEAK_LEVELS.length-1;
   return {li:last,ui:SPEAK_LEVELS[last].units.length-1};
 }
+/* ---------- 4/3/2 AKICILIK SAYACI ---------- */
+var timer432Interval=null;
+function start432Timer(minutes){
+  stop432Timer();
+  var remaining=minutes*60;
+  var disp=document.getElementById("timer432Display"), stopBtn=document.getElementById("timer432Stop");
+  if(!disp||!stopBtn) return;
+  disp.style.display="block"; stopBtn.style.display="block";
+  function render(){
+    var m=Math.floor(remaining/60), s=remaining%60;
+    disp.textContent=m+":"+(s<10?"0":"")+s;
+  }
+  render();
+  timer432Interval=setInterval(function(){
+    remaining--;
+    if(remaining<0){
+      stop432Timer();
+      if(disp) disp.textContent="Bitti! 🎉 Şimdi bir sonraki turu dene.";
+      if(disp) disp.style.display="block";
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+      return;
+    }
+    render();
+  },1000);
+}
+function stop432Timer(){
+  if(timer432Interval){ clearInterval(timer432Interval); timer432Interval=null; }
+  var stopBtn=document.getElementById("timer432Stop");
+  if(stopBtn) stopBtn.style.display="none";
+}
+function addUnitPhrasesToVocab(unit){
+  var addedN=0;
+  unit.phrases.forEach(function(p){
+    var en=p[0].trim(), tr=p[1].trim();
+    var exists=S.words.some(function(w){ return w.en.toLowerCase()===en.toLowerCase(); });
+    if(!exists){ S.words.push({en:en,tr:tr,ex:"",box:0,due:today0()}); addedN++; }
+  });
+  return addedN;
+}
 function buildClaudePrompt(level,unit,hasProject){
   if(hasProject){
     return "Bugün CEFR "+level.cefr+" ("+level.name+") seviyesindeyim, ünite: \""+unit.name+"\". "+
       "Bu ünitenin senaryosu ve kalıp ifadeleri proje müfredatında var — o içerik üzerinden bana kısa bir açılış sorusuyla sesli konuşma pratiği yaptır, seviyeme uygun basit ve net İngilizce kullan, hatalarımı nazikçe ve akışı bozmadan düzelt, sonunda kısa bir geri bildirim ver.";
   }
   return "Sen sabırlı, destekleyici bir İngilizce konuşma öğretmenisin. Öğrencin Türkçe konuşan, İngilizce seviyesi CEFR "+level.cefr+" ("+level.name+"). "+
-    "Bugünkü ünite: \""+unit.name+"\". Bu ünitede kullanmam gereken kalıp ifadeler: "+unit.phrases.join("; ")+". "+
+    "Bugünkü ünite: \""+unit.name+"\". Bu ünitede kullanmam gereken kalıp ifadeler: "+unit.phrases.map(function(p){return p[0];}).join("; ")+". "+
     "Senaryo: "+unit.scenario+" "+
     "Lütfen bana bu senaryo üzerinden kısa bir açılış sorusuyla sesli konuşma pratiği yaptır, seviyeme uygun basit ve net İngilizce kullan, yukarıdaki kalıp ifadeleri doğal şekilde kullanmam için beni yönlendir, hatalarımı nazikçe ve akışı bozmadan düzelt, sonunda kısa bir geri bildirim ver.";
 }
@@ -1215,10 +1370,11 @@ function wireClaudeLink(el,li,ui){
   });
 }
 function renderSpeaking(){
+  stop432Timer();
   var sel=S.speaking.selected||speakFrontier();
   var level=SPEAK_LEVELS[sel.li], unit=level.units[sel.ui];
   var done=!!S.speaking.completed[unitKey(sel.li,sel.ui)];
-  var phrasesHtml=unit.phrases.map(function(p){ return '<span class="phrase-chip">'+esc(p)+'</span>'; }).join("");
+  var phrasesHtml=unit.phrases.map(function(p){ return '<span class="phrase-chip">'+esc(p[0])+'</span>'; }).join("");
   document.getElementById("speakCurrent").innerHTML=
     '<div class="row" style="align-items:center;margin-bottom:10px;">'+
       '<span class="cefr-badge lg">'+level.cefr+'</span>'+
@@ -1227,17 +1383,32 @@ function renderSpeaking(){
     '<div style="font-family:var(--font-display);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:6px;">'+esc(unit.name)+'</div>'+
     '<p class="mut" style="margin-bottom:10px;">'+esc(unit.scenario)+'</p>'+
     '<div style="margin-bottom:10px;">'+phrasesHtml+'</div>'+
-    '<div class="hint" style="text-align:left;margin-bottom:14px;"><b>4/3/2 konuşma konun:</b> '+esc(unit.topic)+' — bu konuyu önce 4, sonra 3, sonra 2 dakikada anlatmayı dene, her turda daha akıcı olacaksın.</div>'+
+    '<div class="hint" style="text-align:left;margin-bottom:10px;"><b>4/3/2 konuşma konun:</b> '+esc(unit.topic)+' — bu konuyu önce 4, sonra 3, sonra 2 dakikada anlatmayı dene, her turda daha akıcı olacaksın.</div>'+
+    '<div style="margin-bottom:14px;">'+
+      '<div class="row" style="gap:8px;margin-bottom:8px;">'+
+        '<button type="button" class="btn sec" data-min="4" style="flex:1;margin-top:0;">4 dk</button>'+
+        '<button type="button" class="btn sec" data-min="3" style="flex:1;margin-top:0;">3 dk</button>'+
+        '<button type="button" class="btn sec" data-min="2" style="flex:1;margin-top:0;">2 dk</button>'+
+      '</div>'+
+      '<div id="timer432Display" style="display:none;text-align:center;font-family:var(--font-display);font-size:34px;font-weight:800;color:var(--purple-deep);padding:6px 0;"></div>'+
+      '<button type="button" class="btn sec" id="timer432Stop" style="display:none;">Durdur</button>'+
+    '</div>'+
     '<a class="btn deep" id="speakOpenClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</a>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın ✓</span></div>'
       : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;">Bu üniteyi tamamladım ✓</button>');
   wireClaudeLink(document.getElementById("speakOpenClaude"),sel.li,sel.ui);
+  document.querySelectorAll("#speakCurrent [data-min]").forEach(function(b){
+    b.addEventListener("click",function(){ start432Timer(parseInt(b.dataset.min,10)); });
+  });
+  document.getElementById("timer432Stop").addEventListener("click",stop432Timer);
   var cb=document.getElementById("speakCompleteBtn");
   if(cb) cb.addEventListener("click",function(){
     S.speaking.completed[unitKey(sel.li,sel.ui)]=true;
+    var addedN=addUnitPhrasesToVocab(unit);
     S.speaking.selected=null; // ilerlemeyi otomatik bir sonraki üniteye taşı
-    save(); renderSpeaking(); renderLearnHub();
+    save(); renderSpeaking(); renderLearnHub(); renderVocab();
+    if(addedN) alert(addedN+" kalıp ifade Kelime kartlarına eklendi — aralıklı tekrarla karşına çıkacak.");
   });
 
   var listEl=document.getElementById("speakLevelList"); listEl.innerHTML="";
@@ -1495,7 +1666,9 @@ function renderProgress(){
   var known=S.words.filter(function(w){return w.box>=3;}).length;
   var vocabPct=S.words.length?Math.round(known/S.words.length*100):0;
   var readPct=Math.min(100,Math.round(S.readings.length/10*100));
-  var speakPct=Math.min(100,Math.round((S.pronCount||0)/20*100));
+  var totalSpeakUnits=SPEAK_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
+  var doneSpeakUnits=Object.keys(S.speaking.completed).length;
+  var speakPct=totalSpeakUnits?Math.round(doneSpeakUnits/totalSpeakUnits*100):0;
   var journalDays=Object.keys(S.journal).length;
   var journalPct=Math.min(100,Math.round(journalDays/14*100));
   setSkill("skillVocab",vocabPct);
