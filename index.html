@@ -590,6 +590,13 @@
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
     <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Claude Projesi</h2>
+      <p class="mut" style="margin-bottom:10px;">Konuşma sekmesindeki "Claude'u Aç" butonu, tüm seviye/ünite müfredatını bilen kendi Claude Project'ini açsın diye linkini buraya yapıştır.</p>
+      <input class="f" id="claudeProjectUrlInput" placeholder="https://claude.ai/project/...">
+      <button class="btn sec" id="claudeProjectUrlSave">Kaydet</button>
+      <p class="hint">Boş bırakırsan buton yerine genel bir yeni sohbet açar.</p>
+    </div>
+    <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify bağlantısı</h2>
       <p class="mut" style="margin-bottom:10px;">Dinleme sekmesinde podcast'lerini görebilmek için Client ID'ni gir.</p>
       <input class="f" id="spotifyClientIdInput" placeholder="Spotify Client ID">
@@ -1050,7 +1057,11 @@ function speakFrontier(){
   var last=SPEAK_LEVELS.length-1;
   return {li:last,ui:SPEAK_LEVELS[last].units.length-1};
 }
-function buildClaudePrompt(level,unit){
+function buildClaudePrompt(level,unit,hasProject){
+  if(hasProject){
+    return "Bugün CEFR "+level.cefr+" ("+level.name+") seviyesindeyim, ünite: \""+unit.name+"\". "+
+      "Bu ünitenin senaryosu ve kalıp ifadeleri proje müfredatında var — o içerik üzerinden bana kısa bir açılış sorusuyla sesli konuşma pratiği yaptır, seviyeme uygun basit ve net İngilizce kullan, hatalarımı nazikçe ve akışı bozmadan düzelt, sonunda kısa bir geri bildirim ver.";
+  }
   return "Sen sabırlı, destekleyici bir İngilizce konuşma öğretmenisin. Öğrencin Türkçe konuşan, İngilizce seviyesi CEFR "+level.cefr+" ("+level.name+"). "+
     "Bugünkü ünite: \""+unit.name+"\". Bu ünitede kullanmam gereken kalıp ifadeler: "+unit.phrases.join("; ")+". "+
     "Senaryo: "+unit.scenario+" "+
@@ -1058,11 +1069,12 @@ function buildClaudePrompt(level,unit){
 }
 async function openClaudeWithContext(li,ui){
   var level=SPEAK_LEVELS[li], unit=level.units[ui];
-  var prompt=buildClaudePrompt(level,unit);
-  window.open("https://claude.ai/new","_blank");
+  var projectUrl=(S.settings.claudeProjectUrl||"").trim();
+  var prompt=buildClaudePrompt(level,unit,!!projectUrl);
+  window.open(projectUrl||"https://claude.ai/new","_blank");
   try{
     await navigator.clipboard.writeText(prompt);
-    alert("Talimat kopyalandı! Açılan Claude sekmesinde mesaj kutusuna yapıştır, gönder, sonra sağ alttaki 🔊 sesli mod ikonuna dokunup konuşmaya başla.");
+    alert("Talimat kopyalandı! Açılan Claude sekmesinde yeni bir sohbet başlatıp mesaj kutusuna yapıştır, gönder, sonra sağ alttaki 🔊 sesli mod ikonuna dokunup konuşmaya başla.");
   }catch(e){
     prompt_fallback(prompt);
   }
@@ -1306,10 +1318,15 @@ function renderProfile(){
     (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi! 🎉")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
   document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
+  document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
 }
 document.getElementById("spotifyClientIdSave").addEventListener("click",function(){
   S.settings.spotifyClientId=document.getElementById("spotifyClientIdInput").value.trim();
   save(); alert("Spotify Client ID kaydedildi.");
+});
+document.getElementById("claudeProjectUrlSave").addEventListener("click",function(){
+  S.settings.claudeProjectUrl=document.getElementById("claudeProjectUrlInput").value.trim();
+  save(); alert("Claude Project linki kaydedildi.");
 });
 
 /* ---------- EXPORT / IMPORT ---------- */
