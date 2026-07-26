@@ -1067,20 +1067,22 @@ function buildClaudePrompt(level,unit,hasProject){
     "Senaryo: "+unit.scenario+" "+
     "Lütfen bana bu senaryo üzerinden kısa bir açılış sorusuyla sesli konuşma pratiği yaptır, seviyeme uygun basit ve net İngilizce kullan, yukarıdaki kalıp ifadeleri doğal şekilde kullanmam için beni yönlendir, hatalarımı nazikçe ve akışı bozmadan düzelt, sonunda kısa bir geri bildirim ver.";
 }
-async function openClaudeWithContext(li,ui){
+function wireClaudeLink(el,li,ui){
   var level=SPEAK_LEVELS[li], unit=level.units[ui];
   var projectUrl=(S.settings.claudeProjectUrl||"").trim();
   var prompt=buildClaudePrompt(level,unit,!!projectUrl);
-  window.open(projectUrl||"https://claude.ai/new","_blank");
-  try{
-    await navigator.clipboard.writeText(prompt);
-    alert("Talimat kopyalandı! Açılan Claude sekmesinde yeni bir sohbet başlatıp mesaj kutusuna yapıştır, gönder, sonra sağ alttaki 🔊 sesli mod ikonuna dokunup konuşmaya başla.");
-  }catch(e){
-    prompt_fallback(prompt);
-  }
-}
-function prompt_fallback(text){
-  window.prompt("Panoya otomatik kopyalanamadı — bu metni seç, kopyala ve Claude'a yapıştır:", text);
+  el.href=projectUrl||"https://claude.ai/new";
+  // Not: href zaten gerçek bir <a> navigasyonu — pop-up engelleyiciler bunu asla durduramaz.
+  // preventDefault YOK: tıklama hem panoya kopyalar hem de normal link davranışıyla yeni sekmeyi açar.
+  el.addEventListener("click",function(){
+    var original=el.innerHTML;
+    navigator.clipboard.writeText(prompt).then(function(){
+      el.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Kopyalandı — Claude\'da yapıştır!';
+      setTimeout(function(){ el.innerHTML=original; },3000);
+    }).catch(function(){
+      window.prompt("Panoya otomatik kopyalanamadı — bu metni seç, kopyala ve Claude'a yapıştır:", prompt);
+    });
+  });
 }
 function renderSpeaking(){
   var sel=S.speaking.selected||speakFrontier();
@@ -1096,11 +1098,11 @@ function renderSpeaking(){
     '<p class="mut" style="margin-bottom:10px;">'+esc(unit.scenario)+'</p>'+
     '<div style="margin-bottom:10px;">'+phrasesHtml+'</div>'+
     '<div class="hint" style="text-align:left;margin-bottom:14px;"><b>4/3/2 konuşma konun:</b> '+esc(unit.topic)+' — bu konuyu önce 4, sonra 3, sonra 2 dakikada anlatmayı dene, her turda daha akıcı olacaksın.</div>'+
-    '<button class="btn deep" id="speakOpenClaude" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</button>'+
+    '<a class="btn deep" id="speakOpenClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</a>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın ✓</span></div>'
       : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;">Bu üniteyi tamamladım ✓</button>');
-  document.getElementById("speakOpenClaude").addEventListener("click",function(){ openClaudeWithContext(sel.li,sel.ui); });
+  wireClaudeLink(document.getElementById("speakOpenClaude"),sel.li,sel.ui);
   var cb=document.getElementById("speakCompleteBtn");
   if(cb) cb.addEventListener("click",function(){
     S.speaking.completed[unitKey(sel.li,sel.ui)]=true;
