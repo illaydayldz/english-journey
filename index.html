@@ -106,6 +106,27 @@
   .check.done .chip-num{ background:var(--purple); color:#fff; }
   .check .t{ font-size:14px; flex:1; } .check .t small{ display:block; color:var(--ink-soft); font-size:12px; margin-top:1px; }
   .check.done .t{ color:#c3bbe0; text-decoration:line-through; }
+
+  /* ---- BUGÜN: günün ödevleri (tasklist — kategoriye göre renkli ikon çipli, .check'ten ayrışır) ---- */
+  .tcheck{ position:relative; display:flex; align-items:center; gap:12px; padding:11px 2px; min-height:44px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .tcheck:last-child{ border-bottom:none; }
+  .tcheck input{ position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
+  .t-ic{ width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:opacity .2s; }
+  .t-ic .icon{ width:18px; height:18px; }
+  .tcheck .t{ font-size:14px; flex:1; color:var(--ink); }
+  .tcheck .t small{ display:block; color:var(--ink-soft); font-size:10.5px; margin-top:2px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; }
+  .tcheck.done .t{ color:#c3bbe0; text-decoration:line-through; }
+  .tcheck.done .t small{ text-decoration:none; }
+  .tcheck.done .t-ic{ opacity:.4; }
+  .t-done{ width:26px; height:26px; border-radius:50%; background:var(--tint); color:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s,color .2s; }
+  .t-done .icon{ width:14px; height:14px; stroke-width:3; }
+  .tcheck.done .t-done{ background:var(--green); color:#fff; }
+  .t-ic-okuma{ background:var(--green-tint); color:var(--green); }
+  .t-ic-dinleme{ background:var(--blue-tint); color:var(--blue); }
+  .t-ic-kelime{ background:var(--tint); color:var(--purple); }
+  .t-ic-konusma{ background:var(--gold-tint); color:var(--gold); }
+  .t-ic-yazma{ background:var(--pink-tint); color:var(--pink); }
+
   .donewrap{ display:flex; align-items:center; gap:10px; background:var(--green-tint); border-radius:14px; padding:10px 12px; margin-top:12px; font-size:13px; font-weight:700; color:#0f7a4e; }
   .continue-card{ display:flex; align-items:center; gap:12px; cursor:pointer; width:100%; border:none; text-align:left; font-family:inherit; }
   .continue-card .cc-t{ font-weight:800; font-size:14px; color:var(--ink); font-family:var(--font-display); }
@@ -163,6 +184,9 @@
   .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); }
   .hub-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
   .hub-s{ font-size:11.5px; color:var(--ink-soft); }
+  .hubcard.wide{ grid-column:1/-1; flex-direction:row; align-items:center; min-height:auto; gap:14px; }
+  .hubcard.wide .hub-txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .hubcard.wide .hub-arrow{ margin-left:auto; color:var(--purple); flex-shrink:0; }
 
   /* ---- KELİME ---- */
   .searchbar{ position:relative; display:flex; align-items:center; margin-bottom:12px; }
@@ -214,8 +238,43 @@
   .chat-ic, .chat-send{ width:44px; height:44px; border-radius:50%; border:none; background:var(--tint); color:var(--purple-deep); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .chat-send{ background:var(--purple); color:#fff; }
 
+  /* ---- KONUŞMA: seviye/ünite bileşenleri ---- */
+  .cefr-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:26px; padding:0 9px; border-radius:9px; background:linear-gradient(135deg,#9b7dff,var(--purple)); color:#fff; font-family:var(--font-display); font-weight:800; font-size:12.5px; letter-spacing:.2px; box-shadow:0 3px 8px rgba(124,92,255,.3); flex-shrink:0; }
+  .cefr-badge.lg{ min-width:50px; height:32px; font-size:14.5px; border-radius:11px; }
+  .cefr-badge.locked{ background:var(--tint); color:var(--ink-soft); box-shadow:none; }
+  .phrase-chip{ display:inline-flex; align-items:center; background:var(--tint); color:var(--purple-deep); font-size:12px; font-weight:700; padding:6px 12px; border-radius:99px; margin:0 6px 6px 0; }
+  .level-block{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--line); }
+  .level-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .level-block.locked{ opacity:.55; }
+  .level-head{ display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .level-head .lv-name{ font-family:var(--font-display); font-weight:800; font-size:13.5px; color:var(--ink); }
+  .level-head .lv-lock{ margin-left:auto; display:flex; align-items:center; gap:5px; color:var(--ink-soft); font-size:11.5px; font-weight:700; }
+  .level-head .lv-lock .icon{ width:14px; height:14px; }
+  .level-head .lv-count{ margin-left:auto; font-size:12px; font-weight:700; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .level-bar{ height:6px; background:var(--tint); border-radius:99px; overflow:hidden; margin-bottom:10px; }
+  .level-bar>div{ height:100%; background:linear-gradient(90deg,#9b7dff,var(--purple)); border-radius:99px; transition:width .4s; }
+  .level-cando{ font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; }
+  .unit-row{ display:flex; align-items:center; gap:11px; width:100%; background:none; border:none; padding:10px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:44px; }
+  .unit-row:last-child{ border-bottom:none; }
+  .unit-row .u-stat{ width:24px; height:24px; border-radius:50%; border:2px solid var(--line); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:transparent; transition:background .2s,border-color .2s,color .2s; }
+  .unit-row .u-stat .icon{ width:13px; height:13px; stroke-width:3; }
+  .unit-row.done .u-stat{ background:var(--green); border-color:var(--green); color:#fff; }
+  .unit-row .u-name{ font-size:13.5px; color:var(--ink); flex:1; }
+  .unit-row.done .u-name{ color:var(--ink-soft); }
+  .unit-row .u-chev{ color:var(--ink-soft); width:16px; height:16px; flex-shrink:0; }
+
   /* ---- DİNLEME ---- */
   .spotify-empty{ text-align:center; color:var(--ink-soft); font-size:13px; padding:16px 0; }
+  .podrow{ display:flex; align-items:center; gap:12px; padding:10px 2px; border-bottom:1px solid var(--line); min-height:44px; }
+  .podrow:last-child{ border-bottom:none; }
+  .podrow .pod-art{ width:44px; height:44px; border-radius:12px; object-fit:cover; flex-shrink:0; background:var(--tint); }
+  .podrow .pod-txt{ min-width:0; flex:1; }
+  .podrow .pod-name{ font-weight:700; font-size:13.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .podrow .pod-sub{ font-size:11.5px; color:var(--ink-soft); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .podrow .pod-type{ font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; color:var(--purple-deep); background:var(--tint); padding:2px 7px; border-radius:99px; margin-top:4px; display:inline-block; }
+  .podrow .pod-play{ width:40px; height:40px; border-radius:50%; border:none; background:var(--tint); color:var(--purple-deep); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .player-frame{ border-radius:18px; overflow:hidden; background:var(--tint); margin-top:12px; }
+  .player-frame iframe{ display:block; width:100%; border:none; }
 
   /* ---- GÜNLÜK ---- */
   .datestrip{ display:flex; align-items:center; justify-content:space-between; }
@@ -234,6 +293,25 @@
 
   /* ---- PROFİL ---- */
   details + details{ margin-top:0; }
+
+  /* ---- ROZETLER (achievements) ---- */
+  .badgegrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px 6px; }
+  .badge-cell{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:7px; }
+  .badge-ic{ width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; flex-shrink:0; background:var(--tint); color:var(--ink-soft); }
+  .badge-ic .icon{ width:25px; height:25px; }
+  .badge-cell .badge-lock{ position:absolute; right:-2px; bottom:-2px; width:20px; height:20px; border-radius:50%; background:var(--card); border:2px solid var(--bg); color:var(--ink-soft); display:flex; align-items:center; justify-content:center; }
+  .badge-cell .badge-lock .icon{ width:10px; height:10px; stroke-width:2.6; }
+  .badge-name{ font-family:var(--font-display); font-weight:800; font-size:11.5px; color:var(--ink); line-height:1.25; }
+  .badge-cell.locked .badge-name{ color:var(--ink-soft); }
+  .badge-sub{ font-size:9.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; font-weight:700; }
+  .milestone-card{ display:flex; align-items:center; gap:14px; }
+  .milestone-ic{ width:52px; height:52px; border-radius:16px; background:var(--gold-tint); color:var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .milestone-ic .icon{ width:24px; height:24px; }
+  .milestone-body{ flex:1; min-width:0; }
+  .milestone-eyebrow{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); font-weight:800; margin-bottom:2px; }
+  .milestone-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
+  .milestone-s{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .milestone-count{ font-size:11.5px; font-weight:700; color:var(--purple-deep); margin-top:8px; text-align:right; font-variant-numeric:tabular-nums; }
 
   /* ---- nav ---- */
   nav{ position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; max-width:560px; margin:0 auto; padding:8px 4px calc(8px + env(safe-area-inset-bottom)); border-radius:28px 28px 0 0; box-shadow:0 -8px 26px rgba(90,60,180,.12); z-index:20; }
@@ -285,6 +363,8 @@
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5Z"/></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12,4 21,9 12,14 3,9"/><polyline points="3,13 12,18 21,13"/></symbol>
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M5 11a7 7 0 0 1 12-4.5M19 13a7 7 0 0 1-12 4.5"/><polyline points="17,3.5 17,7 13.5,7"/><polyline points="7,20.5 7,17 10.5,17"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.5" y="11" width="13" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-gift" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="9.5" rx="1.5"/><rect x="3.3" y="7.5" width="17.4" height="4" rx="1"/><line x1="12" y1="7.5" x2="12" y2="20"/><path d="M12 7.5c-.8-2.6-2.7-4-4.3-3.3-1.4.6-1.6 2.4.4 3.3"/><path d="M12 7.5c.8-2.6 2.7-4 4.3-3.3 1.4.6 1.6 2.4-.4 3.3"/></symbol>
 </defs>
 </svg>
 
@@ -421,6 +501,11 @@
         <span class="hub-t">Konuşma</span>
         <span class="hub-s" id="hubSpeakSub">Telaffuz + Seviyeler</span>
       </button>
+      <button class="hubcard wide" onclick="go('achievements')">
+        <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg></span>
+        <span class="hub-txt"><span class="hub-t">Rozetler</span><span class="hub-s" id="hubBadgeSub">–</span></span>
+        <span class="hub-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
+      </button>
     </div>
   </section>
 
@@ -497,7 +582,7 @@
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Çalar</h2>
       <div id="spotifyNowPlaying" class="spotify-empty">Aşağıdan bir sonuca dokun, çalar burada açılsın.</div>
-      <div id="spotifyPlayerContainer" style="display:none;"></div>
+      <div id="spotifyPlayerContainer" class="player-frame" style="display:none;"></div>
       <p class="hint">Tam parça/bölüm dinlemek için widget içinden Spotify hesabınla (Premium) giriş yapman gerekebilir.</p>
     </div>
     <div class="card">
@@ -540,6 +625,45 @@
         <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Tüm seviyeler</summary>
         <div id="speakLevelList" style="margin-top:14px;"></div>
       </details>
+    </div>
+  </section>
+
+  <!-- ===== ROZETLER ===== -->
+  <section class="view" id="v-achievements">
+    <div class="subhead">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="mchip"><img src="assets/mascot/pose-cheering.png" alt=""></div>
+      <div><h1>Rozetler</h1><p>Emeklerinin karşılığı — kazandığın rozetlere bak.</p></div>
+    </div>
+
+    <div class="card milestone-card">
+      <div class="milestone-ic"><svg class="icon" aria-hidden="true"><use href="#i-gift"></use></svg></div>
+      <div class="milestone-body">
+        <div class="milestone-eyebrow">Sıradaki hedef</div>
+        <div class="milestone-t" id="milestoneTitle">–</div>
+        <div class="milestone-s" id="milestoneDesc">–</div>
+        <div class="bar" style="margin-top:9px;"><div id="milestoneBar" style="width:0%"></div></div>
+        <div class="milestone-count" id="milestoneCount">0 / 0</div>
+      </div>
+    </div>
+
+    <div class="segtabs" id="achSegTabs">
+      <button type="button" class="seg active" data-seg="badges">Rozetler</button>
+      <button type="button" class="seg" data-seg="milestones">Kilometre Taşları</button>
+    </div>
+
+    <div class="segpanel active" id="achPanelBadges">
+      <div class="card">
+        <h2><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg>Tüm rozetler <span class="mut" id="badgeCount"></span></h2>
+        <div class="badgegrid" id="badgeGrid"></div>
+      </div>
+    </div>
+
+    <div class="segpanel" id="achPanelMilestones">
+      <div class="card">
+        <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>İlerleme listesi</h2>
+        <div id="milestoneList"></div>
+      </div>
     </div>
   </section>
 
@@ -675,6 +799,7 @@ function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){
 function save(){ localStorage.setItem(KEY,JSON.stringify(S)); }
 var S=load();
 S.streak=S.streak||0; S.totalDays=S.totalDays||0; S.checks=S.checks||{};
+S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
 S.words=S.words||[];
 S.history=S.history||{};
 S.readings=S.readings||[];
@@ -698,7 +823,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",listening:"learn",speaking:"learn",journal:"journal",profile:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",listening:"learn",speaking:"learn",achievements:"learn",journal:"journal",profile:"profile"};
 function go(v){
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
@@ -711,6 +836,7 @@ function go(v){
   if(v==="reading") renderReading();
   if(v==="listening") renderListening();
   if(v==="speaking") renderSpeaking();
+  if(v==="achievements") renderAchievements();
   if(v==="journal") renderJournal();
   if(v==="profile") renderProfile();
   window.scrollTo(0,0);
@@ -753,6 +879,7 @@ document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
   var y=new Date(); y.setDate(y.getDate()-1);
   S.streak=(S.lastDone===dstr(y))?S.streak+1:1;
+  S.longestStreak=Math.max(S.longestStreak||0,S.streak);
   S.totalDays+=1; S.lastDone=dstr(new Date());
   save(); renderToday();
 });
@@ -973,12 +1100,16 @@ async function spotifySearch(q){
     list.className=""; list.innerHTML="";
     items.forEach(function(item){
       var img=item.images&&item.images[0]?item.images[0].url:"";
-      var row=document.createElement("div"); row.className="word";
-      row.innerHTML='<div style="display:flex;align-items:center;gap:10px;min-width:0;">'+
-        (img?'<img src="'+img+'" style="width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;">':'')+
-        '<div style="min-width:0;"><div class="en" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(item.name)+'</div>'+
-        '<div class="tr">'+esc(item.publisher||(item.show&&item.show.name)||"")+'</div></div></div>'+
-        '<button class="del" aria-label="Çal"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg></button>';
+      var isEpisode=item.type==="episode";
+      var row=document.createElement("div"); row.className="podrow";
+      row.innerHTML=
+        (img?'<img class="pod-art" src="'+img+'" alt="">':'<span class="pod-art"></span>')+
+        '<div class="pod-txt">'+
+          '<div class="pod-name">'+esc(item.name)+'</div>'+
+          '<div class="pod-sub">'+esc(item.publisher||(item.show&&item.show.name)||"")+'</div>'+
+          '<span class="pod-type">'+(isEpisode?"Bölüm":"Podcast")+'</span>'+
+        '</div>'+
+        '<button class="pod-play" aria-label="Çal"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg></button>';
       row.querySelector("button").addEventListener("click",function(){ spotifyPlayUri(item.uri); });
       list.appendChild(row);
     });
@@ -988,11 +1119,10 @@ function spotifyPlayUri(uri){
   var parts=uri.split(":"), type=parts[1], id=parts[2];
   if(!type||!id) return;
   var np=document.getElementById("spotifyNowPlaying");
-  np.className="";
-  np.innerHTML="";
+  np.style.display="none";
   var box=document.getElementById("spotifyPlayerContainer");
   box.style.display="block";
-  box.innerHTML='<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&autoplay=1" width="100%" height="152" style="border-radius:16px;border:none;display:block;" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+  box.innerHTML='<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&autoplay=1" width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
   box.scrollIntoView({behavior:"smooth",block:"center"});
 }
 function renderListening(){
@@ -1088,10 +1218,10 @@ function renderSpeaking(){
   var sel=S.speaking.selected||speakFrontier();
   var level=SPEAK_LEVELS[sel.li], unit=level.units[sel.ui];
   var done=!!S.speaking.completed[unitKey(sel.li,sel.ui)];
-  var phrasesHtml=unit.phrases.map(function(p){ return '<span class="tag" style="margin:0 6px 6px 0;">'+esc(p)+'</span>'; }).join("");
+  var phrasesHtml=unit.phrases.map(function(p){ return '<span class="phrase-chip">'+esc(p)+'</span>'; }).join("");
   document.getElementById("speakCurrent").innerHTML=
     '<div class="row" style="align-items:center;margin-bottom:10px;">'+
-      '<span class="tag" style="margin:0;background:var(--purple);color:#fff;">'+level.cefr+'</span>'+
+      '<span class="cefr-badge lg">'+level.cefr+'</span>'+
       '<span class="mut" style="margin-left:8px;">'+esc(level.name)+' · Ünite '+(sel.ui+1)+'/'+level.units.length+'</span>'+
     '</div>'+
     '<div style="font-family:var(--font-display);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:6px;">'+esc(unit.name)+'</div>'+
@@ -1113,19 +1243,24 @@ function renderSpeaking(){
   var listEl=document.getElementById("speakLevelList"); listEl.innerHTML="";
   SPEAK_LEVELS.forEach(function(lv,li){
     var unlocked=levelUnlocked(li);
-    var box=document.createElement("div"); box.style.marginBottom="16px";
+    var box=document.createElement("div"); box.className="level-block"+(unlocked?"":" locked");
     var doneCount=lv.units.filter(function(_,ui){return !!S.speaking.completed[unitKey(li,ui)];}).length;
-    box.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'+
-      '<span class="tag" style="margin:0;'+(unlocked?'background:var(--purple);color:#fff;':'')+'">'+lv.cefr+'</span>'+
-      '<b style="font-size:13.5px;color:var(--ink);">'+esc(lv.name)+'</b>'+
-      '<span class="mut" style="margin-left:auto;">'+(unlocked?(doneCount+"/"+lv.units.length):'🔒 kilitli')+'</span>'+
+    var pct=Math.round(doneCount/lv.units.length*100);
+    box.innerHTML='<div class="level-head">'+
+      '<span class="cefr-badge'+(unlocked?"":" locked")+'">'+lv.cefr+'</span>'+
+      '<span class="lv-name">'+esc(lv.name)+'</span>'+
+      (unlocked
+        ? '<span class="lv-count">'+doneCount+'/'+lv.units.length+'</span>'
+        : '<span class="lv-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>Kilitli</span>')+
     '</div>'+
-    (unlocked?'<p class="mut" style="margin-bottom:8px;">'+esc(lv.cando)+'</p>':'');
+    (unlocked?'<div class="level-bar"><div style="width:'+pct+'%"></div></div><p class="level-cando">'+esc(lv.cando)+'</p>':'');
     if(unlocked){
       lv.units.forEach(function(u,ui){
         var udone=!!S.speaking.completed[unitKey(li,ui)];
-        var row=document.createElement("button"); row.type="button"; row.className="journal-row";
-        row.innerHTML='<span class="j-mood">'+(udone?'✅':'▫️')+'</span><span class="j-notes">'+esc(u.name)+'</span>';
+        var row=document.createElement("button"); row.type="button"; row.className="unit-row"+(udone?" done":"");
+        row.innerHTML='<span class="u-stat"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'+
+          '<span class="u-name">'+esc(u.name)+'</span>'+
+          '<svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>';
         row.addEventListener("click",function(){ S.speaking.selected={li:li,ui:ui}; save(); renderSpeaking(); window.scrollTo(0,0); });
         box.appendChild(row);
       });
@@ -1133,6 +1268,108 @@ function renderSpeaking(){
     listEl.appendChild(box);
   });
 }
+
+/* ---------- ROZETLER (achievements — gerçek S verisinden hesaplanan rozetler) ---------- */
+function journalStreakCount(){
+  var d=new Date(); d.setHours(0,0,0,0);
+  if(!S.journal[dstr(d)]) d.setDate(d.getDate()-1); // bugün henüz doldurulmadıysa dünden say
+  var n=0;
+  while(true){
+    var e=S.journal[dstr(d)];
+    if(!e||!((e.mood||"").trim()||(e.notes||"").trim())) break;
+    n++; d.setDate(d.getDate()-1);
+  }
+  return n;
+}
+var BADGE_CAT_COLOR={
+  kelime:{bg:"var(--tint)",fg:"var(--purple)"},
+  seri:{bg:"var(--gold-tint)",fg:"var(--gold)"},
+  okuma:{bg:"var(--green-tint)",fg:"var(--green)"},
+  konusma:{bg:"var(--blue-tint)",fg:"var(--blue)"},
+  gunluk:{bg:"var(--pink-tint)",fg:"var(--pink)"}
+};
+var BADGES=[
+  {id:"w1",cat:"kelime",ic:"i-plus",name:"İlk Kelime",desc:"Kelime listene ilk kelimeni ekle.",
+    cur:function(){ return S.words.length; }, tgt:1},
+  {id:"w10",cat:"kelime",ic:"i-cards",name:"Kelime Filizi",desc:"10 kelimeyi tam olarak biliyor duruma getir.",
+    cur:function(){ return S.words.filter(function(w){return w.box>=3;}).length; }, tgt:10},
+  {id:"s7",cat:"seri",ic:"i-flame",name:"1 Haftalık Seri",desc:"7 gün üst üste günü tamamla.",
+    cur:function(){ return S.longestStreak||0; }, tgt:7},
+  {id:"s30",cat:"seri",ic:"i-flame",name:"30 Günlük Seri",desc:"30 gün üst üste günü tamamla.",
+    cur:function(){ return S.longestStreak||0; }, tgt:30},
+  {id:"s60",cat:"seri",ic:"i-star",name:"Hedefe Ulaştın",desc:"60 günlük alışkanlık serisini tamamla.",
+    cur:function(){ return S.longestStreak||0; }, tgt:60},
+  {id:"r1",cat:"okuma",ic:"i-book-open",name:"İlk Sayfa",desc:"Okuma'ya ilk kaydını ekle.",
+    cur:function(){ return S.readings.length; }, tgt:1},
+  {id:"r10",cat:"okuma",ic:"i-book",name:"Kitap Kurdu",desc:"10 okuma kaydı biriktir.",
+    cur:function(){ return S.readings.length; }, tgt:10},
+  {id:"p1",cat:"konusma",ic:"i-mic",name:"İlk Deneme",desc:"İlk telaffuz pratiğini yap.",
+    cur:function(){ return S.pronCount||0; }, tgt:1},
+  {id:"p20",cat:"konusma",ic:"i-volume",name:"Net Konuşma",desc:"20 telaffuz denemesi yap.",
+    cur:function(){ return S.pronCount||0; }, tgt:20},
+  {id:"u1",cat:"konusma",ic:"i-chat",name:"İlk Ünite",desc:"İlk konuşma ünitesini tamamla.",
+    cur:function(){ return Object.keys(S.speaking.completed).length; }, tgt:1},
+  {id:"lvlAll",cat:"konusma",ic:"i-trophy",name:"Tüm Seviyeler",desc:"4 CEFR seviyesinin tamamını bitir.",
+    cur:function(){ return Object.keys(S.speaking.completed).length; },
+    tgt:SPEAK_LEVELS.reduce(function(n,l){ return n+l.units.length; },0)},
+  {id:"j1",cat:"gunluk",ic:"i-edit",name:"İlk Günlük",desc:"İlk günlük kaydını yaz.",
+    cur:function(){ return Object.keys(S.journal).length; }, tgt:1}
+];
+function computeBadges(){
+  return BADGES.map(function(b){
+    var raw=b.cur(), cur=Math.min(b.tgt,raw);
+    return {def:b, cur:cur, tgt:b.tgt, unlocked:raw>=b.tgt, ratio:cur/b.tgt};
+  });
+}
+function renderAchievements(){
+  var list=computeBadges();
+  var unlockedN=list.filter(function(b){ return b.unlocked; }).length;
+  document.getElementById("badgeCount").textContent="· "+unlockedN+"/"+list.length;
+
+  var grid=document.getElementById("badgeGrid"); grid.innerHTML="";
+  list.forEach(function(b){
+    var col=BADGE_CAT_COLOR[b.def.cat];
+    var cell=document.createElement("div"); cell.className="badge-cell"+(b.unlocked?"":" locked");
+    cell.innerHTML='<div class="badge-ic" style="'+(b.unlocked?("background:"+col.bg+";color:"+col.fg+";"):"")+'">'+
+        '<svg class="icon" aria-hidden="true"><use href="#'+b.def.ic+'"></use></svg>'+
+        (b.unlocked?"":'<span class="badge-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg></span>')+
+      '</div>'+
+      '<div class="badge-name">'+esc(b.def.name)+'</div>'+
+      (b.unlocked?'':'<div class="badge-sub">'+b.cur+'/'+b.tgt+'</div>');
+    grid.appendChild(cell);
+  });
+
+  var mlist=document.getElementById("milestoneList"); mlist.innerHTML="";
+  list.forEach(function(b){
+    var pct=Math.round(b.ratio*100);
+    var row=document.createElement("div"); row.className="skill";
+    row.innerHTML='<div class="skill-top"><span>'+(b.unlocked?"✓ ":"")+esc(b.def.name)+'</span><span class="skill-pct">'+b.cur+'/'+b.tgt+'</span></div>'+
+      '<div class="skill-track"><div class="skill-fill" style="width:'+pct+'%"></div></div>';
+    mlist.appendChild(row);
+  });
+
+  var locked=list.filter(function(b){ return !b.unlocked; }).sort(function(a,c){ return c.ratio-a.ratio; });
+  if(!locked.length){
+    document.getElementById("milestoneTitle").textContent="Tüm rozetleri topladın! 🎉";
+    document.getElementById("milestoneDesc").textContent="İnanılmazsın — yeni hedefler yakında burada.";
+    document.getElementById("milestoneBar").style.width="100%";
+    document.getElementById("milestoneCount").textContent=list.length+" / "+list.length;
+  } else {
+    var next=locked[0];
+    document.getElementById("milestoneTitle").textContent=next.def.name;
+    document.getElementById("milestoneDesc").textContent=next.def.desc;
+    document.getElementById("milestoneBar").style.width=Math.round(next.ratio*100)+"%";
+    document.getElementById("milestoneCount").textContent=next.cur+" / "+next.tgt;
+  }
+}
+document.querySelectorAll("#achSegTabs .seg").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll("#achSegTabs .seg").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    document.getElementById("achPanelBadges").classList.toggle("active",b.dataset.seg==="badges");
+    document.getElementById("achPanelMilestones").classList.toggle("active",b.dataset.seg==="milestones");
+  });
+});
 
 /* ---------- DAILY TASKS (her gün karışık reading/listening/vocab/speaking ödevleri) ---------- */
 var TASK_POOL=[
@@ -1153,6 +1390,7 @@ function todaysTasks(){
   return TASK_POOL.map(function(t,i){ return {t:t,k:((doy*9301+i*49297+7)%233280)}; })
     .sort(function(a,b){ return a.k-b.k; }).map(function(x){return x.t;}).slice(0,4);
 }
+var TASK_CAT_CLASS={"Okuma":"t-ic-okuma","Dinleme":"t-ic-dinleme","Kelime":"t-ic-kelime","Konuşma":"t-ic-konusma","Yazma":"t-ic-yazma"};
 function renderTasks(){
   var tasks=todaysTasks(), key=dstr(new Date());
   S.tasks=S.tasks||{}; S.tasks[key]=S.tasks[key]||{};
@@ -1160,10 +1398,12 @@ function renderTasks(){
   wrap.innerHTML="";
   tasks.forEach(function(t,i){
     var done=!!S.tasks[key][i];
-    var lab=document.createElement("label"); lab.className="check"+(done?" done":"");
-    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+
-      (done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':'<svg class="icon icon-sm" aria-hidden="true"><use href="#'+t.ic+'"></use></svg>')+
-      '</span><span class="t">'+esc(t.text)+'<small>'+esc(t.cat)+'</small></span>';
+    var catClass=TASK_CAT_CLASS[t.cat]||"t-ic-kelime";
+    var lab=document.createElement("label"); lab.className="tcheck"+(done?" done":"");
+    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'>'+
+      '<span class="t-ic '+catClass+'"><svg class="icon" aria-hidden="true"><use href="#'+t.ic+'"></use></svg></span>'+
+      '<span class="t">'+esc(t.text)+'<small>'+esc(t.cat)+'</small></span>'+
+      '<span class="t-done"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>';
     lab.querySelector("input").addEventListener("change",function(e){ S.tasks[key][i]=e.target.checked; save(); renderTasks(); });
     wrap.appendChild(lab);
   });
@@ -1273,6 +1513,8 @@ function renderLearnHub(){
   var doneUnits=Object.keys(S.speaking.completed).length;
   var fr=speakFrontier(), lvl=SPEAK_LEVELS[fr.li];
   document.getElementById("hubSpeakSub").textContent=lvl.cefr+" · "+doneUnits+"/"+totalUnits+" ünite";
+  var badges=computeBadges(), badgeN=badges.filter(function(b){ return b.unlocked; }).length;
+  document.getElementById("hubBadgeSub").textContent=badgeN+"/"+badges.length+" kazanıldı";
 }
 
 /* ---------- JOURNAL ---------- */
@@ -1346,6 +1588,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
       S.speaking=S.speaking||{completed:{},selected:null}; S.tasks=S.tasks||{};
+      S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı ✓");
     }catch(err){ alert("Dosya okunamadı."); }
   };
