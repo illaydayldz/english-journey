@@ -322,6 +322,11 @@
       <div class="bar"><div id="progBar" style="width:0%"></div></div>
     </div>
 
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Bugünün ödevleri</h2>
+      <div id="taskList"></div>
+    </div>
+
     <button type="button" class="card continue-card" onclick="go('vocab')">
       <div class="mchip"><img src="assets/mascot/pose-motivated.png" alt=""></div>
       <div>
@@ -414,7 +419,7 @@
       <button class="hubcard" onclick="go('speaking')">
         <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></span>
         <span class="hub-t">Konuşma</span>
-        <span class="hub-s">Telaffuz + Sohbet</span>
+        <span class="hub-s" id="hubSpeakSub">Telaffuz + Seviyeler</span>
       </button>
     </div>
   </section>
@@ -510,7 +515,7 @@
     <div class="subhead">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <div class="mchip"><img src="assets/mascot/pose-newword.png" alt=""></div>
-      <div><h1>Konuşma</h1><p>Telaffuzunu ölç, sonra serbest pratik yap.</p></div>
+      <div><h1>Konuşma</h1><p>Telaffuzunu ölç, seviyeni yükselt, Claude ile sesli pratik yap.</p></div>
     </div>
     <div class="card pron">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Telaffuz pratiği</h2>
@@ -525,18 +530,16 @@
       <div class="result" id="pronResult"></div>
       <div class="hint" id="pronSupport"></div>
     </div>
+
     <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Claude ile konuş</h2>
-      <p class="mut" style="margin-bottom:10px;">Serbest konuşma pratiği için yaz ya da mikrofonla konuş.</p>
-      <div class="chat-log" id="speakingChatLog">
-        <div class="chat-msg bot"><div class="mchip sm"><img src="assets/mascot/pose-newword.png" alt=""></div><div class="bubble">Merhaba! Bugün ne hakkında konuşmak istersin? ✨</div></div>
-      </div>
-      <div class="chat-input-row">
-        <button class="chat-ic" id="speakingMic" title="Mikrofon" aria-label="Mikrofon"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button>
-        <input class="f chat-input" id="speakingInput" placeholder="Bir şeyler yaz...">
-        <button class="chat-send" id="speakingSend" title="Gönder" aria-label="Gönder"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-send"></use></svg></button>
-      </div>
-      <p class="hint">Mikrofona basıp konuşabilir ya da yazabilirsin. Cevaplar sesli de okunur.</p>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg>Konuşma Seviyen</h2>
+      <div id="speakCurrent"></div>
+    </div>
+    <div class="card">
+      <details id="speakAllLevelsBox">
+        <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Tüm seviyeler</summary>
+        <div id="speakLevelList" style="margin-top:14px;"></div>
+      </details>
     </div>
   </section>
 
@@ -593,13 +596,6 @@
       <button class="btn sec" id="spotifyClientIdSave">Kaydet</button>
       <p class="hint" style="text-align:left;">Spotify Developer Dashboard'da app'ine bu adresi Redirect URI olarak ekle:</p>
       <input class="f" id="spotifyRedirectUriDisplay" readonly style="margin-top:6px;font-size:11.5px;color:var(--ink-soft);">
-    </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg>Claude API</h2>
-      <p class="mut" style="margin-bottom:10px;">Konuşma sekmesindeki sohbet özelliği için API anahtarını gir.</p>
-      <input class="f" id="claudeApiKeyInput" type="password" placeholder="sk-ant-...">
-      <button class="btn sec" id="claudeApiKeySave">Kaydet</button>
-      <p class="hint">Bu anahtar yalnızca bu tarayıcıda (localStorage) saklanır, hiçbir sunucuya gönderilmez.</p>
     </div>
     <div class="card">
       <details>
@@ -678,6 +674,8 @@ S.readings=S.readings||[];
 S.journal=S.journal||{};
 S.settings=S.settings||{};
 S.pronCount=S.pronCount||0;
+S.speaking=S.speaking||{completed:{},selected:null};
+S.tasks=S.tasks||{};
 if(S.checksDate!==dstr(new Date())){ S.checks={}; S.checksDate=dstr(new Date()); }
 
 function dstr(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
@@ -705,6 +703,7 @@ function go(v){
   if(v==="progress") renderProgress();
   if(v==="reading") renderReading();
   if(v==="listening") renderListening();
+  if(v==="speaking") renderSpeaking();
   if(v==="journal") renderJournal();
   if(v==="profile") renderProfile();
   window.scrollTo(0,0);
@@ -741,6 +740,7 @@ function renderToday(){
   S.history[dstr(new Date())]=doneN;
   trimHistory();
   save();
+  renderTasks();
 }
 document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
@@ -1001,67 +1001,159 @@ document.getElementById("spotifySearchInput").addEventListener("keydown",functio
   if(e.key==="Enter") spotifySearch(e.target.value.trim());
 });
 
-/* ---------- SPEAKING: Claude chat (Anthropic Messages API, owner's own key) ---------- */
-var CLAUDE_MODEL="claude-haiku-4-5-20251001";
-var claudeHistory=[];
-var CLAUDE_SYSTEM="You are a warm, patient English conversation partner. You are helping a Turkish-speaking A2-level learner (İlayda) practice spoken English before an actuarial exam in September 2026. Reply only in simple, clear English (A2-B1 vocabulary and grammar). Keep replies short: 2-4 sentences. If she makes a grammar mistake, gently model the correct form by naturally rephrasing it back into your reply — do not lecture her about the mistake. Always end with a short follow-up question to keep the conversation going. Be encouraging and friendly.";
-
-function addChatBubble(role,text){
-  var log=document.getElementById("speakingChatLog");
-  var row=document.createElement("div"); row.className="chat-msg "+(role==="user"?"me":"bot");
-  var avatar=role==="user"?"":'<div class="mchip sm"><img src="assets/mascot/pose-newword.png" alt=""></div>';
-  row.innerHTML=avatar+'<div class="bubble">'+esc(text)+'</div>';
-  log.appendChild(row); log.scrollTop=log.scrollHeight;
-  return row;
+/* ---------- SPEAKING LEVELS (CEFR-based, functional units — content grounded in
+   Paul Nation's fluency strand + Market Leader-style functional syllabus) ---------- */
+var SPEAK_LEVELS=[
+ {cefr:"A2",name:"Temel",cando:"Tanıdık konularda basit bilgi alışverişi yapabiliyorum.",units:[
+  {name:"Kendini Tanıtma & Küçük Sohbet",phrases:["Nice to meet you.","What do you do?","How's your day going?","I'm originally from…"],scenario:"Bir networking etkinliğinde yeni biriyle tanışıyorsun. Kendini, mesleğini ve nereli olduğunu anlat.",topic:"Kendini, işini ve boş zamanlarında ne yaptığını anlat."},
+  {name:"Günlük Rutin Anlatma",phrases:["I usually…","On a typical day, I…","After work, I…"],scenario:"Bir arkadaşın sana normal bir iş gününü soruyor.",topic:"Bir gününü sabahtan akşama anlat."},
+  {name:"Basit Rica & İstekler",phrases:["Could you…?","Would you mind…?","Can I ask you a favor?"],scenario:"İş arkadaşından bir dosyayı sana göndermesini istiyorsun.",topic:"Ofiste birinden 3 farklı şey rica et (dosya, bilgi, yardım)."},
+  {name:"Telefon & E-posta İngilizcesi",phrases:["I'm calling about…","Could I speak to…?","I'll send you an email about…"],scenario:"Bir müşteriyi arayıp bir toplantıyı erteliyorsun.",topic:"Bir telefon görüşmesini canlandır: kendini tanıt, sebebini açıkla, teşekkür et."},
+  {name:"Basit Fikir Belirtme",phrases:["I think…","In my opinion…","I agree, but…"],scenario:"İş arkadaşların yeni bir ofis düzeni öneriyor, ne düşündüğünü soruyorlar.",topic:"Bir konu hakkında (uzaktan çalışma, ofis düzeni vb.) ne düşündüğünü basitçe anlat."}
+ ]},
+ {cefr:"B1",name:"Orta-Alt",cando:"İlgi alanım ve mesleğimle ilgili konularda biraz güvenle iletişim kurabiliyorum.",units:[
+  {name:"Toplantıda Fikir Paylaşma",phrases:["I'd like to add something.","From my point of view…","That's a good point, but…"],scenario:"Küçük bir ekip toplantısındasın, yeni bir proje hakkında fikrini soruyorlar.",topic:"Bir projeye dair 3 fikir söyle ve gerekçelendir."},
+  {name:"Sorun Açıklama & Çözüm Önerme",phrases:["The problem is that…","One option would be…","We could try…"],scenario:"Bir raporda hata fark ettin, yöneticine açıklıyorsun.",topic:"Karşılaştığın bir sorunu ve önerdiğin 2 çözümü anlat."},
+  {name:"Nazik İtiraz / Aynı Fikirde Olmama",phrases:["I see your point, but…","I'm not sure I agree, because…","Could we look at it differently?"],scenario:"Bir iş arkadaşın önerdiği bir yaklaşıma katılmıyorsun.",topic:"Bir konuda nazikçe aynı fikirde olmadığını, nedenini belirterek anlat."},
+  {name:"Geçmiş Deneyim Anlatma",phrases:["A while ago, I…","That reminds me of a time when…","It turned out that…"],scenario:"Mülakatta geçmişte zorlu bir durumu nasıl çözdüğünü soruyorlar.",topic:"Geçmişte çözdüğün bir problemi anlat (ne oldu, ne yaptın, sonuç)."},
+  {name:"Mini Sunum / Özetleme",phrases:["Today I'll talk about…","To sum up…","The main point is…"],scenario:"5 kişilik bir ekibe kısa bir güncelleme sunuyorsun.",topic:"Son okuduğun bir makaleyi/paragrafı 1 dakikada özetle."}
+ ]},
+ {cefr:"B2",name:"Orta-Üst",cando:"Ana dili İngilizce olan biriyle akıcı ve doğal bir sohbeti gerçekten sürdürebiliyorum.",units:[
+  {name:"Müzakere (Negotiating)",phrases:["What if we…?","I could agree to that if…","Let's find a middle ground."],scenario:"Bir teslim tarihi üzerinde müşteriyle pazarlık ediyorsun.",topic:"Bir konuda (süre, fiyat, kapsam) karşı tarafla nasıl uzlaşacağını anlat."},
+  {name:"Resmi Sunum / Rapor Sunma",phrases:["The data shows that…","This leads us to conclude…","Let's move on to the next point."],scenario:"Aylık bir performans raporunu yönetime sunuyorsun.",topic:"Hayali bir raporu 2 dakikada sun: durum, bulgular, öneri."},
+  {name:"Karşı Argüman & Tartışma",phrases:["I take your point, but consider this…","That's true to some extent, however…","Let me play devil's advocate."],scenario:"Bir strateji tartışmasında karşıt bir görüşü savunuyorsun.",topic:"Bir konuda kasıtlı olarak karşı tarafı savun, en az 2 argümanla."},
+  {name:"Söz Alma & Toplantı Yönetme",phrases:["Can I jump in here?","Let's park that for now.","Can we get back on track?"],scenario:"Kalabalık bir toplantıyı sen yönetiyorsun, konu dağılıyor.",topic:"Hayali bir toplantıyı yönet: birini kes, konuyu geri getir, birine söz ver."},
+  {name:"Aktüerlik/Finans Bağlamında Teknik Anlatım",phrases:["The risk exposure is…","Based on the assumptions…","This model suggests that…"],scenario:"Teknik olmayan bir yöneticiye bir risk modelini basitleştirerek anlatıyorsun.",topic:"Kendi işinden bir kavramı, hiç bilmeyen birine anlatır gibi açıkla."}
+ ]},
+ {cefr:"C1",name:"İleri",cando:"Kendimi akıcı ve doğal bir şekilde, çok fazla kelime aramadan ifade edebiliyorum.",units:[
+  {name:"İkna Edici Konuşma",phrases:["The way I see it…","It's worth considering that…","At the end of the day…"],scenario:"Ekibini yeni bir araca geçmeye ikna etmeye çalışıyorsun.",topic:"Birini bir karara ikna etmeye çalış, en az 3 gerekçe kullan."},
+  {name:"Spontane, Doğal Akış Tartışma",phrases:["Funnily enough…","Now that you mention it…","On second thought…"],scenario:"Gündemdeki bir konu hakkında serbest, hazırlıksız bir sohbet.",topic:"Hazırlıksız, gündemden bir konu hakkında 2 dakika konuş."},
+  {name:"İnce Nüanslar & Deyim Kullanımı",phrases:["That's a bit of a grey area.","I'm on the fence about it.","Let's not beat around the bush."],scenario:"Belirsiz, net olmayan bir konudaki görüşünü ifade ediyorsun.",topic:"Kararsız kaldığın bir konuyu, nüanslarıyla anlat."},
+  {name:"Zor Durum / Kriz Yönetimi",phrases:["Let's not panic, but we need to act fast.","Here's how I'd handle this.","We should communicate this clearly to everyone."],scenario:"Beklenmedik bir sorun yaşanıyor, ekibi yönlendiriyorsun.",topic:"Hayali bir kriz anını yönet: durumu özetle, aksiyon planı ver."},
+  {name:"Profesyonel Sunum Ustalığı",phrases:["Let me paint a picture for you.","The key takeaway here is…","I'll leave you with this thought."],scenario:"Büyük bir konferansta 5 dakikalık bir konuşma yapıyorsun.",topic:"Herhangi bir konuda etkileyici bir açılış ve kapanışla 2 dakikalık konuşma yap."}
+ ]}
+];
+function unitKey(li,ui){ return li+"-"+ui; }
+function levelUnlocked(li){
+  if(li<=0) return true;
+  var prev=SPEAK_LEVELS[li-1];
+  for(var i=0;i<prev.units.length;i++){ if(!S.speaking.completed[unitKey(li-1,i)]) return false; }
+  return true;
 }
-async function sendSpeakingMsg(){
-  var inp=document.getElementById("speakingInput");
-  var txt=inp.value.trim(); if(!txt) return;
-  var key=(S.settings.claudeApiKey||"").trim();
-  if(!key){ addChatBubble("bot","Sohbet için önce Profil'den Claude API anahtarını girmen gerekiyor."); return; }
-  addChatBubble("user",txt);
-  claudeHistory.push({role:"user",content:txt});
-  inp.value="";
-  var typingRow=addChatBubble("bot","…");
-  var sendBtn=document.getElementById("speakingSend"); sendBtn.disabled=true;
-  try{
-    var res=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{
-        "content-type":"application/json",
-        "x-api-key":key,
-        "anthropic-version":"2023-06-01",
-        "anthropic-dangerous-direct-browser-access":"true"
-      },
-      body:JSON.stringify({ model:CLAUDE_MODEL, max_tokens:300, system:CLAUDE_SYSTEM, messages:claudeHistory.slice(-12) })
-    });
-    var data=await res.json();
-    if(!res.ok) throw new Error((data.error&&data.error.message)||"İstek başarısız oldu.");
-    var reply=(data.content&&data.content[0]&&data.content[0].text)||"...";
-    typingRow.querySelector(".bubble").textContent=reply;
-    claudeHistory.push({role:"assistant",content:reply});
-    if("speechSynthesis" in window){
-      var u=new SpeechSynthesisUtterance(reply); u.lang="en-US"; u.rate=.95;
-      speechSynthesis.cancel(); speechSynthesis.speak(u);
+function speakFrontier(){
+  for(var li=0;li<SPEAK_LEVELS.length;li++){
+    if(!levelUnlocked(li)) break;
+    for(var ui=0;ui<SPEAK_LEVELS[li].units.length;ui++){
+      if(!S.speaking.completed[unitKey(li,ui)]) return {li:li,ui:ui};
     }
+  }
+  var last=SPEAK_LEVELS.length-1;
+  return {li:last,ui:SPEAK_LEVELS[last].units.length-1};
+}
+function buildClaudePrompt(level,unit){
+  return "Sen sabırlı, destekleyici bir İngilizce konuşma öğretmenisin. Öğrencin Türkçe konuşan, İngilizce seviyesi CEFR "+level.cefr+" ("+level.name+"). "+
+    "Bugünkü ünite: \""+unit.name+"\". Bu ünitede kullanmam gereken kalıp ifadeler: "+unit.phrases.join("; ")+". "+
+    "Senaryo: "+unit.scenario+" "+
+    "Lütfen bana bu senaryo üzerinden kısa bir açılış sorusuyla sesli konuşma pratiği yaptır, seviyeme uygun basit ve net İngilizce kullan, yukarıdaki kalıp ifadeleri doğal şekilde kullanmam için beni yönlendir, hatalarımı nazikçe ve akışı bozmadan düzelt, sonunda kısa bir geri bildirim ver.";
+}
+async function openClaudeWithContext(li,ui){
+  var level=SPEAK_LEVELS[li], unit=level.units[ui];
+  var prompt=buildClaudePrompt(level,unit);
+  window.open("https://claude.ai/new","_blank");
+  try{
+    await navigator.clipboard.writeText(prompt);
+    alert("Talimat kopyalandı! Açılan Claude sekmesinde mesaj kutusuna yapıştır, gönder, sonra sağ alttaki 🔊 sesli mod ikonuna dokunup konuşmaya başla.");
   }catch(e){
-    typingRow.querySelector(".bubble").textContent="Bir hata oldu: "+e.message+" (API anahtarını Profil'den kontrol et)";
-  }finally{
-    sendBtn.disabled=false;
-    var log=document.getElementById("speakingChatLog"); log.scrollTop=log.scrollHeight;
+    prompt_fallback(prompt);
   }
 }
-document.getElementById("speakingSend").addEventListener("click",sendSpeakingMsg);
-document.getElementById("speakingInput").addEventListener("keydown",function(e){ if(e.key==="Enter") sendSpeakingMsg(); });
-document.getElementById("speakingMic").addEventListener("click",function(){
-  if(!SR){ alert("Ses tanıma desteklenmiyor. Chrome kullan."); return; }
-  var rec=new SR(); rec.lang="en-US"; rec.interimResults=false; rec.maxAlternatives=1;
-  var micBtn=document.getElementById("speakingMic"); micBtn.disabled=true;
-  rec.onresult=function(e){ document.getElementById("speakingInput").value=e.results[0][0].transcript; };
-  rec.onerror=function(e){ alert("Hata: "+e.error+" (mikrofon izni gerekli olabilir)"); };
-  rec.onend=function(){ micBtn.disabled=false; };
-  rec.start();
-});
+function prompt_fallback(text){
+  window.prompt("Panoya otomatik kopyalanamadı — bu metni seç, kopyala ve Claude'a yapıştır:", text);
+}
+function renderSpeaking(){
+  var sel=S.speaking.selected||speakFrontier();
+  var level=SPEAK_LEVELS[sel.li], unit=level.units[sel.ui];
+  var done=!!S.speaking.completed[unitKey(sel.li,sel.ui)];
+  var phrasesHtml=unit.phrases.map(function(p){ return '<span class="tag" style="margin:0 6px 6px 0;">'+esc(p)+'</span>'; }).join("");
+  document.getElementById("speakCurrent").innerHTML=
+    '<div class="row" style="align-items:center;margin-bottom:10px;">'+
+      '<span class="tag" style="margin:0;background:var(--purple);color:#fff;">'+level.cefr+'</span>'+
+      '<span class="mut" style="margin-left:8px;">'+esc(level.name)+' · Ünite '+(sel.ui+1)+'/'+level.units.length+'</span>'+
+    '</div>'+
+    '<div style="font-family:var(--font-display);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:6px;">'+esc(unit.name)+'</div>'+
+    '<p class="mut" style="margin-bottom:10px;">'+esc(unit.scenario)+'</p>'+
+    '<div style="margin-bottom:10px;">'+phrasesHtml+'</div>'+
+    '<div class="hint" style="text-align:left;margin-bottom:14px;"><b>4/3/2 konuşma konun:</b> '+esc(unit.topic)+' — bu konuyu önce 4, sonra 3, sonra 2 dakikada anlatmayı dene, her turda daha akıcı olacaksın.</div>'+
+    '<button class="btn deep" id="speakOpenClaude" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</button>'+
+    (done
+      ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın ✓</span></div>'
+      : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;">Bu üniteyi tamamladım ✓</button>');
+  document.getElementById("speakOpenClaude").addEventListener("click",function(){ openClaudeWithContext(sel.li,sel.ui); });
+  var cb=document.getElementById("speakCompleteBtn");
+  if(cb) cb.addEventListener("click",function(){
+    S.speaking.completed[unitKey(sel.li,sel.ui)]=true;
+    S.speaking.selected=null; // ilerlemeyi otomatik bir sonraki üniteye taşı
+    save(); renderSpeaking(); renderLearnHub();
+  });
+
+  var listEl=document.getElementById("speakLevelList"); listEl.innerHTML="";
+  SPEAK_LEVELS.forEach(function(lv,li){
+    var unlocked=levelUnlocked(li);
+    var box=document.createElement("div"); box.style.marginBottom="16px";
+    var doneCount=lv.units.filter(function(_,ui){return !!S.speaking.completed[unitKey(li,ui)];}).length;
+    box.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'+
+      '<span class="tag" style="margin:0;'+(unlocked?'background:var(--purple);color:#fff;':'')+'">'+lv.cefr+'</span>'+
+      '<b style="font-size:13.5px;color:var(--ink);">'+esc(lv.name)+'</b>'+
+      '<span class="mut" style="margin-left:auto;">'+(unlocked?(doneCount+"/"+lv.units.length):'🔒 kilitli')+'</span>'+
+    '</div>'+
+    (unlocked?'<p class="mut" style="margin-bottom:8px;">'+esc(lv.cando)+'</p>':'');
+    if(unlocked){
+      lv.units.forEach(function(u,ui){
+        var udone=!!S.speaking.completed[unitKey(li,ui)];
+        var row=document.createElement("button"); row.type="button"; row.className="journal-row";
+        row.innerHTML='<span class="j-mood">'+(udone?'✅':'▫️')+'</span><span class="j-notes">'+esc(u.name)+'</span>';
+        row.addEventListener("click",function(){ S.speaking.selected={li:li,ui:ui}; save(); renderSpeaking(); window.scrollTo(0,0); });
+        box.appendChild(row);
+      });
+    }
+    listEl.appendChild(box);
+  });
+}
+
+/* ---------- DAILY TASKS (her gün karışık reading/listening/vocab/speaking ödevleri) ---------- */
+var TASK_POOL=[
+  {cat:"Okuma",ic:"i-book-open",text:"Okuma'ya en az 1 paragraf ekle"},
+  {cat:"Okuma",ic:"i-book-open",text:"Eski bir okuma kaydını tekrar oku, 3 yeni kelime çıkar"},
+  {cat:"Dinleme",ic:"i-headphones",text:"Dinleme'den 10 dakika bir podcast/bölüm dinle"},
+  {cat:"Dinleme",ic:"i-headphones",text:"Dinlediğin bir bölümden 2 yeni kelime/kalıp not al"},
+  {cat:"Kelime",ic:"i-cards",text:"Kelime'ye en az 5 yeni kelime ekle"},
+  {cat:"Kelime",ic:"i-cards",text:"Bugün çalışılacak tüm kartları bitir"},
+  {cat:"Konuşma",ic:"i-mic",text:"Bugünkü konuşma ünitesini tamamla"},
+  {cat:"Konuşma",ic:"i-mic",text:"Claude'un sesli moduyla en az 5 dakika konuş"},
+  {cat:"Konuşma",ic:"i-mic",text:"Telaffuz pratiğinde 3 cümle dene"},
+  {cat:"Yazma",ic:"i-edit",text:"Günlüğe bugünün özetini İngilizce yazmayı dene"}
+];
+function dayOfYear(d){ var start=new Date(d.getFullYear(),0,0); return Math.floor((d-start)/86400000); }
+function todaysTasks(){
+  var doy=dayOfYear(new Date());
+  return TASK_POOL.map(function(t,i){ return {t:t,k:((doy*9301+i*49297+7)%233280)}; })
+    .sort(function(a,b){ return a.k-b.k; }).map(function(x){return x.t;}).slice(0,4);
+}
+function renderTasks(){
+  var tasks=todaysTasks(), key=dstr(new Date());
+  S.tasks=S.tasks||{}; S.tasks[key]=S.tasks[key]||{};
+  var wrap=document.getElementById("taskList"); if(!wrap) return;
+  wrap.innerHTML="";
+  tasks.forEach(function(t,i){
+    var done=!!S.tasks[key][i];
+    var lab=document.createElement("label"); lab.className="check"+(done?" done":"");
+    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+
+      (done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':'<svg class="icon icon-sm" aria-hidden="true"><use href="#'+t.ic+'"></use></svg>')+
+      '</span><span class="t">'+esc(t.text)+'<small>'+esc(t.cat)+'</small></span>';
+    lab.querySelector("input").addEventListener("change",function(e){ S.tasks[key][i]=e.target.checked; save(); renderTasks(); });
+    wrap.appendChild(lab);
+  });
+}
 
 /* ---------- PRONUNCIATION ---------- */
 var pronText=document.getElementById("pronText"), pronTarget=document.getElementById("pronTarget");
@@ -1163,6 +1255,10 @@ function renderLearnHub(){
   var due=dueWords().length;
   document.getElementById("hubVocabSub").textContent=due?(due+" kart bekliyor"):"Hepsi güncel";
   document.getElementById("hubReadSub").textContent=S.readings.length?(S.readings.length+" kayıt"):"Henüz kayıt yok";
+  var totalUnits=SPEAK_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
+  var doneUnits=Object.keys(S.speaking.completed).length;
+  var fr=speakFrontier(), lvl=SPEAK_LEVELS[fr.li];
+  document.getElementById("hubSpeakSub").textContent=lvl.cefr+" · "+doneUnits+"/"+totalUnits+" ünite";
 }
 
 /* ---------- JOURNAL ---------- */
@@ -1209,16 +1305,11 @@ function renderProfile(){
   document.getElementById("profileSummary").textContent=
     (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi! 🎉")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
-  document.getElementById("claudeApiKeyInput").value=S.settings.claudeApiKey||"";
   document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
 }
 document.getElementById("spotifyClientIdSave").addEventListener("click",function(){
   S.settings.spotifyClientId=document.getElementById("spotifyClientIdInput").value.trim();
   save(); alert("Spotify Client ID kaydedildi.");
-});
-document.getElementById("claudeApiKeySave").addEventListener("click",function(){
-  S.settings.claudeApiKey=document.getElementById("claudeApiKeyInput").value.trim();
-  save(); alert("Claude API anahtarı kaydedildi.");
 });
 
 /* ---------- EXPORT / IMPORT ---------- */
@@ -1235,6 +1326,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
+      S.speaking=S.speaking||{completed:{},selected:null}; S.tasks=S.tasks||{};
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı ✓");
     }catch(err){ alert("Dosya okunamadı."); }
   };
