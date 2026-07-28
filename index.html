@@ -314,6 +314,9 @@
   .chat-send{ background:var(--purple); color:#fff; }
 
   /* ---- KONUŞMA: seviye/ünite bileşenleri ---- */
+  .convo-partner{ display:flex; align-items:center; gap:10px; background:var(--tint); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:12px; }
+  .convo-partner .mchip{ width:40px; height:40px; border-radius:var(--radius-sm); flex-shrink:0; }
+  .convo-partner span{ font-size:12.5px; font-weight:700; color:var(--purple-deep); line-height:1.35; }
   .cefr-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:26px; padding:0 9px; border-radius:var(--radius-sm); background:linear-gradient(135deg,var(--accent-ink),var(--accent)); color:#fff; font-family:var(--font-data); font-weight:800; font-size:12.5px; letter-spacing:.2px; box-shadow:var(--shadow-1); flex-shrink:0; }
   .cefr-badge.lg{ min-width:50px; height:32px; font-size:14.5px; border-radius:var(--radius-md); }
   .cefr-badge.locked{ background:var(--tint); color:var(--ink-soft); box-shadow:none; }
@@ -340,6 +343,7 @@
 
   /* ---- DİNLEME ---- */
   .spotify-empty{ text-align:center; color:var(--ink-soft); font-size:13px; padding:16px 0; }
+  .spotify-empty .mchip{ margin:0 auto 12px; width:64px; height:64px; border-radius:var(--radius-lg); }
   .podrow{ display:flex; align-items:center; gap:12px; padding:10px 2px; border-bottom:1px solid var(--line); min-height:44px; }
   .podrow:last-child{ border-bottom:none; }
   .podrow .pod-art{ width:44px; height:44px; border-radius:12px; object-fit:cover; flex-shrink:0; background:var(--tint); }
@@ -624,6 +628,14 @@
         <span class="hub-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
       </button>
     </div>
+    <button type="button" class="card continue-card" onclick="go('today')" style="margin-top:12px;">
+      <div class="mchip sm"><img src="assets/mascot/pose-motivated.png" alt=""></div>
+      <div>
+        <div class="cc-t">Harika gidiyorsun!</div>
+        <div class="cc-s">Böyle devam et</div>
+      </div>
+      <span class="cc-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
+    </button>
   </section>
 
   <!-- ===== KELİME ===== -->
@@ -692,6 +704,7 @@
         <button type="button" class="lib-next" id="libNextBtn">
           <span class="ln-num" id="libNextNum">1</span>
           <span class="ln-body"><span class="ln-label">Sıradaki metin</span><span class="ln-title" id="libNextTitle">—</span></span>
+          <span class="mchip sm ln-mascot"><img src="assets/mascot/pose-reading.png" alt=""></span>
           <svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
         </button>
         <button type="button" class="lib-toggle" id="libToggle">Tüm metinler (More to Read I)<svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
@@ -762,7 +775,10 @@
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Çalar</h2>
-      <div id="spotifyNowPlaying" class="spotify-empty">Aşağıdan bir sonuca dokun, çalar burada açılsın.</div>
+      <div id="spotifyNowPlaying" class="spotify-empty">
+        <div class="mchip"><img src="assets/mascot/pose-listening.png" alt=""></div>
+        <p>Aşağıdan bir sonuca dokun, çalar burada açılsın.</p>
+      </div>
       <div id="spotifyPlayerContainer" class="player-frame" style="display:none;"></div>
       <p class="hint">Tam parça/bölüm dinlemek için widget içinden Spotify hesabınla (Premium) giriş yapman gerekebilir.</p>
     </div>
@@ -1817,6 +1833,7 @@ function renderSpeaking(){
       '<div id="timer432Display" style="display:none;text-align:center;font-family:var(--font-display);font-size:34px;font-weight:800;color:var(--purple-deep);padding:6px 0;"></div>'+
       '<button type="button" class="btn sec" id="timer432Stop" style="display:none;">Durdur</button>'+
     '</div>'+
+    '<div class="convo-partner"><div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div><span>Konuşma partnerin — Claude sesli sohbette seni dinliyor</span></div>'+
     '<a class="btn deep" id="speakOpenClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</a>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın</span></div>'
