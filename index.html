@@ -93,8 +93,9 @@
   .btn:disabled{ background:var(--tint); color:var(--ink-soft); }
   .btn.sec{ background:var(--tint); color:var(--purple-deep); }
   .btn.deep{ background:var(--purple-deep); } .btn.gold{ background:var(--gold); }
+  .btn.green{ background:var(--green); } .btn.blue{ background:var(--blue); }
   .btn.sm{ width:auto; display:inline-flex; padding:10px 20px; margin:14px auto 0; }
-  .bar{ height:9px; background:var(--tint); border-radius:99px; overflow:hidden; margin-top:11px; }
+  .bar{ height:6px; background:var(--tint); border-radius:99px; overflow:hidden; margin-top:11px; }
   .bar>div{ height:100%; background:linear-gradient(90deg,#9b7dff,var(--purple)); transition:width .4s; }
   .empty{ text-align:center; color:var(--ink-soft); font-size:13px; padding:20px 0; }
   .hint{ font-size:11px; color:var(--ink-soft); margin-top:9px; text-align:center; }
@@ -130,9 +131,20 @@
   .stat .txt{ min-width:0; }
   .stat .n{ font-family:var(--font-data); font-size:19px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--ink); }
   .stat .l{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); margin-top:2px; font-weight:700; white-space:nowrap; }
-  .s-streak .ic-chip{ background:var(--gold-tint); color:var(--gold); } .s-streak .n{ color:var(--gold); }
-  .s-days .ic-chip{ background:var(--green-tint); color:var(--green); } .s-days .n{ color:var(--green); }
-  .s-exam .ic-chip{ background:var(--rust-tint); color:var(--rust); } .s-exam .n{ color:var(--rust); font-size:17px; }
+  .s-streak .ic-chip{ background:var(--gold); color:#fff; } .s-streak .n{ color:var(--gold); }
+  .s-days .ic-chip{ background:var(--green); color:#fff; } .s-days .n{ color:var(--green); }
+  .s-exam .ic-chip{ background:var(--rust); color:#fff; } .s-exam .n{ color:var(--rust); font-size:17px; }
+  /* ---- compact single-card stat row (Home + İlerleme "Genel Bakış"): solid
+     icon-badge circles, thin dividers instead of each stat being its own
+     shadowed tile — matches the reference's "compact horizontal stat row in
+     one card" pattern. ---- */
+  .card.statrow{ display:flex; gap:0; padding:6px 2px; flex-wrap:nowrap; }
+  .card.statrow .stat{ background:none; box-shadow:none; border-radius:0; padding:8px 5px; position:relative; min-width:0; flex:1 1 0; gap:7px; }
+  .card.statrow .stat:not(:last-child)::after{ content:""; position:absolute; right:0; top:18%; bottom:18%; width:1px; background:var(--line); }
+  .card.statrow .ic-chip{ width:34px; height:34px; }
+  .card.statrow .ic-chip .icon{ width:16px; height:16px; }
+  .card.statrow .n{ font-size:15px; }
+  .card.statrow .l{ font-size:9px; letter-spacing:.2px; }
   .check{ position:relative; display:flex; align-items:center; gap:12px; padding:12px 2px; min-height:44px; border-bottom:1px solid var(--line); cursor:pointer; }
   .check:last-child{ border-bottom:none; }
   .check input{ position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
@@ -156,11 +168,11 @@
   .t-done{ width:26px; height:26px; border-radius:50%; background:var(--tint); color:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s,color .2s; }
   .t-done .icon{ width:14px; height:14px; stroke-width:3; }
   .tcheck.done .t-done{ background:var(--green); color:#fff; }
-  .t-ic-okuma{ background:var(--green-tint); color:var(--green); }
-  .t-ic-dinleme{ background:var(--blue-tint); color:var(--blue); }
-  .t-ic-kelime{ background:var(--tint); color:var(--purple); }
-  .t-ic-konusma{ background:var(--gold-tint); color:var(--gold); }
-  .t-ic-yazma{ background:var(--pink-tint); color:var(--pink); }
+  .t-ic-okuma{ background:var(--green); color:#fff; }
+  .t-ic-dinleme{ background:var(--blue); color:#fff; }
+  .t-ic-kelime{ background:var(--purple); color:#fff; }
+  .t-ic-konusma{ background:var(--gold); color:#fff; }
+  .t-ic-yazma{ background:var(--pink); color:#fff; }
 
   .donewrap{ display:flex; align-items:center; gap:10px; background:var(--green-tint); border-radius:var(--radius-md); padding:10px 12px; margin-top:12px; font-size:13px; font-weight:700; color:var(--green); }
   .continue-card{ display:flex; align-items:center; gap:12px; cursor:pointer; width:100%; border:none; text-align:left; font-family:inherit; }
@@ -214,12 +226,25 @@
 
   /* ---- ÇALIŞ (learn hub) ---- */
   .hubgrid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .hubcard{ background:var(--card); border:none; border-radius:var(--radius-lg); padding:18px 14px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; align-items:flex-start; gap:10px; cursor:pointer; text-align:left; font-family:inherit; min-height:118px; }
-  .hub-ic{ width:44px; height:44px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; }
-  .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); }
+  .hubcard{ background:var(--card); border-radius:var(--radius-lg); padding:16px 15px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; align-items:flex-start; gap:9px; text-align:left; font-family:inherit; }
+  /* solid-fill circular icon badge with a white glyph — the app's take on the
+     reference's "colored circle, white icon" skill-badge language, reused
+     everywhere a skill/category needs an icon (hub cards, task list, badges). */
+  .hub-ic{ position:relative; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .hub-purple{ background:var(--purple); color:#fff; } .hub-green{ background:var(--green); color:#fff; } .hub-blue{ background:var(--blue); color:#fff; } .hub-gold{ background:var(--gold); color:#fff; }
+  .hub-ic-plus{ position:absolute; right:-3px; bottom:-3px; width:18px; height:18px; border-radius:50%; background:var(--surface); box-shadow:0 0 0 2px var(--card), var(--shadow-sm); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
+  .hub-ic-plus .icon{ width:10px; height:10px; stroke-width:3; }
   .hub-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
-  .hub-s{ font-size:11.5px; color:var(--ink-soft); }
-  .hubcard.wide{ grid-column:1/-1; flex-direction:row; align-items:center; min-height:auto; gap:14px; }
+  .hub-s{ font-size:11.5px; color:var(--ink-soft); line-height:1.4; }
+  .hub-goal{ width:100%; margin-top:1px; }
+  .hub-goal-row{ display:flex; justify-content:space-between; align-items:baseline; font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; color:var(--ink-soft); margin-bottom:5px; }
+  .hub-goal-row span:last-child{ font-family:var(--font-data); font-variant-numeric:tabular-nums; color:var(--ink); text-transform:none; letter-spacing:0; font-weight:700; font-size:11px; }
+  .hub-goal-track{ height:6px; background:var(--tint); border-radius:99px; overflow:hidden; }
+  .hub-goal-fill{ height:100%; border-radius:99px; transition:width .4s; }
+  .hub-modes{ display:flex; flex-wrap:wrap; gap:5px; width:100%; }
+  .hub-mode{ font-size:9.5px; font-weight:700; color:var(--ink-soft); background:var(--gray-100); padding:4px 8px; border-radius:99px; white-space:nowrap; }
+  .hub-cta{ margin-top:2px; padding:11px; font-size:12.5px; }
+  .hubcard.wide{ grid-column:1/-1; flex-direction:row; align-items:center; gap:14px; cursor:pointer; }
   .hubcard.wide .hub-txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
   .hubcard.wide .hub-arrow{ margin-left:auto; color:var(--purple); flex-shrink:0; }
 
@@ -237,10 +262,16 @@
   .word .en{ font-weight:700; font-size:14px; color:var(--ink); } .word .tr{ font-size:12px; color:var(--ink-soft); margin-top:1px; }
   .word .due{ font-size:10px; font-weight:700; background:var(--gold-tint); color:var(--gold); padding:3px 8px; border-radius:99px; flex-shrink:0; }
   .word .del{ background:none; border:none; color:var(--gray-300); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
-  .flash{ text-align:center; padding:28px 16px; background:var(--bg); border:1.5px dashed var(--line); border-radius:var(--radius-lg); }
+  .flash{ text-align:center; padding:32px 20px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow-sm); border-radius:var(--radius-lg); }
   .flash .q{ font-size:12.5px; color:var(--ink-soft); margin-bottom:9px; text-transform:uppercase; letter-spacing:.4px; }
-  .flash .big{ font-family:var(--font-display); font-size:25px; font-weight:800; margin-bottom:6px; color:var(--ink); }
+  .flash .big{ font-family:var(--font-display); font-size:27px; font-weight:800; margin-bottom:4px; color:var(--ink); }
   .flash .ex{ font-size:13px; color:var(--ink-soft); font-style:italic; margin-top:11px; }
+  /* ---- clean centered flashcard: labeled sections on the reveal side
+     ("Anlamı"/"Örnek") instead of one small unlabeled caption ---- */
+  .flash-sec{ margin-top:16px; text-align:left; }
+  .flash-lbl{ display:block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:var(--purple-deep); margin-bottom:3px; }
+  .flash-val{ font-size:15px; color:var(--ink); }
+  .flash-val.ex{ font-style:italic; color:var(--ink-soft); font-size:13.5px; margin-top:0; }
   #studyArea > .btn{ margin-top:12px; }
   .grade{ display:flex; gap:8px; margin-top:16px; }
   .grade button{ flex:1; padding:12px 4px; border:none; border-radius:var(--radius-md); font-weight:700; font-size:12.5px; color:#fff; cursor:pointer; min-height:44px; display:flex; align-items:center; justify-content:center; gap:5px; }
@@ -265,6 +296,7 @@
   .lib-next .ln-label{ display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--purple-deep); font-weight:800; }
   .lib-next .ln-title{ display:block; font-size:14.5px; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.3; }
   .lib-next .u-chev{ color:var(--purple-deep); width:18px; height:18px; flex-shrink:0; }
+  .ln-preview{ font-size:11.5px; color:var(--purple-deep); opacity:.8; margin-top:4px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .lib-toggle{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; background:none; border:none; padding:11px 0 2px; font-size:12.5px; font-weight:700; color:var(--purple-deep); cursor:pointer; font-family:inherit; min-height:44px; }
   .lib-toggle .icon{ width:14px; height:14px; transition:transform .2s; }
   .lib-toggle.open .icon{ transform:rotate(180deg); }
@@ -314,9 +346,17 @@
   .chat-send{ background:var(--purple); color:#fff; }
 
   /* ---- KONUŞMA: seviye/ünite bileşenleri ---- */
-  .convo-partner{ display:flex; align-items:center; gap:10px; background:var(--tint); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:12px; }
-  .convo-partner .mchip{ width:40px; height:40px; border-radius:var(--radius-sm); flex-shrink:0; }
-  .convo-partner span{ font-size:12.5px; font-weight:700; color:var(--purple-deep); line-height:1.35; }
+  /* Centered "conversation partner" moment: large avatar with a soft pulse
+     ring behind it (implies "listening"), matching the reference's centered
+     mascot-as-partner treatment — still just a visual lead-in to the real
+     "Claude'u Aç" handoff button below it, no fake live voice UI implied. */
+  .convo-partner{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:9px; background:linear-gradient(135deg,var(--tint) 0%,var(--accent-soft-2) 100%); border-radius:var(--radius-lg); padding:22px 16px; margin-bottom:12px; }
+  .cp-avatar{ position:relative; width:84px; height:84px; display:flex; align-items:center; justify-content:center; }
+  .cp-pulse{ position:absolute; inset:-14px; border-radius:50%; border:2px solid var(--accent); opacity:.4; animation:cppulse 2.2s ease-out infinite; }
+  @keyframes cppulse{ 0%{ transform:scale(.72); opacity:.5; } 100%{ transform:scale(1.35); opacity:0; } }
+  .convo-partner .mchip{ position:relative; z-index:1; width:84px; height:84px; border-radius:50%; box-shadow:var(--shadow-2); flex-shrink:0; }
+  .convo-partner span{ font-size:12.5px; font-weight:700; color:var(--purple-deep); line-height:1.4; max-width:260px; }
+  .convo-partner .cp-sub{ font-size:11px; font-weight:600; color:var(--ink-soft); }
   .cefr-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:26px; padding:0 9px; border-radius:var(--radius-sm); background:linear-gradient(135deg,var(--accent-ink),var(--accent)); color:#fff; font-family:var(--font-data); font-weight:800; font-size:12.5px; letter-spacing:.2px; box-shadow:var(--shadow-1); flex-shrink:0; }
   .cefr-badge.lg{ min-width:50px; height:32px; font-size:14.5px; border-radius:var(--radius-md); }
   .cefr-badge.locked{ background:var(--tint); color:var(--ink-soft); box-shadow:none; }
@@ -350,8 +390,8 @@
   .podrow .pod-txt{ min-width:0; flex:1; }
   .podrow .pod-name{ font-weight:700; font-size:13.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .podrow .pod-sub{ font-size:11.5px; color:var(--ink-soft); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .podrow .pod-type{ font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; color:var(--purple-deep); background:var(--tint); padding:2px 7px; border-radius:99px; margin-top:4px; display:inline-block; }
-  .podrow .pod-play{ width:40px; height:40px; border-radius:50%; border:none; background:var(--tint); color:var(--purple-deep); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .podrow .pod-type{ font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; color:var(--blue); background:var(--blue-tint); padding:2px 7px; border-radius:99px; margin-top:4px; display:inline-block; }
+  .podrow .pod-play{ width:40px; height:40px; border-radius:50%; border:none; background:var(--blue); color:#fff; box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .player-frame{ border-radius:18px; overflow:hidden; background:var(--tint); margin-top:12px; }
   .player-frame iframe{ display:block; width:100%; border:none; }
 
@@ -385,7 +425,7 @@
   .badge-cell.locked .badge-name{ color:var(--ink-soft); }
   .badge-sub{ font-size:9.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; font-weight:700; font-family:var(--font-data); }
   .milestone-card{ display:flex; align-items:center; gap:14px; }
-  .milestone-ic{ width:52px; height:52px; border-radius:16px; background:var(--gold-tint); color:var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .milestone-ic{ width:52px; height:52px; border-radius:16px; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .milestone-ic .icon{ width:24px; height:24px; }
   .milestone-body{ flex:1; min-width:0; }
   .milestone-eyebrow{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); font-weight:800; margin-bottom:2px; }
@@ -405,6 +445,17 @@
   /* ---- SKELETON / SHIMMER LOADING ---- */
   .skeleton{ background:linear-gradient(90deg,var(--gray-100) 25%,var(--gray-200) 37%,var(--gray-100) 63%); background-size:400% 100%; animation:shimmer 1.4s ease infinite; border-radius:var(--radius-sm); display:block; }
   @keyframes shimmer{ 0%{ background-position:100% 0; } 100%{ background-position:0 0; } }
+
+  /* ---- İLERLEME: skills overview list — compact rows (colored icon badge +
+     name + wide progress bar + %), one list per card, not one card per skill. ---- */
+  .skillrow{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
+  .skillrow:last-child{ border-bottom:none; }
+  .skillrow-ic{ width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; }
+  .skillrow-ic .icon{ width:15px; height:15px; }
+  .skillrow-name{ font-size:12.5px; font-weight:700; color:var(--ink); width:56px; flex-shrink:0; }
+  .skillrow-track{ flex:1; height:6px; background:var(--tint); border-radius:99px; overflow:hidden; display:block; min-width:0; }
+  .skillrow-fill{ display:block; height:100%; border-radius:99px; transition:width .5s; }
+  .skillrow-pct{ font-size:12px; font-weight:800; color:var(--ink-soft); font-variant-numeric:tabular-nums; font-family:var(--font-data); width:32px; text-align:right; flex-shrink:0; }
 
   /* ---- İLERLEME: radar chart (real skill %'s, no chart library) ---- */
   .radar-svg{ width:100%; max-width:260px; height:auto; display:block; margin:2px auto 0; overflow:visible; }
@@ -504,7 +555,7 @@
       <img class="hero-img" src="assets/mascot/hero-happy.png" alt="Moonie kitap okuyor">
     </div>
 
-    <div class="stats">
+    <div class="card stats statrow">
       <div class="stat s-streak"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="streak">0</div><div class="l">Seri</div></div></div>
       <div class="stat s-days"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="totalDays">0</div><div class="l">Gün</div></div></div>
       <div class="stat s-exam"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg></div><div class="txt"><div class="n" id="examDays">–</div><div class="l">Sınava</div></div></div>
@@ -569,11 +620,11 @@
         </div>
       </div>
 
-      <div class="stats">
-        <div class="stat"><div class="ic-chip" style="background:var(--gold-tint);color:var(--gold);"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="progStreak" style="color:var(--gold);">0</div><div class="l">Seri</div></div></div>
-        <div class="stat"><div class="ic-chip" style="background:var(--green-tint);color:var(--green);"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="progDays" style="color:var(--green);">0</div><div class="l">Gün</div></div></div>
-        <div class="stat"><div class="ic-chip" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></div><div class="txt"><div class="n" id="progWords" style="color:var(--purple);">0</div><div class="l">Kelime</div></div></div>
-        <div class="stat"><div class="ic-chip" style="background:var(--blue-tint);color:var(--blue);"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div><div class="txt"><div class="n" id="progToday" style="color:var(--blue);font-size:16px;">0/6</div><div class="l">Bugün</div></div></div>
+      <div class="card stats statrow">
+        <div class="stat"><div class="ic-chip" style="background:var(--gold);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="progStreak" style="color:var(--gold);">0</div><div class="l">Seri</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--green);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="progDays" style="color:var(--green);">0</div><div class="l">Gün</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--purple);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></div><div class="txt"><div class="n" id="progWords" style="color:var(--purple);">0</div><div class="l">Kelime</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--blue);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div><div class="txt"><div class="n" id="progToday" style="color:var(--blue);font-size:16px;">0/6</div><div class="l">Bugün</div></div></div>
       </div>
 
       <div class="card">
@@ -589,6 +640,10 @@
     </div>
 
     <div class="segpanel" id="progPanelSkills">
+      <div class="card">
+        <h2><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Beceriler</h2>
+        <div id="progSkillList"></div>
+      </div>
       <div class="card" style="text-align:center;">
         <h2 style="justify-content:center;"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Beceri haritası</h2>
         <div id="progRadar"></div>
@@ -602,26 +657,46 @@
       <h1>Çalış</h1>
     </div>
     <div class="hubgrid">
-      <button class="hubcard" onclick="go('vocab')">
-        <span class="hub-ic hub-purple"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></span>
+      <div class="hubcard">
+        <span class="hub-ic hub-purple"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
         <span class="hub-t">Kelime</span>
         <span class="hub-s" id="hubVocabSub">–</span>
-      </button>
-      <button class="hubcard" onclick="go('reading')">
-        <span class="hub-ic hub-green"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span>
+        <div class="hub-goal">
+          <div class="hub-goal-row"><span>İlerleme</span><span id="hubVocabGoalTxt">0/0</span></div>
+          <div class="hub-goal-track"><div class="hub-goal-fill" id="hubVocabGoalFill" style="width:0%;background:var(--purple);"></div></div>
+        </div>
+        <div class="hub-modes"><span class="hub-mode">Flashcards</span><span class="hub-mode">Aralıklı Tekrar</span></div>
+        <button type="button" class="btn hub-cta" onclick="go('vocab')">Öğrenmeye Başla</button>
+      </div>
+      <div class="hubcard">
+        <span class="hub-ic hub-green"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
         <span class="hub-t">Okuma</span>
         <span class="hub-s" id="hubReadSub">–</span>
-      </button>
-      <button class="hubcard" onclick="go('listening')">
-        <span class="hub-ic hub-blue"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span>
+        <div class="hub-goal">
+          <div class="hub-goal-row"><span>İlerleme</span><span id="hubReadGoalTxt">0/10</span></div>
+          <div class="hub-goal-track"><div class="hub-goal-fill" id="hubReadGoalFill" style="width:0%;background:var(--green);"></div></div>
+        </div>
+        <div class="hub-modes"><span class="hub-mode">Kitaplık Metinleri</span><span class="hub-mode">Kendi Notların</span></div>
+        <button type="button" class="btn green hub-cta" onclick="go('reading')">Okumaya Başla</button>
+      </div>
+      <div class="hubcard">
+        <span class="hub-ic hub-blue"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
         <span class="hub-t">Dinleme</span>
-        <span class="hub-s">Spotify</span>
-      </button>
-      <button class="hubcard" onclick="go('speaking')">
-        <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></span>
+        <span class="hub-s">Podcast ve dizilerle pratik yap</span>
+        <div class="hub-modes"><span class="hub-mode">Podcast Arama</span><span class="hub-mode">Gömülü Çalar</span></div>
+        <button type="button" class="btn blue hub-cta" onclick="go('listening')">Dinlemeye Başla</button>
+      </div>
+      <div class="hubcard">
+        <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
         <span class="hub-t">Konuşma</span>
-        <span class="hub-s" id="hubSpeakSub">Telaffuz + Seviyeler</span>
-      </button>
+        <span class="hub-s" id="hubSpeakSub">–</span>
+        <div class="hub-goal">
+          <div class="hub-goal-row"><span>İlerleme</span><span id="hubSpeakGoalTxt">0/0</span></div>
+          <div class="hub-goal-track"><div class="hub-goal-fill" id="hubSpeakGoalFill" style="width:0%;background:var(--gold);"></div></div>
+        </div>
+        <div class="hub-modes"><span class="hub-mode">Telaffuz Pratiği</span><span class="hub-mode">Seviye Üniteleri</span><span class="hub-mode">4/3/2 Akıcılık</span></div>
+        <button type="button" class="btn gold hub-cta" onclick="go('speaking')">Konuşmaya Başla</button>
+      </div>
       <button class="hubcard wide" onclick="go('achievements')">
         <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg></span>
         <span class="hub-txt"><span class="hub-t">Rozetler</span><span class="hub-s" id="hubBadgeSub">–</span></span>
@@ -703,10 +778,11 @@
         <p class="hint" id="libProgressHint" style="margin-bottom:12px;"></p>
         <button type="button" class="lib-next" id="libNextBtn">
           <span class="ln-num" id="libNextNum">1</span>
-          <span class="ln-body"><span class="ln-label">Sıradaki metin</span><span class="ln-title" id="libNextTitle">—</span></span>
+          <span class="ln-body"><span class="ln-label">Sıradaki metin</span><span class="ln-title" id="libNextTitle">—</span><p class="ln-preview" id="libNextPreview"></p></span>
           <span class="mchip sm ln-mascot"><img src="assets/mascot/pose-reading.png" alt=""></span>
           <svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
         </button>
+        <button type="button" class="btn green" id="libNextCta" style="margin-top:10px;">Okumaya Devam Et</button>
         <button type="button" class="lib-toggle" id="libToggle">Tüm metinler (More to Read I)<svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
         <div class="lib-list" id="libList"></div>
       </div>
@@ -1164,8 +1240,9 @@ function renderVocab(){
         '<button class="btn sec" id="flipBtn" style="display:flex;align-items:center;justify-content:center;gap:7px;">Çevir <svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg></button>';
       document.getElementById("flipBtn").addEventListener("click",function(){ flipped=true; renderVocab(); });
     } else {
-      sa.innerHTML='<div class="flash"><div class="q">'+esc(w.tr)+'</div><div class="big">'+esc(w.en)+'</div>'+
-        (w.ex?'<div class="ex">"'+esc(w.ex)+'"</div>':'')+'</div>'+
+      sa.innerHTML='<div class="flash"><div class="big">'+esc(w.en)+'</div>'+
+        '<div class="flash-sec"><span class="flash-lbl">Anlamı</span><div class="flash-val">'+esc(w.tr)+'</div></div>'+
+        (w.ex?'<div class="flash-sec"><span class="flash-lbl">Örnek</span><div class="flash-val ex">"'+esc(w.ex)+'"</div></div>':'')+'</div>'+
         '<div class="grade">'+
         '<button class="g-again" data-g="0"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg>Tekrar</button>'+
         '<button class="g-good" data-g="1"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bildim</button>'+
@@ -1311,8 +1388,15 @@ function renderReadingLib(){
     : (doneN+"/"+total+" metin tamamlandı — sırada "+frontier.id+". metin var.");
   document.getElementById("libNextNum").textContent=frontier.id;
   document.getElementById("libNextTitle").textContent=frontier.title;
+  var previewEl=document.getElementById("libNextPreview");
+  if(previewEl){
+    var firstPara=(frontier.paras||[]).filter(function(p){ return p.indexOf("##")!==0; })[0]||"";
+    previewEl.textContent=firstPara;
+  }
   var nextBtn=document.getElementById("libNextBtn");
   nextBtn.onclick=function(){ openLibRead(frontier.id); };
+  var nextCta=document.getElementById("libNextCta");
+  if(nextCta) nextCta.onclick=function(){ openLibRead(frontier.id); };
 
   var toggle=document.getElementById("libToggle"), listEl=document.getElementById("libList");
   if(!toggle.dataset.wired){
@@ -1833,7 +1917,11 @@ function renderSpeaking(){
       '<div id="timer432Display" style="display:none;text-align:center;font-family:var(--font-display);font-size:34px;font-weight:800;color:var(--purple-deep);padding:6px 0;"></div>'+
       '<button type="button" class="btn sec" id="timer432Stop" style="display:none;">Durdur</button>'+
     '</div>'+
-    '<div class="convo-partner"><div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div><span>Konuşma partnerin — Claude sesli sohbette seni dinliyor</span></div>'+
+    '<div class="convo-partner">'+
+      '<div class="cp-avatar"><span class="cp-pulse" aria-hidden="true"></span><div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div></div>'+
+      '<span>Konuşma partnerin — Claude sesli sohbette seni dinliyor</span>'+
+      '<span class="cp-sub">Konuşmaya başlamak için aşağıdaki butona dokun</span>'+
+    '</div>'+
     '<a class="btn deep" id="speakOpenClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</a>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın</span></div>'
@@ -1942,7 +2030,7 @@ function renderAchievements(){
   list.forEach(function(b){
     var col=BADGE_CAT_COLOR[b.def.cat];
     var cell=document.createElement("div"); cell.className="badge-cell"+(b.unlocked?"":" locked");
-    cell.innerHTML='<div class="badge-ic" style="'+(b.unlocked?("background:"+col.bg+";color:"+col.fg+";"):"")+'">'+
+    cell.innerHTML='<div class="badge-ic" style="'+(b.unlocked?("background:"+col.fg+";color:#fff;box-shadow:0 0 0 5px "+col.bg+", var(--shadow-sm);"):"")+'">'+
         '<svg class="icon" aria-hidden="true"><use href="#'+b.def.ic+'"></use></svg>'+
         (b.unlocked?"":'<span class="badge-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg></span>')+
       '</div>'+
@@ -2109,6 +2197,20 @@ function renderRadar(vals){
   svg+='</svg>';
   wrap.innerHTML=svg;
 }
+var SKILL_ICON={"Kelime":["i-cards","var(--purple)"],"Okuma":["i-book-open","var(--green)"],"Konuşma":["i-mic","var(--gold)"],"Günlük":["i-edit","var(--pink)"]};
+function renderSkillList(vals){
+  var wrap=document.getElementById("progSkillList"); if(!wrap) return;
+  wrap.innerHTML="";
+  vals.forEach(function(v){
+    var meta=SKILL_ICON[v.label]||["i-star","var(--purple)"];
+    var row=document.createElement("div"); row.className="skillrow";
+    row.innerHTML='<span class="skillrow-ic" style="background:'+meta[1]+';"><svg class="icon" aria-hidden="true"><use href="#'+meta[0]+'"></use></svg></span>'+
+      '<span class="skillrow-name">'+esc(v.label)+'</span>'+
+      '<span class="skillrow-track"><span class="skillrow-fill" style="width:'+v.pct+'%;background:'+meta[1]+';"></span></span>'+
+      '<span class="skillrow-pct">'+v.pct+'%</span>';
+    wrap.appendChild(row);
+  });
+}
 function renderHeatmap(){
   var grid=document.getElementById("progHeatmap"); if(!grid) return;
   var maxV=STEPS.length;
@@ -2163,12 +2265,14 @@ function renderProgress(){
   var speakPct=totalSpeakUnits?Math.round(doneSpeakUnits/totalSpeakUnits*100):0;
   var journalDays=Object.keys(S.journal).length;
   var journalPct=Math.min(100,Math.round(journalDays/14*100));
-  renderRadar([
+  var skillVals=[
     {label:"Kelime",pct:vocabPct},
     {label:"Okuma",pct:readPct},
     {label:"Konuşma",pct:speakPct},
     {label:"Günlük",pct:journalPct}
-  ]);
+  ];
+  renderRadar(skillVals);
+  renderSkillList(skillVals);
   renderHeatmap();
 }
 
@@ -2176,11 +2280,26 @@ function renderProgress(){
 function renderLearnHub(){
   var due=dueWords().length;
   document.getElementById("hubVocabSub").textContent=due?(due+" kart bekliyor"):"Hepsi güncel";
+  var knownN=S.words.filter(function(w){return w.box>=3;}).length;
+  var vocabPct=S.words.length?Math.round(knownN/S.words.length*100):0;
+  var vocabFill=document.getElementById("hubVocabGoalFill"), vocabTxt=document.getElementById("hubVocabGoalTxt");
+  if(vocabFill) vocabFill.style.width=vocabPct+"%";
+  if(vocabTxt) vocabTxt.textContent=knownN+"/"+S.words.length+" biliniyor";
+
   document.getElementById("hubReadSub").textContent=S.readings.length?(S.readings.length+" kayıt"):"Henüz kayıt yok";
+  var readGoal=10, readN=Math.min(S.readings.length,readGoal);
+  var readFill=document.getElementById("hubReadGoalFill"), readTxt=document.getElementById("hubReadGoalTxt");
+  if(readFill) readFill.style.width=Math.round(readN/readGoal*100)+"%";
+  if(readTxt) readTxt.textContent=readN+"/"+readGoal+" kayıt";
+
   var totalUnits=SPEAK_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
   var doneUnits=Object.keys(S.speaking.completed).length;
   var fr=speakFrontier(), lvl=SPEAK_LEVELS[fr.li];
-  document.getElementById("hubSpeakSub").textContent=lvl.cefr+" · "+doneUnits+"/"+totalUnits+" ünite";
+  document.getElementById("hubSpeakSub").textContent="Seviyen: "+lvl.cefr+" · "+lvl.name;
+  var speakFill=document.getElementById("hubSpeakGoalFill"), speakTxt=document.getElementById("hubSpeakGoalTxt");
+  if(speakFill) speakFill.style.width=(totalUnits?Math.round(doneUnits/totalUnits*100):0)+"%";
+  if(speakTxt) speakTxt.textContent=doneUnits+"/"+totalUnits+" ünite";
+
   var badges=computeBadges(), badgeN=badges.filter(function(b){ return b.unlocked; }).length;
   document.getElementById("hubBadgeSub").textContent=badgeN+"/"+badges.length+" kazanıldı";
 }
