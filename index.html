@@ -77,6 +77,7 @@
   .subhead{ display:flex; align-items:center; gap:12px; margin:8px 2px 16px; }
   .subhead .back{ background:var(--card); border:none; width:44px; height:44px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .subhead h1{ font-family:var(--font-display); font-size:19px; font-weight:800; color:var(--ink); letter-spacing:-.2px; }
+  .subhead h1.tight{ font-size:16.5px; line-height:1.3; }
   .subhead p{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
 
   /* ---- BUGÜN (home) ---- */
@@ -227,15 +228,16 @@
   .lib-next{ display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,var(--tint) 0%,#fbeaff 100%); border-radius:18px; padding:14px 15px; cursor:pointer; border:none; width:100%; text-align:left; font-family:inherit; }
   .lib-next .ln-num{ width:38px; height:38px; border-radius:50%; background:var(--purple); color:#fff; font-family:var(--font-display); font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .lib-next .ln-body{ flex:1; min-width:0; }
-  .lib-next .ln-label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--purple-deep); font-weight:800; }
-  .lib-next .ln-title{ font-size:14.5px; font-weight:700; color:var(--ink); margin-top:2px; }
+  .lib-next .ln-label{ display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--purple-deep); font-weight:800; }
+  .lib-next .ln-title{ display:block; font-size:14.5px; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.3; }
   .lib-next .u-chev{ color:var(--purple-deep); width:18px; height:18px; flex-shrink:0; }
-  .lib-toggle{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; background:none; border:none; padding:11px 0 2px; font-size:12.5px; font-weight:700; color:var(--purple-deep); cursor:pointer; font-family:inherit; }
+  .lib-toggle{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; background:none; border:none; padding:11px 0 2px; font-size:12.5px; font-weight:700; color:var(--purple-deep); cursor:pointer; font-family:inherit; min-height:44px; }
   .lib-toggle .icon{ width:14px; height:14px; transition:transform .2s; }
   .lib-toggle.open .icon{ transform:rotate(180deg); }
   .lib-list{ max-height:0; overflow:hidden; transition:max-height .25s; }
   .lib-list.open{ max-height:420px; overflow-y:auto; margin-top:6px; }
-  .lib-row{ display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; padding:9px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:40px; }
+  .lib-row{ display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; padding:10px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:44px; border-radius:10px; transition:background .12s; }
+  .lib-row:active{ background:var(--tint); }
   .lib-row .u-stat{ width:22px; height:22px; border-radius:50%; border:2px solid var(--line); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:transparent; }
   .lib-row.done .u-stat{ background:var(--green); border-color:var(--green); color:#fff; }
   .lib-row .u-stat .icon{ width:12px; height:12px; stroke-width:3; }
@@ -245,12 +247,14 @@
   .read-body{ font-size:15px; line-height:1.85; color:var(--ink); }
   .read-body .rp{ margin-bottom:14px; }
   .read-body .rsub{ display:block; font-family:var(--font-display); font-weight:800; font-size:13.5px; color:var(--purple-deep); margin-bottom:6px; letter-spacing:.1px; }
-  .rw{ border-radius:5px; padding:0 1px; cursor:pointer; transition:background .12s; }
-  .rw:active, .rw.tapped{ background:var(--tint-strong); }
-  .word-sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--card); border-radius:22px 22px 0 0; box-shadow:0 -8px 30px rgba(42,33,83,.18); padding:16px 18px calc(18px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform .22s; z-index:60; max-width:560px; margin:0 auto; }
+  .rw{ border-radius:4px; padding:0 1px; cursor:pointer; transition:background .15s; }
+  .rw:active{ background:var(--tint-strong); }
+  .rw.tapped{ background:var(--tint); border-radius:4px; }
+  .word-sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--card); border-radius:22px 22px 0 0; box-shadow:0 -8px 30px rgba(42,33,83,.18); padding:10px 18px calc(18px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform .22s; z-index:60; max-width:560px; margin:0 auto; }
   .word-sheet.open{ transform:translateY(0); }
   .word-backdrop{ position:fixed; inset:0; background:rgba(42,33,83,.28); z-index:59; opacity:0; pointer-events:none; transition:opacity .2s; }
   .word-backdrop.open{ opacity:1; pointer-events:auto; }
+  .ws-handle{ width:36px; height:4px; border-radius:99px; background:var(--tint-strong); margin:0 auto 14px; }
   .ws-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
   .ws-word{ font-family:var(--font-display); font-weight:800; font-size:19px; color:var(--ink); text-transform:lowercase; }
   .ws-close{ margin-left:auto; background:var(--tint); border:none; width:34px; height:34px; border-radius:50%; color:var(--purple-deep); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
@@ -627,7 +631,7 @@
     <div class="subhead">
       <button class="back" onclick="go('reading')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <div class="mchip"><img src="assets/mascot/pose-reading.png" alt=""></div>
-      <div><h1 id="libReadTitle" style="font-size:16px;">—</h1><p id="libReadSub">More to Read I</p></div>
+      <div><h1 id="libReadTitle" class="tight">—</h1><p id="libReadSub">More to Read I</p></div>
     </div>
     <div class="card">
       <p class="hint" style="margin-top:0;margin-bottom:12px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
@@ -848,6 +852,7 @@
 
 <div class="word-backdrop" id="wordBackdrop"></div>
 <div class="word-sheet" id="wordSheet">
+  <div class="ws-handle" aria-hidden="true"></div>
   <div class="ws-head"><span class="ws-word" id="wsWord">—</span><button type="button" class="ws-close" id="wsClose" aria-label="Kapat"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
   <div class="ws-tr" id="wsTr">Anlamına bakılıyor...</div>
   <div class="ws-actions">
@@ -906,6 +911,7 @@ function today0(){ var d=new Date(); d.setHours(0,0,0,0); return d.getTime(); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function isoDate(d){ function pad(n){ return (n<10?"0":"")+n; } return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
 function fmtDate(iso){ if(!iso) return ""; var p=iso.split("-"); if(p.length<3) return iso; return p[2]+"."+p[1]+"."+p[0]; }
+function fmtDstrKey(k){ function pad(n){ return (n.length<2?"0":"")+n; } var p=k.split("-"); if(p.length<3) return k; return pad(p[2])+"."+pad(p[1])+"."+p[0]; }
 function parseDstr(k){ var p=k.split("-"); return new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10)); }
 function trimHistory(){
   var keys=Object.keys(S.history);
@@ -1198,6 +1204,7 @@ function renderLibRead(){
   }).join("");
   body.querySelectorAll(".rw").forEach(function(span){
     span.addEventListener("click",function(){
+      span.classList.add("tapped");
       openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
     });
   });
@@ -1217,8 +1224,15 @@ function renderLibRead(){
   };
 }
 function wrapWords(text){
-  return esc(text).replace(/[A-Za-zÀ-ÖØ-öø-ÿ']+/g,function(w){
-    return '<span class="rw" data-w="'+w.toLowerCase()+'">'+w+'</span>';
+  // Önce esc() uygulayıp SONRA kelimeleri regex ile sarmak, "&quot;" gibi
+  // HTML entity'lerinin ortasındaki harfleri de "kelime" sanıp span içine
+  // alıyordu (&<span>quot</span>; gibi) — bu da entity'yi bozup ekranda
+  // "&quot;" yazısının düz metin olarak görünmesine yol açıyordu.
+  // Bunun yerine metni kelime / kelime-olmayan parçalara ayırıp, sadece
+  // kelime-olmayan (noktalama, boşluk, tırnak vb.) parçaları esc() ediyoruz.
+  return text.replace(/([A-Za-zÀ-ÖØ-öø-ÿ']+)|([^A-Za-zÀ-ÖØ-öø-ÿ']+)/g,function(m,word,rest){
+    if(word) return '<span class="rw" data-w="'+word.toLowerCase()+'">'+word+'</span>';
+    return esc(rest);
   });
 }
 function trLookup(word){
@@ -1967,7 +1981,7 @@ function renderJournal(){
     var e=S.journal[k];
     var row=document.createElement("button"); row.type="button"; row.className="journal-row";
     var noteShort=(e.notes||"").slice(0,42)+((e.notes||"").length>42?"…":"");
-    row.innerHTML='<span class="j-mood">'+(e.mood||"—")+'</span><span class="j-date">'+k+'</span><span class="j-notes">'+esc(noteShort)+'</span>';
+    row.innerHTML='<span class="j-mood">'+(e.mood||"—")+'</span><span class="j-date">'+fmtDstrKey(k)+'</span><span class="j-notes">'+esc(noteShort)+'</span>';
     row.addEventListener("click",function(){ journalCursor=parseDstr(k); renderJournal(); });
     hist.appendChild(row);
   });
