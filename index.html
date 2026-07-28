@@ -41,6 +41,7 @@
     --rust:var(--danger); --rust-tint:var(--danger-soft);
     --pink:#B5459A; --pink-tint:#FAEAF5;   /* warmth accent — kept distinct from success/warning/danger */
     --blue:#3B6FE0; --blue-tint:#E7EDFC;   /* neutral info accent — kept distinct */
+    --teal:#1B8C8C; --teal-tint:#E2F5F5;   /* Dilbilgisi accent — kept distinct from blue/green */
     --shadow-sm:var(--shadow-1); --shadow-md:var(--shadow-2);
     --font-display:var(--font-ui);
   }
@@ -50,7 +51,7 @@
     --accent:#8B7FFF; --accent-ink:#C9C2FF; --accent-soft:#251F42; --accent-soft-2:#332B57;
     --success:#3CC091; --success-soft:#132A22; --warning:#E0A542; --warning-soft:#2E2410; --danger:#E2726E; --danger-soft:#301918;
     --shadow-1:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 10px 28px rgba(0,0,0,.5);
-    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740;
+    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740; --teal:#4DBFBF; --teal-tint:#132B2B;
   }}
   :root[data-theme="dark"]{
     color-scheme: dark;
@@ -59,7 +60,7 @@
     --accent:#8B7FFF; --accent-ink:#C9C2FF; --accent-soft:#251F42; --accent-soft-2:#332B57;
     --success:#3CC091; --success-soft:#132A22; --warning:#E0A542; --warning-soft:#2E2410; --danger:#E2726E; --danger-soft:#301918;
     --shadow-1:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 10px 28px rgba(0,0,0,.5);
-    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740;
+    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740; --teal:#4DBFBF; --teal-tint:#132B2B;
   }
   :root[data-theme="light"]{
     color-scheme: light;
@@ -69,7 +70,7 @@
     --success:#1C9C6E; --success-soft:#E4F5EE; --warning:#B9750F; --warning-soft:#FBF0DD; --danger:#C4433F; --danger-soft:#FBEAE9;
     --shadow-1:0 1px 2px rgba(23,21,31,.06), 0 1px 1px rgba(23,21,31,.04);
     --shadow-2:0 8px 24px rgba(23,21,31,.10), 0 2px 6px rgba(23,21,31,.06);
-    --pink:#B5459A; --pink-tint:#FAEAF5; --blue:#3B6FE0; --blue-tint:#E7EDFC;
+    --pink:#B5459A; --pink-tint:#FAEAF5; --blue:#3B6FE0; --blue-tint:#E7EDFC; --teal:#1B8C8C; --teal-tint:#E2F5F5;
   }
   *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; min-width:0; }
   body{ font-family:var(--font-body); background:var(--bg); color:var(--ink); padding-bottom:112px; line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
@@ -231,7 +232,8 @@
      reference's "colored circle, white icon" skill-badge language, reused
      everywhere a skill/category needs an icon (hub cards, task list, badges). */
   .hub-ic{ position:relative; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-  .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); }
+  .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); } .hub-teal{ background:var(--teal-tint); color:var(--teal); }
+  .btn.teal{ background:var(--teal); }
   .hub-ic-plus{ position:absolute; right:-3px; bottom:-3px; width:18px; height:18px; border-radius:50%; background:var(--surface); box-shadow:0 0 0 2px var(--card), var(--shadow-sm); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
   .hub-ic-plus .icon{ width:10px; height:10px; stroke-width:3; }
   .hub-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
@@ -361,6 +363,26 @@
   .cefr-badge.lg{ min-width:50px; height:32px; font-size:14.5px; border-radius:var(--radius-md); }
   .cefr-badge.locked{ background:var(--tint); color:var(--ink-soft); box-shadow:none; }
   .phrase-chip{ display:inline-flex; align-items:center; background:var(--tint); color:var(--purple-deep); font-size:12px; font-weight:700; padding:6px 12px; border-radius:99px; margin:0 6px 6px 0; }
+
+  /* ---- DİLBİLGİSİ ---- */
+  .rule-box{ background:var(--tint); border-radius:var(--radius-md); padding:13px 14px; margin-bottom:12px; font-size:13.5px; line-height:1.55; color:var(--ink); }
+  .example-row{ padding:9px 0; border-bottom:1px solid var(--line); }
+  .example-row:last-child{ border-bottom:none; }
+  .example-row .ex-en{ font-size:14px; font-weight:700; color:var(--ink); }
+  .example-row .ex-tr{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+  .mistake-box{ display:flex; gap:10px; background:var(--rust-tint); border-radius:var(--radius-md); padding:12px 13px; margin:12px 0; font-size:12.5px; line-height:1.5; color:var(--ink); }
+  .mistake-box .icon{ color:var(--rust); width:18px; height:18px; flex-shrink:0; margin-top:1px; }
+  .mistake-box b{ color:var(--rust); }
+  .gx-block{ margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--line); }
+  .gx-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .gx-q{ font-size:14px; font-weight:700; color:var(--ink); margin-bottom:10px; font-family:var(--font-data); }
+  .gx-opts{ display:flex; flex-direction:column; gap:8px; }
+  .gx-opt{ text-align:left; padding:11px 13px; border-radius:var(--radius-md); border:1.5px solid var(--line); background:var(--surface); font-family:var(--font-data); font-size:13px; color:var(--ink); cursor:pointer; min-height:44px; transition:border-color .15s,background .15s; }
+  .gx-opt.sel{ border-color:var(--accent); background:var(--tint); }
+  .gx-opt.correct{ border-color:var(--green); background:var(--green-tint); color:var(--green); font-weight:700; }
+  .gx-opt.wrong{ border-color:var(--rust); background:var(--rust-tint); color:var(--rust); font-weight:700; }
+  .gx-opt:disabled{ cursor:default; }
+  .gx-score{ display:flex; align-items:center; gap:10px; background:var(--tint); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:14px; font-weight:800; color:var(--purple-deep); font-family:var(--font-data); }
   .level-block{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--line); }
   .level-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
   .level-block.locked{ opacity:.55; }
@@ -515,6 +537,7 @@
 <symbol id="i-x" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
 <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20l.9-3.6L15.9 5.4a1.5 1.5 0 0 1 2.1 0l.6.6a1.5 1.5 0 0 1 0 2.1L7.6 19.1 4 20Z"/><line x1="14.5" y1="6.8" x2="17.2" y2="9.5"/></symbol>
 <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" style="fill:currentColor;stroke:none"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20h-19L12 3.5Z"/><line x1="12" y1="9.5" x2="12" y2="14"/><circle cx="12" cy="17" r="1" style="fill:currentColor;stroke:none"/></symbol>
 <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c8-1 13-6 14-14-8 1-13 6-14 14Z"/><path d="M6.5 17.5C9 15 11 12.5 14 8.5"/></symbol>
 <symbol id="i-cards" viewBox="0 0 24 24"><rect x="6" y="7" width="13" height="14" rx="2"/><path d="M9.5 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1.5"/></symbol>
 <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4Z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.8a7.5 7.5 0 0 1 0 10.4"/></symbol>
@@ -696,6 +719,17 @@
         </div>
         <div class="hub-modes"><span class="hub-mode">Telaffuz Pratiği</span><span class="hub-mode">Seviye Üniteleri</span><span class="hub-mode">4/3/2 Akıcılık</span></div>
         <button type="button" class="btn gold hub-cta" onclick="go('speaking')">Konuşmaya Başla</button>
+      </div>
+      <div class="hubcard">
+        <span class="hub-ic hub-teal"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
+        <span class="hub-t">Dilbilgisi</span>
+        <span class="hub-s" id="hubGrammarSub">–</span>
+        <div class="hub-goal">
+          <div class="hub-goal-row"><span>İlerleme</span><span id="hubGrammarGoalTxt">0/0</span></div>
+          <div class="hub-goal-track"><div class="hub-goal-fill" id="hubGrammarGoalFill" style="width:0%;background:var(--teal);"></div></div>
+        </div>
+        <div class="hub-modes"><span class="hub-mode">Kural + Örnek</span><span class="hub-mode">Alıştırmalar</span></div>
+        <button type="button" class="btn teal hub-cta" onclick="go('grammar')">Dilbilgisine Başla</button>
       </div>
       <button class="hubcard wide" onclick="go('achievements')">
         <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg></span>
@@ -896,6 +930,24 @@
       <details id="speakAllLevelsBox">
         <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Tüm seviyeler</summary>
         <div id="speakLevelList" style="margin-top:14px;"></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== DİLBİLGİSİ ===== -->
+  <section class="view" id="v-grammar">
+    <div class="page-head">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Dilbilgisi</h1>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Konun</h2>
+      <div id="grammarCurrent"></div>
+    </div>
+    <div class="card">
+      <details id="grammarAllLevelsBox">
+        <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Tüm konular</summary>
+        <div id="grammarLevelList" style="margin-top:14px;"></div>
       </details>
     </div>
   </section>
@@ -1102,6 +1154,7 @@ S.journal=S.journal||{};
 S.settings=S.settings||{};
 S.pronCount=S.pronCount||0;
 S.speaking=S.speaking||{completed:{},selected:null};
+S.grammar=S.grammar||{completed:{},selected:null};
 S.tasks=S.tasks||{};
 S.readingLib=S.readingLib||{completed:{}};
 S.trCache=S.trCache||{};
@@ -1143,7 +1196,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",achievements:"learn",journal:"journal",profile:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",achievements:"learn",journal:"journal",profile:"profile"};
 function go(v){
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
@@ -1157,6 +1210,7 @@ function go(v){
   if(v==="libread") renderLibRead();
   if(v==="listening") renderListening();
   if(v==="speaking") renderSpeaking();
+  if(v==="grammar") renderGrammar();
   if(v==="achievements") renderAchievements();
   if(v==="journal") renderJournal();
   if(v==="profile") renderProfile();
@@ -1827,6 +1881,278 @@ function speakFrontier(){
   var last=SPEAK_LEVELS.length-1;
   return {li:last,ui:SPEAK_LEVELS[last].units.length-1};
 }
+
+/* ---------- DİLBİLGİSİ (CEFR-based grammar curriculum — topics grounded in the
+   standard CEFR grammar syllabus + documented Turkish-L1 interference errors:
+   word order, articles, prepositions, tense/aspect ---------- */
+var GRAMMAR_LEVELS=[
+ {cefr:"A2",name:"Temel",cando:"Günlük konularda temel dilbilgisi yapılarını doğru kurabiliyorum.",units:[
+  {name:"Present Simple vs Present Continuous",
+   rule:"Present Simple: alışkanlıklar, genel gerçekler, rutinler için (I work, she works). Present Continuous: şu an olan ya da geçici bir eylem için (I am working). Türkçede '-yor' eki her iki zamanı da karşılayabildiğinden, İngilizcede bu ikisini karıştırmak çok yaygın bir hatadır.",
+   examples:[["I work in a bank.","Bir bankada çalışıyorum. (genel durum)"],["I am working on a report right now.","Şu anda bir rapor üzerinde çalışıyorum. (şu anki eylem)"],["She usually drinks tea, but today she is drinking coffee.","Genelde çay içer ama bugün kahve içiyor."]],
+   mistake:"Türkçe konuşanlar 'şu an' anlamındaki '-yor'u her zaman Present Continuous'a çevirme eğilimindedir; oysa 'I think', 'I like', 'I know' gibi durum bildiren (stative) fiiller Türkçede '-yor' alsa bile İngilizcede Present Simple ister: 'I am liking it' değil, 'I like it'.",
+   exercises:[
+    {q:"Every morning, she ___ coffee before work.",opts:["drink","drinks","is drinking","was drinking"],a:1},
+    {q:"Look! It ___ outside — take an umbrella.",opts:["rains","rain","is raining","rained"],a:2},
+    {q:"I ___ (not/understand) this sentence.",opts:["don't understand","am not understanding","doesn't understand","not understand"],a:0},
+    {q:"We usually ___ to the gym on Mondays, but this week we ___ on Wednesday.",opts:["go / are going","are going / go","go / go","are going / are going"],a:0}
+   ]},
+  {name:"Artikeller: a / an / the",
+   rule:"'a/an' ilk kez bahsedilen ya da belirsiz bir tekil sayılabilir isim için kullanılır (a book). 'the' hem konuşan hem dinleyenin bildiği belirli bir şey için kullanılır (the book on the table). Genel geçer ifadelerde ve çoğul/sayılamayan isimlerde çoğu zaman artikel kullanılmaz (I like music, not 'the music').",
+   examples:[["I saw a dog in the park.","Parkta bir köpek gördüm."],["The dog was very friendly.","Köpek çok cana yakındı. (az önce bahsedilen köpek)"],["Money can't buy happiness.","Para mutluluk satın alamaz. (genel ifade, artikelsiz)"]],
+   mistake:"Türkçede artikel karşılığı olmadığı için Türkçe konuşanlar artikelleri sıkça atlar ('I saw dog') ya da gereksiz yere 'the' ekler ('I like the music'). Kural: ilk bahsedişte 'a/an', tekrar bahsedişte 'the', genel/soyut ifadelerde artikelsiz.",
+   exercises:[
+    {q:"I bought ___ umbrella yesterday. ___ umbrella is red.",opts:["a / An","an / The","the / A","a / The"],a:3},
+    {q:"___ honesty is important in every relationship.",opts:["The","A","An","(no article)"],a:3},
+    {q:"She works as ___ engineer in Istanbul.",opts:["a","an","the","(no article)"],a:1},
+    {q:"Can you close ___ door? It's cold.",opts:["a","an","the","(no article)"],a:2}
+   ]},
+  {name:"Sayılabilen / Sayılamayan İsimler",
+   rule:"Sayılabilen isimler (book, idea) tekil/çoğul olabilir ve 'a/an', 'many', 'few' ile kullanılır. Sayılamayanlar (water, information, advice) çoğul yapılamaz ve 'much', 'little', 'some' ile kullanılır. Türkçede 'bilgi', 'tavsiye' gibi kelimeler çoğul yapılabildiği için İngilizcede 'informations', 'advices' gibi hatalar sık görülür.",
+   examples:[["I need some information about the course.","Kurs hakkında biraz bilgiye ihtiyacım var."],["She gave me some good advice.","Bana iyi bir tavsiye verdi."],["How many books do you have?","Kaç kitabın var?"]],
+   mistake:"'Information', 'advice', 'furniture', 'news' gibi kelimeler İngilizcede sayılamaz ve ASLA çoğul yapılmaz (informations ✗). Bunun yerine 'a piece of advice', 'some information' gibi kalıplar kullanılır.",
+   exercises:[
+    {q:"I don't have ___ money left this month.",opts:["many","much","a few","numbers of"],a:1},
+    {q:"She gave me some useful ___.",opts:["advices","advice","an advice","the advices"],a:1},
+    {q:"How ___ people came to the meeting?",opts:["much","many","a little","much of"],a:1},
+    {q:"There is ___ water in the bottle.",opts:["a","many","a few","a little"],a:3}
+   ]},
+  {name:"Comparatives & Superlatives",
+   rule:"Kısa sıfatlarda (1 hece) -er/-est eklenir (fast → faster → fastest). Uzun sıfatlarda more/most kullanılır (expensive → more expensive → the most expensive). Karşılaştırmada 'than' kullanılır, üstünlük belirtirken başına 'the' gelir.",
+   examples:[["This phone is more expensive than that one.","Bu telefon şundan daha pahalı."],["She is the tallest in her class.","Sınıfındaki en uzun kişi o."],["Today is colder than yesterday.","Bugün dünden daha soğuk."]],
+   mistake:"Uzun sıfatlarda hem '-er' hem 'more' birlikte kullanmak yaygın bir hatadır ('more better' ✗, 'better' ✓). Ayrıca karşılaştırmada 'than' yerine 'from' veya 'that' kullanmak da sık görülür.",
+   exercises:[
+    {q:"This exercise is ___ than the last one.",opts:["more difficult","difficulter","more difficulter","most difficult"],a:0},
+    {q:"He is ___ player on the team.",opts:["gooder","the best","the goodest","more good"],a:1},
+    {q:"My sister is ___ than me.",opts:["tall","more tall","taller","the tallest"],a:2},
+    {q:"This is ___ restaurant in the city.",opts:["the most good","the best","the goodest","more best"],a:1}
+   ]},
+  {name:"Temel Edatlar: Yer ve Zaman",
+   rule:"Zamanda: 'at' saat (at 6 o'clock), 'on' gün/tarih (on Monday), 'in' ay/yıl/mevsim (in July). Yerde: 'at' nokta (at the door), 'on' yüzey (on the table), 'in' kapalı alan (in the room). Türkçedeki '-de/-da' eki tüm bu edatları karşıladığı için seçim yapmak zorlaşır.",
+   examples:[["I have a meeting at 3 PM on Friday in July.","Temmuz'da, Cuma günü saat 15:00'te toplantım var."],["The keys are on the table.","Anahtarlar masanın üzerinde."],["She lives in Istanbul.","İstanbul'da yaşıyor."]],
+   mistake:"'in the morning' ama 'at night' — bu istisna sık karıştırılır. Ayrıca 'arrive to' değil 'arrive in/at' doğru kullanımdır (Türkçedeki '-e/-a' yönelme ekinin etkisiyle 'to' kullanma eğilimi olur).",
+   exercises:[
+    {q:"I usually wake up early ___ the morning.",opts:["at","in","on","(no preposition)"],a:1},
+    {q:"We arrived ___ the airport ___ 9 PM.",opts:["at / at","to / on","in / at","to / in"],a:0},
+    {q:"Her birthday is ___ March.",opts:["at","on","in","(no preposition)"],a:2},
+    {q:"See you ___ Monday!",opts:["at","in","on","(no preposition)"],a:2}
+   ]},
+  {name:"Past Simple (Düzenli / Düzensiz Fiiller)",
+   rule:"Düzenli fiillere -ed eklenir (work → worked). Düzensiz fiillerin ikinci hali ezbere bilinmelidir (go → went, see → saw). Olumsuz ve soru cümlelerinde 'did' yardımcı fiili kullanılır, ana fiil ise mastar (base) halinde kalır.",
+   examples:[["I visited my grandmother last weekend.","Geçen hafta sonu büyükannemi ziyaret ettim."],["She didn't go to the party.","Partiye gitmedi."],["Did you finish your homework?","Ödevini bitirdin mi?"]],
+   mistake:"Olumsuz/soru cümlesinde hem 'did' hem de fiilin geçmiş halini birlikte kullanmak yaygın bir hatadır: 'Did you went?' ✗ → 'Did you go?' ✓ — 'did' zaten geçmiş zamanı taşıdığı için fiil mastar halinde kalmalı.",
+   exercises:[
+    {q:"She ___ to London two years ago.",opts:["go","goes","went","has gone"],a:2},
+    {q:"___ you ___ the movie last night?",opts:["Did / watched","Did / watch","Do / watch","Were / watch"],a:1},
+    {q:"I ___ (not/see) him at the party.",opts:["didn't saw","not saw","didn't see","don't saw"],a:2},
+    {q:"They ___ (study) for three hours yesterday.",opts:["studyed","studied","studies","was study"],a:1}
+   ]}
+ ]},
+ {cefr:"B1",name:"Orta-Alt",cando:"Geçmiş, gelecek ve aktarılan anlatım gibi daha karmaşık yapıları kullanabiliyorum.",units:[
+  {name:"Present Perfect vs Past Simple",
+   rule:"Present Perfect (have/has + V3): geçmişte olan ama şimdiki zamanla bağlantısı olan ya da zamanı belirsiz olaylar için (I have visited Paris). Past Simple: geçmişte, belirli bir zamanda bitmiş olaylar için (I visited Paris in 2019). Türkçede bu ikisi genelde '-di' geçmiş zamanıyla karşılandığı için ayrım zor gelir.",
+   examples:[["I have already finished my homework.","Ödevimi çoktan bitirdim. (ne zaman önemli değil)"],["I finished my homework at 6 PM.","Ödevimi saat 18:00'de bitirdim. (belirli zaman)"],["Have you ever been to Japan?","Hiç Japonya'ya gittin mi?"]],
+   mistake:"Belirli bir geçmiş zaman ifadesiyle (yesterday, last year, in 2020) Present Perfect kullanmak en yaygın hatadır: 'I have seen him yesterday' ✗ → 'I saw him yesterday' ✓.",
+   exercises:[
+    {q:"I ___ that movie three times.",opts:["saw","have seen","see","was seeing"],a:1},
+    {q:"She ___ her keys yesterday.",opts:["has lost","lost","loses","was losing"],a:1},
+    {q:"___ you ever ___ sushi?",opts:["Did / eat","Have / eaten","Have / eat","Do / eat"],a:1},
+    {q:"We ___ to that restaurant last month.",opts:["have been","went","have gone","go"],a:1}
+   ]},
+  {name:"Future Forms: will / going to / present continuous",
+   rule:"'Will': anlık kararlar ve tahminler (I'll help you / It will rain). 'Going to': önceden planlanmış niyetler ve kanıta dayalı tahminler (I'm going to study medicine / Look at those clouds, it's going to rain). 'Present continuous': yakın gelecekte kesinleşmiş randevu/planlar (I'm meeting her at 5).",
+   examples:[["I think it will be sunny tomorrow.","Sanırım yarın güneşli olacak. (tahmin)"],["I'm going to start a new job next month.","Gelecek ay yeni bir işe başlayacağım. (planlanmış)"],["I'm having dinner with my parents tonight.","Bu akşam ailemle yemek yiyorum. (kesinleşmiş plan)"]],
+   mistake:"Türkçede gelecek zaman tek bir ek (-ecek/-acak) ile ifade edildiği için bu üç yapı arasındaki niyet/kesinlik farkı genelde göz ardı edilir ve her zaman 'will' kullanılır.",
+   exercises:[
+    {q:"A: The phone is ringing. B: I ___ answer it.",opts:["am going to","will","am answering","answer"],a:1},
+    {q:"Look at those dark clouds — it ___ rain.",opts:["will","is going to","is raining","rains"],a:1},
+    {q:"We ___ dinner with the Smiths on Friday. It's all planned.",opts:["will have","are having","have","will be having"],a:1},
+    {q:"I promise I ___ call you as soon as I arrive.",opts:["am going to","will","am calling","call"],a:1}
+   ]},
+  {name:"Reported Speech (Aktarılan Anlatım)",
+   rule:"Doğrudan anlatım aktarılırken zaman genelde bir adım geriye kayar: Present Simple → Past Simple, Present Perfect → Past Perfect, will → would. Zamir ve zaman zarfları da bağlama göre değişir (tomorrow → the next day).",
+   examples:[["\"I am tired,\" she said. → She said (that) she was tired.","\"Yorgunum,\" dedi. → Yorgun olduğunu söyledi."],["\"I will call you,\" he said. → He said he would call me.","\"Seni arayacağım,\" dedi. → Beni arayacağını söyledi."],["\"I have finished,\" she said. → She said she had finished.","\"Bitirdim,\" dedi. → Bitirdiğini söyledi."]],
+   mistake:"Zaman kaydırmayı unutup doğrudan anlatımdaki zamanı olduğu gibi bırakmak çok yaygındır: 'She said she is tired' ✗ → 'She said she was tired' ✓.",
+   exercises:[
+    {q:"\"I am busy,\" she said. → She said (that) she ___ busy.",opts:["is","was","has been","will be"],a:1},
+    {q:"\"I will help you,\" he said. → He said he ___ help me.",opts:["will","would","can","helps"],a:1},
+    {q:"\"I saw the movie,\" she said. → She said she ___ the movie.",opts:["saw","sees","had seen","has seen"],a:2},
+    {q:"\"I live in Paris,\" he said. → He said he ___ in Paris.",opts:["lives","lived","is living","was live"],a:1}
+   ]},
+  {name:"Relative Clauses (who / which / that / where)",
+   rule:"'Who' insanlar için, 'which' nesneler için, 'that' her ikisi için (konuşma dilinde yaygın), 'where' yerler için kullanılır. Bu bağlaçlar iki cümleyi birleştirip tekrar eden isim/zamiri ortadan kaldırır.",
+   examples:[["The woman who lives next door is a doctor.","Yan komşu olan kadın doktor."],["This is the book which I told you about.","Bu, sana bahsettiğim kitap."],["That's the café where we first met.","Orası ilk tanıştığımız kafe."]],
+   mistake:"İlgi zamirinden sonra gereksiz bir kişi zamiri eklemek yaygındır: 'The woman who she lives next door...' ✗ — 'who' zaten öznenin yerini tuttuğu için 'she' tekrar kullanılmamalı.",
+   exercises:[
+    {q:"The man ___ called you is my brother.",opts:["which","who","where","whose"],a:1},
+    {q:"This is the house ___ I grew up.",opts:["which","who","where","that"],a:2},
+    {q:"I lost the phone ___ I bought last week.",opts:["who","where","which","whom"],a:2},
+    {q:"She's the teacher ___ class I really enjoyed.",opts:["who","which","whose","where"],a:2}
+   ]},
+  {name:"Modals of Obligation & Advice",
+   rule:"'Must': güçlü zorunluluk, genelde konuşanın kendi görüşü (I must finish this). 'Have to': dışarıdan gelen zorunluluk/kural (I have to wear a uniform). 'Should': tavsiye (You should sleep more). 'Don't have to' ≠ 'mustn't': ilki gereksizlik ('yapmana gerek yok'), ikincisi yasak ('yapmamalısın').",
+   examples:[["I have to submit this report by Friday.","Bu raporu Cuma'ya kadar teslim etmem gerekiyor. (kural)"],["You should see a doctor about that.","Bunun için bir doktora görünmelisin. (tavsiye)"],["You mustn't smoke here.","Burada sigara içmemelisin. (yasak)"],["You don't have to come if you're busy.","Meşgulsen gelmene gerek yok. (gereksizlik)"]],
+   mistake:"'Mustn't' ve 'don't have to' birbirine karıştırılır — biri yasak, diğeri sadece zorunlu olmama anlamı taşır. Bu iki yapının anlamca tamamen zıt olduğunun farkına varılmalı.",
+   exercises:[
+    {q:"You ___ wear a seatbelt — it's the law.",opts:["should","must","could","might"],a:1},
+    {q:"You ___ come to the party if you don't want to — it's optional.",opts:["mustn't","don't have to","shouldn't","can't"],a:1},
+    {q:"I think you ___ apologize to her.",opts:["must","should","have to","can"],a:1},
+    {q:"Passengers ___ smoke on this flight.",opts:["don't have to","mustn't","shouldn't have to","don't must"],a:1}
+   ]},
+  {name:"First & Second Conditionals",
+   rule:"Birinci koşul (First Conditional): gerçekleşmesi olası durumlar — If + Present Simple, ... will + V (If it rains, I will stay home). İkinci koşul (Second Conditional): gerçek dışı/hayali durumlar — If + Past Simple, ... would + V (If I were rich, I would travel the world).",
+   examples:[["If I have time, I will call you.","Vaktim olursa seni ararım. (muhtemel)"],["If I were you, I would apologize.","Senin yerinde olsam özür dilerdim. (hayali)"],["If she studies hard, she will pass the exam.","Sıkı çalışırsa sınavı geçer."]],
+   mistake:"İkinci koşulda 'if' cümleciğinde 'would' kullanmak yaygın bir hatadır: 'If I would have money...' ✗ → 'If I had money...' ✓ — 'would' sadece sonuç cümleciğinde bulunur.",
+   exercises:[
+    {q:"If it ___ tomorrow, we will cancel the picnic.",opts:["rains","will rain","rained","would rain"],a:0},
+    {q:"If I ___ you, I would take that job.",opts:["am","were","will be","was being"],a:1},
+    {q:"She will call you if she ___ time.",opts:["has","will have","had","would have"],a:0},
+    {q:"If I had a car, I ___ drive to work.",opts:["will","would","would have","had"],a:1}
+   ]}
+ ]},
+ {cefr:"B2",name:"Orta-Üst",cando:"Edilgen çatı, koşul cümleleri ve daha soyut yapıları akıcı şekilde kullanabiliyorum.",units:[
+  {name:"Passive Voice (Edilgen Çatı)",
+   rule:"Eylemi yapan değil, eylemden etkilenen ön plana çıkarılmak istendiğinde kullanılır: be + V3. (The report was written by John / English is spoken worldwide). Kim yaptığı önemli değilse 'by' ile belirtilmez.",
+   examples:[["The bridge was built in 1990.","Köprü 1990'da inşa edildi."],["This song is played on every radio station.","Bu şarkı her radyo istasyonunda çalınıyor."],["Mistakes were made during the process.","Süreç sırasında hatalar yapıldı."]],
+   mistake:"Edilgen yapıda 'be' fiilini unutup sadece V3 kullanmak sık görülür: 'The letter sent yesterday' ✗ → 'The letter was sent yesterday' ✓.",
+   exercises:[
+    {q:"This building ___ in 1920.",opts:["built","was built","is building","builds"],a:1},
+    {q:"English ___ in many countries.",opts:["speaks","is spoken","spoke","was speaking"],a:1},
+    {q:"The email ___ by tomorrow morning.",opts:["will send","will be sent","sends","is sending"],a:1},
+    {q:"My car ___ while I was on holiday.",opts:["stole","was stolen","has stolen","stealing"],a:1}
+   ]},
+  {name:"Past Perfect vs Past Simple",
+   rule:"Past Perfect (had + V3), geçmişteki iki olaydan önce gerçekleşeni belirtir. Past Simple, sırayla anlatılan olaylar için yeterlidir; ama zaman sırası karışıksa Past Perfect ile netleştirilir.",
+   examples:[["When I arrived, the train had already left.","Vardığımda tren çoktan kalkmıştı."],["I had never seen snow before I moved to Canada.","Kanada'ya taşınmadan önce hiç kar görmemiştim."],["She was tired because she had worked all night.","Bütün gece çalıştığı için yorgundu."]],
+   mistake:"İki geçmiş olay arasında sıra belirtmek gerektiğinde ikisini de Past Simple ile anlatmak, hangisinin önce olduğunu belirsizleştirir: 'When I arrived, the train left' cümlesi trenin gelişten hemen sonra mı yoksa önce mi kalktığını netleştirmez.",
+   exercises:[
+    {q:"By the time we got to the cinema, the film ___.",opts:["started","had started","has started","starts"],a:1},
+    {q:"She ___ breakfast before she left for work.",opts:["had","had had","has had","was having"],a:1},
+    {q:"I couldn't get in because I ___ my keys at home.",opts:["left","had left","have left","was leaving"],a:1},
+    {q:"After they ___ dinner, they watched a movie.",opts:["finished","had finished","have finished","finish"],a:1}
+   ]},
+  {name:"Third Conditional & Mixed Conditionals",
+   rule:"Üçüncü koşul: geçmişte gerçekleşmemiş, hayali durumlar için — If + Past Perfect, ... would have + V3 (If I had studied, I would have passed). Karma koşul: geçmiş bir durumun şimdiki sonucu için farklı zaman kombinasyonları kullanılabilir (If I had studied medicine, I would be a doctor now).",
+   examples:[["If I had known, I would have told you.","Bilseydim sana söylerdim."],["If she had left earlier, she wouldn't have missed the train.","Daha erken çıksaydı treni kaçırmazdı."],["If I hadn't met him, my life would be different now.","Onunla tanışmasaydım hayatım şimdi farklı olurdu. (karma koşul)"]],
+   mistake:"Üçüncü koşulda 'if' cümleciğinde 'would have' kullanmak yaygın hatadır: 'If I would have known...' ✗ → 'If I had known...' ✓.",
+   exercises:[
+    {q:"If I ___ earlier, I wouldn't have missed the bus.",opts:["left","had left","would leave","have left"],a:1},
+    {q:"She would have called if she ___ your number.",opts:["had","has had","had had","would have had"],a:2},
+    {q:"If they had trained harder, they ___ the match.",opts:["would win","would have won","won","had won"],a:1},
+    {q:"If I hadn't taken that job, I ___ in this city now.",opts:["wouldn't live","wouldn't have lived","didn't live","hadn't lived"],a:0}
+   ]},
+  {name:"Gerunds vs Infinitives",
+   rule:"Bazı fiiller -ing (gerund) ister (enjoy, avoid, finish + V-ing), bazıları 'to + fiil' (infinitive) ister (want, decide, hope + to V). Bazı fiiller ikisini de alabilir ama anlam değişebilir (stop doing / stop to do).",
+   examples:[["I enjoy reading before bed.","Yatmadan önce okumaktan hoşlanırım."],["She decided to change her job.","İşini değiştirmeye karar verdi."],["He stopped smoking last year.","Geçen yıl sigarayı bıraktı."],["He stopped to smoke a cigarette.","Sigara içmek için durdu. (farklı anlam!)"]],
+   mistake:"Hangi fiilin gerund, hangisinin infinitive istediği ezbere bilinmelidir çünkü kural her zaman mantıksal değildir. 'I enjoy to read' ✗ → 'I enjoy reading' ✓ en sık görülen hatalardan biridir.",
+   exercises:[
+    {q:"I really enjoy ___ new places.",opts:["visit","to visit","visiting","visited"],a:2},
+    {q:"She decided ___ her own business.",opts:["starting","start","to start","started"],a:2},
+    {q:"They avoided ___ about the accident.",opts:["to talk","talking","talk","talked"],a:1},
+    {q:"We hope ___ you again soon.",opts:["seeing","see","to see","saw"],a:2}
+   ]},
+  {name:"Phrasal Verbs & Edat Kesinliği",
+   rule:"Phrasal verb'ler (fiil + edat) genelde tek kelimelik bir anlam taşır ve edat değişince anlam tamamen değişir: give up (vazgeçmek) ≠ give in (teslim olmak) ≠ give away (bağışlamak). Bu yapılar ezbere öğrenilmeli, kelime kelime çevrilmemelidir.",
+   examples:[["I gave up smoking two years ago.","İki yıl önce sigarayı bıraktım."],["She looks after her little brother.","Küçük kardeşine bakıyor."],["Can you look into this problem?","Bu sorunu araştırabilir misin?"],["He ran into an old friend yesterday.","Dün eski bir arkadaşına rastladı."]],
+   mistake:"Phrasal verb'leri Türkçedeki karşılığını kelime kelime çevirerek kurmaya çalışmak yanlış edat seçimine yol açar. Örneğin 'bakmak' hem 'look at' hem 'look after' hem 'look for' olabilir — anlam bağlama göre değişir.",
+   exercises:[
+    {q:"I need to look ___ my keys — I can't find them.",opts:["after","for","into","up"],a:1},
+    {q:"She was brought ___ by her grandparents.",opts:["up","on","off","into"],a:0},
+    {q:"Don't give ___ — you're almost done!",opts:["in","up","away","off"],a:1},
+    {q:"Can you look ___ my little sister while I'm out?",opts:["for","after","into","up"],a:1}
+   ]},
+  {name:"Advanced Modals: Speculation (must have / might have / can't have)",
+   rule:"Geçmişteki bir olay hakkında tahmin yürütmek için: 'must have + V3' (eminlik: kesin öyle olmuş), 'might/could have + V3' (olasılık: belki öyle olmuş), 'can't have + V3' (imkânsızlık: kesinlikle öyle olmamış).",
+   examples:[["She isn't answering — she must have left already.","Cevap vermiyor — kesin çoktan gitmiştir."],["He might have forgotten about the meeting.","Toplantıyı unutmuş olabilir."],["They can't have arrived yet, it's too early.","Henüz varmış olamazlar, çok erken."]],
+   mistake:"Bu yapılar Türkçedeki '-mıştır/-miş olmalı' kalıplarına çevrilmeye çalışılırken 'must' ile 'have to' karıştırılır ya da V3 yerine mastar kullanılır: 'must have go' ✗ → 'must have gone' ✓.",
+   exercises:[
+    {q:"The lights are off — they ___ (must) go out.",opts:["must have gone","must has gone","must went","must going"],a:0},
+    {q:"She looks upset. Something ___ (might) happen.",opts:["might happened","might have happened","might has happened","might happen"],a:1},
+    {q:"He ___ (can't) seen you — he wasn't even there.",opts:["can't see","can't have seen","can't saw","couldn't seeing"],a:1},
+    {q:"They're not home — they ___ (must) out.",opts:["must go","must have gone","must went","must be gone out"],a:1}
+   ]}
+ ]},
+ {cefr:"C1",name:"İleri",cando:"Nüanslı yapıları, vurgu için devrik cümleleri ve resmi/gayriresmi kayıt farklarını kullanabiliyorum.",units:[
+  {name:"Inversion for Emphasis (Devrik Cümle ile Vurgu)",
+   rule:"Belirli olumsuz zarflar cümle başına geldiğinde özne-fiil sırası devrilir, resmi ve vurgulu bir anlam katar: Never, Rarely, Not only, No sooner, Little vb. (Never have I seen such a mess.)",
+   examples:[["Never have I seen such beautiful scenery.","Hiç bu kadar güzel bir manzara görmemiştim. (vurgulu)"],["Not only did she pass the exam, but she also got the highest score.","Sadece sınavı geçmekle kalmadı, en yüksek notu da aldı."],["Rarely do we see such dedication.","Böyle bir özveriyi nadiren görürüz."]],
+   mistake:"Devrik yapıda yardımcı fiili (do/does/did/have) unutmak ya da normal cümle sırasını korumak sık görülür: 'Never I have seen...' ✗ → 'Never have I seen...' ✓.",
+   exercises:[
+    {q:"Never ___ such an incredible performance.",opts:["I have seen","have I seen","I saw","saw I"],a:1},
+    {q:"Not only ___ late, but he also forgot the documents.",opts:["he was","was he","he did be","did he was"],a:1},
+    {q:"Rarely ___ such dedication in a new employee.",opts:["we see","do we see","we do see","see we"],a:1},
+    {q:"No sooner ___ home than the phone rang.",opts:["I had arrived","had I arrived","I arrived","arrived I"],a:1}
+   ]},
+  {name:"Cleft Sentences (Vurgulu Bölünmüş Cümleler)",
+   rule:"Cümlenin belirli bir kısmını vurgulamak için 'It is/was ... that' ya da 'What ... is/was' kalıpları kullanılır: 'It was John who called' (John'ı vurgular), 'What I need is more time' (ihtiyacı vurgular).",
+   examples:[["It was Sarah who suggested this idea.","Bu fikri öneren Sarah'ydı. (Sarah vurgulanıyor)"],["What surprised me most was his honesty.","Beni en çok şaşırtan onun dürüstlüğüydü."],["It wasn't until midnight that she finished the report.","Raporu ancak gece yarısı bitirdi."]],
+   mistake:"'What' ile başlayan cleft cümlelerde fiil uyumunu ya da 'is/was' seçimini yanlış yapmak (bağlam geçmiş/şimdiki zamana göre ayarlanmalı) yaygındır.",
+   exercises:[
+    {q:"___ John who broke the window, not his brother.",opts:["It is","It was","There was","This was"],a:1},
+    {q:"What I really need ___ a good night's sleep.",opts:["are","is","was being","be"],a:1},
+    {q:"It wasn't ___ she apologized that I forgave her.",opts:["when","until","that","after when"],a:1},
+    {q:"What surprised everyone ___ how calm she stayed.",opts:["was","is being","were","are"],a:0}
+   ]},
+  {name:"Nüanslı Artikel ve Edat Kullanımı",
+   rule:"İleri seviyede artikel/edat kullanımı istisnalarla doludur: hastane/okul gibi kurumlar işlev olarak kullanıldığında artikelsiz (go to hospital = tedavi için), fiziksel bina olarak bahsedildiğinde 'the' ile (go to the hospital = binaya gitmek, ör. ziyarete). Ayrıca 'in time' (yetişmek) ile 'on time' (tam vaktinde) gibi ince anlam farkları vardır.",
+   examples:[["He was taken to hospital after the accident.","Kazadan sonra hastaneye kaldırıldı. (tedavi anlamında)"],["I visited my friend at the hospital.","Arkadaşımı hastanede ziyaret ettim. (fiziksel bina)"],["We arrived just in time for the show.","Gösteriye tam yetiştik."],["The train left on time.","Tren tam vaktinde kalktı."]],
+   mistake:"Bu ince ayrımlar genelde göz ardı edilip her durumda 'the' ile kurum isimleri kullanılır; oysa işlevsel kullanımda artikel düşer.",
+   exercises:[
+    {q:"After the injury, he was rushed to ___ hospital.",opts:["the","a","(no article)","an"],a:2},
+    {q:"I need to visit my grandmother at ___ hospital this weekend.",opts:["the","(no article)","a","an"],a:0},
+    {q:"We got to the station just ___ time to catch the train.",opts:["on","in","at","by"],a:1},
+    {q:"The meeting started exactly ___ time, at 9 AM sharp.",opts:["in","on","at","by"],a:1}
+   ]},
+  {name:"Aktarılan Anlatımda İnce Farklar (Hedging & Reporting Verbs)",
+   rule:"İleri seviyede 'say/tell' yerine daha nüanslı raporlama fiilleri kullanılır: claim (iddia etmek, şüphe içerir), admit (itiraf etmek), deny (inkâr etmek), suggest (önermek), point out (belirtmek). Bu fiillerin her biri konuşanın tavrını da yansıtır.",
+   examples:[["She claimed that she hadn't seen the email.","E-postayı görmediğini iddia etti. (şüpheli bir ton)"],["He admitted that he had made a mistake.","Hata yaptığını itiraf etti."],["The report suggests that sales will increase.","Rapor satışların artacağını öne sürüyor."]],
+   mistake:"Bu fiillerin taşıdığı ince tavır/şüphe farkını göz ardı edip hepsini 'say' ile eşdeğer kullanmak, metnin nüansını kaybettirir — ör. 'claim' kullanmak konuşanın iddiaya inanmadığını ima edebilir.",
+   exercises:[
+    {q:"He ___ that he was innocent, but no one believed him.",opts:["admitted","claimed","pointed out","agreed"],a:1},
+    {q:"She finally ___ that she had lied about her age.",opts:["suggested","admitted","claimed","denied"],a:1},
+    {q:"The manager ___ that the deadline was unrealistic.",opts:["pointed out","denied","admitted","apologized"],a:0},
+    {q:"He ___ any involvement in the incident.",opts:["suggested","denied","pointed out","admitted"],a:1}
+   ]},
+  {name:"Participle Clauses (Ortaç Cümlecikleri)",
+   rule:"İki cümleyi daha akıcı ve resmi biçimde birleştirmek için -ing (aktif) ya da -ed/V3 (pasif) ortaç kullanılır: 'Feeling tired, she went to bed early' (= Because she felt tired...). Bu yapı yazılı/resmi dilde cümleleri sadeleştirir.",
+   examples:[["Having finished her homework, she watched TV.","Ödevini bitirdikten sonra televizyon izledi."],["Written in 1990, the book is still popular today.","1990'da yazılan kitap hâlâ popüler."],["Not knowing what to say, he stayed silent.","Ne diyeceğini bilmediği için sessiz kaldı."]],
+   mistake:"Ortaç cümleciğinin öznesi ile ana cümlenin öznesinin farklı olması ('dangling participle') mantıksal bir hataya yol açar: 'Walking to school, the rain started' ✗ (yağmur yürümüyor!) → 'While I was walking to school, it started to rain.' ✓",
+   exercises:[
+    {q:"___ her homework, she went out to play.",opts:["Finishing","Having finished","Finished","To finish"],a:1},
+    {q:"___ in a hurry, he forgot his keys.",opts:["Being","Have been","To be","Been"],a:0},
+    {q:"The novel, ___ by a famous author, became a bestseller.",opts:["writing","having written","written","write"],a:2},
+    {q:"___ what to do, she called her manager for advice.",opts:["Not knowing","Not to know","Not known","Doesn't know"],a:0}
+   ]},
+  {name:"Advanced Passive: Reporting Structures",
+   rule:"Genel kanı/söylenti bildirirken kullanılan resmi pasif yapı: 'It is said/believed/reported that + cümle' ya da 'Subject + is said/believed to + fiil'. Kimin söylediği belirsiz ya da önemsiz olduğunda, haber dilinde ve akademik yazıda sık kullanılır.",
+   examples:[["It is believed that the ancient city was destroyed by an earthquake.","Antik kentin bir deprem tarafından yok edildiğine inanılıyor."],["She is said to be the best candidate for the job.","İş için en iyi aday olduğu söyleniyor."],["The economy is expected to grow next year.","Ekonominin gelecek yıl büyümesi bekleniyor."]],
+   mistake:"'Subject + is said to + V' kalıbında fiili mastar yerine V-ing ya da düz zamanla kullanmak yaygındır: 'She is said being...' ✗ → 'She is said to be...' ✓",
+   exercises:[
+    {q:"It is ___ that the company will announce layoffs soon.",opts:["reporting","reported","reports","report"],a:1},
+    {q:"He is said ___ fluent in five languages.",opts:["being","to be","he is","be"],a:1},
+    {q:"The bridge is believed ___ by a famous architect.",opts:["designing","to have been designed","designed","have designed"],a:1},
+    {q:"Prices are expected ___ next quarter.",opts:["rise","to rise","rising","rose"],a:1}
+   ]}
+ ]}
+];
+function grammarUnitKey(li,ui){ return li+"-"+ui; }
+function grammarLevelUnlocked(li){
+  if(li<=0) return true;
+  var prev=GRAMMAR_LEVELS[li-1];
+  for(var i=0;i<prev.units.length;i++){ if(!S.grammar.completed[grammarUnitKey(li-1,i)]) return false; }
+  return true;
+}
+function grammarFrontier(){
+  for(var li=0;li<GRAMMAR_LEVELS.length;li++){
+    if(!grammarLevelUnlocked(li)) break;
+    for(var ui=0;ui<GRAMMAR_LEVELS[li].units.length;ui++){
+      if(!S.grammar.completed[grammarUnitKey(li,ui)]) return {li:li,ui:ui};
+    }
+  }
+  var last=GRAMMAR_LEVELS.length-1;
+  return {li:last,ui:GRAMMAR_LEVELS[last].units.length-1};
+}
+
 /* ---------- 4/3/2 AKICILIK SAYACI ---------- */
 var timer432Interval=null;
 function start432Timer(minutes){
@@ -1962,6 +2288,105 @@ function renderSpeaking(){
           '<span class="u-name">'+esc(u.name)+'</span>'+
           '<svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>';
         row.addEventListener("click",function(){ S.speaking.selected={li:li,ui:ui}; save(); renderSpeaking(); window.scrollTo(0,0); });
+        box.appendChild(row);
+      });
+    }
+    listEl.appendChild(box);
+  });
+}
+
+/* ---------- DİLBİLGİSİ ---------- */
+var grammarAnswers={}, grammarChecked=false;
+function renderGrammar(){
+  var sel=S.grammar.selected||grammarFrontier();
+  var level=GRAMMAR_LEVELS[sel.li], unit=level.units[sel.ui];
+  var done=!!S.grammar.completed[grammarUnitKey(sel.li,sel.ui)];
+  grammarAnswers={}; grammarChecked=false;
+
+  var examplesHtml=unit.examples.map(function(ex){
+    return '<div class="example-row"><div class="ex-en">'+esc(ex[0])+'</div><div class="ex-tr">'+esc(ex[1])+'</div></div>';
+  }).join("");
+
+  var exHtml=unit.exercises.map(function(ex,i){
+    var optsHtml=ex.opts.map(function(o,oi){
+      return '<button type="button" class="gx-opt" data-ex="'+i+'" data-opt="'+oi+'">'+esc(o)+'</button>';
+    }).join("");
+    return '<div class="gx-block"><div class="gx-q">'+(i+1)+'. '+esc(ex.q)+'</div><div class="gx-opts">'+optsHtml+'</div></div>';
+  }).join("");
+
+  document.getElementById("grammarCurrent").innerHTML=
+    '<div class="row" style="align-items:center;margin-bottom:10px;">'+
+      '<span class="cefr-badge lg">'+level.cefr+'</span>'+
+      '<span class="mut" style="margin-left:8px;">'+esc(level.name)+' · Konu '+(sel.ui+1)+'/'+level.units.length+'</span>'+
+    '</div>'+
+    '<div style="font-family:var(--font-ui);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:10px;">'+esc(unit.name)+'</div>'+
+    '<div class="rule-box">'+esc(unit.rule)+'</div>'+
+    '<h2 style="font-size:12.5px;margin-bottom:4px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-book"></use></svg>Örnekler</h2>'+
+    examplesHtml+
+    '<div class="mistake-box"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg><div><b>Sık yapılan hata:</b> '+esc(unit.mistake)+'</div></div>'+
+    '<h2 style="font-size:12.5px;margin:16px 0 4px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Alıştırmalar</h2>'+
+    '<div id="grammarExList">'+exHtml+'</div>'+
+    '<div id="grammarScore" style="display:none;"></div>'+
+    '<button type="button" class="btn sec" id="grammarCheckBtn" style="margin-top:6px;">Cevapları Kontrol Et</button>'+
+    (done
+      ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu konuyu tamamladın</span></div>'
+      : '<button class="btn" id="grammarCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu konuyu tamamladım</button>');
+
+  document.querySelectorAll("#grammarExList .gx-opt").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      if(grammarChecked) return;
+      var exi=btn.dataset.ex;
+      grammarAnswers[exi]=parseInt(btn.dataset.opt,10);
+      document.querySelectorAll('.gx-opt[data-ex="'+exi+'"]').forEach(function(b){ b.classList.toggle("sel",b===btn); });
+    });
+  });
+  document.getElementById("grammarCheckBtn").addEventListener("click",function(){
+    grammarChecked=true;
+    var correctN=0;
+    unit.exercises.forEach(function(ex,i){
+      var answered=grammarAnswers[i];
+      if(answered===ex.a) correctN++;
+      document.querySelectorAll('.gx-opt[data-ex="'+i+'"]').forEach(function(b){
+        var oi=parseInt(b.dataset.opt,10);
+        b.disabled=true;
+        if(oi===ex.a) b.classList.add("correct");
+        else if(oi===answered) b.classList.add("wrong");
+      });
+    });
+    var scoreEl=document.getElementById("grammarScore");
+    scoreEl.style.display="flex"; scoreEl.className="gx-score";
+    scoreEl.innerHTML='<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>'+correctN+'/'+unit.exercises.length+' doğru';
+    document.getElementById("grammarCheckBtn").style.display="none";
+  });
+  var cb=document.getElementById("grammarCompleteBtn");
+  if(cb) cb.addEventListener("click",function(){
+    S.grammar.completed[grammarUnitKey(sel.li,sel.ui)]=true;
+    S.grammar.selected=null;
+    save(); renderGrammar(); renderLearnHub();
+  });
+
+  var listEl=document.getElementById("grammarLevelList"); listEl.innerHTML="";
+  GRAMMAR_LEVELS.forEach(function(lv,li){
+    var unlocked=grammarLevelUnlocked(li);
+    var box=document.createElement("div"); box.className="level-block"+(unlocked?"":" locked");
+    var doneCount=lv.units.filter(function(_,ui){return !!S.grammar.completed[grammarUnitKey(li,ui)];}).length;
+    var pct=Math.round(doneCount/lv.units.length*100);
+    box.innerHTML='<div class="level-head">'+
+      '<span class="cefr-badge'+(unlocked?"":" locked")+'">'+lv.cefr+'</span>'+
+      '<span class="lv-name">'+esc(lv.name)+'</span>'+
+      (unlocked
+        ? '<span class="lv-count">'+doneCount+'/'+lv.units.length+'</span>'
+        : '<span class="lv-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>Kilitli</span>')+
+    '</div>'+
+    (unlocked?'<div class="level-bar"><div style="width:'+pct+'%"></div></div><p class="level-cando">'+esc(lv.cando)+'</p>':'');
+    if(unlocked){
+      lv.units.forEach(function(u,ui){
+        var udone=!!S.grammar.completed[grammarUnitKey(li,ui)];
+        var row=document.createElement("button"); row.type="button"; row.className="unit-row"+(udone?" done":"");
+        row.innerHTML='<span class="u-stat"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'+
+          '<span class="u-name">'+esc(u.name)+'</span>'+
+          '<svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>';
+        row.addEventListener("click",function(){ S.grammar.selected={li:li,ui:ui}; save(); renderGrammar(); window.scrollTo(0,0); });
         box.appendChild(row);
       });
     }
@@ -2197,7 +2622,7 @@ function renderRadar(vals){
   svg+='</svg>';
   wrap.innerHTML=svg;
 }
-var SKILL_ICON={"Kelime":["i-cards","var(--tint)","var(--purple)"],"Okuma":["i-book-open","var(--green-tint)","var(--green)"],"Dilbilgisi":["i-layers","var(--blue-tint)","var(--blue)"],"Konuşma":["i-mic","var(--gold-tint)","var(--gold)"],"Günlük":["i-edit","var(--pink-tint)","var(--pink)"]};
+var SKILL_ICON={"Kelime":["i-cards","var(--tint)","var(--purple)"],"Okuma":["i-book-open","var(--green-tint)","var(--green)"],"Dilbilgisi":["i-layers","var(--teal-tint)","var(--teal)"],"Konuşma":["i-mic","var(--gold-tint)","var(--gold)"],"Günlük":["i-edit","var(--pink-tint)","var(--pink)"]};
 function renderSkillList(vals){
   var wrap=document.getElementById("progSkillList"); if(!wrap) return;
   wrap.innerHTML="";
@@ -2263,11 +2688,15 @@ function renderProgress(){
   var totalSpeakUnits=SPEAK_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
   var doneSpeakUnits=Object.keys(S.speaking.completed).length;
   var speakPct=totalSpeakUnits?Math.round(doneSpeakUnits/totalSpeakUnits*100):0;
+  var totalGrammarUnits=GRAMMAR_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
+  var doneGrammarUnits=Object.keys(S.grammar.completed).length;
+  var grammarPct=totalGrammarUnits?Math.round(doneGrammarUnits/totalGrammarUnits*100):0;
   var journalDays=Object.keys(S.journal).length;
   var journalPct=Math.min(100,Math.round(journalDays/14*100));
   var skillVals=[
     {label:"Kelime",pct:vocabPct},
     {label:"Okuma",pct:readPct},
+    {label:"Dilbilgisi",pct:grammarPct},
     {label:"Konuşma",pct:speakPct},
     {label:"Günlük",pct:journalPct}
   ];
@@ -2299,6 +2728,14 @@ function renderLearnHub(){
   var speakFill=document.getElementById("hubSpeakGoalFill"), speakTxt=document.getElementById("hubSpeakGoalTxt");
   if(speakFill) speakFill.style.width=(totalUnits?Math.round(doneUnits/totalUnits*100):0)+"%";
   if(speakTxt) speakTxt.textContent=doneUnits+"/"+totalUnits+" ünite";
+
+  var totalGUnits=GRAMMAR_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
+  var doneGUnits=Object.keys(S.grammar.completed).length;
+  var gfr=grammarFrontier(), glvl=GRAMMAR_LEVELS[gfr.li];
+  document.getElementById("hubGrammarSub").textContent="Seviyen: "+glvl.cefr+" · "+glvl.name;
+  var grammarFill=document.getElementById("hubGrammarGoalFill"), grammarTxt=document.getElementById("hubGrammarGoalTxt");
+  if(grammarFill) grammarFill.style.width=(totalGUnits?Math.round(doneGUnits/totalGUnits*100):0)+"%";
+  if(grammarTxt) grammarTxt.textContent=doneGUnits+"/"+totalGUnits+" konu";
 
   var badges=computeBadges(), badgeN=badges.filter(function(b){ return b.unlocked; }).length;
   document.getElementById("hubBadgeSub").textContent=badgeN+"/"+badges.length+" kazanıldı";
@@ -2385,7 +2822,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
-      S.speaking=S.speaking||{completed:{},selected:null}; S.tasks=S.tasks||{};
+      S.speaking=S.speaking||{completed:{},selected:null}; S.grammar=S.grammar||{completed:{},selected:null}; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
