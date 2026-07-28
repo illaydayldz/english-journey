@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#7c5cff">
+<meta name="theme-color" content="#FAFAFC" id="themeColorMeta">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,32 +14,65 @@
 <title>Moonie · My English Journey</title>
 <style>
   :root{
+    color-scheme: light dark;
+    /* ---- design tokens (Phase 3 system) ---- */
+    --accent:#5A4FCF; --accent-ink:#3F35A8; --accent-soft:#EDEBFC; --accent-soft-2:#E0DCF9;
+    --paper:#FAFAFC; --surface:#FFFFFF; --ink:#17151F; --ink-2:#3A3745;
+    --gray-700:#4B4856; --gray-500:#6E6B7A; --gray-300:#B5B2C0; --gray-200:#E4E2EA; --gray-100:#EFEEF3;
+    --success:#1C9C6E; --success-soft:#E4F5EE; --warning:#B9750F; --warning-soft:#FBF0DD; --danger:#C4433F; --danger-soft:#FBEAE9;
+    --line:var(--gray-200);
+    --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-full:999px;
+    --shadow-1:0 1px 2px rgba(23,21,31,.06), 0 1px 1px rgba(23,21,31,.04);
+    --shadow-2:0 8px 24px rgba(23,21,31,.10), 0 2px 6px rgba(23,21,31,.06);
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px; --sp-16:64px;
+    --font-ui:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    --font-data:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,monospace;
+
+    /* ---- back-compat aliases — the component CSS below (and a lot of JS-
+       generated markup) references these older names; pointing them at the
+       new tokens reskins the whole app from this one place. ---- */
+    --purple:var(--accent); --purple-deep:var(--accent-ink);
+    --ink-soft:var(--gray-500);
+    --bg:var(--paper); --card:var(--surface);
+    --tint:var(--accent-soft); --tint-strong:var(--accent-soft-2);
+    --gold:var(--warning); --gold-tint:var(--warning-soft);
+    --green:var(--success); --green-tint:var(--success-soft);
+    --rust:var(--danger); --rust-tint:var(--danger-soft);
+    --pink:#B5459A; --pink-tint:#FAEAF5;   /* warmth accent — kept distinct from success/warning/danger */
+    --blue:#3B6FE0; --blue-tint:#E7EDFC;   /* neutral info accent — kept distinct */
+    --shadow-sm:var(--shadow-1); --shadow-md:var(--shadow-2);
+    --font-display:var(--font-ui);
+  }
+  @media (prefers-color-scheme: dark){ :root{
+    --paper:#121016; --surface:#19171F; --ink:#F3F2F7; --ink-2:#D6D3E0;
+    --gray-700:#C7C4D2; --gray-500:#9C98AA; --gray-300:#514D5D; --gray-200:#2C2934; --gray-100:#211F29;
+    --accent:#8B7FFF; --accent-ink:#C9C2FF; --accent-soft:#251F42; --accent-soft-2:#332B57;
+    --success:#3CC091; --success-soft:#132A22; --warning:#E0A542; --warning-soft:#2E2410; --danger:#E2726E; --danger-soft:#301918;
+    --shadow-1:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 10px 28px rgba(0,0,0,.5);
+    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740;
+  }}
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --paper:#121016; --surface:#19171F; --ink:#F3F2F7; --ink-2:#D6D3E0;
+    --gray-700:#C7C4D2; --gray-500:#9C98AA; --gray-300:#514D5D; --gray-200:#2C2934; --gray-100:#211F29;
+    --accent:#8B7FFF; --accent-ink:#C9C2FF; --accent-soft:#251F42; --accent-soft-2:#332B57;
+    --success:#3CC091; --success-soft:#132A22; --warning:#E0A542; --warning-soft:#2E2410; --danger:#E2726E; --danger-soft:#301918;
+    --shadow-1:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 10px 28px rgba(0,0,0,.5);
+    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740;
+  }
+  :root[data-theme="light"]{
     color-scheme: light;
-    --purple:#7c5cff;       /* brand — primary buttons, active states */
-    --purple-deep:#5b3fd1;  /* headings on tint, hover/pressed */
-    --ink:#2a2153;          /* body text — purple-biased near-black */
-    --ink-soft:#726a92;     /* secondary text — purple-biased grey */
-    --bg:#f5f3ff;           /* page canvas — lavender-white */
-    --card:#ffffff;
-    --tint:#efe9ff;         /* soft lavender surface / chip bg */
-    --tint-strong:#e2d8ff;
-    --line:rgba(124,92,255,.14);
-    --gold:#f0a422;         /* streak / achievement */
-    --gold-tint:#fff3da;
-    --pink:#ff6f9c;         /* warmth / love */
-    --pink-tint:#ffe3ec;
-    --green:#1fb579;        /* success / known / correct */
-    --green-tint:#e0f8ec;
-    --rust:#ef5b6a;         /* urgent / wrong / exam countdown */
-    --rust-tint:#ffe1e5;
-    --blue:#4f8ef7;         /* neutral info accent */
-    --blue-tint:#e7f0ff;
-    --shadow-sm:0 1px 3px rgba(90,60,180,.09);
-    --shadow-md:0 10px 26px rgba(90,60,180,.14);
-    --font-display:-apple-system,"SF Pro Rounded",ui-rounded,"Segoe UI Rounded",Roboto,sans-serif;
+    --paper:#FAFAFC; --surface:#FFFFFF; --ink:#17151F; --ink-2:#3A3745;
+    --gray-700:#4B4856; --gray-500:#6E6B7A; --gray-300:#B5B2C0; --gray-200:#E4E2EA; --gray-100:#EFEEF3;
+    --accent:#5A4FCF; --accent-ink:#3F35A8; --accent-soft:#EDEBFC; --accent-soft-2:#E0DCF9;
+    --success:#1C9C6E; --success-soft:#E4F5EE; --warning:#B9750F; --warning-soft:#FBF0DD; --danger:#C4433F; --danger-soft:#FBEAE9;
+    --shadow-1:0 1px 2px rgba(23,21,31,.06), 0 1px 1px rgba(23,21,31,.04);
+    --shadow-2:0 8px 24px rgba(23,21,31,.10), 0 2px 6px rgba(23,21,31,.06);
+    --pink:#B5459A; --pink-tint:#FAEAF5; --blue:#3B6FE0; --blue-tint:#E7EDFC;
   }
   *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; min-width:0; }
-  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); padding-bottom:112px; line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  body{ font-family:var(--font-body); background:var(--bg); color:var(--ink); padding-bottom:112px; line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
   .wrap{ max-width:560px; margin:0 auto; padding:max(16px, env(safe-area-inset-top)) 16px 10px; }
 
   /* ---- icon system ---- */
@@ -48,37 +81,38 @@
   .icon-lg{ width:26px; height:26px; }
 
   /* ---- shared bits ---- */
-  .card{ background:var(--card); border-radius:24px; padding:18px; margin-bottom:13px; box-shadow:var(--shadow-sm); }
+  .card{ background:var(--card); border-radius:var(--radius-lg); padding:18px; margin-bottom:13px; box-shadow:var(--shadow-sm); }
   h2{ font-family:var(--font-display); font-size:15px; font-weight:800; letter-spacing:-.1px; margin-bottom:13px; display:flex; align-items:center; gap:8px; color:var(--ink); }
   h2 .icon{ color:var(--purple); width:18px; height:18px; }
   .mut{ font-size:12px; color:var(--ink-soft); }
   .row{ display:flex; gap:8px; }
-  input.f, textarea.f{ width:100%; padding:12px 13px; border:1.5px solid var(--line); border-radius:14px; font-size:14px; font-family:inherit; margin-bottom:8px; background:#faf9ff; color:var(--ink); }
-  input.f:focus, textarea.f:focus{ outline:none; border-color:var(--purple); background:#fff; }
-  .btn{ width:100%; padding:14px; border:none; border-radius:16px; background:var(--purple); color:#fff; font-family:var(--font-display); font-size:15px; font-weight:700; cursor:pointer; transition:transform .1s; margin-top:4px; }
+  input.f, textarea.f{ width:100%; padding:12px 13px; border:1.5px solid var(--line); border-radius:var(--radius-md); font-size:14px; font-family:inherit; margin-bottom:8px; background:var(--gray-100); color:var(--ink); }
+  input.f:focus, textarea.f:focus{ outline:none; border-color:var(--purple); background:var(--surface); }
+  .btn{ width:100%; padding:14px; border:none; border-radius:var(--radius-md); background:var(--purple); color:#fff; font-family:var(--font-display); font-size:15px; font-weight:700; cursor:pointer; transition:transform .1s; margin-top:4px; display:flex; align-items:center; justify-content:center; gap:7px; }
   .btn:active{ transform:scale(.97); }
   .btn:disabled{ background:var(--tint); color:var(--ink-soft); }
   .btn.sec{ background:var(--tint); color:var(--purple-deep); }
   .btn.deep{ background:var(--purple-deep); } .btn.gold{ background:var(--gold); }
+  .btn.sm{ width:auto; display:inline-flex; padding:10px 20px; margin:14px auto 0; }
   .bar{ height:9px; background:var(--tint); border-radius:99px; overflow:hidden; margin-top:11px; }
   .bar>div{ height:100%; background:linear-gradient(90deg,#9b7dff,var(--purple)); transition:width .4s; }
   .empty{ text-align:center; color:var(--ink-soft); font-size:13px; padding:20px 0; }
   .hint{ font-size:11px; color:var(--ink-soft); margin-top:9px; text-align:center; }
   a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{ outline:2px solid var(--purple); outline-offset:1px; }
   .view{ display:none; } .view.active{ display:block; }
-  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
 
   /* ---- mascot chip (reused header thumbnail across every screen) ---- */
-  .mchip{ width:56px; height:56px; border-radius:18px; overflow:hidden; background:var(--tint); flex-shrink:0; display:flex; }
+  .mchip{ width:56px; height:56px; border-radius:var(--radius-md); overflow:hidden; background:var(--tint); flex-shrink:0; display:flex; }
   .mchip img{ width:100%; height:130%; object-fit:cover; object-position:50% 0%; display:block; }
-  .mchip.sm{ width:34px; height:34px; border-radius:12px; }
+  .mchip.sm{ width:34px; height:34px; border-radius:var(--radius-md); }
 
-  /* ---- screen sub-header (used by every non-Home screen) ---- */
-  .subhead{ display:flex; align-items:center; gap:12px; margin:8px 2px 16px; }
-  .subhead .back{ background:var(--card); border:none; width:44px; height:44px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-  .subhead h1{ font-family:var(--font-display); font-size:19px; font-weight:800; color:var(--ink); letter-spacing:-.2px; }
-  .subhead h1.tight{ font-size:16.5px; line-height:1.3; }
-  .subhead p{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+  /* ---- screen header (back button + title only — no mascot/subtitle;
+     used by every non-Home screen) ---- */
+  .page-head{ display:flex; align-items:center; gap:12px; margin:4px 2px 18px; min-height:44px; }
+  .page-head .back{ background:var(--card); border:none; width:44px; height:44px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .page-head h1{ font-family:var(--font-ui); font-size:20px; font-weight:800; color:var(--ink); letter-spacing:-.2px; }
+  .page-head h1.tight{ font-size:16.5px; line-height:1.3; }
 
   /* ---- BUGÜN (home) ---- */
   .topbar{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-top:2px; }
@@ -86,15 +120,15 @@
   .hero-greet .icon{ color:var(--gold); width:16px; height:16px; }
   .topbar .mut{ margin-top:3px; }
   .bell-btn{ width:44px; height:44px; border-radius:50%; border:none; background:var(--card); color:var(--purple-deep); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
-  .hero{ display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--tint) 0%,#fbeaff 100%); border-radius:26px; padding:20px; margin:14px 0 16px; overflow:hidden; }
+  .hero{ display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--tint) 0%,var(--accent-soft-2) 100%); border-radius:var(--radius-lg); padding:20px; margin:14px 0 16px; overflow:hidden; }
   .hero h1{ font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--ink); line-height:1.28; text-wrap:balance; }
-  .hero-img{ width:92px; height:auto; flex-shrink:0; margin-left:auto; filter:drop-shadow(0 10px 16px rgba(124,92,255,.28)); }
+  .hero-img{ width:92px; height:auto; flex-shrink:0; margin-left:auto; filter:drop-shadow(0 10px 16px rgba(23,21,31,.18)); }
   .stats{ display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
-  .stat{ flex:1; min-width:100px; background:var(--card); border-radius:18px; padding:12px 13px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-sm); }
+  .stat{ flex:1; min-width:100px; background:var(--card); border-radius:var(--radius-lg); padding:12px 13px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-sm); }
   .stat .ic-chip{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .stat .ic-chip .icon{ width:19px; height:19px; }
   .stat .txt{ min-width:0; }
-  .stat .n{ font-family:var(--font-display); font-size:19px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--ink); }
+  .stat .n{ font-family:var(--font-data); font-size:19px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--ink); }
   .stat .l{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); margin-top:2px; font-weight:700; white-space:nowrap; }
   .s-streak .ic-chip{ background:var(--gold-tint); color:var(--gold); } .s-streak .n{ color:var(--gold); }
   .s-days .ic-chip{ background:var(--green-tint); color:var(--green); } .s-days .n{ color:var(--green); }
@@ -106,7 +140,7 @@
   .chip-num .icon{ width:16px; height:16px; stroke-width:2.6; }
   .check.done .chip-num{ background:var(--purple); color:#fff; }
   .check .t{ font-size:14px; flex:1; } .check .t small{ display:block; color:var(--ink-soft); font-size:12px; margin-top:1px; }
-  .check.done .t{ color:#c3bbe0; text-decoration:line-through; }
+  .check.done .t{ color:var(--gray-300); text-decoration:line-through; }
 
   /* ---- BUGÜN: günün ödevleri (tasklist — kategoriye göre renkli ikon çipli, .check'ten ayrışır) ---- */
   .tcheck{ position:relative; display:flex; align-items:center; gap:12px; padding:11px 2px; min-height:44px; border-bottom:1px solid var(--line); cursor:pointer; }
@@ -116,7 +150,7 @@
   .t-ic .icon{ width:18px; height:18px; }
   .tcheck .t{ font-size:14px; flex:1; color:var(--ink); }
   .tcheck .t small{ display:block; color:var(--ink-soft); font-size:10.5px; margin-top:2px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; }
-  .tcheck.done .t{ color:#c3bbe0; text-decoration:line-through; }
+  .tcheck.done .t{ color:var(--gray-300); text-decoration:line-through; }
   .tcheck.done .t small{ text-decoration:none; }
   .tcheck.done .t-ic{ opacity:.4; }
   .t-done{ width:26px; height:26px; border-radius:50%; background:var(--tint); color:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s,color .2s; }
@@ -128,7 +162,7 @@
   .t-ic-konusma{ background:var(--gold-tint); color:var(--gold); }
   .t-ic-yazma{ background:var(--pink-tint); color:var(--pink); }
 
-  .donewrap{ display:flex; align-items:center; gap:10px; background:var(--green-tint); border-radius:14px; padding:10px 12px; margin-top:12px; font-size:13px; font-weight:700; color:#0f7a4e; }
+  .donewrap{ display:flex; align-items:center; gap:10px; background:var(--green-tint); border-radius:var(--radius-md); padding:10px 12px; margin-top:12px; font-size:13px; font-weight:700; color:var(--green); }
   .continue-card{ display:flex; align-items:center; gap:12px; cursor:pointer; width:100%; border:none; text-align:left; font-family:inherit; }
   .continue-card .cc-t{ font-weight:800; font-size:14px; color:var(--ink); font-family:var(--font-display); }
   .continue-card .cc-s{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
@@ -151,37 +185,37 @@
   table.plan td, table.plan th{ padding:9px 10px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
   table.plan th{ background:var(--purple); color:#fff; font-weight:700; font-family:var(--font-display); }
   table.plan tr:last-child td{ border-bottom:none; }
-  table.plan tr:nth-child(even) td{ background:#faf8ff; }
+  table.plan tr:nth-child(even) td{ background:var(--gray-100); }
 
   /* ---- segmented pill tabs (reused: Progress Genel Bakış/Beceriler, etc.) ---- */
   .segtabs{ display:flex; gap:3px; background:var(--tint); border-radius:14px; padding:4px; margin-bottom:14px; }
   .segtabs .seg{ flex:1; border:none; background:none; padding:9px 6px; border-radius:11px; font-family:var(--font-display); font-size:12.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; transition:background .18s,color .18s; min-height:44px; }
-  .segtabs .seg.active{ background:var(--purple); color:#fff; box-shadow:0 4px 10px rgba(124,92,255,.35); }
+  .segtabs .seg.active{ background:var(--purple); color:#fff; box-shadow:var(--shadow-1); }
   .segpanel{ display:none; }
   .segpanel.active{ display:block; }
 
   /* ---- İLERLEME (progress) ---- */
   .ring{ width:148px; height:148px; border-radius:50%; background:conic-gradient(var(--purple) calc(var(--p,0)*1%), var(--tint) 0); display:flex; align-items:center; justify-content:center; margin:4px auto 0; position:relative; }
-  .ring::before{ content:""; position:absolute; inset:12px; background:var(--card); border-radius:50%; box-shadow:inset 0 1px 4px rgba(90,60,180,.08); }
+  .ring::before{ content:""; position:absolute; inset:12px; background:var(--card); border-radius:50%; box-shadow:inset 0 1px 4px rgba(0,0,0,.08); }
   .ring-inner{ position:relative; text-align:center; z-index:1; }
-  .ring-inner .pct{ font-family:var(--font-display); font-size:29px; font-weight:800; color:var(--purple-deep); font-variant-numeric:tabular-nums; }
+  .ring-inner .pct{ font-family:var(--font-data); font-size:29px; font-weight:800; color:var(--purple-deep); font-variant-numeric:tabular-nums; }
   .ring-inner .lbl{ font-size:10.5px; color:var(--ink-soft); margin-top:3px; max-width:96px; }
-  .goal-badge{ display:none; align-items:center; gap:10px; background:var(--gold-tint); border-radius:14px; padding:10px 12px; margin-top:16px; font-size:13px; font-weight:700; color:#8a5b12; text-align:left; }
+  .goal-badge{ display:none; align-items:center; gap:10px; background:var(--gold-tint); border-radius:var(--radius-md); padding:10px 12px; margin-top:16px; font-size:13px; font-weight:700; color:var(--gold); text-align:left; }
   .weekchart{ display:flex; gap:9px; align-items:flex-end; height:104px; padding-top:6px; }
   .wk-bar{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
   .wk-fill{ width:100%; max-width:22px; background:var(--tint-strong); border-radius:8px 8px 4px 4px; transition:height .4s; min-height:5px; }
-  .wk-bar.is-today .wk-fill{ background:linear-gradient(180deg,#9b7dff,var(--purple)); }
+  .wk-bar.is-today .wk-fill{ background:linear-gradient(180deg,var(--accent-ink),var(--accent)); }
   .wk-lbl{ font-size:10.5px; color:var(--ink-soft); margin-top:7px; font-weight:700; }
   .skill{ margin-bottom:15px; } .skill:last-child{ margin-bottom:0; }
   .skill-top{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:6px; }
-  .skill-pct{ color:var(--ink-soft); font-weight:700; font-variant-numeric:tabular-nums; }
+  .skill-pct{ color:var(--ink-soft); font-weight:700; font-variant-numeric:tabular-nums; font-family:var(--font-data); }
   .skill-track{ height:9px; background:var(--tint); border-radius:99px; overflow:hidden; }
-  .skill-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg,#9b7dff,var(--purple)); transition:width .5s; }
+  .skill-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg,var(--accent-ink),var(--accent)); transition:width .5s; }
 
   /* ---- ÇALIŞ (learn hub) ---- */
   .hubgrid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .hubcard{ background:var(--card); border:none; border-radius:20px; padding:18px 14px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; align-items:flex-start; gap:10px; cursor:pointer; text-align:left; font-family:inherit; min-height:118px; }
-  .hub-ic{ width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; }
+  .hubcard{ background:var(--card); border:none; border-radius:var(--radius-lg); padding:18px 14px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; align-items:flex-start; gap:10px; cursor:pointer; text-align:left; font-family:inherit; min-height:118px; }
+  .hub-ic{ width:44px; height:44px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; }
   .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); }
   .hub-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
   .hub-s{ font-size:11.5px; color:var(--ink-soft); }
@@ -192,7 +226,7 @@
   /* ---- KELİME ---- */
   .searchbar{ position:relative; display:flex; align-items:center; margin-bottom:12px; }
   .searchbar .icon{ position:absolute; left:14px; color:var(--ink-soft); pointer-events:none; }
-  .searchbar input{ width:100%; padding:12px 14px 12px 40px; border:1.5px solid var(--line); border-radius:99px; font-size:14px; font-family:inherit; background:#faf9ff; color:var(--ink); }
+  .searchbar input{ width:100%; padding:12px 14px 12px 40px; border:1.5px solid var(--line); border-radius:99px; font-size:14px; font-family:inherit; background:var(--gray-100); color:var(--ink); }
   .searchbar input:focus{ outline:none; border-color:var(--purple); background:#fff; }
   .filterchips{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch; }
   .fchip{ flex-shrink:0; border:none; background:var(--tint); color:var(--purple-deep); font-family:inherit; font-size:12.5px; font-weight:700; padding:9px 14px; border-radius:99px; cursor:pointer; min-height:44px; white-space:nowrap; transition:background .18s,color .18s; }
@@ -201,18 +235,18 @@
   .word{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:12px 0; border-bottom:1px solid var(--line); min-height:44px; }
   .word:last-child{ border-bottom:none; }
   .word .en{ font-weight:700; font-size:14px; color:var(--ink); } .word .tr{ font-size:12px; color:var(--ink-soft); margin-top:1px; }
-  .word .due{ font-size:10px; font-weight:700; background:var(--gold-tint); color:#8a5115; padding:3px 8px; border-radius:99px; flex-shrink:0; }
-  .word .del{ background:none; border:none; color:#c9c1e8; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
-  .flash{ text-align:center; padding:28px 16px; background:var(--bg); border:1.5px dashed var(--line); border-radius:18px; }
+  .word .due{ font-size:10px; font-weight:700; background:var(--gold-tint); color:var(--gold); padding:3px 8px; border-radius:99px; flex-shrink:0; }
+  .word .del{ background:none; border:none; color:var(--gray-300); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
+  .flash{ text-align:center; padding:28px 16px; background:var(--bg); border:1.5px dashed var(--line); border-radius:var(--radius-lg); }
   .flash .q{ font-size:12.5px; color:var(--ink-soft); margin-bottom:9px; text-transform:uppercase; letter-spacing:.4px; }
   .flash .big{ font-family:var(--font-display); font-size:25px; font-weight:800; margin-bottom:6px; color:var(--ink); }
   .flash .ex{ font-size:13px; color:var(--ink-soft); font-style:italic; margin-top:11px; }
   #studyArea > .btn{ margin-top:12px; }
   .grade{ display:flex; gap:8px; margin-top:16px; }
-  .grade button{ flex:1; padding:12px 4px; border:none; border-radius:14px; font-weight:700; font-size:12.5px; color:#fff; cursor:pointer; min-height:44px; display:flex; align-items:center; justify-content:center; gap:5px; }
+  .grade button{ flex:1; padding:12px 4px; border:none; border-radius:var(--radius-md); font-weight:700; font-size:12.5px; color:#fff; cursor:pointer; min-height:44px; display:flex; align-items:center; justify-content:center; gap:5px; }
   .g-again{ background:var(--rust); } .g-good{ background:var(--green); } .g-easy{ background:var(--blue); }
   .empty-mascot{ text-align:center; padding:14px 0 6px; }
-  .empty-mascot .mchip{ width:64px; height:64px; margin:0 auto 10px; border-radius:20px; }
+  .empty-mascot .mchip{ width:64px; height:64px; margin:0 auto 10px; border-radius:var(--radius-lg); }
 
   /* ---- OKUMA ---- */
   .read-item{ padding:12px 0; border-bottom:1px solid var(--line); }
@@ -220,12 +254,12 @@
   .read-top{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
   .read-date{ font-size:11px; font-weight:800; color:var(--purple-deep); background:var(--tint); padding:4px 10px; border-radius:99px; }
   .read-src{ font-size:11px; color:var(--ink-soft); font-style:italic; }
-  .read-item .del{ margin-left:auto; background:none; border:none; color:#c9c1e8; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
+  .read-item .del{ margin-left:auto; background:none; border:none; color:var(--gray-300); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
   .read-text{ font-size:13.5px; color:var(--ink); line-height:1.55; white-space:pre-wrap; }
   .read-att{ display:inline-flex; align-items:center; gap:6px; margin-top:8px; background:var(--tint); color:var(--purple-deep); font-size:12.5px; font-weight:700; padding:8px 12px; border-radius:12px; text-decoration:none; min-height:40px; }
 
   /* ---- OKUMA: Kitaplığım (More to Read) ---- */
-  .lib-next{ display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,var(--tint) 0%,#fbeaff 100%); border-radius:18px; padding:14px 15px; cursor:pointer; border:none; width:100%; text-align:left; font-family:inherit; }
+  .lib-next{ display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,var(--tint) 0%,var(--accent-soft-2) 100%); border-radius:var(--radius-lg); padding:14px 15px; cursor:pointer; border:none; width:100%; text-align:left; font-family:inherit; }
   .lib-next .ln-num{ width:38px; height:38px; border-radius:50%; background:var(--purple); color:#fff; font-family:var(--font-display); font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .lib-next .ln-body{ flex:1; min-width:0; }
   .lib-next .ln-label{ display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--purple-deep); font-weight:800; }
@@ -236,7 +270,7 @@
   .lib-toggle.open .icon{ transform:rotate(180deg); }
   .lib-list{ max-height:0; overflow:hidden; transition:max-height .25s; }
   .lib-list.open{ max-height:420px; overflow-y:auto; margin-top:6px; }
-  .lib-row{ display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; padding:10px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:44px; border-radius:10px; transition:background .12s; }
+  .lib-row{ display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; padding:10px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:44px; border-radius:var(--radius-sm); transition:background .12s; }
   .lib-row:active{ background:var(--tint); }
   .lib-row .u-stat{ width:22px; height:22px; border-radius:50%; border:2px solid var(--line); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:transparent; }
   .lib-row.done .u-stat{ background:var(--green); border-color:var(--green); color:#fff; }
@@ -250,9 +284,9 @@
   .rw{ border-radius:4px; padding:0 1px; cursor:pointer; transition:background .15s; }
   .rw:active{ background:var(--tint-strong); }
   .rw.tapped{ background:var(--tint); border-radius:4px; }
-  .word-sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--card); border-radius:22px 22px 0 0; box-shadow:0 -8px 30px rgba(42,33,83,.18); padding:10px 18px calc(18px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform .22s; z-index:60; max-width:560px; margin:0 auto; }
+  .word-sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--card); border-radius:var(--radius-lg) var(--radius-lg) 0 0; box-shadow:var(--shadow-2); padding:10px 18px calc(18px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform .22s; z-index:60; max-width:560px; margin:0 auto; }
   .word-sheet.open{ transform:translateY(0); }
-  .word-backdrop{ position:fixed; inset:0; background:rgba(42,33,83,.28); z-index:59; opacity:0; pointer-events:none; transition:opacity .2s; }
+  .word-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:59; opacity:0; pointer-events:none; transition:opacity .2s; }
   .word-backdrop.open{ opacity:1; pointer-events:auto; }
   .ws-handle{ width:36px; height:4px; border-radius:99px; background:var(--tint-strong); margin:0 auto 14px; }
   .ws-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
@@ -264,14 +298,14 @@
   .ws-speak{ display:flex; align-items:center; justify-content:center; gap:7px; }
 
   /* ---- KONUŞMA ---- */
-  .pron .target{ font-family:var(--font-display); font-size:19px; font-weight:700; text-align:center; padding:18px 10px; background:var(--tint); border-radius:16px; margin-bottom:13px; color:var(--ink); }
-  .pron .result{ margin-top:14px; padding:13px 14px; border-radius:14px; font-size:14px; display:none; }
-  .pron .result.ok{ background:var(--green-tint); color:#0f7a4e; } .pron .result.mid{ background:var(--gold-tint); color:#7a4413; } .pron .result.bad{ background:var(--rust-tint); color:#8a2c3a; }
+  .pron .target{ font-family:var(--font-display); font-size:19px; font-weight:700; text-align:center; padding:18px 10px; background:var(--tint); border-radius:var(--radius-lg); margin-bottom:13px; color:var(--ink); }
+  .pron .result{ margin-top:14px; padding:13px 14px; border-radius:var(--radius-md); font-size:14px; display:none; }
+  .pron .result.ok{ background:var(--green-tint); color:var(--green); } .pron .result.mid{ background:var(--gold-tint); color:var(--gold); } .pron .result.bad{ background:var(--rust-tint); color:var(--rust); }
   .heard{ font-size:13px; margin-top:7px; opacity:.85; }
   .chat-log{ max-height:230px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px 2px 12px; }
   .chat-msg{ display:flex; gap:8px; align-items:flex-end; }
   .chat-msg.me{ flex-direction:row-reverse; }
-  .chat-msg .bubble{ max-width:78%; padding:10px 13px; border-radius:16px; font-size:13.5px; line-height:1.45; background:var(--tint); color:var(--ink); }
+  .chat-msg .bubble{ max-width:78%; padding:10px 13px; border-radius:var(--radius-lg); font-size:13.5px; line-height:1.45; background:var(--tint); color:var(--ink); }
   .chat-msg.me .bubble{ background:var(--purple); color:#fff; border-bottom-right-radius:4px; }
   .chat-msg.bot .bubble{ border-bottom-left-radius:4px; }
   .chat-input-row{ display:flex; align-items:center; gap:8px; margin-top:6px; }
@@ -280,8 +314,8 @@
   .chat-send{ background:var(--purple); color:#fff; }
 
   /* ---- KONUŞMA: seviye/ünite bileşenleri ---- */
-  .cefr-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:26px; padding:0 9px; border-radius:9px; background:linear-gradient(135deg,#9b7dff,var(--purple)); color:#fff; font-family:var(--font-display); font-weight:800; font-size:12.5px; letter-spacing:.2px; box-shadow:0 3px 8px rgba(124,92,255,.3); flex-shrink:0; }
-  .cefr-badge.lg{ min-width:50px; height:32px; font-size:14.5px; border-radius:11px; }
+  .cefr-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:26px; padding:0 9px; border-radius:var(--radius-sm); background:linear-gradient(135deg,var(--accent-ink),var(--accent)); color:#fff; font-family:var(--font-data); font-weight:800; font-size:12.5px; letter-spacing:.2px; box-shadow:var(--shadow-1); flex-shrink:0; }
+  .cefr-badge.lg{ min-width:50px; height:32px; font-size:14.5px; border-radius:var(--radius-md); }
   .cefr-badge.locked{ background:var(--tint); color:var(--ink-soft); box-shadow:none; }
   .phrase-chip{ display:inline-flex; align-items:center; background:var(--tint); color:var(--purple-deep); font-size:12px; font-weight:700; padding:6px 12px; border-radius:99px; margin:0 6px 6px 0; }
   .level-block{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--line); }
@@ -293,7 +327,7 @@
   .level-head .lv-lock .icon{ width:14px; height:14px; }
   .level-head .lv-count{ margin-left:auto; font-size:12px; font-weight:700; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
   .level-bar{ height:6px; background:var(--tint); border-radius:99px; overflow:hidden; margin-bottom:10px; }
-  .level-bar>div{ height:100%; background:linear-gradient(90deg,#9b7dff,var(--purple)); border-radius:99px; transition:width .4s; }
+  .level-bar>div{ height:100%; background:linear-gradient(90deg,var(--accent-ink),var(--accent)); border-radius:99px; transition:width .4s; }
   .level-cando{ font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; }
   .unit-row{ display:flex; align-items:center; gap:11px; width:100%; background:none; border:none; padding:10px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:44px; }
   .unit-row:last-child{ border-bottom:none; }
@@ -324,8 +358,9 @@
   .dlabel{ font-family:var(--font-display); font-weight:800; font-size:15px; color:var(--ink); }
   .ddate{ font-size:12px; color:var(--ink-soft); margin-top:1px; }
   .moodrow{ display:flex; gap:8px; justify-content:space-between; }
-  .mood{ flex:1; background:var(--tint); border:2px solid transparent; border-radius:14px; font-size:22px; padding:10px 0; cursor:pointer; transition:transform .1s,border-color .15s; }
-  .mood.active{ border-color:var(--purple); background:#fff; transform:scale(1.06); }
+  .mood{ flex:1; background:var(--tint); border:2px solid transparent; border-radius:var(--radius-md); padding:12px 0; cursor:pointer; transition:transform .1s,border-color .15s,color .15s; color:var(--gray-500); display:flex; align-items:center; justify-content:center; }
+  .mood .icon{ width:23px; height:23px; }
+  .mood.active{ border-color:var(--purple); background:var(--surface); color:var(--accent); transform:scale(1.06); }
   .journal-row{ display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; padding:9px 0; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; }
   .journal-row:last-child{ border-bottom:none; }
   .j-mood{ font-size:18px; width:22px; text-align:center; flex-shrink:0; }
@@ -344,7 +379,7 @@
   .badge-cell .badge-lock .icon{ width:10px; height:10px; stroke-width:2.6; }
   .badge-name{ font-family:var(--font-display); font-weight:800; font-size:11.5px; color:var(--ink); line-height:1.25; }
   .badge-cell.locked .badge-name{ color:var(--ink-soft); }
-  .badge-sub{ font-size:9.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; font-weight:700; }
+  .badge-sub{ font-size:9.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; font-weight:700; font-family:var(--font-data); }
   .milestone-card{ display:flex; align-items:center; gap:14px; }
   .milestone-ic{ width:52px; height:52px; border-radius:16px; background:var(--gold-tint); color:var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .milestone-ic .icon{ width:24px; height:24px; }
@@ -352,10 +387,42 @@
   .milestone-eyebrow{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); font-weight:800; margin-bottom:2px; }
   .milestone-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
   .milestone-s{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
-  .milestone-count{ font-size:11.5px; font-weight:700; color:var(--purple-deep); margin-top:8px; text-align:right; font-variant-numeric:tabular-nums; }
+  .milestone-count{ font-size:11.5px; font-weight:700; color:var(--purple-deep); margin-top:8px; text-align:right; font-variant-numeric:tabular-nums; font-family:var(--font-data); }
+
+
+  /* ---- EMPTY STATES (icon or mascot + copy + real CTA) ---- */
+  .empty-state{ text-align:center; padding:26px 12px 10px; }
+  .empty-state .ic{ width:34px; height:34px; color:var(--gray-300); margin:0 auto 10px; display:block; }
+  .empty-state .mchip{ width:44px; height:44px; border-radius:var(--radius-md); margin:0 auto 10px; }
+  .empty-state .t{ font-family:var(--font-ui); font-weight:800; font-size:14.5px; color:var(--ink); }
+  .empty-state .d{ font-size:12.5px; color:var(--gray-500); margin-top:4px; line-height:1.5; max-width:280px; margin-left:auto; margin-right:auto; }
+  .empty-state .btn.sm{ margin-top:14px; }
+
+  /* ---- SKELETON / SHIMMER LOADING ---- */
+  .skeleton{ background:linear-gradient(90deg,var(--gray-100) 25%,var(--gray-200) 37%,var(--gray-100) 63%); background-size:400% 100%; animation:shimmer 1.4s ease infinite; border-radius:var(--radius-sm); display:block; }
+  @keyframes shimmer{ 0%{ background-position:100% 0; } 100%{ background-position:0 0; } }
+
+  /* ---- İLERLEME: radar chart (real skill %'s, no chart library) ---- */
+  .radar-svg{ width:100%; max-width:260px; height:auto; display:block; margin:2px auto 0; overflow:visible; }
+  .radar-ring{ fill:none; stroke:var(--gray-200); stroke-width:1; }
+  .radar-axis{ stroke:var(--gray-200); stroke-width:1; }
+  .radar-fill{ fill:var(--accent); fill-opacity:.22; stroke:var(--accent); stroke-width:2; stroke-linejoin:round; }
+  .radar-dot{ fill:var(--accent); }
+  .radar-label{ font-family:var(--font-ui); font-size:9.5px; font-weight:700; fill:var(--gray-500); }
+
+  /* ---- İLERLEME: activity heatmap (GitHub-style, real S.history data) ---- */
+  .heatmap-grid{ display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,10px); gap:3px; margin-top:4px; }
+  .hm-cell{ border-radius:2.5px; background:var(--gray-100); }
+  .hm-cell.hm-future{ background:transparent; }
+  .hm-cell.hm-1{ background:var(--accent-soft-2); }
+  .hm-cell.hm-2{ background:color-mix(in srgb, var(--accent) 55%, var(--accent-soft-2)); }
+  .hm-cell.hm-3{ background:color-mix(in srgb, var(--accent) 80%, transparent); }
+  .hm-cell.hm-4{ background:var(--accent); }
+  .heatmap-legend{ display:flex; align-items:center; justify-content:flex-end; gap:4px; margin-top:9px; font-size:10px; color:var(--gray-500); font-weight:700; }
+  .heatmap-legend .hm-cell{ width:10px; height:10px; }
 
   /* ---- nav ---- */
-  nav{ position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; max-width:560px; margin:0 auto; padding:8px 4px calc(8px + env(safe-area-inset-bottom)); border-radius:28px 28px 0 0; box-shadow:0 -8px 26px rgba(90,60,180,.12); z-index:20; }
+  nav{ position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; max-width:560px; margin:0 auto; padding:8px 4px calc(8px + env(safe-area-inset-bottom)); border-radius:var(--radius-lg) var(--radius-lg) 0 0; box-shadow:var(--shadow-2); z-index:20; }
   nav button{ flex:1; background:none; border:none; padding:5px 0 4px; font-size:10.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-family:inherit; min-height:52px; }
   nav button .ic{ width:36px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:13px; transition:background .2s,color .2s; }
   nav button .ic .icon{ width:21px; height:21px; }
@@ -363,7 +430,7 @@
   nav button.active .ic{ background:var(--tint); }
   nav button.active .ic .icon{ stroke-width:2.3; }
   nav button.fab{ margin-top:-30px; }
-  nav button.fab .ic{ width:56px; height:56px; border-radius:50%; background:var(--purple); color:#fff; box-shadow:0 10px 20px rgba(124,92,255,.45); border:4px solid var(--bg); }
+  nav button.fab .ic{ width:56px; height:56px; border-radius:50%; background:var(--purple); color:#fff; box-shadow:var(--shadow-2); border:4px solid var(--bg); }
   nav button.fab .ic .icon{ width:24px; height:24px; stroke-width:2.4; }
   nav button.fab.active .ic{ background:var(--purple-deep); }
 </style>
@@ -407,6 +474,13 @@
 <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1-2h7l1 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.5" y="11" width="13" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
 <symbol id="i-gift" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="9.5" rx="1.5"/><rect x="3.3" y="7.5" width="17.4" height="4" rx="1"/><line x1="12" y1="7.5" x2="12" y2="20"/><path d="M12 7.5c-.8-2.6-2.7-4-4.3-3.3-1.4.6-1.6 2.4.4 3.3"/><path d="M12 7.5c.8-2.6 2.7-4 4.3-3.3 1.4.6 1.6 2.4-.4 3.3"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="5" y1="5" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="19" y2="19"/><line x1="5" y1="19" x2="6.8" y2="17.2"/><line x1="17.2" y1="6.8" x2="19" y2="5"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 13.5A8 8 0 1 1 10.5 5a6.3 6.3 0 0 0 8.5 8.5Z"/></symbol>
+<symbol id="i-mood-1" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.7" cy="10" r="1" style="fill:currentColor;stroke:none"/><circle cx="15.3" cy="10" r="1" style="fill:currentColor;stroke:none"/><path d="M8 16c1-1.6 2.5-2.4 4-2.4s3 .8 4 2.4"/></symbol>
+<symbol id="i-mood-2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.7" cy="10" r="1" style="fill:currentColor;stroke:none"/><circle cx="15.3" cy="10" r="1" style="fill:currentColor;stroke:none"/><path d="M8.3 15.3c1.1-.7 2.4-1 3.7-1s2.6.3 3.7 1"/></symbol>
+<symbol id="i-mood-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.7" cy="10" r="1" style="fill:currentColor;stroke:none"/><circle cx="15.3" cy="10" r="1" style="fill:currentColor;stroke:none"/><line x1="8" y1="15" x2="16" y2="15"/></symbol>
+<symbol id="i-mood-4" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.7" cy="9.7" r="1" style="fill:currentColor;stroke:none"/><circle cx="15.3" cy="9.7" r="1" style="fill:currentColor;stroke:none"/><path d="M8 14c1 1.6 2.5 2.4 4 2.4s3-.8 4-2.4"/></symbol>
+<symbol id="i-mood-5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.7" cy="9.5" r="1" style="fill:currentColor;stroke:none"/><circle cx="15.3" cy="9.5" r="1" style="fill:currentColor;stroke:none"/><path d="M7.5 13.5c1.2 2.1 2.8 3.2 4.5 3.2s3.3-1.1 4.5-3.2"/></symbol>
 </defs>
 </svg>
 
@@ -435,7 +509,7 @@
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün hedefi</h2>
       <div id="checklist"></div>
-      <button class="btn" id="completeBtn">Bugünü tamamla ✓</button>
+      <button class="btn" id="completeBtn">Bugünü tamamla</button>
       <div class="donewrap" id="doneWrap" style="display:none;">
         <div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div>
         <span>Bugünü tamamladın, harikasın!</span>
@@ -473,9 +547,8 @@
 
   <!-- ===== İLERLEME ===== -->
   <section class="view" id="v-progress">
-    <div class="subhead">
-      <div class="mchip"><img src="assets/mascot/pose-greatprogress.png" alt=""></div>
-      <div><h1>İlerleme</h1><p>Alışkanlığın nasıl gidiyor, bir bak.</p></div>
+    <div class="page-head">
+      <h1>İlerleme</h1>
     </div>
 
     <div class="segtabs" id="progSegTabs">
@@ -488,7 +561,7 @@
         <div class="ring" id="progRing"><div class="ring-inner"><div class="pct" id="progRingPct">0%</div><div class="lbl">60 günlük alışkanlık hedefi</div></div></div>
         <div class="goal-badge" id="progGoalBadge">
           <div class="mchip sm"><img src="assets/mascot/pose-goalachieved.png" alt=""></div>
-          <span>Hedefe ulaştın, tebrikler! 🎉</span>
+          <span>Hedefe ulaştın, tebrikler!</span>
         </div>
       </div>
 
@@ -503,24 +576,26 @@
         <h2><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Bu hafta</h2>
         <div class="weekchart" id="weekChart"></div>
       </div>
+
+      <div class="card">
+        <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Aktivite haritası</h2>
+        <div class="heatmap-grid" id="progHeatmap" aria-hidden="true"></div>
+        <div class="heatmap-legend" aria-hidden="true"><span>Az</span><span class="hm-cell hm-0"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-3"></span><span class="hm-cell hm-4"></span><span>Çok</span></div>
+      </div>
     </div>
 
     <div class="segpanel" id="progPanelSkills">
-      <div class="card">
-        <h2><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Beceri dağılımı</h2>
-        <div class="skill" id="skillVocab"><div class="skill-top"><span>Kelime</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
-        <div class="skill" id="skillRead"><div class="skill-top"><span>Okuma</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
-        <div class="skill" id="skillSpeak"><div class="skill-top"><span>Konuşma</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
-        <div class="skill" id="skillJournal"><div class="skill-top"><span>Günlük tutarlılık</span><span class="skill-pct">0%</span></div><div class="skill-track"><div class="skill-fill" style="width:0%"></div></div></div>
+      <div class="card" style="text-align:center;">
+        <h2 style="justify-content:center;"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Beceri haritası</h2>
+        <div id="progRadar"></div>
       </div>
     </div>
   </section>
 
   <!-- ===== ÇALIŞ (hub) ===== -->
   <section class="view" id="v-learn">
-    <div class="subhead">
-      <div class="mchip"><img src="assets/mascot/pose-learning.png" alt=""></div>
-      <div><h1>Çalış</h1><p>Bugün hangi beceriyle ilerlemek istersin?</p></div>
+    <div class="page-head">
+      <h1>Çalış</h1>
     </div>
     <div class="hubgrid">
       <button class="hubcard" onclick="go('vocab')">
@@ -553,10 +628,9 @@
 
   <!-- ===== KELİME ===== -->
   <section class="view" id="v-vocab">
-    <div class="subhead">
+    <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="mchip"><img src="assets/mascot/pose-reading.png" alt=""></div>
-      <div><h1>Kelime</h1><p>Aralıklı tekrar ile kelime dağarcığını büyüt.</p></div>
+      <h1>Kelime</h1>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime ekle</h2>
@@ -567,7 +641,14 @@
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg>Çalış <span class="mut" id="dueCount"></span></h2>
-      <div id="studyArea"><div class="empty">Çalışılacak kart yok. Kelime ekle ya da yarın gel. 🎉</div></div>
+      <div id="studyArea">
+        <div class="empty-state">
+          <div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div>
+          <div class="t">Çalışılacak kart yok</div>
+          <div class="d">Bugün için tüm kartları bitirdin. Yeni kelime ekle ya da yarın tekrar gel.</div>
+          <button type="button" class="btn sec sm" onclick="document.getElementById('wEn').focus();document.getElementById('wEn').scrollIntoView({behavior:'smooth',block:'center'});">Kelime ekle</button>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="searchbar">
@@ -582,28 +663,40 @@
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Tüm kelimeler <span class="mut" id="wordCount"></span></h2>
-      <div id="wordList"><div class="empty">Henüz kelime yok.</div></div>
+      <div id="wordList">
+        <div class="empty-state">
+          <svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg>
+          <div class="t">Henüz kelime yok</div>
+          <div class="d">İlk kelimeni yukarıdan ekle, aralıklı tekrarla kalıcı hale getir.</div>
+          <button type="button" class="btn sec sm" onclick="document.getElementById('wEn').focus();document.getElementById('wEn').scrollIntoView({behavior:'smooth',block:'center'});">İlk kelimeni ekle</button>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ===== OKUMA ===== -->
   <section class="view" id="v-reading">
-    <div class="subhead">
+    <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="mchip"><img src="assets/mascot/pose-writing.png" alt=""></div>
-      <div><h1>Okuma</h1><p>Okuduğun paragrafları ve kaynakları biriktir.</p></div>
+      <h1>Okuma</h1>
     </div>
-    <div class="card">
+    <div class="card" id="libCard">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Kitaplığım <span class="mut" id="libCount"></span></h2>
-      <div class="bar"><div id="libProgressBar" style="width:0%"></div></div>
-      <p class="hint" id="libProgressHint" style="margin-bottom:12px;"></p>
-      <button type="button" class="lib-next" id="libNextBtn">
-        <span class="ln-num" id="libNextNum">1</span>
-        <span class="ln-body"><span class="ln-label">Sıradaki metin</span><span class="ln-title" id="libNextTitle">—</span></span>
-        <svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
-      </button>
-      <button type="button" class="lib-toggle" id="libToggle">Tüm metinler (More to Read I)<svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
-      <div class="lib-list" id="libList"></div>
+      <div id="libSkeleton" class="lib-skel" style="display:none;">
+        <div class="skeleton" style="height:9px;border-radius:99px;margin:11px 0 12px;"></div>
+        <div class="skeleton" style="height:58px;"></div>
+      </div>
+      <div id="libReal">
+        <div class="bar"><div id="libProgressBar" style="width:0%"></div></div>
+        <p class="hint" id="libProgressHint" style="margin-bottom:12px;"></p>
+        <button type="button" class="lib-next" id="libNextBtn">
+          <span class="ln-num" id="libNextNum">1</span>
+          <span class="ln-body"><span class="ln-label">Sıradaki metin</span><span class="ln-title" id="libNextTitle">—</span></span>
+          <svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+        </button>
+        <button type="button" class="lib-toggle" id="libToggle">Tüm metinler (More to Read I)<svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+        <div class="lib-list" id="libList"></div>
+      </div>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Yeni kayıt</h2>
@@ -622,18 +715,25 @@
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Kayıtların <span class="mut" id="readingCount"></span></h2>
-      <div id="readingList"><div class="empty">Henüz okuma kaydı yok.</div></div>
+      <div id="readingList">
+        <div class="empty-state">
+          <div class="mchip"><img src="assets/mascot/pose-reading.png" alt=""></div>
+          <div class="t">Henüz okuma kaydın yok</div>
+          <div class="d">Kitaplığımdan bir metin aç ya da yukarıdan kendi notunu ekle.</div>
+          <button type="button" class="btn sec sm" onclick="document.getElementById('rText').focus();document.getElementById('rText').scrollIntoView({behavior:'smooth',block:'center'});">İlk kaydını ekle</button>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ===== OKUMA: Kitaplık metni ===== -->
   <section class="view" id="v-libread">
-    <div class="subhead">
+    <div class="page-head">
       <button class="back" onclick="go('reading')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="mchip"><img src="assets/mascot/pose-reading.png" alt=""></div>
-      <div><h1 id="libReadTitle" class="tight">—</h1><p id="libReadSub">More to Read I</p></div>
+      <h1 id="libReadTitle" class="tight">—</h1>
     </div>
     <div class="card">
+      <p class="mut" id="libReadSub" style="margin-bottom:6px;">More to Read I</p>
       <p class="hint" style="margin-top:0;margin-bottom:12px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
       <div class="read-body" id="libReadBody"></div>
     </div>
@@ -643,17 +743,16 @@
       <a class="btn deep" id="libReadClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'u Aç (Telaffuz kontrolü)</a>
     </div>
     <div class="card">
-      <button class="btn" id="libReadCompleteBtn">Bu metni tamamladım ✓</button>
-      <div class="donewrap" id="libReadDoneMsg" style="display:none;margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu metni tamamladın ✓</span></div>
+      <button class="btn" id="libReadCompleteBtn"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu metni tamamladım</button>
+      <div class="donewrap" id="libReadDoneMsg" style="display:none;margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu metni tamamladın</span></div>
     </div>
   </section>
 
   <!-- ===== DİNLEME ===== -->
   <section class="view" id="v-listening">
-    <div class="subhead">
+    <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="mchip"><img src="assets/mascot/pose-listening.png" alt=""></div>
-      <div><h1>Dinleme</h1><p>Podcast'lerini Spotify ile senkronize et.</p></div>
+      <h1>Dinleme</h1>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify bağlantısı</h2>
@@ -679,10 +778,9 @@
 
   <!-- ===== KONUŞMA ===== -->
   <section class="view" id="v-speaking">
-    <div class="subhead">
+    <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="mchip"><img src="assets/mascot/pose-newword.png" alt=""></div>
-      <div><h1>Konuşma</h1><p>Telaffuzunu ölç, seviyeni yükselt, Claude ile sesli pratik yap.</p></div>
+      <h1>Konuşma</h1>
     </div>
     <div class="card pron">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Telaffuz pratiği</h2>
@@ -712,14 +810,13 @@
 
   <!-- ===== ROZETLER ===== -->
   <section class="view" id="v-achievements">
-    <div class="subhead">
+    <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="mchip"><img src="assets/mascot/pose-cheering.png" alt=""></div>
-      <div><h1>Rozetler</h1><p>Emeklerinin karşılığı — kazandığın rozetlere bak.</p></div>
+      <h1>Rozetler</h1>
     </div>
 
     <div class="card milestone-card">
-      <div class="milestone-ic"><svg class="icon" aria-hidden="true"><use href="#i-gift"></use></svg></div>
+      <div class="milestone-ic" id="milestoneIc"><svg class="icon" aria-hidden="true"><use href="#i-gift"></use></svg></div>
       <div class="milestone-body">
         <div class="milestone-eyebrow">Sıradaki hedef</div>
         <div class="milestone-t" id="milestoneTitle">–</div>
@@ -751,9 +848,8 @@
 
   <!-- ===== GÜNLÜK ===== -->
   <section class="view" id="v-journal">
-    <div class="subhead">
-      <div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div>
-      <div><h1>Günlük</h1><p>Günün özeti — ruh halin ve notların.</p></div>
+    <div class="page-head">
+      <h1>Günlük</h1>
     </div>
     <div class="card">
       <div class="datestrip">
@@ -765,26 +861,40 @@
     <div class="card">
       <h2>Bugün nasıl geçti?</h2>
       <div class="moodrow" id="moodRow">
-        <button type="button" class="mood" data-m="😞">😞</button>
-        <button type="button" class="mood" data-m="😐">😐</button>
-        <button type="button" class="mood" data-m="🙂">🙂</button>
-        <button type="button" class="mood" data-m="😄">😄</button>
-        <button type="button" class="mood" data-m="🤩">🤩</button>
+        <button type="button" class="mood" data-m="😞" aria-label="Çok kötü"><svg class="icon" aria-hidden="true"><use href="#i-mood-1"></use></svg></button>
+        <button type="button" class="mood" data-m="😐" aria-label="Kötü"><svg class="icon" aria-hidden="true"><use href="#i-mood-2"></use></svg></button>
+        <button type="button" class="mood" data-m="🙂" aria-label="İdare eder"><svg class="icon" aria-hidden="true"><use href="#i-mood-3"></use></svg></button>
+        <button type="button" class="mood" data-m="😄" aria-label="İyi"><svg class="icon" aria-hidden="true"><use href="#i-mood-4"></use></svg></button>
+        <button type="button" class="mood" data-m="🤩" aria-label="Harika"><svg class="icon" aria-hidden="true"><use href="#i-mood-5"></use></svg></button>
       </div>
       <textarea class="f" id="journalNotes" rows="4" placeholder="Bugün ne öğrendin, neler hissettin?" style="margin-top:12px;"></textarea>
       <button class="btn" id="journalSave">Kaydet</button>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Son kayıtlar</h2>
-      <div id="journalHistory"><div class="empty">Henüz günlük kaydı yok.</div></div>
+      <div id="journalHistory">
+        <div class="empty-state">
+          <svg class="ic" aria-hidden="true"><use href="#i-book"></use></svg>
+          <div class="t">Henüz günlük kaydın yok</div>
+          <div class="d">Bugün nasıl geçti, yukarıdan ruh halini seç ve birkaç cümle yaz.</div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ===== PROFİL ===== -->
   <section class="view" id="v-profile">
-    <div class="subhead">
-      <div class="mchip"><img src="assets/mascot/pose-proud.png" alt=""></div>
-      <div><h1>Profil</h1><p id="profileSummary">–</p></div>
+    <div class="page-head">
+      <h1>Profil</h1>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-sun"></use></svg>Görünüm</h2>
+      <p class="mut" id="profileSummary" style="margin-bottom:12px;">–</p>
+      <div class="segtabs" id="themeSegTabs">
+        <button type="button" class="seg" data-theme="light"><svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;margin-right:4px;"><use href="#i-sun"></use></svg>Açık</button>
+        <button type="button" class="seg" data-theme="dark"><svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;margin-right:4px;"><use href="#i-moon"></use></svg>Koyu</button>
+        <button type="button" class="seg" data-theme="system">Sistem</button>
+      </div>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg>Veri</h2>
@@ -905,6 +1015,28 @@ S.readingLib=S.readingLib||{completed:{}};
 S.trCache=S.trCache||{};
 if(S.checksDate!==dstr(new Date())){ S.checks={}; S.checksDate=dstr(new Date()); }
 
+/* ---------- THEME ---------- */
+/* Default is ALWAYS light — a brand new user (S.settings.theme unset) or a
+   user who picked "Açık" must never auto-flip to dark just because the OS
+   is in dark mode. Only an explicit "system" choice follows prefers-color-scheme. */
+function applyTheme(mode){
+  var root=document.documentElement;
+  if(mode==="dark") root.setAttribute("data-theme","dark");
+  else if(mode==="system") root.removeAttribute("data-theme");
+  else root.setAttribute("data-theme","light");
+  var meta=document.getElementById("themeColorMeta");
+  if(meta){
+    var paper=getComputedStyle(root).getPropertyValue("--paper").trim();
+    if(paper) meta.setAttribute("content",paper);
+  }
+}
+applyTheme(S.settings.theme||"light");
+try{
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){
+    if((S.settings.theme||"light")==="system") applyTheme("system");
+  });
+}catch(e){}
+
 function dstr(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
 function daysBetween(a,b){ return Math.round((a-b)/86400000); }
 function today0(){ var d=new Date(); d.setHours(0,0,0,0); return d.getTime(); }
@@ -945,7 +1077,7 @@ function renderToday(){
   document.getElementById("streak").textContent=S.streak;
   document.getElementById("totalDays").textContent=S.totalDays;
   var ed=daysBetween(EXAM,new Date());
-  document.getElementById("examDays").textContent=ed>0?ed+"g":"🎉";
+  document.getElementById("examDays").innerHTML=ed>0?(ed+"g"):'<svg class="icon icon-sm" aria-hidden="true"><use href="#i-trophy"></use></svg>';
   var dt=new Date();
   document.getElementById("todayDate").textContent=DAYS_TR[dt.getDay()]+", "+dt.getDate()+" "+MONTHS_TR[dt.getMonth()];
   var cl=document.getElementById("checklist"); cl.innerHTML="";
@@ -959,8 +1091,9 @@ function renderToday(){
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
   var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
   var btn=document.getElementById("completeBtn");
-  if(doneToday){ btn.textContent="Bugün tamamlandı ✓ Aferin!"; btn.disabled=true; }
-  else{ btn.textContent=all?"Bugünü tamamla ✓":("Adımlar: "+doneN+"/"+STEPS.length); btn.disabled=!all; }
+  var checkIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>';
+  if(doneToday){ btn.innerHTML=checkIcon+"Bugün tamamlandı — Aferin!"; btn.disabled=true; }
+  else{ btn.innerHTML=all?(checkIcon+"Bugünü tamamla"):("Adımlar: "+doneN+"/"+STEPS.length); btn.disabled=!all; }
   document.getElementById("doneWrap").style.display=doneToday?"flex":"none";
   var pct=Math.min(100,Math.round(S.totalDays/GOAL*100));
   document.getElementById("progBar").style.width=pct+"%";
@@ -1003,7 +1136,8 @@ function renderVocab(){
   // study
   var sa=document.getElementById("studyArea");
   if(!due.length){
-    sa.innerHTML='<div class="empty-mascot"><div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div><div class="empty">Çalışılacak kart yok. 🎉</div></div>';
+    sa.innerHTML='<div class="empty-state"><div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div><div class="t">Çalışılacak kart yok</div><div class="d">Bugün için tüm kartları bitirdin. Yeni kelime ekle ya da yarın tekrar gel.</div>'+
+      '<button type="button" class="btn sec sm" onclick="document.getElementById(\'wEn\').focus();document.getElementById(\'wEn\').scrollIntoView({behavior:\'smooth\',block:\'center\'});">Kelime ekle</button></div>';
     studyIdx=null;
   }
   else{
@@ -1040,8 +1174,21 @@ function renderVocab(){
     if(q&&w.en.toLowerCase().indexOf(q)===-1&&w.tr.toLowerCase().indexOf(q)===-1) return false;
     return true;
   });
-  if(!S.words.length){ wl.innerHTML='<div class="empty">Henüz kelime yok.</div>'; }
-  else if(!filtered.length){ wl.innerHTML='<div class="empty">Eşleşen kelime yok.</div>'; }
+  if(!S.words.length){
+    wl.innerHTML='<div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg><div class="t">Henüz kelime yok</div><div class="d">İlk kelimeni yukarıdan ekle, aralıklı tekrarla kalıcı hale getir.</div>'+
+      '<button type="button" class="btn sec sm" onclick="document.getElementById(\'wEn\').focus();document.getElementById(\'wEn\').scrollIntoView({behavior:\'smooth\',block:\'center\'});">İlk kelimeni ekle</button></div>';
+  }
+  else if(!filtered.length){
+    wl.innerHTML='<div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg><div class="t">Eşleşen kelime yok</div><div class="d">Arama ya da filtreyi değiştirip tekrar dene.</div>'+
+      '<button type="button" class="btn sec sm" id="vocabClearFilter">Aramayı temizle</button></div>';
+    var clearBtn=document.getElementById("vocabClearFilter");
+    if(clearBtn) clearBtn.addEventListener("click",function(){
+      vocabQ=""; document.getElementById("vocabSearch").value="";
+      vocabFilter="all";
+      document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(x){ x.classList.toggle("active", x.dataset.f==="all"); });
+      renderVocab();
+    });
+  }
   else{
     wl.innerHTML="";
     filtered.slice().reverse().forEach(function(w){
@@ -1128,10 +1275,14 @@ function libFrontierId(){
   return READING_LIBRARY[READING_LIBRARY.length-1].id;
 }
 function renderReadingLib(){
+  var skel=document.getElementById("libSkeleton"), real=document.getElementById("libReal");
   if(!READING_LIBRARY){
-    document.getElementById("libNextTitle").textContent="Yükleniyor...";
+    if(skel) skel.style.display="block";
+    if(real) real.style.display="none";
     return;
   }
+  if(skel) skel.style.display="none";
+  if(real) real.style.display="block";
   var total=READING_LIBRARY.length;
   var doneN=Object.keys(S.readingLib.completed).length;
   document.getElementById("libCount").textContent="· "+doneN+"/"+total;
@@ -1140,7 +1291,7 @@ function renderReadingLib(){
   var frontier=READING_LIBRARY.filter(function(r){return r.id===frontierId;})[0]||READING_LIBRARY[0];
   var allDone=doneN>=total;
   document.getElementById("libProgressHint").textContent=allDone
-    ? "Kitaptaki tüm metinleri tamamladın! 🎉"
+    ? "Kitaptaki tüm metinleri tamamladın!"
     : (doneN+"/"+total+" metin tamamlandı — sırada "+frontier.id+". metin var.");
   document.getElementById("libNextNum").textContent=frontier.id;
   document.getElementById("libNextTitle").textContent=frontier.title;
@@ -1260,7 +1411,7 @@ function openWordSheet(word,paragraphText){
   wsCurrentWord=word;
   wsCurrentEx=sentenceAround(word,paragraphText||"");
   document.getElementById("wsWord").textContent=word;
-  document.getElementById("wsTr").textContent="Anlamına bakılıyor...";
+  document.getElementById("wsTr").innerHTML='<span class="skeleton" style="width:60%;height:16px;"></span>';
   document.getElementById("wordSheet").classList.add("open");
   document.getElementById("wordBackdrop").classList.add("open");
   trLookup(word).then(function(tr){
@@ -1286,7 +1437,7 @@ document.getElementById("wsAdd").addEventListener("click",function(){
   if(!tr||tr==="Anlamına bakılıyor..."||tr==="Anlamı bulunamadı") tr="";
   var exists=S.words.some(function(w){ return w.en.toLowerCase()===en.toLowerCase(); });
   var btn=document.getElementById("wsAdd");
-  if(exists){ btn.textContent="Zaten defterinde ✓"; setTimeout(function(){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime defterine ekle'; },1800); return; }
+  if(exists){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Zaten defterinde'; setTimeout(function(){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime defterine ekle'; },1800); return; }
   S.words.push({en:en,tr:tr,ex:wsCurrentEx,box:0,due:today0()});
   save();
   btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Eklendi!';
@@ -1516,7 +1667,7 @@ function spotifyPlayUri(uri){
 }
 function renderListening(){
   var st=document.getElementById("spotifyStatus"), btn=document.getElementById("spotifyConnectBtn");
-  if(spotifyTokens()){ st.textContent="Spotify'a bağlı ✓"; btn.textContent="Bağlantıyı kes"; }
+  if(spotifyTokens()){ st.innerHTML='<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#i-check"></use></svg> Spotify\'a bağlı'; btn.textContent="Bağlantıyı kes"; }
   else if(spotifyClientId()){ st.textContent="Client ID kaydedildi, bağlanmaya hazır."; btn.textContent="Spotify'a bağlan"; }
   else{ st.textContent="Henüz bağlı değil."; btn.textContent="Spotify'a bağlan"; }
 }
@@ -1593,7 +1744,7 @@ function start432Timer(minutes){
     remaining--;
     if(remaining<0){
       stop432Timer();
-      if(disp) disp.textContent="Bitti! 🎉 Şimdi bir sonraki turu dene.";
+      if(disp) disp.textContent="Bitti — şimdi bir sonraki turu dene.";
       if(disp) disp.style.display="block";
       if(navigator.vibrate) navigator.vibrate([200,100,200]);
       return;
@@ -1668,8 +1819,8 @@ function renderSpeaking(){
     '</div>'+
     '<a class="btn deep" id="speakOpenClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</a>'+
     (done
-      ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın ✓</span></div>'
-      : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;">Bu üniteyi tamamladım ✓</button>');
+      ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın</span></div>'
+      : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu üniteyi tamamladım</button>');
   wireClaudeLink(document.getElementById("speakOpenClaude"),sel.li,sel.ui);
   document.querySelectorAll("#speakCurrent [data-min]").forEach(function(b){
     b.addEventListener("click",function(){ start432Timer(parseInt(b.dataset.min,10)); });
@@ -1787,18 +1938,21 @@ function renderAchievements(){
   list.forEach(function(b){
     var pct=Math.round(b.ratio*100);
     var row=document.createElement("div"); row.className="skill";
-    row.innerHTML='<div class="skill-top"><span>'+(b.unlocked?"✓ ":"")+esc(b.def.name)+'</span><span class="skill-pct">'+b.cur+'/'+b.tgt+'</span></div>'+
+    row.innerHTML='<div class="skill-top"><span>'+(b.unlocked?'<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;color:var(--green);"><use href="#i-check"></use></svg> ':"")+esc(b.def.name)+'</span><span class="skill-pct">'+b.cur+'/'+b.tgt+'</span></div>'+
       '<div class="skill-track"><div class="skill-fill" style="width:'+pct+'%"></div></div>';
     mlist.appendChild(row);
   });
 
   var locked=list.filter(function(b){ return !b.unlocked; }).sort(function(a,c){ return c.ratio-a.ratio; });
+  var milestoneIc=document.getElementById("milestoneIc");
   if(!locked.length){
-    document.getElementById("milestoneTitle").textContent="Tüm rozetleri topladın! 🎉";
+    if(milestoneIc) milestoneIc.innerHTML='<img src="assets/mascot/pose-goalachieved.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
+    document.getElementById("milestoneTitle").textContent="Tüm rozetleri topladın!";
     document.getElementById("milestoneDesc").textContent="İnanılmazsın — yeni hedefler yakında burada.";
     document.getElementById("milestoneBar").style.width="100%";
     document.getElementById("milestoneCount").textContent=list.length+" / "+list.length;
   } else {
+    if(milestoneIc) milestoneIc.innerHTML='<svg class="icon" aria-hidden="true"><use href="#i-gift"></use></svg>';
     var next=locked[0];
     document.getElementById("milestoneTitle").textContent=next.def.name;
     document.getElementById("milestoneDesc").textContent=next.def.desc;
@@ -1890,12 +2044,12 @@ function norm(s){ return s.toLowerCase().replace(/[^a-z0-9\s']/g,"").replace(/\s
 function showPron(score,said){
   S.pronCount=(S.pronCount||0)+1; save();
   var res=document.getElementById("pronResult"); res.style.display="block";
-  var pct=Math.round(score*100), cls, msg;
-  if(pct>=85){ cls="ok"; msg="🎉 Harika! Çok net."; }
-  else if(pct>=60){ cls="mid"; msg="👍 Fena değil — tekrar dene, biraz daha net."; }
-  else{ cls="bad"; msg="💪 Devam et. 'Dinle'ye basıp tekrar taklit et."; }
+  var pct=Math.round(score*100), cls, msg, ic;
+  if(pct>=85){ cls="ok"; ic="i-check"; msg="Harika! Çok net."; }
+  else if(pct>=60){ cls="mid"; ic="i-target"; msg="Fena değil — tekrar dene, biraz daha net."; }
+  else{ cls="bad"; ic="i-refresh"; msg="Devam et. 'Dinle'ye basıp tekrar taklit et."; }
   res.className="result "+cls;
-  res.innerHTML="<b>%"+pct+" eşleşme</b> — "+msg+'<div class="heard">Duydum: "'+esc(said)+'"</div>';
+  res.innerHTML='<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#'+ic+'"></use></svg> <b>%'+pct+" eşleşme</b> — "+msg+'<div class="heard">Duydum: "'+esc(said)+'"</div>';
 }
 function similarity(a,b){
   if(a===b) return 1; if(!a||!b) return 0;
@@ -1910,10 +2064,58 @@ function similarity(a,b){
 }
 
 /* ---------- PROGRESS ---------- */
-function setSkill(id,pct){
-  var el=document.getElementById(id); if(!el) return;
-  el.querySelector(".skill-fill").style.width=pct+"%";
-  el.querySelector(".skill-pct").textContent=pct+"%";
+function renderRadar(vals){
+  var wrap=document.getElementById("progRadar"); if(!wrap) return;
+  var size=260, cx=size/2, cy=size/2, R=82, n=vals.length;
+  function pt(i,r){
+    var ang=-Math.PI/2+i*(2*Math.PI/n);
+    return [+(cx+r*R*Math.cos(ang)).toFixed(1), +(cy+r*R*Math.sin(ang)).toFixed(1)];
+  }
+  var svg='<svg class="radar-svg" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="Beceri haritası: '+
+    vals.map(function(v){ return v.label+" yüzde "+v.pct; }).join(", ")+'">';
+  [0.25,0.5,0.75,1].forEach(function(r){
+    var pts=[]; for(var i=0;i<n;i++){ pts.push(pt(i,r).join(",")); }
+    svg+='<polygon class="radar-ring" points="'+pts.join(" ")+'"></polygon>';
+  });
+  for(var i=0;i<n;i++){
+    var p=pt(i,1);
+    svg+='<line class="radar-axis" x1="'+cx+'" y1="'+cy+'" x2="'+p[0]+'" y2="'+p[1]+'"></line>';
+  }
+  var dataPts=vals.map(function(v,i){ return pt(i,Math.max(v.pct/100,0.04)); });
+  svg+='<polygon class="radar-fill" points="'+dataPts.map(function(p){return p.join(",");}).join(" ")+'"></polygon>';
+  dataPts.forEach(function(p){ svg+='<circle class="radar-dot" cx="'+p[0]+'" cy="'+p[1]+'" r="3"></circle>'; });
+  for(var i=0;i<n;i++){
+    var lp=pt(i,1.32);
+    var anchor=Math.abs(lp[0]-cx)<6?"middle":(lp[0]>cx?"start":"end");
+    svg+='<text class="radar-label" x="'+lp[0]+'" y="'+lp[1]+'" text-anchor="'+anchor+'">'+esc(vals[i].label)+' · '+vals[i].pct+'%</text>';
+  }
+  svg+='</svg>';
+  wrap.innerHTML=svg;
+}
+function renderHeatmap(){
+  var grid=document.getElementById("progHeatmap"); if(!grid) return;
+  var maxV=STEPS.length;
+  var today=new Date(); today.setHours(0,0,0,0);
+  var start=new Date(today); start.setDate(start.getDate()-97);
+  start.setDate(start.getDate()-start.getDay()); // back up to that week's Sunday
+  var cells=[], cur=new Date(start);
+  while(cur<=today){
+    var v=S.history[dstr(cur)]||0;
+    var lvl=v<=0?0:(v>=maxV?4:Math.max(1,Math.ceil(v/maxV*4)));
+    cells.push({date:new Date(cur),lvl:lvl,v:v});
+    cur.setDate(cur.getDate()+1);
+  }
+  while(cells.length%7!==0){ cells.push({future:true}); }
+  grid.innerHTML="";
+  cells.forEach(function(c){
+    var d=document.createElement("div");
+    if(c.future){ d.className="hm-cell hm-future"; }
+    else{
+      d.className="hm-cell hm-"+c.lvl;
+      d.title=c.date.getDate()+" "+MONTHS_TR[c.date.getMonth()]+" · "+c.v+"/"+maxV;
+    }
+    grid.appendChild(d);
+  });
 }
 function renderProgress(){
   var pct=Math.min(100,Math.round(S.totalDays/GOAL*100));
@@ -1944,10 +2146,13 @@ function renderProgress(){
   var speakPct=totalSpeakUnits?Math.round(doneSpeakUnits/totalSpeakUnits*100):0;
   var journalDays=Object.keys(S.journal).length;
   var journalPct=Math.min(100,Math.round(journalDays/14*100));
-  setSkill("skillVocab",vocabPct);
-  setSkill("skillRead",readPct);
-  setSkill("skillSpeak",speakPct);
-  setSkill("skillJournal",journalPct);
+  renderRadar([
+    {label:"Kelime",pct:vocabPct},
+    {label:"Okuma",pct:readPct},
+    {label:"Konuşma",pct:speakPct},
+    {label:"Günlük",pct:journalPct}
+  ]);
+  renderHeatmap();
 }
 
 /* ---------- LEARN HUB ---------- */
@@ -2005,11 +2210,22 @@ document.getElementById("journalSave").addEventListener("click",function(){
 function renderProfile(){
   var ed=daysBetween(EXAM,new Date());
   document.getElementById("profileSummary").textContent=
-    (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi! 🎉")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
+    (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi!")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
   document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
   document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
+  var curTheme=S.settings.theme||"light";
+  document.querySelectorAll("#themeSegTabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.theme===curTheme); });
 }
+document.querySelectorAll("#themeSegTabs .seg").forEach(function(b){
+  b.addEventListener("click",function(){
+    var mode=b.dataset.theme;
+    S.settings.theme=mode; save();
+    applyTheme(mode);
+    document.querySelectorAll("#themeSegTabs .seg").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+  });
+});
 document.getElementById("spotifyClientIdSave").addEventListener("click",function(){
   S.settings.spotifyClientId=document.getElementById("spotifyClientIdInput").value.trim();
   save(); alert("Spotify Client ID kaydedildi.");
@@ -2035,7 +2251,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
       S.speaking=S.speaking||{completed:{},selected:null}; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
-      save(); renderToday(); renderVocab(); alert("İçe aktarıldı ✓");
+      save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
   };
   r.readAsText(f);
