@@ -1,7 +1,8 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v4-spotify-embed";
+const CACHE = "english-app-v5-reading-library";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
+  "./assets/reading-library.json",
   "./assets/mascot/hero-happy.png",
   "./assets/mascot/pose-motivated.png",
   "./assets/mascot/pose-goodjob.png",
