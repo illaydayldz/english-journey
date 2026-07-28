@@ -131,9 +131,9 @@
   .stat .txt{ min-width:0; }
   .stat .n{ font-family:var(--font-data); font-size:19px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--ink); }
   .stat .l{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); margin-top:2px; font-weight:700; white-space:nowrap; }
-  .s-streak .ic-chip{ background:var(--gold); color:#fff; } .s-streak .n{ color:var(--gold); }
-  .s-days .ic-chip{ background:var(--green); color:#fff; } .s-days .n{ color:var(--green); }
-  .s-exam .ic-chip{ background:var(--rust); color:#fff; } .s-exam .n{ color:var(--rust); font-size:17px; }
+  .s-streak .ic-chip{ background:var(--gold-tint); color:var(--gold); } .s-streak .n{ color:var(--gold); }
+  .s-days .ic-chip{ background:var(--green-tint); color:var(--green); } .s-days .n{ color:var(--green); }
+  .s-exam .ic-chip{ background:var(--rust-tint); color:var(--rust); } .s-exam .n{ color:var(--rust); font-size:17px; }
   /* ---- compact single-card stat row (Home + İlerleme "Genel Bakış"): solid
      icon-badge circles, thin dividers instead of each stat being its own
      shadowed tile — matches the reference's "compact horizontal stat row in
@@ -168,11 +168,11 @@
   .t-done{ width:26px; height:26px; border-radius:50%; background:var(--tint); color:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s,color .2s; }
   .t-done .icon{ width:14px; height:14px; stroke-width:3; }
   .tcheck.done .t-done{ background:var(--green); color:#fff; }
-  .t-ic-okuma{ background:var(--green); color:#fff; }
-  .t-ic-dinleme{ background:var(--blue); color:#fff; }
-  .t-ic-kelime{ background:var(--purple); color:#fff; }
-  .t-ic-konusma{ background:var(--gold); color:#fff; }
-  .t-ic-yazma{ background:var(--pink); color:#fff; }
+  .t-ic-okuma{ background:var(--green-tint); color:var(--green); }
+  .t-ic-dinleme{ background:var(--blue-tint); color:var(--blue); }
+  .t-ic-kelime{ background:var(--tint); color:var(--purple); }
+  .t-ic-konusma{ background:var(--gold-tint); color:var(--gold); }
+  .t-ic-yazma{ background:var(--pink-tint); color:var(--pink); }
 
   .donewrap{ display:flex; align-items:center; gap:10px; background:var(--green-tint); border-radius:var(--radius-md); padding:10px 12px; margin-top:12px; font-size:13px; font-weight:700; color:var(--green); }
   .continue-card{ display:flex; align-items:center; gap:12px; cursor:pointer; width:100%; border:none; text-align:left; font-family:inherit; }
@@ -231,7 +231,7 @@
      reference's "colored circle, white icon" skill-badge language, reused
      everywhere a skill/category needs an icon (hub cards, task list, badges). */
   .hub-ic{ position:relative; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-  .hub-purple{ background:var(--purple); color:#fff; } .hub-green{ background:var(--green); color:#fff; } .hub-blue{ background:var(--blue); color:#fff; } .hub-gold{ background:var(--gold); color:#fff; }
+  .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); }
   .hub-ic-plus{ position:absolute; right:-3px; bottom:-3px; width:18px; height:18px; border-radius:50%; background:var(--surface); box-shadow:0 0 0 2px var(--card), var(--shadow-sm); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
   .hub-ic-plus .icon{ width:10px; height:10px; stroke-width:3; }
   .hub-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
@@ -425,7 +425,7 @@
   .badge-cell.locked .badge-name{ color:var(--ink-soft); }
   .badge-sub{ font-size:9.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; font-weight:700; font-family:var(--font-data); }
   .milestone-card{ display:flex; align-items:center; gap:14px; }
-  .milestone-ic{ width:52px; height:52px; border-radius:16px; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .milestone-ic{ width:52px; height:52px; border-radius:16px; background:var(--gold-tint); color:var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .milestone-ic .icon{ width:24px; height:24px; }
   .milestone-body{ flex:1; min-width:0; }
   .milestone-eyebrow{ font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); font-weight:800; margin-bottom:2px; }
@@ -450,7 +450,7 @@
      name + wide progress bar + %), one list per card, not one card per skill. ---- */
   .skillrow{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
   .skillrow:last-child{ border-bottom:none; }
-  .skillrow-ic{ width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; }
+  .skillrow-ic{ width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .skillrow-ic .icon{ width:15px; height:15px; }
   .skillrow-name{ font-size:12.5px; font-weight:700; color:var(--ink); width:56px; flex-shrink:0; }
   .skillrow-track{ flex:1; height:6px; background:var(--tint); border-radius:99px; overflow:hidden; display:block; min-width:0; }
@@ -621,10 +621,10 @@
       </div>
 
       <div class="card stats statrow">
-        <div class="stat"><div class="ic-chip" style="background:var(--gold);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="progStreak" style="color:var(--gold);">0</div><div class="l">Seri</div></div></div>
-        <div class="stat"><div class="ic-chip" style="background:var(--green);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="progDays" style="color:var(--green);">0</div><div class="l">Gün</div></div></div>
-        <div class="stat"><div class="ic-chip" style="background:var(--purple);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></div><div class="txt"><div class="n" id="progWords" style="color:var(--purple);">0</div><div class="l">Kelime</div></div></div>
-        <div class="stat"><div class="ic-chip" style="background:var(--blue);color:#fff;"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div><div class="txt"><div class="n" id="progToday" style="color:var(--blue);font-size:16px;">0/6</div><div class="l">Bugün</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--gold-tint);color:var(--gold);"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="progStreak" style="color:var(--gold);">0</div><div class="l">Seri</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--green-tint);color:var(--green);"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="progDays" style="color:var(--green);">0</div><div class="l">Gün</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></div><div class="txt"><div class="n" id="progWords" style="color:var(--purple);">0</div><div class="l">Kelime</div></div></div>
+        <div class="stat"><div class="ic-chip" style="background:var(--blue-tint);color:var(--blue);"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div><div class="txt"><div class="n" id="progToday" style="color:var(--blue);font-size:16px;">0/6</div><div class="l">Bugün</div></div></div>
       </div>
 
       <div class="card">
@@ -2030,7 +2030,7 @@ function renderAchievements(){
   list.forEach(function(b){
     var col=BADGE_CAT_COLOR[b.def.cat];
     var cell=document.createElement("div"); cell.className="badge-cell"+(b.unlocked?"":" locked");
-    cell.innerHTML='<div class="badge-ic" style="'+(b.unlocked?("background:"+col.fg+";color:#fff;box-shadow:0 0 0 5px "+col.bg+", var(--shadow-sm);"):"")+'">'+
+    cell.innerHTML='<div class="badge-ic" style="'+(b.unlocked?("background:"+col.bg+";color:"+col.fg+";box-shadow:0 0 0 3px "+col.bg+", var(--shadow-sm);"):"")+'">'+
         '<svg class="icon" aria-hidden="true"><use href="#'+b.def.ic+'"></use></svg>'+
         (b.unlocked?"":'<span class="badge-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg></span>')+
       '</div>'+
@@ -2197,16 +2197,16 @@ function renderRadar(vals){
   svg+='</svg>';
   wrap.innerHTML=svg;
 }
-var SKILL_ICON={"Kelime":["i-cards","var(--purple)"],"Okuma":["i-book-open","var(--green)"],"Konuşma":["i-mic","var(--gold)"],"Günlük":["i-edit","var(--pink)"]};
+var SKILL_ICON={"Kelime":["i-cards","var(--tint)","var(--purple)"],"Okuma":["i-book-open","var(--green-tint)","var(--green)"],"Dilbilgisi":["i-layers","var(--blue-tint)","var(--blue)"],"Konuşma":["i-mic","var(--gold-tint)","var(--gold)"],"Günlük":["i-edit","var(--pink-tint)","var(--pink)"]};
 function renderSkillList(vals){
   var wrap=document.getElementById("progSkillList"); if(!wrap) return;
   wrap.innerHTML="";
   vals.forEach(function(v){
-    var meta=SKILL_ICON[v.label]||["i-star","var(--purple)"];
+    var meta=SKILL_ICON[v.label]||["i-star","var(--tint)","var(--purple)"];
     var row=document.createElement("div"); row.className="skillrow";
-    row.innerHTML='<span class="skillrow-ic" style="background:'+meta[1]+';"><svg class="icon" aria-hidden="true"><use href="#'+meta[0]+'"></use></svg></span>'+
+    row.innerHTML='<span class="skillrow-ic" style="background:'+meta[1]+';color:'+meta[2]+';"><svg class="icon" aria-hidden="true"><use href="#'+meta[0]+'"></use></svg></span>'+
       '<span class="skillrow-name">'+esc(v.label)+'</span>'+
-      '<span class="skillrow-track"><span class="skillrow-fill" style="width:'+v.pct+'%;background:'+meta[1]+';"></span></span>'+
+      '<span class="skillrow-track"><span class="skillrow-fill" style="width:'+v.pct+'%;background:'+meta[2]+';"></span></span>'+
       '<span class="skillrow-pct">'+v.pct+'%</span>';
     wrap.appendChild(row);
   });
