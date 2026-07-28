@@ -42,6 +42,7 @@
     --pink:#B5459A; --pink-tint:#FAEAF5;   /* warmth accent — kept distinct from success/warning/danger */
     --blue:#3B6FE0; --blue-tint:#E7EDFC;   /* neutral info accent — kept distinct */
     --teal:#1B8C8C; --teal-tint:#E2F5F5;   /* Dilbilgisi accent — kept distinct from blue/green */
+    --coral:#D9754F; --coral-tint:#FBEBE4; /* Günlük accent — pink is reserved for Yazma/Writing */
     --shadow-sm:var(--shadow-1); --shadow-md:var(--shadow-2);
     --font-display:var(--font-ui);
   }
@@ -51,7 +52,7 @@
     --accent:#8B7FFF; --accent-ink:#C9C2FF; --accent-soft:#251F42; --accent-soft-2:#332B57;
     --success:#3CC091; --success-soft:#132A22; --warning:#E0A542; --warning-soft:#2E2410; --danger:#E2726E; --danger-soft:#301918;
     --shadow-1:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 10px 28px rgba(0,0,0,.5);
-    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740; --teal:#4DBFBF; --teal-tint:#132B2B;
+    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740; --teal:#4DBFBF; --teal-tint:#132B2B; --coral:#E8916D; --coral-tint:#332218;
   }}
   :root[data-theme="dark"]{
     color-scheme: dark;
@@ -60,7 +61,7 @@
     --accent:#8B7FFF; --accent-ink:#C9C2FF; --accent-soft:#251F42; --accent-soft-2:#332B57;
     --success:#3CC091; --success-soft:#132A22; --warning:#E0A542; --warning-soft:#2E2410; --danger:#E2726E; --danger-soft:#301918;
     --shadow-1:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 10px 28px rgba(0,0,0,.5);
-    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740; --teal:#4DBFBF; --teal-tint:#132B2B;
+    --pink:#E28FCB; --pink-tint:#332030; --blue:#7FA0F2; --blue-tint:#1E2740; --teal:#4DBFBF; --teal-tint:#132B2B; --coral:#E8916D; --coral-tint:#332218;
   }
   :root[data-theme="light"]{
     color-scheme: light;
@@ -70,7 +71,7 @@
     --success:#1C9C6E; --success-soft:#E4F5EE; --warning:#B9750F; --warning-soft:#FBF0DD; --danger:#C4433F; --danger-soft:#FBEAE9;
     --shadow-1:0 1px 2px rgba(23,21,31,.06), 0 1px 1px rgba(23,21,31,.04);
     --shadow-2:0 8px 24px rgba(23,21,31,.10), 0 2px 6px rgba(23,21,31,.06);
-    --pink:#B5459A; --pink-tint:#FAEAF5; --blue:#3B6FE0; --blue-tint:#E7EDFC; --teal:#1B8C8C; --teal-tint:#E2F5F5;
+    --pink:#B5459A; --pink-tint:#FAEAF5; --blue:#3B6FE0; --blue-tint:#E7EDFC; --teal:#1B8C8C; --teal-tint:#E2F5F5; --coral:#D9754F; --coral-tint:#FBEBE4;
   }
   *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; min-width:0; }
   body{ font-family:var(--font-body); background:var(--bg); color:var(--ink); padding-bottom:112px; line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
@@ -174,6 +175,7 @@
   .t-ic-kelime{ background:var(--tint); color:var(--purple); }
   .t-ic-konusma{ background:var(--gold-tint); color:var(--gold); }
   .t-ic-yazma{ background:var(--pink-tint); color:var(--pink); }
+  .t-ic-dilbilgisi{ background:var(--teal-tint); color:var(--teal); }
 
   .donewrap{ display:flex; align-items:center; gap:10px; background:var(--green-tint); border-radius:var(--radius-md); padding:10px 12px; margin-top:12px; font-size:13px; font-weight:700; color:var(--green); }
   .continue-card{ display:flex; align-items:center; gap:12px; cursor:pointer; width:100%; border:none; text-align:left; font-family:inherit; }
@@ -232,8 +234,8 @@
      reference's "colored circle, white icon" skill-badge language, reused
      everywhere a skill/category needs an icon (hub cards, task list, badges). */
   .hub-ic{ position:relative; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-  .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); } .hub-teal{ background:var(--teal-tint); color:var(--teal); }
-  .btn.teal{ background:var(--teal); }
+  .hub-purple{ background:var(--tint); color:var(--purple); } .hub-green{ background:var(--green-tint); color:var(--green); } .hub-blue{ background:var(--blue-tint); color:var(--blue); } .hub-gold{ background:var(--gold-tint); color:var(--gold); } .hub-teal{ background:var(--teal-tint); color:var(--teal); } .hub-pink{ background:var(--pink-tint); color:var(--pink); }
+  .btn.teal{ background:var(--teal); } .btn.pink{ background:var(--pink); }
   .hub-ic-plus{ position:absolute; right:-3px; bottom:-3px; width:18px; height:18px; border-radius:50%; background:var(--surface); box-shadow:0 0 0 2px var(--card), var(--shadow-sm); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
   .hub-ic-plus .icon{ width:10px; height:10px; stroke-width:3; }
   .hub-t{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); }
@@ -731,6 +733,17 @@
         <div class="hub-modes"><span class="hub-mode">Kural + Örnek</span><span class="hub-mode">Alıştırmalar</span></div>
         <button type="button" class="btn teal hub-cta" onclick="go('grammar')">Dilbilgisine Başla</button>
       </div>
+      <div class="hubcard">
+        <span class="hub-ic hub-pink"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
+        <span class="hub-t">Yazma</span>
+        <span class="hub-s" id="hubWritingSub">–</span>
+        <div class="hub-goal">
+          <div class="hub-goal-row"><span>İlerleme</span><span id="hubWritingGoalTxt">0/10</span></div>
+          <div class="hub-goal-track"><div class="hub-goal-fill" id="hubWritingGoalFill" style="width:0%;background:var(--pink);"></div></div>
+        </div>
+        <div class="hub-modes"><span class="hub-mode">Günlük Konu</span><span class="hub-mode">Claude Geri Bildirimi</span></div>
+        <button type="button" class="btn pink hub-cta" onclick="go('writing')">Yazmaya Başla</button>
+      </div>
       <button class="hubcard wide" onclick="go('achievements')">
         <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg></span>
         <span class="hub-txt"><span class="hub-t">Rozetler</span><span class="hub-s" id="hubBadgeSub">–</span></span>
@@ -952,6 +965,26 @@
     </div>
   </section>
 
+  <!-- ===== YAZMA ===== -->
+  <section class="view" id="v-writing">
+    <div class="page-head">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Yazma</h1>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>Bugünün konusu</h2>
+      <p class="rule-box" id="writingPrompt">—</p>
+      <textarea class="f" id="writingText" rows="5" placeholder="En az 3-4 cümle yaz..."></textarea>
+      <button class="btn" id="writingSaveBtn">Kaydet</button>
+      <a class="btn pink" id="writingFeedbackBtn" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'dan Geri Bildirim Al</a>
+      <p class="hint">Yazdığın metin ve konu panoya kopyalanır, Claude'da yapıştırıp gönder — düzeltme ve daha doğal bir alternatif önerir.</p>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Yazıların <span class="mut" id="writingCount"></span></h2>
+      <div id="writingList"></div>
+    </div>
+  </section>
+
   <!-- ===== ROZETLER ===== -->
   <section class="view" id="v-achievements">
     <div class="page-head">
@@ -1155,6 +1188,7 @@ S.settings=S.settings||{};
 S.pronCount=S.pronCount||0;
 S.speaking=S.speaking||{completed:{},selected:null};
 S.grammar=S.grammar||{completed:{},selected:null};
+S.writings=S.writings||[];
 S.tasks=S.tasks||{};
 S.readingLib=S.readingLib||{completed:{}};
 S.trCache=S.trCache||{};
@@ -1196,7 +1230,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",achievements:"learn",journal:"journal",profile:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",journal:"journal",profile:"profile"};
 function go(v){
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
@@ -1211,6 +1245,7 @@ function go(v){
   if(v==="listening") renderListening();
   if(v==="speaking") renderSpeaking();
   if(v==="grammar") renderGrammar();
+  if(v==="writing") renderWriting();
   if(v==="achievements") renderAchievements();
   if(v==="journal") renderJournal();
   if(v==="profile") renderProfile();
@@ -2153,6 +2188,87 @@ function grammarFrontier(){
   return {li:last,ui:GRAMMAR_LEVELS[last].units.length-1};
 }
 
+/* ---------- YAZMA (writing prompts + Claude düzeltme geri bildirimi —
+   "focused" değil "unfocused" ama önceliklendirilmiş geri bildirim: araştırmalar
+   makale/edat/zaman hatalarında unfocused corrective feedback'in gerçekten işe
+   yaradığını gösteriyor, tam da Türkçe konuşanların en çok zorlandığı noktalar) ---------- */
+var WRITING_PROMPTS=[
+  "Dünkü günün nasıl geçti? 3-5 cümleyle anlat.",
+  "En sevdiğin yemeği ve neden sevdiğini anlat.",
+  "Hafta sonu planların neler? Kısaca yaz.",
+  "Son okuduğun bir kitap/haber hakkında ne düşünüyorsun?",
+  "Bir iş arkadaşına, bir toplantıyı ertelemek için kısa bir e-posta yaz.",
+  "En sevdiğin tatil anını anlat.",
+  "Bugün öğrendiğin yeni bir şeyi anlat.",
+  "İdeal bir tatil günün nasıl geçer?",
+  "Bir arkadaşına yeni bir restoranı önerir gibi yaz.",
+  "İşinde/okulunda seni en çok zorlayan şey nedir, neden?",
+  "5 yıl sonra kendini nerede görüyorsun?",
+  "En son izlediğin bir filmi/diziyi kısaca özetle, ne düşündün?",
+  "Bir arkadaşına doğum günü kutlaması için kısa bir mesaj yaz.",
+  "Bugünkü hava durumu ve sana nasıl hissettirdiğini anlat.",
+  "Küçükken en sevdiğin oyuncağı/aktiviteyi anlat.",
+  "Bir toplantıda karşı çıktığın bir fikri nazikçe nasıl ifade edersin, örnek yaz.",
+  "Şu anki işinle ilgili en sevdiğin 2 şeyi anlat.",
+  "Bir arkadaşına yardım istediğin kısa bir mesaj yaz (ör. taşınma, eşya ödünç alma).",
+  "Son bir haftada seni mutlu eden bir anı anlat.",
+  "Bir konuda (uzaktan çalışma, sosyal medya vb.) kısaca fikrini yaz.",
+  "Yöneticine, izin istemek için kısa ve resmi bir mesaj yaz."
+];
+function todaysWritingPrompt(){
+  return WRITING_PROMPTS[dayOfYear(new Date())%WRITING_PROMPTS.length];
+}
+function buildWritingFeedbackPrompt(promptText,userText){
+  return "Sen bir İngilizce yazma koçusun. Öğrencin Türkçe konuşan, aşağıdaki konu hakkında İngilizce kısa bir paragraf yazdı. "+
+    "Metnini düzelt: dil bilgisi ve kelime hatalarını göster, her biri için doğrusunu ve neden yanlış olduğunu kısaca açıkla. "+
+    "Türkçe konuşanlarda en sık görülen hata türlerine (artikel kullanımı, edatlar, zaman/görünüş (tense) seçimi, kelime sırası) özellikle dikkat et. "+
+    "Sonunda, aynı fikri daha doğal/akıcı İngilizce ile nasıl ifade edebileceğine dair alternatif bir versiyon öner.\n\n"+
+    "Konu: "+promptText+"\n\nYazdığım metin:\n"+userText;
+}
+function renderWriting(){
+  var promptText=todaysWritingPrompt();
+  document.getElementById("writingPrompt").textContent=promptText;
+  document.getElementById("writingText").value="";
+  var feedBtn=document.getElementById("writingFeedbackBtn");
+  var freshBtn=feedBtn.cloneNode(true);
+  feedBtn.parentNode.replaceChild(freshBtn,feedBtn);
+  freshBtn.addEventListener("click",function(){
+    var text=document.getElementById("writingText").value.trim();
+    if(!text){ alert("Önce birkaç cümle yaz."); return; }
+    claudeHandoff(freshBtn,buildWritingFeedbackPrompt(promptText,text));
+  });
+  document.getElementById("writingSaveBtn").onclick=function(){
+    var text=document.getElementById("writingText").value.trim();
+    if(!text) return;
+    S.writings=S.writings||[];
+    S.writings.push({date:isoDate(new Date()),prompt:promptText,text:text});
+    save();
+    document.getElementById("writingText").value="";
+    renderWritingList();
+    alert("Kaydedildi! İstersen şimdi Claude'dan geri bildirim al.");
+  };
+  renderWritingList();
+}
+function renderWritingList(){
+  S.writings=S.writings||[];
+  var list=document.getElementById("writingList");
+  document.getElementById("writingCount").textContent=S.writings.length?("· "+S.writings.length):"";
+  if(!S.writings.length){ list.innerHTML='<div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-edit"></use></svg><div class="t">Henüz yazı kaydın yok</div><div class="d">Yukarıdaki konu hakkında birkaç cümle yaz, kaydet.</div></div>'; return; }
+  list.innerHTML="";
+  S.writings.slice().reverse().forEach(function(w){
+    var idx=S.writings.indexOf(w);
+    var row=document.createElement("div"); row.className="read-item";
+    row.innerHTML='<div class="read-top"><span class="read-date">'+fmtDate(w.date)+'</span>'+
+      '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>'+
+      '<div class="mut" style="margin-bottom:4px;">'+esc(w.prompt)+'</div>'+
+      '<p class="read-text">'+esc(w.text)+'</p>';
+    row.querySelector(".del").addEventListener("click",function(){
+      if(confirm("Bu yazı kaydı silinsin mi?")){ S.writings.splice(idx,1); save(); renderWritingList(); }
+    });
+    list.appendChild(row);
+  });
+}
+
 /* ---------- 4/3/2 AKICILIK SAYACI ---------- */
 var timer432Interval=null;
 function start432Timer(minutes){
@@ -2411,7 +2527,8 @@ var BADGE_CAT_COLOR={
   seri:{bg:"var(--gold-tint)",fg:"var(--gold)"},
   okuma:{bg:"var(--green-tint)",fg:"var(--green)"},
   konusma:{bg:"var(--blue-tint)",fg:"var(--blue)"},
-  gunluk:{bg:"var(--pink-tint)",fg:"var(--pink)"}
+  gunluk:{bg:"var(--coral-tint)",fg:"var(--coral)"},
+  yazma:{bg:"var(--pink-tint)",fg:"var(--pink)"}
 };
 var BADGES=[
   {id:"w1",cat:"kelime",ic:"i-plus",name:"İlk Kelime",desc:"Kelime listene ilk kelimeni ekle.",
@@ -2510,7 +2627,9 @@ var TASK_POOL=[
   {cat:"Konuşma",ic:"i-mic",text:"Bugünkü konuşma ünitesini tamamla"},
   {cat:"Konuşma",ic:"i-mic",text:"Claude'un sesli moduyla en az 5 dakika konuş"},
   {cat:"Konuşma",ic:"i-mic",text:"Telaffuz pratiğinde 3 cümle dene"},
-  {cat:"Yazma",ic:"i-edit",text:"Günlüğe bugünün özetini İngilizce yazmayı dene"}
+  {cat:"Yazma",ic:"i-edit",text:"Günlüğe bugünün özetini İngilizce yazmayı dene"},
+  {cat:"Yazma",ic:"i-edit",text:"Yazma'da bugünün konusu hakkında birkaç cümle yaz"},
+  {cat:"Dilbilgisi",ic:"i-layers",text:"Dilbilgisi'nde bir konuyu çalış, alıştırmaları çöz"}
 ];
 function dayOfYear(d){ var start=new Date(d.getFullYear(),0,0); return Math.floor((d-start)/86400000); }
 function todaysTasks(){
@@ -2518,7 +2637,7 @@ function todaysTasks(){
   return TASK_POOL.map(function(t,i){ return {t:t,k:((doy*9301+i*49297+7)%233280)}; })
     .sort(function(a,b){ return a.k-b.k; }).map(function(x){return x.t;}).slice(0,4);
 }
-var TASK_CAT_CLASS={"Okuma":"t-ic-okuma","Dinleme":"t-ic-dinleme","Kelime":"t-ic-kelime","Konuşma":"t-ic-konusma","Yazma":"t-ic-yazma"};
+var TASK_CAT_CLASS={"Okuma":"t-ic-okuma","Dinleme":"t-ic-dinleme","Kelime":"t-ic-kelime","Konuşma":"t-ic-konusma","Yazma":"t-ic-yazma","Dilbilgisi":"t-ic-dilbilgisi"};
 function renderTasks(){
   var tasks=todaysTasks(), key=dstr(new Date());
   S.tasks=S.tasks||{}; S.tasks[key]=S.tasks[key]||{};
@@ -2622,7 +2741,7 @@ function renderRadar(vals){
   svg+='</svg>';
   wrap.innerHTML=svg;
 }
-var SKILL_ICON={"Kelime":["i-cards","var(--tint)","var(--purple)"],"Okuma":["i-book-open","var(--green-tint)","var(--green)"],"Dilbilgisi":["i-layers","var(--teal-tint)","var(--teal)"],"Konuşma":["i-mic","var(--gold-tint)","var(--gold)"],"Günlük":["i-edit","var(--pink-tint)","var(--pink)"]};
+var SKILL_ICON={"Kelime":["i-cards","var(--tint)","var(--purple)"],"Okuma":["i-book-open","var(--green-tint)","var(--green)"],"Dilbilgisi":["i-layers","var(--teal-tint)","var(--teal)"],"Yazma":["i-edit","var(--pink-tint)","var(--pink)"],"Konuşma":["i-mic","var(--gold-tint)","var(--gold)"],"Günlük":["i-edit","var(--coral-tint)","var(--coral)"]};
 function renderSkillList(vals){
   var wrap=document.getElementById("progSkillList"); if(!wrap) return;
   wrap.innerHTML="";
@@ -2691,12 +2810,14 @@ function renderProgress(){
   var totalGrammarUnits=GRAMMAR_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
   var doneGrammarUnits=Object.keys(S.grammar.completed).length;
   var grammarPct=totalGrammarUnits?Math.round(doneGrammarUnits/totalGrammarUnits*100):0;
+  var writingPct=Math.min(100,Math.round((S.writings?S.writings.length:0)/10*100));
   var journalDays=Object.keys(S.journal).length;
   var journalPct=Math.min(100,Math.round(journalDays/14*100));
   var skillVals=[
     {label:"Kelime",pct:vocabPct},
     {label:"Okuma",pct:readPct},
     {label:"Dilbilgisi",pct:grammarPct},
+    {label:"Yazma",pct:writingPct},
     {label:"Konuşma",pct:speakPct},
     {label:"Günlük",pct:journalPct}
   ];
@@ -2736,6 +2857,13 @@ function renderLearnHub(){
   var grammarFill=document.getElementById("hubGrammarGoalFill"), grammarTxt=document.getElementById("hubGrammarGoalTxt");
   if(grammarFill) grammarFill.style.width=(totalGUnits?Math.round(doneGUnits/totalGUnits*100):0)+"%";
   if(grammarTxt) grammarTxt.textContent=doneGUnits+"/"+totalGUnits+" konu";
+
+  S.writings=S.writings||[];
+  document.getElementById("hubWritingSub").textContent=S.writings.length?(S.writings.length+" yazı"):"Henüz yazı yok";
+  var writeGoal=10, writeN=Math.min(S.writings.length,writeGoal);
+  var writeFill=document.getElementById("hubWritingGoalFill"), writeTxt=document.getElementById("hubWritingGoalTxt");
+  if(writeFill) writeFill.style.width=Math.round(writeN/writeGoal*100)+"%";
+  if(writeTxt) writeTxt.textContent=writeN+"/"+writeGoal+" yazı";
 
   var badges=computeBadges(), badgeN=badges.filter(function(b){ return b.unlocked; }).length;
   document.getElementById("hubBadgeSub").textContent=badgeN+"/"+badges.length+" kazanıldı";
@@ -2822,7 +2950,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
-      S.speaking=S.speaking||{completed:{},selected:null}; S.grammar=S.grammar||{completed:{},selected:null}; S.tasks=S.tasks||{};
+      S.speaking=S.speaking||{completed:{},selected:null}; S.grammar=S.grammar||{completed:{},selected:null}; S.writings=S.writings||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
