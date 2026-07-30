@@ -84,6 +84,8 @@
 
   /* ---- shared bits ---- */
   .card{ background:var(--card); border-radius:var(--radius-lg); padding:18px; margin-bottom:13px; box-shadow:var(--shadow-sm); }
+  .note-card{ display:block; width:100%; border:none; text-align:left; font-family:inherit; cursor:pointer; }
+  .note-card:active{ background:var(--tint); }
   h2{ font-family:var(--font-display); font-size:15px; font-weight:800; letter-spacing:-.1px; margin-bottom:13px; display:flex; align-items:center; gap:8px; color:var(--ink); }
   h2 .icon{ color:var(--purple); width:18px; height:18px; }
   .mut{ font-size:12px; color:var(--ink-soft); }
@@ -800,6 +802,11 @@
         <span class="hub-txt"><span class="hub-t">Rozetler</span><span class="hub-s" id="hubBadgeSub">–</span></span>
         <span class="hub-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
       </button>
+      <button class="hubcard wide" onclick="go('notes')">
+        <span class="hub-ic hub-purple"><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg></span>
+        <span class="hub-txt"><span class="hub-t">Notlarım</span><span class="hub-s" id="hubNotesSub">–</span></span>
+        <span class="hub-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
+      </button>
     </div>
     <button type="button" class="card continue-card" onclick="go('today')" style="margin-top:12px;">
       <div class="mchip sm"><img src="assets/mascot/pose-motivated.png" alt=""></div>
@@ -1062,6 +1069,16 @@
     </div>
   </section>
 
+  <!-- ===== NOTLARIM ===== -->
+  <section class="view" id="v-notes">
+    <div class="page-head">
+      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Notlarım</h1>
+    </div>
+    <p class="hint" style="margin:0 2px 14px;text-align:left;">Konuşma, Grammar Path, Okuma, Yazma ve Dinleme'de kaydettiğin Claude geri bildirimlerinin ve notlarının tümü burada.</p>
+    <div id="notesList"></div>
+  </section>
+
   <!-- ===== ROZETLER ===== -->
   <section class="view" id="v-achievements">
     <div class="page-head">
@@ -1151,6 +1168,12 @@
       </div>
     </div>
     <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Sınav Tarihi</h2>
+      <p class="mut" style="margin-bottom:10px;">Bugün ve Profil'deki "sınava X gün" sayacı bu tarihe göre hesaplanır.</p>
+      <input class="f" type="date" id="examDateInput">
+      <button class="btn sec" id="examDateSave">Kaydet</button>
+    </div>
+    <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg>Veri</h2>
       <p class="mut" style="margin-bottom:10px;">Tüm ilerlemen bu cihazda (tarayıcıda) saklanır. Yedeklemek için dışa aktar.</p>
       <div class="row">
@@ -1228,7 +1251,13 @@
 <script>
 "use strict";
 var KEY="my_english_app_v1";
-var EXAM=new Date(2026,8,19);
+function examDate(){
+  if(S.settings.examDate){
+    var p=S.settings.examDate.split("-");
+    if(p.length===3){ var d=new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10)); if(!isNaN(d)) return d; }
+  }
+  return new Date(2026,8,19); // varsayılan, Profil'den değiştirilebilir
+}
 var GOAL=60;
 var DAYS_TR=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
 var DAYS_TR_SHORT=["Pz","Pt","Sa","Ça","Pe","Cu","Ct"];
@@ -1311,7 +1340,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",journal:"journal",profile:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",notes:"learn",journal:"journal",profile:"profile"};
 function go(v){
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
@@ -1328,6 +1357,7 @@ function go(v){
   if(v==="grammar") renderGrammar();
   if(v==="writing") renderWriting();
   if(v==="achievements") renderAchievements();
+  if(v==="notes") renderNotes();
   if(v==="journal") renderJournal();
   if(v==="profile") renderProfile();
   window.scrollTo(0,0);
@@ -1372,7 +1402,7 @@ function renderContinueList(){
 }
 function renderToday(){
   document.getElementById("heroMsg").textContent=HERO_MSGS[dayOfYear(new Date())%HERO_MSGS.length];
-  var ed=daysBetween(EXAM,new Date());
+  var ed=daysBetween(examDate(),new Date());
   document.getElementById("examBadge").textContent=ed>0?("Sınava "+ed+" gün"):"";
   var dt=new Date();
   document.getElementById("todayDate").textContent=DAYS_TR[dt.getDay()]+", "+dt.getDate()+" "+MONTHS_TR[dt.getMonth()];
@@ -2773,6 +2803,57 @@ function computeBadges(){
     return {def:b, cur:cur, tgt:b.tgt, unlocked:raw>=b.tgt, ratio:cur/b.tgt};
   });
 }
+/* ---------- NOTLARIM (tüm modüllerdeki notların tek yerde toplanmış hali) ---------- */
+function collectAllNotes(){
+  var items=[];
+  Object.keys(S.speaking.notes||{}).forEach(function(key){
+    var text=(S.speaking.notes[key]||"").trim(); if(!text) return;
+    var p=key.split("-"), li=+p[0], ui=+p[1];
+    var lv=SPEAK_LEVELS[li]; if(!lv) return; var unit=lv.units[ui]; if(!unit) return;
+    items.push({cat:"Konuşma",ic:"i-mic",bg:"var(--gold-tint)",fg:"var(--gold)",title:unit.name,sub:lv.cefr+" · "+lv.name,text:text,go:function(){ S.speaking.selected={li:li,ui:ui}; save(); go("speaking"); }});
+  });
+  Object.keys(S.grammar.notes||{}).forEach(function(key){
+    var text=(S.grammar.notes[key]||"").trim(); if(!text) return;
+    var p=key.split("-"), li=+p[0], ui=+p[1];
+    var lv=GRAMMAR_LEVELS[li]; if(!lv) return; var unit=lv.units[ui]; if(!unit) return;
+    items.push({cat:"Grammar Path",ic:"i-layers",bg:"var(--teal-tint)",fg:"var(--teal)",title:unit.name,sub:lv.cefr+" · "+lv.name,text:text,go:function(){ S.grammar.selected={li:li,ui:ui}; save(); go("grammar"); }});
+  });
+  Object.keys(S.readingLib.notes||{}).forEach(function(key){
+    var text=(S.readingLib.notes[key]||"").trim(); if(!text) return;
+    var id=+key;
+    var passage=READING_LIBRARY?READING_LIBRARY.filter(function(r){return r.id===id;})[0]:null;
+    items.push({cat:"Okuma",ic:"i-book-open",bg:"var(--green-tint)",fg:"var(--green)",title:passage?passage.title:("Metin #"+id),sub:"More to Read I",text:text,go:function(){ S.readingLib.openId=id; save(); go("libread"); }});
+  });
+  (S.writings||[]).forEach(function(w){
+    var text=(w.feedback||"").trim(); if(!text) return;
+    items.push({cat:"Yazma",ic:"i-edit",bg:"var(--pink-tint)",fg:"var(--pink)",title:w.prompt,sub:fmtDate(w.date),text:text,go:function(){ go("writing"); }});
+  });
+  var listenNote=(S.listening.notes||"").trim();
+  if(listenNote){
+    items.push({cat:"Dinleme",ic:"i-headphones",bg:"var(--blue-tint)",fg:"var(--blue)",title:"Dinleme notların",sub:"",text:listenNote,go:function(){ go("listening"); }});
+  }
+  return items;
+}
+function renderNotes(){
+  var items=collectAllNotes();
+  var wrap=document.getElementById("notesList");
+  if(!items.length){
+    wrap.innerHTML='<div class="card"><div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-chat"></use></svg><div class="t">Henüz not yok</div><div class="d">Konuşma, Grammar Path, Okuma, Yazma ya da Dinleme\'de Claude geri bildirimi kaydettiğinde burada görünecek.</div></div></div>';
+    return;
+  }
+  wrap.innerHTML="";
+  items.forEach(function(it){
+    var card=document.createElement("button"); card.type="button"; card.className="card note-card";
+    card.innerHTML='<div class="row" style="align-items:center;margin-bottom:8px;gap:9px;">'+
+        '<span class="hub-ic" style="width:32px;height:32px;background:'+it.bg+';color:'+it.fg+';"><svg class="icon" aria-hidden="true" style="width:16px;height:16px;"><use href="#'+it.ic+'"></use></svg></span>'+
+        '<span style="min-width:0;flex:1;"><span style="display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:'+it.fg+';">'+esc(it.cat)+'</span>'+
+        '<span style="display:block;font-size:13.5px;font-weight:700;color:var(--ink);font-family:var(--font-display);">'+esc(it.title)+(it.sub?' <span class="mut" style="font-weight:600;">· '+esc(it.sub)+'</span>':'')+'</span></span>'+
+      '</div>'+
+      '<p style="font-size:13px;color:var(--ink-2);line-height:1.5;white-space:pre-wrap;margin:0;">'+esc(it.text)+'</p>';
+    card.addEventListener("click",it.go);
+    wrap.appendChild(card);
+  });
+}
 function renderAchievements(){
   var list=computeBadges();
   var unlockedN=list.filter(function(b){ return b.unlocked; }).length;
@@ -3078,6 +3159,8 @@ function renderLearnHub(){
 
   var badges=computeBadges(), badgeN=badges.filter(function(b){ return b.unlocked; }).length;
   document.getElementById("hubBadgeSub").textContent=badgeN+"/"+badges.length+" kazanıldı";
+  var notesN=collectAllNotes().length;
+  document.getElementById("hubNotesSub").textContent=notesN?(notesN+" not"):"Henüz not yok";
 }
 
 /* ---------- JOURNAL ---------- */
@@ -3120,15 +3203,24 @@ document.getElementById("journalSave").addEventListener("click",function(){
 
 /* ---------- PROFILE ---------- */
 function renderProfile(){
-  var ed=daysBetween(EXAM,new Date());
+  var ed=daysBetween(examDate(),new Date());
   document.getElementById("profileSummary").textContent=
     (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi!")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
   document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
   document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
+  document.getElementById("examDateInput").value=isoDate(examDate());
   var curTheme=S.settings.theme||"light";
   document.querySelectorAll("#themeSegTabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.theme===curTheme); });
 }
+document.getElementById("examDateSave").addEventListener("click",function(){
+  var v=document.getElementById("examDateInput").value;
+  if(!v) return;
+  S.settings.examDate=v;
+  save(); renderProfile(); renderToday();
+  var btn=document.getElementById("examDateSave"), orig=btn.textContent;
+  btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
+});
 document.querySelectorAll("#themeSegTabs .seg").forEach(function(b){
   b.addEventListener("click",function(){
     var mode=b.dataset.theme;
