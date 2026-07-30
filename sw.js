@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v6-auto-update";
+const CACHE = "english-app-v7-mascot-recrop";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
   "./assets/reading-library.json",
