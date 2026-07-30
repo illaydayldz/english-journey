@@ -1,7 +1,7 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v9-icon-opaque-fix";
+const CACHE = "english-app-v10-icon-cachebust";
 const ASSETS = [
-  "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
+  "./", "./index.html", "./manifest.webmanifest", "./icon-192.png?v=3", "./icon-512.png?v=3",
   "./assets/reading-library.json",
   "./assets/mascot/hero-happy.png",
   "./assets/mascot/pose-motivated.png",
