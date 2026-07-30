@@ -939,11 +939,16 @@
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Sesli oku, telaffuzunu kontrol ettir</h2>
-      <p class="mut" style="margin-bottom:10px;">Metni yüksek sesle oku, sonra Claude'u aç ve sesli sohbete geç — telaffuz, vurgu ve tonlamanı değerlendirsin.</p>
-      <a class="btn deep" id="libReadClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'u Aç (Telaffuz kontrolü)</a>
+      <p class="mut" style="margin-bottom:10px;">Önce Moonie'nin okumasını dinle, sonra sen yüksek sesle oku — Moonie seni dinleyip telaffuzunu değerlendirsin.</p>
+      <div class="row" style="gap:8px;">
+        <button type="button" class="btn sec" id="libReadListenBtn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg>Dinle</button>
+        <button type="button" class="btn gold" id="libReadRecordBtn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'ye Oku</button>
+      </div>
+      <p class="hint" id="libReadRecordHint" style="display:none;"></p>
+      <div class="gemini-result" id="libReadGeminiResult" style="display:none;"></div>
       <details class="note-details" id="libReadNoteDetails">
-        <summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirim notun</summary>
-        <textarea class="f note-ta" id="libReadNoteTa" rows="3" placeholder="Claude telaffuzun hakkında ne söyledi..."></textarea>
+        <summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Bu metinle ilgili notların</summary>
+        <textarea class="f note-ta" id="libReadNoteTa" rows="3" placeholder="Bu metinle ilgili aklında kalanları, öğrendiğin ifadeleri buraya yaz..."></textarea>
         <button type="button" class="btn sec sm note-save" id="libReadNoteSave">Notu Kaydet</button>
       </details>
     </div>
@@ -1016,7 +1021,7 @@
       <div class="target" id="pronTarget">I have an important meeting today.</div>
       <button class="btn gold" id="speakBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Konuş</button>
       <div class="result" id="pronResult"></div>
-      <button type="button" class="btn sec" id="geminiAnalyzeBtn" style="display:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Detaylı Telaffuz Analizi (Gemini)</button>
+      <button type="button" class="btn sec" id="geminiAnalyzeBtn" style="display:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'den Detaylı Analiz İste</button>
       <div class="gemini-result" id="geminiResult" style="display:none;"></div>
       <div class="hint" id="pronSupport"></div>
     </div>
@@ -1754,11 +1759,13 @@ function claudeHandoff(el,prompt){
     });
   },{once:true});
 }
-function buildLibReadClaudePrompt(r){
-  var fullText=r.paras.map(function(p){ return p.indexOf("##")===0 ? p.slice(2)+":" : p; }).join("\n\n");
-  return "Sen bir İngilizce telaffuz koçusun. Az sonra sesli sohbette şu metni yüksek sesle sana okuyacağım. "+
-    "Beni dinle, telaffuz, kelime vurgusu ve tonlama hatalarımı nazikçe düzelt, zorlandığım kelimeleri tekrar ettir, sonunda kısa bir geri bildirim ver. "+
-    "Metin başlığı: \""+r.title+"\" (More to Read I kitabından, "+r.id+". metin).\n\nMetin:\n"+fullText;
+function libReadFullText(r){
+  return r.paras.map(function(p){ return p.indexOf("##")===0 ? p.slice(2)+":" : p; }).join("\n\n");
+}
+function currentLibReadPassage(){
+  if(!READING_LIBRARY) return null;
+  var id=S.readingLib.openId||libFrontierId();
+  return READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
 }
 function renderLibRead(){
   if(!READING_LIBRARY) return;
@@ -1780,10 +1787,9 @@ function renderLibRead(){
   var done=!!S.readingLib.completed[r.id];
   document.getElementById("libReadCompleteBtn").style.display=done?"none":"block";
   document.getElementById("libReadDoneMsg").style.display=done?"flex":"none";
-  var claudeBtn=document.getElementById("libReadClaude");
-  var freshClaudeBtn=claudeBtn.cloneNode(true); // eski click dinleyicilerini temizle
-  claudeBtn.parentNode.replaceChild(freshClaudeBtn,claudeBtn);
-  claudeHandoff(freshClaudeBtn,buildLibReadClaudePrompt(r));
+  if(libReadRecording&&libReadRecorder&&libReadRecorder.state!=="inactive"){ libReadRecorder.stop(); }
+  document.getElementById("libReadGeminiResult").style.display="none";
+  document.getElementById("libReadRecordHint").style.display="none";
   var noteTa=document.getElementById("libReadNoteTa");
   noteTa.value=S.readingLib.notes[r.id]||"";
   document.getElementById("libReadNoteDetails").open=!!S.readingLib.notes[r.id];
@@ -1804,6 +1810,46 @@ function renderLibRead(){
     renderLibRead(); renderReadingLib(); renderLearnHub();
   };
 }
+document.getElementById("libReadListenBtn").addEventListener("click",function(){
+  var r=currentLibReadPassage(); if(!r) return;
+  if(!("speechSynthesis" in window)){ alert("Bu tarayıcı seslendirmeyi desteklemiyor."); return; }
+  var u=new SpeechSynthesisUtterance(libReadFullText(r).replace(/##/g," ").replace(/\n+/g," "));
+  u.lang="en-US"; u.rate=.92;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+});
+var libReadRecorder=null, libReadRecording=false, libReadChunks=[];
+document.getElementById("libReadRecordBtn").addEventListener("click",function(){
+  var btn=this, micIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>';
+  var hint=document.getElementById("libReadRecordHint");
+  if(libReadRecording){
+    if(libReadRecorder&&libReadRecorder.state!=="inactive") libReadRecorder.stop();
+    return;
+  }
+  if(!(navigator.mediaDevices&&window.MediaRecorder)){ alert("Bu tarayıcı ses kaydını desteklemiyor. Chrome kullan."); return; }
+  if(!(S.settings.geminiApiKey||"").trim()){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
+  document.getElementById("libReadGeminiResult").style.display="none";
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    libReadChunks=[];
+    libReadRecorder=new MediaRecorder(stream);
+    libReadRecorder.ondataavailable=function(e){ if(e.data.size>0) libReadChunks.push(e.data); };
+    libReadRecorder.onstop=function(){
+      stream.getTracks().forEach(function(t){ t.stop(); });
+      libReadRecording=false;
+      btn.className="btn gold"; btn.innerHTML=micIcon+"Moonie'ye Oku";
+      hint.style.display="none";
+      var blob=new Blob(libReadChunks,{type:libReadRecorder.mimeType||"audio/webm"});
+      var r=currentLibReadPassage(); if(!r) return;
+      runGeminiAnalysis(blob,libReadFullText(r),document.getElementById("libReadGeminiResult"),btn);
+    };
+    libReadRecorder.start();
+    libReadRecording=true;
+    btn.className="btn pink"; btn.innerHTML=micIcon+"Kaydı Bitir";
+    hint.textContent="Moonie dinliyor... metni oku, bitirince tekrar dokun.";
+    hint.style.display="block";
+  }).catch(function(){
+    alert("Mikrofon izni verilmedi.");
+  });
+});
 function wrapWords(text){
   // Önce esc() uygulayıp SONRA kelimeleri regex ile sarmak, "&quot;" gibi
   // HTML entity'lerinin ortasındaki harfleri de "kelime" sanıp span içine
@@ -3104,22 +3150,22 @@ function blobToBase64(blob){
   });
 }
 function buildGeminiPronPrompt(target){
-  return "Sen deneyimli bir İngilizce telaffuz koçusun. Öğrencin Türkçe konuşan biri ve bu ses kaydında şu cümleyi söylemeye çalıştı: \""+target+"\". "+
-    "Ses kaydını dinle ve gerçek fonem/vurgu seviyesinde analiz yap: hangi sesleri (özellikle Türkçede karşılığı olmayan İngilizce sesler — th, r, v/w, kısa/uzun ünlüler gibi) yanlış ya da eksik telaffuz etti, kelime vurgusu ve cümle tonlaması doğru muydu. "+
+  return "Sen deneyimli bir İngilizce telaffuz koçusun. Öğrencin Türkçe konuşan biri ve bu ses kaydında şu metni okumaya/söylemeye çalıştı:\n\n\""+target+"\"\n\n"+
+    "Ses kaydını dinle ve gerçek fonem/vurgu seviyesinde analiz yap: hangi sesleri (özellikle Türkçede karşılığı olmayan İngilizce sesler — th, r, v/w, kısa/uzun ünlüler gibi) yanlış ya da eksik telaffuz etti, kelime vurgusu ve cümle/metin tonlaması doğru muydu. "+
     "Kısa, somut, Türkçe bir geri bildirim ver: 1) genel değerlendirme (1-2 cümle), 2) tespit ettiğin spesifik telaffuz sorunları (varsa, madde madde, hangi kelime/ses), 3) düzeltmek için kısa bir pratik önerisi. Uzun olmasın, doğrudan ve yapıcı ol.";
 }
-document.getElementById("geminiAnalyzeBtn").addEventListener("click",function(){
+var MOONIE_LISTEN_CHIP='<span class="mchip sm" style="display:inline-flex;vertical-align:-9px;margin-right:6px;"><img src="assets/mascot/pose-listening.png" alt=""></span>';
+function runGeminiAnalysis(audioBlob,targetText,resultEl,btn){
   var apiKey=(S.settings.geminiApiKey||"").trim();
   if(!apiKey){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
-  if(!lastPronAudioBlob){ alert("Önce 'Konuş' ile bir ses kaydı oluştur."); return; }
-  var btn=this, orig=btn.innerHTML;
-  btn.disabled=true; btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg>Analiz ediliyor...';
-  var resultEl=document.getElementById("geminiResult");
+  if(!audioBlob){ alert("Önce bir ses kaydı oluştur."); return; }
+  var orig=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML=MOONIE_LISTEN_CHIP+"Moonie dinliyor...";
   resultEl.style.display="none";
-  blobToBase64(lastPronAudioBlob).then(function(b64){
-    var mime=lastPronAudioBlob.type||"audio/webm";
+  blobToBase64(audioBlob).then(function(b64){
+    var mime=audioBlob.type||"audio/webm";
     var body={contents:[{parts:[
-      {text:buildGeminiPronPrompt(lastPronTarget)},
+      {text:buildGeminiPronPrompt(targetText)},
       {inline_data:{mime_type:mime,data:b64}}
     ]}]};
     return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+GEMINI_MODEL+":generateContent?key="+encodeURIComponent(apiKey),{
@@ -3135,20 +3181,23 @@ document.getElementById("geminiAnalyzeBtn").addEventListener("click",function(){
       resultEl.style.display="block";
       return;
     }
-    resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Gemini Telaffuz Analizi</div>'+esc(text)+
-      '<button type="button" class="btn sec sm" id="geminiSaveNoteBtn" style="margin-top:12px;">Notlarım\'a Kaydet</button>';
+    resultEl.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Moonie'nin Değerlendirmesi</div>"+esc(text)+
+      '<button type="button" class="btn sec sm gr-save-btn" style="margin-top:12px;">Notlarım\'a Kaydet</button>';
     resultEl.style.display="block";
-    document.getElementById("geminiSaveNoteBtn").addEventListener("click",function(){
-      S.pronunciationNotes.push({date:isoDate(new Date()),target:lastPronTarget,analysis:text});
+    var saveBtn=resultEl.querySelector(".gr-save-btn");
+    saveBtn.addEventListener("click",function(){
+      S.pronunciationNotes.push({date:isoDate(new Date()),target:targetText,analysis:text});
       save();
-      var sb=document.getElementById("geminiSaveNoteBtn");
-      sb.textContent="Kaydedildi"; sb.disabled=true;
+      saveBtn.textContent="Kaydedildi"; saveBtn.disabled=true;
     });
   }).catch(function(err){
     btn.disabled=false; btn.innerHTML=orig;
     resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert"></use></svg>Analiz başarısız</div>'+esc(err.message||String(err));
     resultEl.style.display="block";
   });
+}
+document.getElementById("geminiAnalyzeBtn").addEventListener("click",function(){
+  runGeminiAnalysis(lastPronAudioBlob,lastPronTarget,document.getElementById("geminiResult"),this);
 });
 function similarity(a,b){
   if(a===b) return 1; if(!a||!b) return 0;
