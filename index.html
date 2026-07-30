@@ -597,6 +597,7 @@
 <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="14.5" r="4"/><path d="M11 11.5 19 3.5"/><path d="M15.5 7 18 9.5"/><path d="M18 4 20.5 6.5"/></symbol>
 <symbol id="i-list-check" viewBox="0 0 24 24"><polyline points="4.5,7 6,8.5 9,5.5"/><line x1="12" y1="7" x2="20" y2="7"/><polyline points="4.5,14 6,15.5 9,12.5"/><line x1="12" y1="14" x2="20" y2="14"/><polyline points="4.5,21 6,22.5 9,19.5"/><line x1="12" y1="21" x2="20" y2="21"/></symbol>
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5Z"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12,4 21,9 12,14 3,9"/><polyline points="3,13 12,18 21,13"/></symbol>
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M5 11a7 7 0 0 1 12-4.5M19 13a7 7 0 0 1-12 4.5"/><polyline points="17,3.5 17,7 13.5,7"/><polyline points="7,20.5 7,17 10.5,17"/></symbol>
 <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1-2h7l1 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
@@ -940,6 +941,11 @@
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Sesli oku, telaffuzunu kontrol ettir</h2>
       <p class="mut" style="margin-bottom:10px;">Önce Moonie'nin okumasını dinle, sonra sen yüksek sesle oku — Moonie seni dinleyip telaffuzunu değerlendirsin.</p>
+      <div class="row" style="align-items:center;gap:10px;margin-bottom:12px;">
+        <label class="mut" style="font-size:12.5px;font-weight:700;white-space:nowrap;">Okuma hızı</label>
+        <input type="range" id="libReadRateSlider" min="0.6" max="1.15" step="0.05" style="flex:1;">
+        <span class="mut" id="libReadRateLabel" style="font-size:12.5px;font-weight:700;min-width:36px;text-align:right;">0.95x</span>
+      </div>
       <div class="row" style="gap:8px;">
         <button type="button" class="btn sec" id="libReadListenBtn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg>Dinle</button>
         <button type="button" class="btn gold" id="libReadRecordBtn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'ye Oku</button>
@@ -1788,8 +1794,13 @@ function renderLibRead(){
   document.getElementById("libReadCompleteBtn").style.display=done?"none":"block";
   document.getElementById("libReadDoneMsg").style.display=done?"flex":"none";
   if(libReadRecording&&libReadRecorder&&libReadRecorder.state!=="inactive"){ libReadRecorder.stop(); }
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  resetLibReadListenBtn();
   document.getElementById("libReadGeminiResult").style.display="none";
   document.getElementById("libReadRecordHint").style.display="none";
+  var rateSlider=document.getElementById("libReadRateSlider");
+  rateSlider.value=S.settings.ttsRate||0.95;
+  document.getElementById("libReadRateLabel").textContent=(+rateSlider.value).toFixed(2)+"x";
   var noteTa=document.getElementById("libReadNoteTa");
   noteTa.value=S.readingLib.notes[r.id]||"";
   document.getElementById("libReadNoteDetails").open=!!S.readingLib.notes[r.id];
@@ -1810,12 +1821,29 @@ function renderLibRead(){
     renderLibRead(); renderReadingLib(); renderLearnHub();
   };
 }
+function resetLibReadListenBtn(){
+  var btn=document.getElementById("libReadListenBtn");
+  btn.className="btn sec";
+  btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg>Dinle';
+}
 document.getElementById("libReadListenBtn").addEventListener("click",function(){
+  var btn=this;
+  if(("speechSynthesis" in window)&&speechSynthesis.speaking){
+    speechSynthesis.cancel();
+    resetLibReadListenBtn();
+    return;
+  }
   var r=currentLibReadPassage(); if(!r) return;
-  if(!("speechSynthesis" in window)){ alert("Bu tarayıcı seslendirmeyi desteklemiyor."); return; }
-  var u=new SpeechSynthesisUtterance(libReadFullText(r).replace(/##/g," ").replace(/\n+/g," "));
-  u.lang="en-US"; u.rate=.92;
-  speechSynthesis.cancel(); speechSynthesis.speak(u);
+  var rate=+document.getElementById("libReadRateSlider").value||.95;
+  var u=speakEnglish(libReadFullText(r).replace(/##/g," ").replace(/\n+/g," "),rate,function(){ resetLibReadListenBtn(); });
+  if(!u) return;
+  btn.className="btn pink";
+  btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-stop"></use></svg>Durdur';
+});
+document.getElementById("libReadRateSlider").addEventListener("input",function(){
+  var v=+this.value;
+  document.getElementById("libReadRateLabel").textContent=v.toFixed(2)+"x";
+  S.settings.ttsRate=v; save();
 });
 var libReadRecorder=null, libReadRecording=false, libReadChunks=[];
 document.getElementById("libReadRecordBtn").addEventListener("click",function(){
@@ -1901,11 +1929,34 @@ function closeWordSheet(){
 }
 document.getElementById("wsClose").addEventListener("click",closeWordSheet);
 document.getElementById("wordBackdrop").addEventListener("click",closeWordSheet);
-document.getElementById("wsSpeak").addEventListener("click",function(){
-  if(!wsCurrentWord||!window.speechSynthesis) return;
-  var u=new SpeechSynthesisUtterance(wsCurrentWord);
-  u.lang="en-US"; u.rate=0.9;
+/* ---------- İngilizce seslendirme (TTS): doğal bir sesi otomatik seç ---------- */
+var ttsVoicesCache=[];
+function refreshTtsVoices(){ ttsVoicesCache=("speechSynthesis" in window)?speechSynthesis.getVoices():[]; }
+if("speechSynthesis" in window){
+  refreshTtsVoices();
+  speechSynthesis.addEventListener("voiceschanged",refreshTtsVoices);
+}
+function pickEnglishVoice(){
+  var voices=ttsVoicesCache.length?ttsVoicesCache:(("speechSynthesis" in window)?speechSynthesis.getVoices():[]);
+  if(!voices.length) return null;
+  var enUS=voices.filter(function(v){ return v.lang==="en-US"; });
+  var pool=enUS.length?enUS:voices.filter(function(v){ return v.lang&&v.lang.indexOf("en")===0; });
+  if(!pool.length) pool=voices;
+  function byName(re){ return pool.filter(function(v){ return re.test(v.name); })[0]; }
+  return byName(/natural|online|neural/i)||byName(/Google US English/i)||byName(/Samantha/i)||byName(/Aria|Jenny|Guy|Ava|Nova/i)||pool[0];
+}
+function speakEnglish(text,rate,onEnd){
+  if(!("speechSynthesis" in window)){ alert("Bu tarayıcı seslendirmeyi desteklemiyor."); return null; }
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang="en-US"; u.rate=rate||0.95;
+  var v=pickEnglishVoice(); if(v) u.voice=v;
+  if(onEnd) u.onend=onEnd;
   speechSynthesis.cancel(); speechSynthesis.speak(u);
+  return u;
+}
+document.getElementById("wsSpeak").addEventListener("click",function(){
+  if(!wsCurrentWord) return;
+  speakEnglish(wsCurrentWord,0.9);
 });
 document.getElementById("wsAdd").addEventListener("click",function(){
   if(!wsCurrentWord) return;
@@ -3080,9 +3131,7 @@ document.getElementById("pickPhrase").addEventListener("click",function(){
 });
 document.getElementById("listenBtn").addEventListener("click",function(){
   var t=pronText.value.trim(); if(!t) return;
-  if(!("speechSynthesis" in window)){ alert("Bu tarayıcı seslendirmeyi desteklemiyor."); return; }
-  var u=new SpeechSynthesisUtterance(t); u.lang="en-US"; u.rate=.9;
-  speechSynthesis.cancel(); speechSynthesis.speak(u);
+  speakEnglish(t,.9);
 });
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 var supp=document.getElementById("pronSupport");
