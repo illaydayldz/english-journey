@@ -615,7 +615,7 @@
   <section class="view active" id="v-today">
     <div class="topbar">
       <div>
-        <div class="hero-greet">Merhaba, İlayda <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></div>
+        <div class="hero-greet"><span id="greetText">Merhaba</span> <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></div>
         <p class="mut" id="todayDate"></p>
       </div>
       <button class="bell-btn" aria-label="Bildirimler"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></button>
@@ -1159,6 +1159,19 @@
       <h1>Profil</h1>
     </div>
     <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-person"></use></svg>İsim</h2>
+      <input class="f" id="userNameInput" placeholder="Adın">
+      <button class="btn sec" id="userNameSave">Kaydet</button>
+    </div>
+    <button type="button" class="card continue-card" onclick="go('settings')">
+      <span class="hub-ic hub-purple" style="width:44px;height:44px;"><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg></span>
+      <div>
+        <div class="cc-t">Ayarlar</div>
+        <div class="cc-s">Spotify ve Claude bağlantıları</div>
+      </div>
+      <span class="cc-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
+    </button>
+    <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-sun"></use></svg>Görünüm</h2>
       <p class="mut" id="profileSummary" style="margin-bottom:12px;">–</p>
       <div class="segtabs" id="themeSegTabs">
@@ -1181,21 +1194,6 @@
         <button class="btn sec" id="importBtn" style="flex:1;">İçe aktar</button>
       </div>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
-    </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Claude Projesi</h2>
-      <p class="mut" style="margin-bottom:10px;">"Claude'u Aç" butonlarının hep <b>aynı sohbete devam etmesini</b> istiyorsan: projenin içinde bir sohbet başlat, o sohbetin linkini (adres çubuğundaki claude.ai/chat/... adresi — proje ana sayfası değil) buraya yapıştır.</p>
-      <input class="f" id="claudeProjectUrlInput" placeholder="https://claude.ai/chat/... (proje içindeki sohbetin linki)">
-      <button class="btn sec" id="claudeProjectUrlSave">Kaydet</button>
-      <p class="hint">Boş bırakırsan buton her seferinde boş bir yeni sohbet açar. Proje ana sayfa linkini yapıştırırsan her seferinde o proje altında yeni bir sohbet açılır. Belirli bir sohbetin linkini yapıştırırsan hep o sohbete, geçmişiyle birlikte, devam edersin.</p>
-    </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify bağlantısı</h2>
-      <p class="mut" style="margin-bottom:10px;">Dinleme sekmesinde podcast'lerini görebilmek için Client ID'ni gir.</p>
-      <input class="f" id="spotifyClientIdInput" placeholder="Spotify Client ID">
-      <button class="btn sec" id="spotifyClientIdSave">Kaydet</button>
-      <p class="hint" style="text-align:left;">Spotify Developer Dashboard'da app'ine bu adresi Redirect URI olarak ekle:</p>
-      <input class="f" id="spotifyRedirectUriDisplay" readonly style="margin-top:6px;font-size:11.5px;color:var(--ink-soft);">
     </div>
     <div class="card">
       <details>
@@ -1227,6 +1225,29 @@
     </div>
   </section>
 
+  <!-- ===== AYARLAR ===== -->
+  <section class="view" id="v-settings">
+    <div class="page-head">
+      <button class="back" onclick="go('profile')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Ayarlar</h1>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Claude Projesi</h2>
+      <p class="mut" style="margin-bottom:10px;">"Claude'u Aç" butonlarının hep <b>aynı sohbete devam etmesini</b> istiyorsan: projenin içinde bir sohbet başlat, o sohbetin linkini (adres çubuğundaki claude.ai/chat/... adresi — proje ana sayfası değil) buraya yapıştır.</p>
+      <input class="f" id="claudeProjectUrlInput" placeholder="https://claude.ai/chat/... (proje içindeki sohbetin linki)">
+      <button class="btn sec" id="claudeProjectUrlSave">Kaydet</button>
+      <p class="hint">Boş bırakırsan buton her seferinde boş bir yeni sohbet açar. Proje ana sayfa linkini yapıştırırsan her seferinde o proje altında yeni bir sohbet açılır. Belirli bir sohbetin linkini yapıştırırsan hep o sohbete, geçmişiyle birlikte, devam edersin.</p>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify Client ID</h2>
+      <p class="mut" style="margin-bottom:10px;">Dinleme sekmesinde podcast'lerini görebilmek için Client ID'ni gir.</p>
+      <input class="f" id="spotifyClientIdInput" placeholder="Spotify Client ID">
+      <button class="btn sec" id="spotifyClientIdSave">Kaydet</button>
+      <p class="hint" style="text-align:left;">Spotify Developer Dashboard'da app'ine bu adresi Redirect URI olarak ekle:</p>
+      <input class="f" id="spotifyRedirectUriDisplay" readonly style="margin-top:6px;font-size:11.5px;color:var(--ink-soft);">
+    </div>
+  </section>
+
 </div>
 
 <nav>
@@ -1237,6 +1258,17 @@
   <button data-v="profile"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-person"></use></svg></span>Profil</button>
 </nav>
 
+<div class="word-backdrop" id="onboardBackdrop"></div>
+<div class="word-sheet" id="onboardSheet">
+  <div class="ws-handle" aria-hidden="true"></div>
+  <div style="text-align:center;margin-bottom:14px;">
+    <div class="mchip" style="width:64px;height:64px;margin:0 auto 10px;"><img src="assets/mascot/hero-happy.png" alt=""></div>
+    <div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);">Sana nasıl seslenelim?</div>
+  </div>
+  <input class="f" id="onboardNameInput" placeholder="Adın">
+  <button type="button" class="btn" id="onboardSave">Başla</button>
+  <button type="button" class="btn sec" id="onboardSkip" style="margin-top:8px;">Geç</button>
+</div>
 <div class="word-backdrop" id="wordBackdrop"></div>
 <div class="word-sheet" id="wordSheet">
   <div class="ws-handle" aria-hidden="true"></div>
@@ -1340,7 +1372,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",notes:"learn",journal:"journal",profile:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",notes:"learn",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
@@ -1360,6 +1392,7 @@ function go(v){
   if(v==="notes") renderNotes();
   if(v==="journal") renderJournal();
   if(v==="profile") renderProfile();
+  if(v==="settings") renderSettings();
   window.scrollTo(0,0);
 }
 document.querySelectorAll("nav button").forEach(function(b){ b.addEventListener("click",function(){ go(b.dataset.v); }); });
@@ -1401,6 +1434,7 @@ function renderContinueList(){
   });
 }
 function renderToday(){
+  document.getElementById("greetText").textContent=S.settings.userName?("Merhaba, "+S.settings.userName):"Merhaba";
   document.getElementById("heroMsg").textContent=HERO_MSGS[dayOfYear(new Date())%HERO_MSGS.length];
   var ed=daysBetween(examDate(),new Date());
   document.getElementById("examBadge").textContent=ed>0?("Sınava "+ed+" gün"):"";
@@ -3206,13 +3240,23 @@ function renderProfile(){
   var ed=daysBetween(examDate(),new Date());
   document.getElementById("profileSummary").textContent=
     (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi!")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
-  document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
-  document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
-  document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
+  document.getElementById("userNameInput").value=S.settings.userName||"";
   document.getElementById("examDateInput").value=isoDate(examDate());
   var curTheme=S.settings.theme||"light";
   document.querySelectorAll("#themeSegTabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.theme===curTheme); });
 }
+function renderSettings(){
+  document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
+  document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
+  document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
+}
+document.getElementById("userNameSave").addEventListener("click",function(){
+  var v=document.getElementById("userNameInput").value.trim();
+  S.settings.userName=v;
+  save(); renderToday();
+  var btn=document.getElementById("userNameSave"), orig=btn.textContent;
+  btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
+});
 document.getElementById("examDateSave").addEventListener("click",function(){
   var v=document.getElementById("examDateInput").value;
   if(!v) return;
@@ -3274,6 +3318,25 @@ document.getElementById("skillSeeAllLink").addEventListener("click",function(){
   switchProgSeg("skills");
   window.scrollTo(0,0);
 });
+
+/* ---------- ONBOARDING: ilk girişte isim sor ---------- */
+function closeOnboard(){
+  document.getElementById("onboardSheet").classList.remove("open");
+  document.getElementById("onboardBackdrop").classList.remove("open");
+}
+document.getElementById("onboardSave").addEventListener("click",function(){
+  var v=document.getElementById("onboardNameInput").value.trim();
+  S.settings.userName=v; S.settings.onboardShown=true;
+  save(); renderToday(); closeOnboard();
+});
+document.getElementById("onboardSkip").addEventListener("click",function(){
+  S.settings.onboardShown=true; save(); closeOnboard();
+});
+document.getElementById("onboardBackdrop").addEventListener("click",closeOnboard);
+if(!S.settings.onboardShown){
+  document.getElementById("onboardSheet").classList.add("open");
+  document.getElementById("onboardBackdrop").classList.add("open");
+}
 
 /* ---------- INIT ---------- */
 syncTarget(); renderToday(); renderVocab();
