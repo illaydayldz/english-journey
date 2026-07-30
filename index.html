@@ -291,7 +291,8 @@
   .word{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:12px 0; border-bottom:1px solid var(--line); min-height:44px; }
   .word:last-child{ border-bottom:none; }
   .word .en{ font-weight:700; font-size:14px; color:var(--ink); } .word .tr{ font-size:12px; color:var(--ink-soft); margin-top:1px; }
-  .word .due{ font-size:10px; font-weight:700; background:var(--gold-tint); color:var(--gold); padding:3px 8px; border-radius:99px; flex-shrink:0; }
+  .word .due{ font-size:10px; font-weight:700; background:var(--gold-tint); color:var(--gold); padding:3px 8px; border-radius:99px; flex-shrink:0; cursor:help; }
+  .word .due.future{ background:var(--gray-100); color:var(--ink-soft); }
   .word .del{ background:none; border:none; color:var(--gray-300); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; flex-shrink:0; }
   .flash{ text-align:center; padding:32px 20px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow-sm); border-radius:var(--radius-lg); }
   .flash .q{ font-size:12.5px; color:var(--ink-soft); margin-bottom:9px; text-transform:uppercase; letter-spacing:.4px; }
@@ -1409,7 +1410,7 @@ function renderContinueList(){
   var wrap=document.getElementById("continueList"); wrap.innerHTML="";
   var due=dueWords().length;
   var items=[
-    {ic:"i-cards",bg:"var(--tint)",fg:"var(--purple)",t:"Kelime",s:due?(due+" kart bekliyor"):"Hepsi güncel",pct:S.words.length?Math.round(S.words.filter(function(w){return w.box>=3;}).length/S.words.length*100):0,go:"vocab"}
+    {ic:"i-cards",bg:"var(--tint)",fg:"var(--purple)",t:"Kelime",s:due?(due+" kart bekliyor"):"Hepsi güncel",pct:S.words.length?Math.round(S.words.filter(function(w){return w.reps>=2;}).length/S.words.length*100):0,go:"vocab"}
   ];
   if(typeof GRAMMAR_LEVELS!=="undefined"){
     var gfr=grammarFrontier(), glvl=GRAMMAR_LEVELS[gfr.li], gunit=glvl.units[gfr.ui];
@@ -1479,11 +1480,24 @@ document.getElementById("completeBtn").addEventListener("click",function(){
   save(); renderToday();
 });
 
-/* ---------- VOCAB (SRS) ---------- */
-var SRS=[0,1,2,4,7,15,30,60]; // gün aralıkları, box index'e göre
+/* ---------- VOCAB (gerçek SM-2 aralıklı tekrar) ----------
+   Her kelime: ef (kolaylık faktörü, 1.3 taban, 2.5 başlangıç), reps (ardışık
+   doğru tekrar sayısı), interval (gün). "Tekrar" (quality 2) reps'i sıfırlar
+   ve yarın tekrar sorar; "Bildim" (quality 4) ve "Kolay" (quality 5) normal
+   SM-2 aralık büyümesini uygular. Eski kutu-tabanlı (box) kayıtlar ilk
+   yüklemede aşağıda otomatik SM-2 alanlarına taşınır, ilerleme kaybolmaz. */
+var OLD_SRS=[0,1,2,4,7,15,30,60];
+S.words.forEach(function(w){
+  if(w.ef===undefined){
+    var oldBox=w.box||0;
+    w.ef=2.5;
+    w.reps=oldBox>=3?2:(oldBox>=1?1:0);
+    w.interval=OLD_SRS[Math.min(oldBox,OLD_SRS.length-1)]||0;
+  }
+});
 function addWord(en,tr,ex){
   en=en.trim(); tr=tr.trim(); if(!en||!tr) return;
-  S.words.push({en:en,tr:tr,ex:ex.trim(),box:0,due:today0()});
+  S.words.push({en:en,tr:tr,ex:ex.trim(),ef:2.5,reps:0,interval:0,due:today0()});
   save(); renderVocab();
 }
 document.getElementById("addWord").addEventListener("click",function(){
@@ -1526,8 +1540,8 @@ function renderVocab(){
     }
   }
   // filter chip counts
-  var learningN=S.words.filter(function(w){return w.box<3;}).length;
-  var knownN=S.words.filter(function(w){return w.box>=3;}).length;
+  var learningN=S.words.filter(function(w){return w.reps<2;}).length;
+  var knownN=S.words.filter(function(w){return w.reps>=2;}).length;
   document.getElementById("fCountAll").textContent="("+S.words.length+")";
   document.getElementById("fCountLearning").textContent="("+learningN+")";
   document.getElementById("fCountKnown").textContent="("+knownN+")";
@@ -1535,8 +1549,8 @@ function renderVocab(){
   var wl=document.getElementById("wordList");
   var q=vocabQ;
   var filtered=S.words.filter(function(w){
-    if(vocabFilter==="learning"&&w.box>=3) return false;
-    if(vocabFilter==="known"&&w.box<3) return false;
+    if(vocabFilter==="learning"&&w.reps>=2) return false;
+    if(vocabFilter==="known"&&w.reps<2) return false;
     if(q&&w.en.toLowerCase().indexOf(q)===-1&&w.tr.toLowerCase().indexOf(q)===-1) return false;
     return true;
   });
@@ -1559,9 +1573,12 @@ function renderVocab(){
     wl.innerHTML="";
     filtered.slice().reverse().forEach(function(w){
       var idx=S.words.indexOf(w), isDue=w.due<=today0();
+      var daysLeft=Math.max(0,Math.round((w.due-today0())/86400000));
+      var dueLabel=isDue?"bugün":(daysLeft===1?"yarın":daysLeft+" gün sonra");
       var row=document.createElement("div"); row.className="word";
       row.innerHTML='<div><div class="en">'+esc(w.en)+'</div><div class="tr">'+esc(w.tr)+'</div></div>'+
-        '<div style="display:flex;align-items:center;gap:6px;">'+(isDue?'<span class="due">bugün</span>':'')+
+        '<div style="display:flex;align-items:center;gap:6px;">'+
+        '<span class="due'+(isDue?"":" future")+'" title="Aralık: '+(w.interval||0)+' gün · Kolaylık: '+(w.ef||2.5).toFixed(1)+'">'+dueLabel+'</span>'+
         '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>';
       row.querySelector(".del").addEventListener("click",function(){
         if(confirm('"'+w.en+'" silinsin mi?')){ S.words.splice(idx,1); save(); renderVocab(); }
@@ -1580,16 +1597,26 @@ document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(b){
   });
 });
 function gradeCard(w,g){
-  if(g===0) w.box=0;
-  else if(g===1) w.box=Math.min(SRS.length-1,w.box+1);
-  else w.box=Math.min(SRS.length-1,w.box+2);
-  var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+SRS[w.box]);
+  // Gerçek SM-2: g -> quality (0-5 skalasında) eşlemesi
+  //   Tekrar=2 (hatırlayamadı), Bildim=4 (normal doğru), Kolay=5 (kolay doğru)
+  var quality = g===0?2:(g===1?4:5);
+  if(quality<3){
+    w.reps=0;
+    w.interval=1;
+  } else {
+    if(w.reps===0) w.interval=1;
+    else if(w.reps===1) w.interval=6;
+    else w.interval=Math.round(w.interval*w.ef);
+    w.reps=(w.reps||0)+1;
+  }
+  w.ef=(w.ef||2.5)+(0.1-(5-quality)*(0.08+(5-quality)*0.02));
+  if(w.ef<1.3) w.ef=1.3;
+  var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+w.interval);
   w.due=d.getTime();
   flipped=false;
-  // "Tekrar" (g=0) seçildiğinde kelime bugün için hâlâ bekleyen listesinde kalır
-  // (bu doğru — aralıklı tekrar mantığı öyle ister), ama studyIdx'i sıfırlamak
-  // seni hep aynı karta geri götürüyordu. Bunun yerine sıradaki karta ilerliyoruz;
-  // liste kısalırsa/dönerse renderVocab zaten sınırları kontrol edip sarıyor.
+  // "Tekrar" seçildiğinde kelime kısa aralıkla (1 gün) tekrar sıraya girer ama
+  // BUGÜN artık bekleyen listesinde değildir (studyIdx'i sıfırlamak seni hep
+  // aynı karta geri götürüyordu — artık sıradaki karta ilerliyoruz).
   studyIdx=(studyIdx===null?0:studyIdx)+1;
   save(); renderVocab();
 }
@@ -1829,7 +1856,7 @@ document.getElementById("wsAdd").addEventListener("click",function(){
   var exists=S.words.some(function(w){ return w.en.toLowerCase()===en.toLowerCase(); });
   var btn=document.getElementById("wsAdd");
   if(exists){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Zaten defterinde'; setTimeout(function(){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime defterine ekle'; },1800); return; }
-  S.words.push({en:en,tr:tr,ex:wsCurrentEx,box:0,due:today0()});
+  S.words.push({en:en,tr:tr,ex:wsCurrentEx,ef:2.5,reps:0,interval:0,due:today0()});
   save();
   btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Eklendi!';
   setTimeout(function(){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime defterine ekle'; },1800);
@@ -2536,7 +2563,7 @@ function addUnitPhrasesToVocab(unit){
   unit.phrases.forEach(function(p){
     var en=p[0].trim(), tr=p[1].trim();
     var exists=S.words.some(function(w){ return w.en.toLowerCase()===en.toLowerCase(); });
-    if(!exists){ S.words.push({en:en,tr:tr,ex:"",box:0,due:today0()}); addedN++; }
+    if(!exists){ S.words.push({en:en,tr:tr,ex:"",ef:2.5,reps:0,interval:0,due:today0()}); addedN++; }
   });
   return addedN;
 }
@@ -2808,7 +2835,7 @@ var BADGES=[
   {id:"w1",cat:"kelime",ic:"i-plus",name:"İlk Kelime",desc:"Kelime listene ilk kelimeni ekle.",
     cur:function(){ return S.words.length; }, tgt:1},
   {id:"w10",cat:"kelime",ic:"i-cards",name:"Kelime Filizi",desc:"10 kelimeyi tam olarak biliyor duruma getir.",
-    cur:function(){ return S.words.filter(function(w){return w.box>=3;}).length; }, tgt:10},
+    cur:function(){ return S.words.filter(function(w){return w.reps>=2;}).length; }, tgt:10},
   {id:"s7",cat:"seri",ic:"i-flame",name:"1 Haftalık Seri",desc:"7 gün üst üste günü tamamla.",
     cur:function(){ return S.longestStreak||0; }, tgt:7},
   {id:"s30",cat:"seri",ic:"i-flame",name:"30 Günlük Seri",desc:"30 gün üst üste günü tamamla.",
@@ -3127,7 +3154,7 @@ function renderProgress(){
     wrap.appendChild(bar);
   }
 
-  var known=S.words.filter(function(w){return w.box>=3;}).length;
+  var known=S.words.filter(function(w){return w.reps>=2;}).length;
   var vocabPct=S.words.length?Math.round(known/S.words.length*100):0;
   var readPct=Math.min(100,Math.round(S.readings.length/10*100));
   var totalSpeakUnits=SPEAK_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
@@ -3156,7 +3183,7 @@ function renderProgress(){
 function renderLearnHub(){
   var due=dueWords().length;
   document.getElementById("hubVocabSub").textContent=due?(due+" kart bekliyor"):"Hepsi güncel";
-  var knownN=S.words.filter(function(w){return w.box>=3;}).length;
+  var knownN=S.words.filter(function(w){return w.reps>=2;}).length;
   var vocabPct=S.words.length?Math.round(knownN/S.words.length*100):0;
   var vocabFill=document.getElementById("hubVocabGoalFill"), vocabTxt=document.getElementById("hubVocabGoalTxt");
   if(vocabFill) vocabFill.style.width=vocabPct+"%";
