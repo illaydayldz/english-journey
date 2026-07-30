@@ -992,11 +992,15 @@
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Transkript</h2>
-      <p class="mut" style="margin-bottom:10px;">Dinlediğin bölümün transkriptini (varsa) buraya yapıştır — kelime dokunuşu yok ama okuyarak takip edebilirsin.</p>
+      <p class="mut" style="margin-bottom:10px;">Dinlediğin bölümün transkriptini (varsa) buraya yapıştır.</p>
       <textarea class="f" id="listeningTranscript" rows="6" placeholder="Transkripti buraya yapıştır..."></textarea>
       <div class="row">
         <button type="button" class="btn sec" id="listeningTranscriptSave" style="flex:1;">Kaydet</button>
         <button type="button" class="btn sec" id="listeningTranscriptClear" style="flex:1;">Temizle</button>
+      </div>
+      <div id="listeningTranscriptViewWrap" style="display:none;margin-top:16px;">
+        <p class="hint" style="margin-top:0;margin-bottom:10px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
+        <div class="read-body" id="listeningTranscriptView"></div>
       </div>
     </div>
     <div class="card">
@@ -2204,6 +2208,21 @@ function renderListening(){
   else{ st.textContent="Henüz bağlı değil."; btn.textContent="Spotify'a bağlan"; }
   document.getElementById("listeningTranscript").value=S.listening.transcript||"";
   document.getElementById("listeningNotes").value=S.listening.notes||"";
+  renderListeningTranscriptView();
+}
+function renderListeningTranscriptView(){
+  var text=(S.listening.transcript||"").trim();
+  var wrap=document.getElementById("listeningTranscriptViewWrap");
+  var view=document.getElementById("listeningTranscriptView");
+  if(!text){ wrap.style.display="none"; view.innerHTML=""; return; }
+  wrap.style.display="block";
+  view.innerHTML=text.split(/\n+/).map(function(p){ return p.trim()?'<p class="rp">'+wrapWords(p)+'</p>':""; }).join("");
+  view.querySelectorAll(".rw").forEach(function(span){
+    span.addEventListener("click",function(){
+      span.classList.add("tapped");
+      openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
+    });
+  });
 }
 document.getElementById("spotifyConnectBtn").addEventListener("click",function(){
   if(spotifyTokens()) spotifyDisconnect(); else spotifyConnect();
@@ -2211,6 +2230,7 @@ document.getElementById("spotifyConnectBtn").addEventListener("click",function()
 document.getElementById("listeningTranscriptSave").addEventListener("click",function(){
   S.listening.transcript=document.getElementById("listeningTranscript").value.trim();
   save();
+  renderListeningTranscriptView();
   var btn=document.getElementById("listeningTranscriptSave"), orig=btn.textContent;
   btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
 });
@@ -2218,6 +2238,7 @@ document.getElementById("listeningTranscriptClear").addEventListener("click",fun
   if(!confirm("Transkripti silmek istediğine emin misin?")) return;
   S.listening.transcript=""; save();
   document.getElementById("listeningTranscript").value="";
+  renderListeningTranscriptView();
 });
 document.getElementById("listeningNotesSave").addEventListener("click",function(){
   S.listening.notes=document.getElementById("listeningNotes").value.trim();
