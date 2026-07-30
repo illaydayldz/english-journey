@@ -681,6 +681,14 @@
       </div>
 
       <div class="card">
+        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:2px;">
+          <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Beceri Özeti</h2>
+          <a href="javascript:void(0)" class="mission-edit" id="skillSeeAllLink">Tümünü gör</a>
+        </div>
+        <div id="progSkillList"></div>
+      </div>
+
+      <div class="card">
         <h2><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Bu hafta</h2>
         <div class="weekchart" id="weekChart"></div>
       </div>
@@ -693,10 +701,6 @@
     </div>
 
     <div class="segpanel" id="progPanelSkills">
-      <div class="card">
-        <h2><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Beceriler</h2>
-        <div id="progSkillList"></div>
-      </div>
       <div class="card" style="text-align:center;">
         <h2 style="justify-content:center;"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Beceri haritası</h2>
         <div id="progRadar"></div>
@@ -3116,13 +3120,17 @@ document.getElementById("importFile").addEventListener("change",function(e){
 });
 
 /* ---------- SEGMENTED TABS (İlerleme: Genel Bakış / Beceriler) ---------- */
+function switchProgSeg(seg){
+  document.querySelectorAll("#progSegTabs .seg").forEach(function(x){ x.classList.toggle("active",x.dataset.seg===seg); });
+  document.querySelectorAll(".segpanel").forEach(function(p){ p.classList.remove("active"); });
+  document.getElementById(seg==="overview"?"progPanelOverview":"progPanelSkills").classList.add("active");
+}
 document.querySelectorAll("#progSegTabs .seg").forEach(function(b){
-  b.addEventListener("click",function(){
-    document.querySelectorAll("#progSegTabs .seg").forEach(function(x){ x.classList.remove("active"); });
-    b.classList.add("active");
-    document.querySelectorAll(".segpanel").forEach(function(p){ p.classList.remove("active"); });
-    document.getElementById(b.dataset.seg==="overview"?"progPanelOverview":"progPanelSkills").classList.add("active");
-  });
+  b.addEventListener("click",function(){ switchProgSeg(b.dataset.seg); });
+});
+document.getElementById("skillSeeAllLink").addEventListener("click",function(){
+  switchProgSeg("skills");
+  window.scrollTo(0,0);
 });
 
 /* ---------- INIT ---------- */
