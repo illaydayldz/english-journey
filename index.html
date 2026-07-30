@@ -430,6 +430,24 @@
   .unit-row.done .u-name{ color:var(--ink-soft); }
   .unit-row .u-chev{ color:var(--ink-soft); width:16px; height:16px; flex-shrink:0; }
 
+  /* ---- GRAMMAR PATH: bağlı düğüm görünümü ---- */
+  .path-track{ position:relative; }
+  .path-node{ position:relative; display:flex; align-items:flex-start; gap:13px; width:100%; background:none; border:none; padding:0 2px 22px; text-align:left; font-family:inherit; cursor:pointer; }
+  .path-node:last-child{ padding-bottom:0; }
+  .path-node:last-child .path-line{ display:none; }
+  .path-line{ position:absolute; left:19px; top:40px; bottom:-4px; width:3px; background:var(--line); border-radius:2px; }
+  .path-node.done .path-line{ background:var(--teal); }
+  .path-marker{ width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--surface); box-shadow:0 0 0 2.5px var(--line); color:var(--ink-soft); font-family:var(--font-data); font-weight:800; font-size:13.5px; position:relative; z-index:1; }
+  .path-marker .icon{ width:16px; height:16px; stroke-width:3; }
+  .path-node.done .path-marker{ background:var(--teal); box-shadow:0 0 0 2.5px var(--teal); color:#fff; }
+  .path-node.current .path-marker{ background:var(--teal-tint); box-shadow:0 0 0 3px var(--teal); color:var(--teal); }
+  .path-node.locked .path-marker{ background:var(--gray-100); box-shadow:0 0 0 2.5px var(--line); color:var(--gray-300); }
+  .path-body{ flex:1; min-width:0; padding-top:8px; }
+  .path-body .pn-t{ display:block; font-size:13.5px; font-weight:700; color:var(--ink); font-family:var(--font-display); }
+  .path-node.locked .path-body .pn-t{ color:var(--ink-soft); }
+  .path-body .pn-s{ display:block; font-size:11px; color:var(--ink-soft); margin-top:1px; font-weight:600; }
+  .path-node.current .path-body .pn-s{ color:var(--teal); font-weight:800; text-transform:uppercase; letter-spacing:.3px; font-size:10px; }
+
   /* ---- DİNLEME ---- */
   .spotify-empty{ text-align:center; color:var(--ink-soft); font-size:13px; padding:16px 0; }
   .spotify-empty .mchip{ margin:0 auto 12px; width:64px; height:64px; border-radius:var(--radius-lg); }
@@ -757,14 +775,14 @@
       </div>
       <div class="hubcard">
         <span class="hub-ic hub-teal"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
-        <span class="hub-t">Dilbilgisi</span>
+        <span class="hub-t">Grammar Path</span>
         <span class="hub-s" id="hubGrammarSub">–</span>
         <div class="hub-goal">
           <div class="hub-goal-row"><span>İlerleme</span><span id="hubGrammarGoalTxt">0/0</span></div>
           <div class="hub-goal-track"><div class="hub-goal-fill" id="hubGrammarGoalFill" style="width:0%;background:var(--teal);"></div></div>
         </div>
         <div class="hub-modes"><span class="hub-mode">Kural + Örnek</span><span class="hub-mode">Alıştırmalar</span></div>
-        <button type="button" class="btn teal hub-cta" onclick="go('grammar')">Dilbilgisine Başla</button>
+        <button type="button" class="btn teal hub-cta" onclick="go('grammar')">Path'e Başla</button>
       </div>
       <div class="hubcard">
         <span class="hub-ic hub-pink"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
@@ -1000,19 +1018,19 @@
     </div>
   </section>
 
-  <!-- ===== DİLBİLGİSİ ===== -->
+  <!-- ===== GRAMMAR PATH ===== -->
   <section class="view" id="v-grammar">
     <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <h1>Dilbilgisi</h1>
+      <h1>Grammar Path</h1>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Konun</h2>
       <div id="grammarCurrent"></div>
     </div>
     <div class="card">
-      <details id="grammarAllLevelsBox">
-        <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Tüm konular</summary>
+      <details id="grammarAllLevelsBox" open>
+        <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Grammar Path — Tüm konular</summary>
         <div id="grammarLevelList" style="margin-top:14px;"></div>
       </details>
     </div>
@@ -1029,7 +1047,7 @@
       <p class="rule-box" id="writingPrompt">—</p>
       <textarea class="f" id="writingText" rows="5" placeholder="En az 3-4 cümle yaz..."></textarea>
       <button class="btn" id="writingSaveBtn">Kaydet</button>
-      <a class="btn pink" id="writingFeedbackBtn" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'dan Geri Bildirim Al</a>
+      <a class="btn deep" id="writingFeedbackBtn" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'dan Geri Bildirim Al</a>
       <p class="hint">Yazdığın metin ve konu panoya kopyalanır, Claude'da yapıştırıp gönder — düzeltme ve daha doğal bir alternatif önerir.</p>
     </div>
     <div class="card">
@@ -1328,7 +1346,7 @@ function renderContinueList(){
     var gfr=grammarFrontier(), glvl=GRAMMAR_LEVELS[gfr.li], gunit=glvl.units[gfr.ui];
     var gTotal=GRAMMAR_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
     var gDone=Object.keys(S.grammar.completed).length;
-    items.push({ic:"i-layers",bg:"var(--teal-tint)",fg:"var(--teal)",t:"Dilbilgisi: "+gunit.name,s:glvl.cefr+" · "+glvl.name,pct:gTotal?Math.round(gDone/gTotal*100):0,go:"grammar"});
+    items.push({ic:"i-layers",bg:"var(--teal-tint)",fg:"var(--teal)",t:"Grammar Path: "+gunit.name,s:glvl.cefr+" · "+glvl.name,pct:gTotal?Math.round(gDone/gTotal*100):0,go:"grammar"});
   }
   if(typeof SPEAK_LEVELS!=="undefined"){
     var sfr=speakFrontier(), slvl=SPEAK_LEVELS[sfr.li], sunit=slvl.units[sfr.ui];
@@ -2644,29 +2662,45 @@ function renderGrammar(){
   });
 
   var listEl=document.getElementById("grammarLevelList"); listEl.innerHTML="";
+  var frontier=grammarFrontier();
   GRAMMAR_LEVELS.forEach(function(lv,li){
     var unlocked=grammarLevelUnlocked(li);
     var box=document.createElement("div"); box.className="level-block"+(unlocked?"":" locked");
     var doneCount=lv.units.filter(function(_,ui){return !!S.grammar.completed[grammarUnitKey(li,ui)];}).length;
-    var pct=Math.round(doneCount/lv.units.length*100);
     box.innerHTML='<div class="level-head">'+
       '<span class="cefr-badge'+(unlocked?"":" locked")+'">'+lv.cefr+'</span>'+
       '<span class="lv-name">'+esc(lv.name)+'</span>'+
       (unlocked
         ? '<span class="lv-count">'+doneCount+'/'+lv.units.length+'</span>'
         : '<span class="lv-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>Kilitli</span>')+
-    '</div>'+
-    (unlocked?'<div class="level-bar"><div style="width:'+pct+'%"></div></div><p class="level-cando">'+esc(lv.cando)+'</p>':'');
+    '</div>';
     if(unlocked){
+      var path=document.createElement("div"); path.className="path-track";
       lv.units.forEach(function(u,ui){
         var udone=!!S.grammar.completed[grammarUnitKey(li,ui)];
-        var row=document.createElement("button"); row.type="button"; row.className="unit-row"+(udone?" done":"");
-        row.innerHTML='<span class="u-stat"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'+
-          '<span class="u-name">'+esc(u.name)+'</span>'+
-          '<svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>';
-        row.addEventListener("click",function(){ S.grammar.selected={li:li,ui:ui}; save(); renderGrammar(); window.scrollTo(0,0); });
-        box.appendChild(row);
+        var isCurrent=!udone&&li===frontier.li&&ui===frontier.ui;
+        var node=document.createElement("button"); node.type="button";
+        node.className="path-node"+(udone?" done":"")+(isCurrent?" current":"");
+        var markerIcon=udone?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(ui+1);
+        node.innerHTML='<span class="path-line" aria-hidden="true"></span>'+
+          '<span class="path-marker">'+markerIcon+'</span>'+
+          '<span class="path-body"><span class="pn-t">'+esc(u.name)+'</span>'+
+          (isCurrent?'<span class="pn-s">Sıradaki konu</span>':(udone?'<span class="pn-s">Tamamlandı</span>':'<span class="pn-s">Hazır</span>'))+
+          '</span>';
+        node.addEventListener("click",function(){ S.grammar.selected={li:li,ui:ui}; save(); renderGrammar(); window.scrollTo(0,0); });
+        path.appendChild(node);
       });
+      box.appendChild(path);
+    } else {
+      var lockedPath=document.createElement("div"); lockedPath.className="path-track";
+      lv.units.forEach(function(u,ui){
+        var node=document.createElement("div"); node.className="path-node locked";
+        node.innerHTML='<span class="path-line" aria-hidden="true"></span>'+
+          '<span class="path-marker"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg></span>'+
+          '<span class="path-body"><span class="pn-t">'+esc(u.name)+'</span><span class="pn-s">Önce '+GRAMMAR_LEVELS[li-1].cefr+' seviyesini bitir</span></span>';
+        lockedPath.appendChild(node);
+      });
+      box.appendChild(lockedPath);
     }
     listEl.appendChild(box);
   });
@@ -2791,7 +2825,7 @@ var TASK_POOL=[
   {cat:"Konuşma",ic:"i-mic",text:"Telaffuz pratiğinde 3 cümle dene"},
   {cat:"Yazma",ic:"i-edit",text:"Günlüğe bugünün özetini İngilizce yazmayı dene"},
   {cat:"Yazma",ic:"i-edit",text:"Yazma'da bugünün konusu hakkında birkaç cümle yaz"},
-  {cat:"Dilbilgisi",ic:"i-layers",text:"Dilbilgisi'nde bir konuyu çalış, alıştırmaları çöz"}
+  {cat:"Grammar Path",ic:"i-layers",text:"Grammar Path'te bir konuyu çalış, alıştırmaları çöz"}
 ];
 function dayOfYear(d){ var start=new Date(d.getFullYear(),0,0); return Math.floor((d-start)/86400000); }
 function todaysTasks(){
@@ -2799,7 +2833,7 @@ function todaysTasks(){
   return TASK_POOL.map(function(t,i){ return {t:t,k:((doy*9301+i*49297+7)%233280)}; })
     .sort(function(a,b){ return a.k-b.k; }).map(function(x){return x.t;}).slice(0,4);
 }
-var TASK_CAT_CLASS={"Okuma":"t-ic-okuma","Dinleme":"t-ic-dinleme","Kelime":"t-ic-kelime","Konuşma":"t-ic-konusma","Yazma":"t-ic-yazma","Dilbilgisi":"t-ic-dilbilgisi"};
+var TASK_CAT_CLASS={"Okuma":"t-ic-okuma","Dinleme":"t-ic-dinleme","Kelime":"t-ic-kelime","Konuşma":"t-ic-konusma","Yazma":"t-ic-yazma","Grammar Path":"t-ic-dilbilgisi"};
 function renderTasks(){
   var tasks=todaysTasks(), key=dstr(new Date());
   S.tasks=S.tasks||{}; S.tasks[key]=S.tasks[key]||{};
