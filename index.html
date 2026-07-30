@@ -183,6 +183,11 @@
   .continue-card .cc-s{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
   .continue-card .cc-arrow{ color:var(--purple); margin-left:auto; flex-shrink:0; }
   details summary{ font-family:var(--font-display); font-weight:800; font-size:14.5px; color:var(--ink); cursor:pointer; list-style:none; display:flex; align-items:center; gap:9px; min-height:22px; }
+  .note-details{ margin-top:9px; }
+  .note-details summary{ font-family:inherit; font-weight:700; font-size:12px; color:var(--purple-deep); min-height:32px; }
+  .note-details summary .icon{ width:14px; height:14px; }
+  .note-details .note-ta{ margin-top:8px; }
+  .note-details .note-save{ margin-top:0; }
   details summary .icon{ color:var(--purple); width:18px; height:18px; }
   details summary::-webkit-details-marker{ display:none; }
   details summary::after{ content:""; margin-left:auto; width:9px; height:9px; border-right:2px solid var(--ink-soft); border-bottom:2px solid var(--ink-soft); border-radius:0 0 2px 0; transform:rotate(45deg); transition:transform .2s; flex-shrink:0; }
@@ -877,6 +882,11 @@
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Sesli oku, telaffuzunu kontrol ettir</h2>
       <p class="mut" style="margin-bottom:10px;">Metni yüksek sesle oku, sonra Claude'u aç ve sesli sohbete geç — telaffuz, vurgu ve tonlamanı değerlendirsin.</p>
       <a class="btn deep" id="libReadClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'u Aç (Telaffuz kontrolü)</a>
+      <details class="note-details" id="libReadNoteDetails">
+        <summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirim notun</summary>
+        <textarea class="f note-ta" id="libReadNoteTa" rows="3" placeholder="Claude telaffuzun hakkında ne söyledi..."></textarea>
+        <button type="button" class="btn sec sm note-save" id="libReadNoteSave">Notu Kaydet</button>
+      </details>
     </div>
     <div class="card">
       <button class="btn" id="libReadCompleteBtn"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu metni tamamladım</button>
@@ -904,6 +914,21 @@
       </div>
       <div id="spotifyPlayerContainer" class="player-frame" style="display:none;"></div>
       <p class="hint">Tam parça/bölüm dinlemek için widget içinden Spotify hesabınla (Premium) giriş yapman gerekebilir.</p>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Transkript</h2>
+      <p class="mut" style="margin-bottom:10px;">Dinlediğin bölümün transkriptini (varsa) buraya yapıştır — kelime dokunuşu yok ama okuyarak takip edebilirsin.</p>
+      <textarea class="f" id="listeningTranscript" rows="6" placeholder="Transkripti buraya yapıştır..."></textarea>
+      <div class="row">
+        <button type="button" class="btn sec" id="listeningTranscriptSave" style="flex:1;">Kaydet</button>
+        <button type="button" class="btn sec" id="listeningTranscriptClear" style="flex:1;">Temizle</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Notların</h2>
+      <p class="mut" style="margin-bottom:10px;">Dinlerken öğrendiğin kelimeler, Claude'dan aldığın notlar ya da aklında kalanlar.</p>
+      <textarea class="f" id="listeningNotes" rows="4" placeholder="Notunu yaz..."></textarea>
+      <button type="button" class="btn sec" id="listeningNotesSave">Notu Kaydet</button>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Podcast ara</h2>
@@ -1187,10 +1212,14 @@ S.journal=S.journal||{};
 S.settings=S.settings||{};
 S.pronCount=S.pronCount||0;
 S.speaking=S.speaking||{completed:{},selected:null};
+S.speaking.notes=S.speaking.notes||{};
 S.grammar=S.grammar||{completed:{},selected:null};
+S.grammar.notes=S.grammar.notes||{};
 S.writings=S.writings||[];
-S.tasks=S.tasks||{};
 S.readingLib=S.readingLib||{completed:{}};
+S.readingLib.notes=S.readingLib.notes||{};
+S.listening=S.listening||{notes:"",transcript:""};
+S.tasks=S.tasks||{};
 S.trCache=S.trCache||{};
 if(S.checksDate!==dstr(new Date())){ S.checks={}; S.checksDate=dstr(new Date()); }
 
@@ -1555,6 +1584,18 @@ function renderLibRead(){
   var freshClaudeBtn=claudeBtn.cloneNode(true); // eski click dinleyicilerini temizle
   claudeBtn.parentNode.replaceChild(freshClaudeBtn,claudeBtn);
   claudeHandoff(freshClaudeBtn,buildLibReadClaudePrompt(r));
+  var noteTa=document.getElementById("libReadNoteTa");
+  noteTa.value=S.readingLib.notes[r.id]||"";
+  document.getElementById("libReadNoteDetails").open=!!S.readingLib.notes[r.id];
+  var noteSaveBtn=document.getElementById("libReadNoteSave");
+  var freshNoteSaveBtn=noteSaveBtn.cloneNode(true);
+  noteSaveBtn.parentNode.replaceChild(freshNoteSaveBtn,noteSaveBtn);
+  freshNoteSaveBtn.addEventListener("click",function(){
+    S.readingLib.notes[r.id]=noteTa.value.trim();
+    save();
+    var orig=freshNoteSaveBtn.textContent;
+    freshNoteSaveBtn.textContent="Kaydedildi"; setTimeout(function(){ freshNoteSaveBtn.textContent=orig; },1500);
+  });
   var completeBtn=document.getElementById("libReadCompleteBtn");
   completeBtn.onclick=function(){
     S.readingLib.completed[r.id]=true;
@@ -1859,9 +1900,28 @@ function renderListening(){
   if(spotifyTokens()){ st.innerHTML='<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#i-check"></use></svg> Spotify\'a bağlı'; btn.textContent="Bağlantıyı kes"; }
   else if(spotifyClientId()){ st.textContent="Client ID kaydedildi, bağlanmaya hazır."; btn.textContent="Spotify'a bağlan"; }
   else{ st.textContent="Henüz bağlı değil."; btn.textContent="Spotify'a bağlan"; }
+  document.getElementById("listeningTranscript").value=S.listening.transcript||"";
+  document.getElementById("listeningNotes").value=S.listening.notes||"";
 }
 document.getElementById("spotifyConnectBtn").addEventListener("click",function(){
   if(spotifyTokens()) spotifyDisconnect(); else spotifyConnect();
+});
+document.getElementById("listeningTranscriptSave").addEventListener("click",function(){
+  S.listening.transcript=document.getElementById("listeningTranscript").value.trim();
+  save();
+  var btn=document.getElementById("listeningTranscriptSave"), orig=btn.textContent;
+  btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
+});
+document.getElementById("listeningTranscriptClear").addEventListener("click",function(){
+  if(!confirm("Transkripti silmek istediğine emin misin?")) return;
+  S.listening.transcript=""; save();
+  document.getElementById("listeningTranscript").value="";
+});
+document.getElementById("listeningNotesSave").addEventListener("click",function(){
+  S.listening.notes=document.getElementById("listeningNotes").value.trim();
+  save();
+  var btn=document.getElementById("listeningNotesSave"), orig=btn.textContent;
+  btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
 });
 document.getElementById("spotifySearchInput").addEventListener("keydown",function(e){
   if(e.key==="Enter") spotifySearch(e.target.value.trim());
@@ -2261,9 +2321,20 @@ function renderWritingList(){
     row.innerHTML='<div class="read-top"><span class="read-date">'+fmtDate(w.date)+'</span>'+
       '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>'+
       '<div class="mut" style="margin-bottom:4px;">'+esc(w.prompt)+'</div>'+
-      '<p class="read-text">'+esc(w.text)+'</p>';
+      '<p class="read-text">'+esc(w.text)+'</p>'+
+      '<details class="note-details"'+(w.feedback?" open":"")+'>'+
+        '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirimi'+(w.feedback?"":" ekle")+'</summary>'+
+        '<textarea class="f note-ta" rows="3" placeholder="Claude\'dan aldığın geri bildirimi buraya yapıştır...">'+esc(w.feedback||"")+'</textarea>'+
+        '<button type="button" class="btn sec sm note-save">Notu Kaydet</button>'+
+      '</details>';
     row.querySelector(".del").addEventListener("click",function(){
       if(confirm("Bu yazı kaydı silinsin mi?")){ S.writings.splice(idx,1); save(); renderWritingList(); }
+    });
+    row.querySelector(".note-save").addEventListener("click",function(){
+      w.feedback=row.querySelector(".note-ta").value.trim();
+      save();
+      var btn=row.querySelector(".note-save"); var orig=btn.textContent;
+      btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
     });
     list.appendChild(row);
   });
@@ -2365,10 +2436,22 @@ function renderSpeaking(){
       '<span class="cp-sub">Konuşmaya başlamak için aşağıdaki butona dokun</span>'+
     '</div>'+
     '<a class="btn deep" id="speakOpenClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</a>'+
+    '<details class="note-details" id="speakNoteDetails"'+(S.speaking.notes[unitKey(sel.li,sel.ui)]?" open":"")+'>'+
+      '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirim notun</summary>'+
+      '<textarea class="f note-ta" id="speakNoteTa" rows="3" placeholder="Claude ne söyledi, neyi düzeltmen gerekiyor..."></textarea>'+
+      '<button type="button" class="btn sec sm note-save" id="speakNoteSave">Notu Kaydet</button>'+
+    '</details>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın</span></div>'
       : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu üniteyi tamamladım</button>');
   wireClaudeLink(document.getElementById("speakOpenClaude"),sel.li,sel.ui);
+  document.getElementById("speakNoteTa").value=S.speaking.notes[unitKey(sel.li,sel.ui)]||"";
+  document.getElementById("speakNoteSave").addEventListener("click",function(){
+    S.speaking.notes[unitKey(sel.li,sel.ui)]=document.getElementById("speakNoteTa").value.trim();
+    save();
+    var btn=document.getElementById("speakNoteSave"), orig=btn.textContent;
+    btn.textContent="Kaydedildi"; setTimeout(function(){ if(btn) btn.textContent=orig; },1500);
+  });
   document.querySelectorAll("#speakCurrent [data-min]").forEach(function(b){
     b.addEventListener("click",function(){ start432Timer(parseInt(b.dataset.min,10)); });
   });
@@ -2444,10 +2527,22 @@ function renderGrammar(){
     '<div id="grammarExList">'+exHtml+'</div>'+
     '<div id="grammarScore" style="display:none;"></div>'+
     '<button type="button" class="btn sec" id="grammarCheckBtn" style="margin-top:6px;">Cevapları Kontrol Et</button>'+
+    '<details class="note-details" id="grammarNoteDetails"'+(S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]?" open":"")+'>'+
+      '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirim notun</summary>'+
+      '<textarea class="f note-ta" id="grammarNoteTa" rows="3" placeholder="Bu konuyla ilgili Claude\'dan aldığın notları buraya yaz..."></textarea>'+
+      '<button type="button" class="btn sec sm note-save" id="grammarNoteSave">Notu Kaydet</button>'+
+    '</details>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu konuyu tamamladın</span></div>'
       : '<button class="btn" id="grammarCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu konuyu tamamladım</button>');
 
+  document.getElementById("grammarNoteTa").value=S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]||"";
+  document.getElementById("grammarNoteSave").addEventListener("click",function(){
+    S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]=document.getElementById("grammarNoteTa").value.trim();
+    save();
+    var btn=document.getElementById("grammarNoteSave"), orig=btn.textContent;
+    btn.textContent="Kaydedildi"; setTimeout(function(){ if(btn) btn.textContent=orig; },1500);
+  });
   document.querySelectorAll("#grammarExList .gx-opt").forEach(function(btn){
     btn.addEventListener("click",function(){
       if(grammarChecked) return;
@@ -2950,7 +3045,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
-      S.speaking=S.speaking||{completed:{},selected:null}; S.grammar=S.grammar||{completed:{},selected:null}; S.writings=S.writings||[]; S.tasks=S.tasks||{};
+      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.listening=S.listening||{notes:"",transcript:""}; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
