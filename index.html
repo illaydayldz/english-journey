@@ -381,9 +381,7 @@
 
   /* ---- KONUŞMA: seviye/ünite bileşenleri ---- */
   /* Centered "conversation partner" moment: large avatar with a soft pulse
-     ring behind it (implies "listening"), matching the reference's centered
-     mascot-as-partner treatment — still just a visual lead-in to the real
-     "Claude'u Aç" handoff button below it, no fake live voice UI implied. */
+     ring behind it, shown before a live Moonie voice chat starts. */
   .convo-partner{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:9px; background:linear-gradient(135deg,var(--tint) 0%,var(--accent-soft-2) 100%); border-radius:var(--radius-lg); padding:22px 16px; margin-bottom:12px; }
   .cp-avatar{ position:relative; width:84px; height:84px; display:flex; align-items:center; justify-content:center; }
   .cp-pulse{ position:absolute; inset:-14px; border-radius:50%; border:2px solid var(--accent); opacity:.4; animation:cppulse 2.2s ease-out infinite; }
@@ -391,6 +389,13 @@
   .convo-partner .mchip{ position:relative; z-index:1; width:84px; height:84px; border-radius:50%; box-shadow:var(--shadow-2); flex-shrink:0; }
   .convo-partner span{ font-size:12.5px; font-weight:700; color:var(--purple-deep); line-height:1.4; max-width:260px; }
   .convo-partner .cp-sub{ font-size:11px; font-weight:600; color:var(--ink-soft); }
+  .convo-log{ max-height:360px; overflow-y:auto; flex-direction:column; gap:10px; margin-bottom:12px; padding:4px 2px; }
+  .convo-bubble{ max-width:84%; padding:10px 13px; border-radius:var(--radius-md); font-size:13.5px; line-height:1.5; }
+  .convo-bubble.moonie{ align-self:flex-start; background:var(--tint); color:var(--ink); border-bottom-left-radius:4px; }
+  .convo-bubble.me{ align-self:flex-end; background:var(--purple-deep); color:#fff; border-bottom-right-radius:4px; }
+  .convo-bubble .cb-note{ display:block; margin-top:6px; font-size:11.5px; font-weight:700; color:var(--gold); }
+  .convo-bubble.me .cb-note{ color:#ffe9b0; }
+  .convo-loading{ align-self:flex-start; font-size:12.5px; color:var(--ink-soft); font-weight:700; display:flex; align-items:center; gap:6px; }
   .cefr-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:26px; padding:0 9px; border-radius:var(--radius-sm); background:linear-gradient(135deg,var(--accent-ink),var(--accent)); color:#fff; font-family:var(--font-data); font-weight:800; font-size:12.5px; letter-spacing:.2px; box-shadow:var(--shadow-1); flex-shrink:0; }
   .cefr-badge.lg{ min-width:50px; height:32px; font-size:14.5px; border-radius:var(--radius-md); }
   .cefr-badge.locked{ background:var(--tint); color:var(--ink-soft); box-shadow:none; }
@@ -2676,35 +2681,149 @@ function addUnitPhrasesToVocab(unit){
   });
   return addedN;
 }
-function buildClaudePrompt(level,unit,hasProject){
-  if(hasProject){
-    return "Bugün CEFR "+level.cefr+" ("+level.name+") seviyesindeyim, ünite: \""+unit.name+"\". "+
-      "Bu ünitenin senaryosu ve kalıp ifadeleri proje müfredatında var — o içerik üzerinden bana kısa bir açılış sorusuyla sesli konuşma pratiği yaptır, seviyeme uygun basit ve net İngilizce kullan, hatalarımı nazikçe ve akışı bozmadan düzelt, sonunda kısa bir geri bildirim ver.";
-  }
-  return "Sen sabırlı, destekleyici bir İngilizce konuşma öğretmenisin. Öğrencin Türkçe konuşan, İngilizce seviyesi CEFR "+level.cefr+" ("+level.name+"). "+
-    "Bugünkü ünite: \""+unit.name+"\". Bu ünitede kullanmam gereken kalıp ifadeler: "+unit.phrases.map(function(p){return p[0];}).join("; ")+". "+
-    "Senaryo: "+unit.scenario+" "+
-    "Lütfen bana bu senaryo üzerinden kısa bir açılış sorusuyla sesli konuşma pratiği yaptır, seviyeme uygun basit ve net İngilizce kullan, yukarıdaki kalıp ifadeleri doğal şekilde kullanmam için beni yönlendir, hatalarımı nazikçe ve akışı bozmadan düzelt, sonunda kısa bir geri bildirim ver.";
+/* ---------- Moonie ile sesli sohbet (Gemini, çok turlu rol yapma) ---------- */
+var speakConvo={active:false,recognizing:false,recognizer:null};
+function buildSpeakConvoSystemPrompt(level,unit){
+  return "Sen Moonie adında dostane bir İngilizce konuşma partnerisin. Öğrencinle sesli bir rol yapma (role-play) alıştırması yapıyorsun.\n"+
+    "Seviye: "+level.cefr+" ("+level.name+"). Senaryo: "+unit.scenario+"\n"+
+    "Konuşma konusu: "+unit.topic+"\n"+
+    "Kullanmasını istediğin kalıp ifadeler: "+unit.phrases.map(function(p){return p[0];}).join("; ")+"\n\n"+
+    "Kurallar: SADECE İngilizce konuş; senaryodaki karakteri oynuyormuş gibi doğal, kısa (1-3 cümle) cevaplar ver; öğrenciyi konuşturmak için soru sor. "+
+    "Öğrencinin son mesajında belirgin bir dilbilgisi/kelime hatası varsa, cevabının en altına YENİ SATIRDA \"Not: \" ile başlayan kısa bir Türkçe düzeltme ekle (hata yoksa bu satırı hiç ekleme). "+
+    "Şimdi senaryoya uygun kısa, doğal bir açılış cümlesiyle konuşmayı SEN başlat (öğrenci henüz bir şey söylemedi).";
 }
-function wireClaudeLink(el,li,ui){
-  var level=SPEAK_LEVELS[li], unit=level.units[ui];
-  var projectUrl=(S.settings.claudeProjectUrl||"").trim();
-  var prompt=buildClaudePrompt(level,unit,!!projectUrl);
-  el.href=projectUrl||"https://claude.ai/new";
-  // Not: href zaten gerçek bir <a> navigasyonu — pop-up engelleyiciler bunu asla durduramaz.
-  // preventDefault YOK: tıklama hem panoya kopyalar hem de normal link davranışıyla yeni sekmeyi açar.
-  el.addEventListener("click",function(){
-    var original=el.innerHTML;
-    navigator.clipboard.writeText(prompt).then(function(){
-      el.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Kopyalandı — Claude\'da yapıştır!';
-      setTimeout(function(){ el.innerHTML=original; },3000);
-    }).catch(function(){
-      window.prompt("Panoya otomatik kopyalanamadı — bu metni seç, kopyala ve Claude'a yapıştır:", prompt);
+function splitMoonieReply(text){
+  var m=text.match(/\n+Not:\s*([\s\S]*)$/i);
+  if(m) return {speak:text.slice(0,m.index).trim(),note:m[1].trim()};
+  return {speak:text.trim(),note:""};
+}
+function callGeminiText(contents){
+  var apiKey=(S.settings.geminiApiKey||"").trim();
+  return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+GEMINI_MODEL+":generateContent?key="+encodeURIComponent(apiKey),{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:contents})
+  }).then(function(r){ return r.json(); }).then(function(data){
+    var text=data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+      data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+    if(!text) throw new Error((data&&data.error&&data.error.message)||"Moonie şu an yanıt veremedi.");
+    return text;
+  });
+}
+function appendConvoBubble(role,text,note){
+  var log=document.getElementById("speakConvoLog");
+  var b=document.createElement("div");
+  b.className="convo-bubble "+(role==="model"?"moonie":"me");
+  b.innerHTML=esc(text)+(note?'<span class="cb-note">'+esc(note)+"</span>":"");
+  log.appendChild(b); log.scrollTop=log.scrollHeight;
+  return b;
+}
+function appendConvoLoading(msg){
+  var log=document.getElementById("speakConvoLog");
+  var d=document.createElement("div"); d.className="convo-loading"; d.id="speakConvoLoadingRow";
+  d.innerHTML=MOONIE_LISTEN_CHIP+esc(msg);
+  log.appendChild(d); log.scrollTop=log.scrollHeight;
+}
+function removeConvoLoading(){
+  var d=document.getElementById("speakConvoLoadingRow"); if(d) d.remove();
+}
+function resetSpeakConvo(){
+  if(speakConvo.recognizer){ try{ speakConvo.recognizer.abort(); }catch(e){} }
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  speakConvo={active:false,recognizing:false,recognizer:null};
+}
+function wireSpeakConvo(level,unit,sel){
+  var startBtn=document.getElementById("speakConvoStart");
+  var talkBtn=document.getElementById("speakConvoTalk");
+  var endBtn=document.getElementById("speakConvoEnd");
+  var controls=document.getElementById("speakConvoControls");
+  var intro=document.getElementById("speakConvoIntro");
+  var log=document.getElementById("speakConvoLog");
+  var micIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>';
+  var SRClass=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+  function talkTurn(){
+    if(!SRClass) return;
+    var rec=new SRClass(); rec.lang="en-US"; rec.interimResults=false; rec.maxAlternatives=1;
+    speakConvo.recognizer=rec; speakConvo.recognizing=true;
+    talkBtn.innerHTML=micIcon+"Dinliyorum...";
+    rec.onresult=function(e){
+      var said=e.results[0][0].transcript;
+      appendConvoBubble("user",said,"");
+      speakConvo.contents.push({role:"user",parts:[{text:said}]});
+      appendConvoLoading("Moonie düşünüyor...");
+      talkBtn.disabled=true; talkBtn.innerHTML=micIcon+"Moonie yanıtlıyor...";
+      callGeminiText(speakConvo.contents).then(function(text){
+        removeConvoLoading();
+        speakConvo.contents.push({role:"model",parts:[{text:text}]});
+        var parts=splitMoonieReply(text);
+        appendConvoBubble("model",parts.speak,parts.note);
+        speakEnglish(parts.speak,.95);
+        talkBtn.disabled=false; talkBtn.innerHTML=micIcon+"Konuş";
+      }).catch(function(err){
+        removeConvoLoading();
+        appendConvoBubble("model","(Bağlantı hatası: "+err.message+")","");
+        talkBtn.disabled=false; talkBtn.innerHTML=micIcon+"Konuş";
+      });
+    };
+    rec.onerror=function(e){ speakConvo.recognizing=false; talkBtn.innerHTML=micIcon+"Konuş"; if(e.error!=="aborted"&&e.error!=="no-speech") alert("Hata: "+e.error); };
+    rec.onend=function(){ speakConvo.recognizing=false; if(talkBtn.innerHTML.indexOf("Dinliyorum")!==-1) talkBtn.innerHTML=micIcon+"Konuş"; };
+    rec.start();
+  }
+
+  startBtn.addEventListener("click",function(){
+    if(!(S.settings.geminiApiKey||"").trim()){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
+    if(!SRClass){ alert("Sesli sohbet için ses tanıma gerekiyor. Chrome kullan."); return; }
+    speakConvo={active:true,recognizing:false,recognizer:null,contents:[{role:"user",parts:[{text:buildSpeakConvoSystemPrompt(level,unit)}]}]};
+    intro.style.display="none";
+    startBtn.style.display="none";
+    log.innerHTML=""; log.style.display="flex";
+    appendConvoLoading("Moonie hazırlanıyor...");
+    callGeminiText(speakConvo.contents).then(function(text){
+      removeConvoLoading();
+      speakConvo.contents.push({role:"model",parts:[{text:text}]});
+      var parts=splitMoonieReply(text);
+      appendConvoBubble("model",parts.speak,parts.note);
+      speakEnglish(parts.speak,.95);
+      controls.style.display="flex";
+    }).catch(function(err){
+      removeConvoLoading();
+      appendConvoBubble("model","(Bağlantı hatası: "+err.message+")","");
+      intro.style.display="flex"; startBtn.style.display="flex";
+      speakConvo.active=false;
     });
+  });
+
+  talkBtn.addEventListener("click",function(){
+    if(speakConvo.recognizing){ if(speakConvo.recognizer) speakConvo.recognizer.stop(); return; }
+    talkTurn();
+  });
+
+  endBtn.addEventListener("click",function(){
+    if(speakConvo.recognizer&&speakConvo.recognizing){ try{ speakConvo.recognizer.stop(); }catch(e){} }
+    if("speechSynthesis" in window) speechSynthesis.cancel();
+    var finishedContents=speakConvo.contents;
+    speakConvo.active=false;
+    controls.style.display="none";
+    var saveBtn=document.createElement("button");
+    saveBtn.type="button"; saveBtn.className="btn sec sm"; saveBtn.style.marginTop="6px";
+    saveBtn.textContent="Notlarım'a Kaydet";
+    saveBtn.addEventListener("click",function(){
+      var transcript=finishedContents.slice(1).map(function(c){
+        return (c.role==="model"?"Moonie: ":"Sen: ")+c.parts[0].text;
+      }).join("\n\n");
+      S.pronunciationNotes.push({date:isoDate(new Date()),target:unit.name+" — sesli sohbet",analysis:transcript});
+      save();
+      saveBtn.textContent="Kaydedildi"; saveBtn.disabled=true;
+    });
+    log.appendChild(saveBtn);
+    startBtn.textContent="Yeni Sohbet Başlat";
+    startBtn.innerHTML=micIcon+"Yeni Sohbet Başlat";
+    intro.style.display="none";
+    startBtn.style.display="flex";
   });
 }
 function renderSpeaking(){
   stop432Timer();
+  resetSpeakConvo();
   var sel=S.speaking.selected||speakFrontier();
   var level=SPEAK_LEVELS[sel.li], unit=level.units[sel.ui];
   var done=!!S.speaking.completed[unitKey(sel.li,sel.ui)];
@@ -2727,21 +2846,26 @@ function renderSpeaking(){
       '<div id="timer432Display" style="display:none;text-align:center;font-family:var(--font-display);font-size:34px;font-weight:800;color:var(--purple-deep);padding:6px 0;"></div>'+
       '<button type="button" class="btn sec" id="timer432Stop" style="display:none;">Durdur</button>'+
     '</div>'+
-    '<div class="convo-partner">'+
+    '<div class="convo-partner" id="speakConvoIntro">'+
       '<div class="cp-avatar"><span class="cp-pulse" aria-hidden="true"></span><div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div></div>'+
-      '<span>Konuşma partnerin — Claude sesli sohbette seni dinliyor</span>'+
-      '<span class="cp-sub">Konuşmaya başlamak için aşağıdaki butona dokun</span>'+
+      '<span>Moonie ile sesli sohbet — bu senaryoyu birlikte canlandırın</span>'+
+      '<span class="cp-sub">Başlamak için aşağıdaki butona dokun</span>'+
     '</div>'+
-    '<a class="btn deep" id="speakOpenClaude" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude\'u Aç (Sesli pratik)</a>'+
+    '<div class="convo-log" id="speakConvoLog" style="display:none;"></div>'+
+    '<button type="button" class="btn gold" id="speakConvoStart" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Sohbeti Başlat</button>'+
+    '<div class="row" id="speakConvoControls" style="display:none;gap:8px;">'+
+      '<button type="button" class="btn gold" id="speakConvoTalk" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Konuş</button>'+
+      '<button type="button" class="btn sec" id="speakConvoEnd" style="flex:1;">Sohbeti Bitir</button>'+
+    '</div>'+
     '<details class="note-details" id="speakNoteDetails"'+(S.speaking.notes[unitKey(sel.li,sel.ui)]?" open":"")+'>'+
-      '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirim notun</summary>'+
-      '<textarea class="f note-ta" id="speakNoteTa" rows="3" placeholder="Claude ne söyledi, neyi düzeltmen gerekiyor..."></textarea>'+
+      '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Bu üniteyle ilgili notların</summary>'+
+      '<textarea class="f note-ta" id="speakNoteTa" rows="3" placeholder="Aklında kalanları, zorlandığın noktaları buraya yaz..."></textarea>'+
       '<button type="button" class="btn sec sm note-save" id="speakNoteSave">Notu Kaydet</button>'+
     '</details>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın</span></div>'
       : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu üniteyi tamamladım</button>');
-  wireClaudeLink(document.getElementById("speakOpenClaude"),sel.li,sel.ui);
+  wireSpeakConvo(level,unit,sel);
   document.getElementById("speakNoteTa").value=S.speaking.notes[unitKey(sel.li,sel.ui)]||"";
   document.getElementById("speakNoteSave").addEventListener("click",function(){
     S.speaking.notes[unitKey(sel.li,sel.ui)]=document.getElementById("speakNoteTa").value.trim();
