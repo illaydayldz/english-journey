@@ -365,6 +365,8 @@
   .pron .target{ font-family:var(--font-display); font-size:19px; font-weight:700; text-align:center; padding:18px 10px; background:var(--tint); border-radius:var(--radius-lg); margin-bottom:13px; color:var(--ink); }
   .pron .result{ margin-top:14px; padding:13px 14px; border-radius:var(--radius-md); font-size:14px; display:none; }
   .pron .result.ok{ background:var(--green-tint); color:var(--green); } .pron .result.mid{ background:var(--gold-tint); color:var(--gold); } .pron .result.bad{ background:var(--rust-tint); color:var(--rust); }
+  .gemini-result{ margin-top:10px; padding:14px 15px; border-radius:var(--radius-md); background:var(--tint); font-size:13.5px; line-height:1.6; color:var(--ink); white-space:pre-wrap; }
+  .gemini-result .gr-head{ display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:800; font-size:12.5px; color:var(--purple-deep); margin-bottom:8px; text-transform:uppercase; letter-spacing:.3px; }
   .heard{ font-size:13px; margin-top:7px; opacity:.85; }
   .chat-log{ max-height:230px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px 2px 12px; }
   .chat-msg{ display:flex; gap:8px; align-items:flex-end; }
@@ -1014,6 +1016,8 @@
       <div class="target" id="pronTarget">I have an important meeting today.</div>
       <button class="btn gold" id="speakBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Konuş</button>
       <div class="result" id="pronResult"></div>
+      <button type="button" class="btn sec" id="geminiAnalyzeBtn" style="display:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Detaylı Telaffuz Analizi (Gemini)</button>
+      <div class="gemini-result" id="geminiResult" style="display:none;"></div>
       <div class="hint" id="pronSupport"></div>
     </div>
 
@@ -1240,6 +1244,13 @@
       <p class="hint">Boş bırakırsan buton her seferinde boş bir yeni sohbet açar. Proje ana sayfa linkini yapıştırırsan her seferinde o proje altında yeni bir sohbet açılır. Belirli bir sohbetin linkini yapıştırırsan hep o sohbete, geçmişiyle birlikte, devam edersin.</p>
     </div>
     <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Gemini API Anahtarı</h2>
+      <p class="mut" style="margin-bottom:10px;">Konuşma'daki "Detaylı Telaffuz Analizi" için — sesini gerçekten dinleyip fonem/vurgu seviyesinde geri bildirim verir (şu anki hızlı puanlama sadece kelime eşleşmesine bakıyor). <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--purple-deep);font-weight:700;">Google AI Studio'dan</a> ücretsiz al.</p>
+      <input class="f" id="geminiApiKeyInput" type="password" placeholder="Gemini API Key">
+      <button class="btn sec" id="geminiApiKeySave">Kaydet</button>
+      <p class="hint">Ücretsiz katman: günde 1500, dakikada 10 istek — günlük pratik için fazlasıyla yeter. Anahtarın sadece bu cihazda saklanır, istekler doğrudan Google'a gider.</p>
+    </div>
+    <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify Client ID</h2>
       <p class="mut" style="margin-bottom:10px;">Dinleme sekmesinde podcast'lerini görebilmek için Client ID'ni gir.</p>
       <input class="f" id="spotifyClientIdInput" placeholder="Spotify Client ID">
@@ -1333,6 +1344,7 @@ S.writings=S.writings||[];
 S.readingLib=S.readingLib||{completed:{}};
 S.readingLib.notes=S.readingLib.notes||{};
 S.listening=S.listening||{notes:"",transcript:""};
+S.pronunciationNotes=S.pronunciationNotes||[];
 S.tasks=S.tasks||{};
 S.trCache=S.trCache||{};
 if(S.checksDate!==dstr(new Date())){ S.checks={}; S.checksDate=dstr(new Date()); }
@@ -2893,6 +2905,10 @@ function collectAllNotes(){
   if(listenNote){
     items.push({cat:"Dinleme",ic:"i-headphones",bg:"var(--blue-tint)",fg:"var(--blue)",title:"Dinleme notların",sub:"",text:listenNote,go:function(){ go("listening"); }});
   }
+  (S.pronunciationNotes||[]).forEach(function(n){
+    var text=(n.analysis||"").trim(); if(!text) return;
+    items.push({cat:"Telaffuz",ic:"i-mic",bg:"var(--gold-tint)",fg:"var(--gold)",title:n.target,sub:fmtDate(n.date),text:text,go:function(){ go("speaking"); }});
+  });
   return items;
 }
 function renderNotes(){
@@ -3025,6 +3041,7 @@ document.getElementById("listenBtn").addEventListener("click",function(){
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 var supp=document.getElementById("pronSupport");
 if(!SR){ supp.textContent="Not: Ses tanıma bu tarayıcıda yok. Chrome (telefon/masaüstü) öner. 'Dinle' yine çalışır."; }
+var lastPronAudioBlob=null, lastPronTarget="";
 document.getElementById("speakBtn").addEventListener("click",function(){
   var target=pronText.value.trim(); if(!target) return;
   if(!SR){ alert("Ses tanıma desteklenmiyor. Chrome kullan."); return; }
@@ -3032,6 +3049,25 @@ document.getElementById("speakBtn").addEventListener("click",function(){
   var btn=this, micIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>';
   btn.innerHTML=micIcon+"Dinliyorum...";
   var res=document.getElementById("pronResult"); res.style.display="none";
+  document.getElementById("geminiAnalyzeBtn").style.display="none";
+  document.getElementById("geminiResult").style.display="none";
+  lastPronAudioBlob=null; lastPronTarget=target;
+  // Gemini'ye gönderebilmek için SpeechRecognition'a paralel olarak ham sesi de kaydediyoruz
+  // (SpeechRecognition sadece metne çeviriyor, ses dosyasını vermiyor).
+  if(navigator.mediaDevices&&window.MediaRecorder){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      var chunks=[];
+      var mr=new MediaRecorder(stream);
+      mr.ondataavailable=function(e){ if(e.data.size>0) chunks.push(e.data); };
+      mr.onstop=function(){
+        lastPronAudioBlob=new Blob(chunks,{type:mr.mimeType||"audio/webm"});
+        stream.getTracks().forEach(function(t){ t.stop(); });
+        updateGeminiBtnVisibility();
+      };
+      mr.start();
+      rec.addEventListener("end",function(){ if(mr.state!=="inactive") mr.stop(); },{once:true});
+    }).catch(function(){ /* mikrofon izni yoksa sessizce sadece hızlı puanlamayla devam */ });
+  }
   rec.onresult=function(e){
     var said=e.results[0][0].transcript;
     var score=similarity(norm(said),norm(target));
@@ -3041,6 +3077,10 @@ document.getElementById("speakBtn").addEventListener("click",function(){
   rec.onend=function(){ btn.innerHTML=micIcon+"Konuş"; };
   rec.start();
 });
+function updateGeminiBtnVisibility(){
+  var btn=document.getElementById("geminiAnalyzeBtn");
+  btn.style.display=(S.settings.geminiApiKey&&lastPronAudioBlob)?"block":"none";
+}
 function norm(s){ return s.toLowerCase().replace(/[^a-z0-9\s']/g,"").replace(/\s+/g," ").trim(); }
 function showPron(score,said){
   S.pronCount=(S.pronCount||0)+1; save();
@@ -3052,7 +3092,64 @@ function showPron(score,said){
   res.className="result "+cls;
   res.innerHTML=(mascot?'<div class="mchip sm" style="float:right;margin-left:8px;"><img src="assets/mascot/'+mascot+'" alt=""></div>':"")+
     '<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#'+ic+'"></use></svg> <b>%'+pct+" eşleşme</b> — "+msg+'<div class="heard">Duydum: "'+esc(said)+'"</div>';
+  updateGeminiBtnVisibility();
 }
+var GEMINI_MODEL="gemini-3.6-flash";
+function blobToBase64(blob){
+  return new Promise(function(resolve,reject){
+    var r=new FileReader();
+    r.onloadend=function(){ resolve(r.result.split(",")[1]); };
+    r.onerror=reject;
+    r.readAsDataURL(blob);
+  });
+}
+function buildGeminiPronPrompt(target){
+  return "Sen deneyimli bir İngilizce telaffuz koçusun. Öğrencin Türkçe konuşan biri ve bu ses kaydında şu cümleyi söylemeye çalıştı: \""+target+"\". "+
+    "Ses kaydını dinle ve gerçek fonem/vurgu seviyesinde analiz yap: hangi sesleri (özellikle Türkçede karşılığı olmayan İngilizce sesler — th, r, v/w, kısa/uzun ünlüler gibi) yanlış ya da eksik telaffuz etti, kelime vurgusu ve cümle tonlaması doğru muydu. "+
+    "Kısa, somut, Türkçe bir geri bildirim ver: 1) genel değerlendirme (1-2 cümle), 2) tespit ettiğin spesifik telaffuz sorunları (varsa, madde madde, hangi kelime/ses), 3) düzeltmek için kısa bir pratik önerisi. Uzun olmasın, doğrudan ve yapıcı ol.";
+}
+document.getElementById("geminiAnalyzeBtn").addEventListener("click",function(){
+  var apiKey=(S.settings.geminiApiKey||"").trim();
+  if(!apiKey){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
+  if(!lastPronAudioBlob){ alert("Önce 'Konuş' ile bir ses kaydı oluştur."); return; }
+  var btn=this, orig=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg>Analiz ediliyor...';
+  var resultEl=document.getElementById("geminiResult");
+  resultEl.style.display="none";
+  blobToBase64(lastPronAudioBlob).then(function(b64){
+    var mime=lastPronAudioBlob.type||"audio/webm";
+    var body={contents:[{parts:[
+      {text:buildGeminiPronPrompt(lastPronTarget)},
+      {inline_data:{mime_type:mime,data:b64}}
+    ]}]};
+    return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+GEMINI_MODEL+":generateContent?key="+encodeURIComponent(apiKey),{
+      method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+    });
+  }).then(function(r){ return r.json(); }).then(function(data){
+    btn.disabled=false; btn.innerHTML=orig;
+    var text=data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+      data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+    if(!text){
+      var errMsg=(data&&data.error&&data.error.message)||"Beklenmeyen bir yanıt geldi.";
+      resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert"></use></svg>Analiz başarısız</div>'+esc(errMsg);
+      resultEl.style.display="block";
+      return;
+    }
+    resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Gemini Telaffuz Analizi</div>'+esc(text)+
+      '<button type="button" class="btn sec sm" id="geminiSaveNoteBtn" style="margin-top:12px;">Notlarım\'a Kaydet</button>';
+    resultEl.style.display="block";
+    document.getElementById("geminiSaveNoteBtn").addEventListener("click",function(){
+      S.pronunciationNotes.push({date:isoDate(new Date()),target:lastPronTarget,analysis:text});
+      save();
+      var sb=document.getElementById("geminiSaveNoteBtn");
+      sb.textContent="Kaydedildi"; sb.disabled=true;
+    });
+  }).catch(function(err){
+    btn.disabled=false; btn.innerHTML=orig;
+    resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert"></use></svg>Analiz başarısız</div>'+esc(err.message||String(err));
+    resultEl.style.display="block";
+  });
+});
 function similarity(a,b){
   if(a===b) return 1; if(!a||!b) return 0;
   var la=a.length,lb=b.length,d=[];
@@ -3276,7 +3373,12 @@ function renderSettings(){
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
   document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
   document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
+  document.getElementById("geminiApiKeyInput").value=S.settings.geminiApiKey||"";
 }
+document.getElementById("geminiApiKeySave").addEventListener("click",function(){
+  S.settings.geminiApiKey=document.getElementById("geminiApiKeyInput").value.trim();
+  save(); alert("Gemini API anahtarı kaydedildi.");
+});
 document.getElementById("userNameSave").addEventListener("click",function(){
   var v=document.getElementById("userNameInput").value.trim();
   S.settings.userName=v;
@@ -3324,7 +3426,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
-      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.listening=S.listening||{notes:"",transcript:""}; S.tasks=S.tasks||{};
+      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.listening=S.listening||{notes:"",transcript:""}; S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
