@@ -818,8 +818,11 @@
       <h1>Kelime</h1>
     </div>
     <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime ekle</h2>
-      <input class="f" id="wEn" placeholder="İngilizce (ör. meeting)">
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime ekle</h2>
+        <div class="mchip sm"><img src="assets/mascot/pose-newword.png" alt=""></div>
+      </div>
+      <input class="f" id="wEn" placeholder="İngilizce (ör. meeting)" style="margin-top:12px;">
       <input class="f" id="wTr" placeholder="Türkçe (ör. toplantı)">
       <input class="f" id="wEx" placeholder="Örnek cümle (opsiyonel)">
       <button class="btn" id="addWord">Ekle</button>
@@ -1043,8 +1046,11 @@
       <h1>Yazma</h1>
     </div>
     <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>Bugünün konusu</h2>
-      <p class="rule-box" id="writingPrompt">—</p>
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>Bugünün konusu</h2>
+        <div class="mchip sm"><img src="assets/mascot/extra-pencil.png" alt=""></div>
+      </div>
+      <p class="rule-box" id="writingPrompt" style="margin-top:12px;">—</p>
       <textarea class="f" id="writingText" rows="5" placeholder="En az 3-4 cümle yaz..."></textarea>
       <button class="btn" id="writingSaveBtn">Kaydet</button>
       <a class="btn deep" id="writingFeedbackBtn" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'dan Geri Bildirim Al</a>
@@ -2667,9 +2673,11 @@ function renderGrammar(){
     var unlocked=grammarLevelUnlocked(li);
     var box=document.createElement("div"); box.className="level-block"+(unlocked?"":" locked");
     var doneCount=lv.units.filter(function(_,ui){return !!S.grammar.completed[grammarUnitKey(li,ui)];}).length;
+    var levelComplete=unlocked&&doneCount===lv.units.length;
     box.innerHTML='<div class="level-head">'+
       '<span class="cefr-badge'+(unlocked?"":" locked")+'">'+lv.cefr+'</span>'+
       '<span class="lv-name">'+esc(lv.name)+'</span>'+
+      (levelComplete?'<div class="mchip sm"><img src="assets/mascot/extra-flying.png" alt=""></div>':"")+
       (unlocked
         ? '<span class="lv-count">'+doneCount+'/'+lv.units.length+'</span>'
         : '<span class="lv-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>Kilitli</span>')+
@@ -2889,12 +2897,13 @@ function norm(s){ return s.toLowerCase().replace(/[^a-z0-9\s']/g,"").replace(/\s
 function showPron(score,said){
   S.pronCount=(S.pronCount||0)+1; save();
   var res=document.getElementById("pronResult"); res.style.display="block";
-  var pct=Math.round(score*100), cls, msg, ic;
-  if(pct>=85){ cls="ok"; ic="i-check"; msg="Harika! Çok net."; }
+  var pct=Math.round(score*100), cls, msg, ic, mascot="";
+  if(pct>=85){ cls="ok"; ic="i-check"; msg="Harika! Çok net."; mascot="pose-cheering.png"; }
   else if(pct>=60){ cls="mid"; ic="i-target"; msg="Fena değil — tekrar dene, biraz daha net."; }
-  else{ cls="bad"; ic="i-refresh"; msg="Devam et. 'Dinle'ye basıp tekrar taklit et."; }
+  else{ cls="bad"; ic="i-refresh"; msg="Devam et. 'Dinle'ye basıp tekrar taklit et."; mascot="pose-confused.png"; }
   res.className="result "+cls;
-  res.innerHTML='<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#'+ic+'"></use></svg> <b>%'+pct+" eşleşme</b> — "+msg+'<div class="heard">Duydum: "'+esc(said)+'"</div>';
+  res.innerHTML=(mascot?'<div class="mchip sm" style="float:right;margin-left:8px;"><img src="assets/mascot/'+mascot+'" alt=""></div>':"")+
+    '<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#'+ic+'"></use></svg> <b>%'+pct+" eşleşme</b> — "+msg+'<div class="heard">Duydum: "'+esc(said)+'"</div>';
 }
 function similarity(a,b){
   if(a===b) return 1; if(!a||!b) return 0;
