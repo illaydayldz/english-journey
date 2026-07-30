@@ -1521,7 +1521,13 @@ function gradeCard(w,g){
   else w.box=Math.min(SRS.length-1,w.box+2);
   var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+SRS[w.box]);
   w.due=d.getTime();
-  flipped=false; studyIdx=null; save(); renderVocab();
+  flipped=false;
+  // "Tekrar" (g=0) seçildiğinde kelime bugün için hâlâ bekleyen listesinde kalır
+  // (bu doğru — aralıklı tekrar mantığı öyle ister), ama studyIdx'i sıfırlamak
+  // seni hep aynı karta geri götürüyordu. Bunun yerine sıradaki karta ilerliyoruz;
+  // liste kısalırsa/dönerse renderVocab zaten sınırları kontrol edip sarıyor.
+  studyIdx=(studyIdx===null?0:studyIdx)+1;
+  save(); renderVocab();
 }
 
 /* ---------- READING ---------- */
