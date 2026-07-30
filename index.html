@@ -3180,7 +3180,20 @@ document.getElementById("skillSeeAllLink").addEventListener("click",function(){
 /* ---------- INIT ---------- */
 syncTarget(); renderToday(); renderVocab();
 spotifyHandleCallback();
-if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(function(){}); }
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(function(){});
+  // Yeni bir sürüm yayınlanıp arka planda kuruluşu bitince (sw.js zaten
+  // skipWaiting+clients.claim çağırıyor) bu event bir kez ateşlenir —
+  // sayfayı otomatik yeniliyoruz ki kullanıcı hiçbir şey yapmasın
+  // (ana ekrana yeniden ekleme ile karıştırılmasın: veriler zaten
+  // origin'e bağlı, ikonla ilgisi yok — bu sadece HTML/JS'i tazeliyor).
+  var refreshingForUpdate=false;
+  navigator.serviceWorker.addEventListener("controllerchange",function(){
+    if(refreshingForUpdate) return;
+    refreshingForUpdate=true;
+    window.location.reload();
+  });
+}
 window.go=go;
 </script>
 </body>

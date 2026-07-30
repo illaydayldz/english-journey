@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v5-reading-library";
+const CACHE = "english-app-v6-auto-update";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
   "./assets/reading-library.json",
@@ -15,7 +15,11 @@ const ASSETS = [
   "./assets/mascot/pose-listening.png",
   "./assets/mascot/pose-newword.png",
   "./assets/mascot/pose-happy2.png",
-  "./assets/mascot/pose-proud.png"
+  "./assets/mascot/pose-proud.png",
+  "./assets/mascot/pose-cheering.png",
+  "./assets/mascot/pose-confused.png",
+  "./assets/mascot/extra-pencil.png",
+  "./assets/mascot/extra-flying.png"
 ];
 
 self.addEventListener("install", (e) => {
