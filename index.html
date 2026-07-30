@@ -123,9 +123,28 @@
   .hero-greet .icon{ color:var(--gold); width:16px; height:16px; }
   .topbar .mut{ margin-top:3px; }
   .bell-btn{ width:44px; height:44px; border-radius:50%; border:none; background:var(--card); color:var(--purple-deep); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
-  .hero{ display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--tint) 0%,var(--accent-soft-2) 100%); border-radius:var(--radius-lg); padding:20px; margin:14px 0 16px; overflow:hidden; }
+  .home-q{ font-family:var(--font-ui); font-size:22px; font-weight:800; color:var(--ink); line-height:1.25; margin:16px 2px 12px; text-wrap:balance; }
+  .hero{ display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--tint) 0%,var(--accent-soft-2) 100%); border-radius:var(--radius-lg); padding:18px; margin:0 0 14px; overflow:hidden; }
   .hero h1{ font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--ink); line-height:1.28; text-wrap:balance; }
+  .hero-bubble{ background:var(--surface); border-radius:16px 16px 16px 4px; padding:12px 14px; box-shadow:var(--shadow-1); flex:1; }
+  .hero-bubble-text{ font-family:var(--font-ui); font-size:13.5px; font-weight:700; color:var(--ink); line-height:1.4; }
   .hero-img{ width:92px; height:auto; flex-shrink:0; margin-left:auto; filter:drop-shadow(0 10px 16px rgba(23,21,31,.18)); }
+  .mission-row{ display:flex; }
+  .mission-item{ flex:1; text-align:center; padding:4px 4px; border-right:1px solid var(--line); }
+  .mission-item:last-child{ border-right:none; }
+  .mission-item .icon{ width:18px; height:18px; color:var(--purple); margin:0 auto 4px; display:block; }
+  .mission-item .n{ font-family:var(--font-data); font-weight:800; font-size:16px; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .mission-item .l{ font-size:10px; color:var(--ink-soft); font-weight:700; text-transform:uppercase; letter-spacing:.3px; margin-top:1px; }
+  .mission-edit{ font-size:12px; font-weight:700; color:var(--purple-deep); text-decoration:none; }
+  .continue-row{ display:flex; align-items:center; gap:11px; width:100%; background:none; border:none; padding:10px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:52px; }
+  .continue-row:last-child{ border-bottom:none; }
+  .continue-row .cr-ic{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .continue-row .cr-ic .icon{ width:16px; height:16px; }
+  .continue-row .cr-body{ flex:1; min-width:0; }
+  .continue-row .cr-t{ display:block; font-size:13.5px; font-weight:700; color:var(--ink); font-family:var(--font-display); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .continue-row .cr-s{ display:block; font-size:11.5px; color:var(--ink-soft); margin-top:1px; }
+  .continue-row .cr-track{ height:5px; background:var(--tint); border-radius:99px; overflow:hidden; margin-top:6px; }
+  .continue-row .cr-fill{ height:100%; border-radius:99px; }
   .stats{ display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
   .stat{ flex:1; min-width:100px; background:var(--card); border-radius:var(--radius-lg); padding:12px 13px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-sm); }
   .stat .ic-chip{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -580,18 +599,31 @@
       </div>
       <button class="bell-btn" aria-label="Bildirimler"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></button>
     </div>
+
+    <h1 class="home-q">Bugün ne öğrenelim?</h1>
     <div class="hero">
-      <div><h1>Bugün öğrenmeye<br>hazır mısın?</h1></div>
+      <div class="hero-bubble"><div class="hero-bubble-text" id="heroMsg">Bugünü harika bir öğrenme günü yapalım!</div></div>
       <img class="hero-img" src="assets/mascot/hero-happy.png" alt="Moonie kitap okuyor">
     </div>
 
-    <div class="card stats statrow">
-      <div class="stat s-streak"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg></div><div class="txt"><div class="n" id="streak">0</div><div class="l">Seri</div></div></div>
-      <div class="stat s-days"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg></div><div class="txt"><div class="n" id="totalDays">0</div><div class="l">Gün</div></div></div>
-      <div class="stat s-exam"><div class="ic-chip"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg></div><div class="txt"><div class="n" id="examDays">–</div><div class="l">Sınava</div></div></div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün Görevi</h2>
+        <a href="javascript:void(0)" class="mission-edit" id="missionEditLink">Düzenle</a>
+      </div>
+      <div class="mission-row">
+        <div class="mission-item"><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg><div class="n" id="missionDone">0/0</div><div class="l">Görev</div></div>
+        <div class="mission-item"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg><div class="n" id="missionDue">0</div><div class="l">Kart</div></div>
+        <div class="mission-item"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg><div class="n" id="streak">0</div><div class="l">Seri</div></div>
+      </div>
     </div>
 
     <div class="card">
+      <h2>Devam Et <span class="mut" id="examBadge"></span></h2>
+      <div id="continueList"></div>
+    </div>
+
+    <div class="card" id="todayPlan">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün hedefi</h2>
       <div id="checklist"></div>
       <button class="btn" id="completeBtn">Bugünü tamamla</button>
@@ -607,15 +639,6 @@
       <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Bugünün ödevleri</h2>
       <div id="taskList"></div>
     </div>
-
-    <button type="button" class="card continue-card" onclick="go('vocab')">
-      <div class="mchip"><img src="assets/mascot/pose-motivated.png" alt=""></div>
-      <div>
-        <div class="cc-t">Devam et</div>
-        <div class="cc-s" id="continueSub">Kelime kartlarına göz at</div>
-      </div>
-      <span class="cc-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
-    </button>
 
     <div class="card">
       <details>
@@ -1283,11 +1306,45 @@ function go(v){
 document.querySelectorAll("nav button").forEach(function(b){ b.addEventListener("click",function(){ go(b.dataset.v); }); });
 
 /* ---------- TODAY ---------- */
+var HERO_MSGS=[
+  "Bugünü harika bir öğrenme günü yapalım!",
+  "Küçük adımlar, büyük ilerleme. Hadi başlayalım!",
+  "Her gün biraz daha akıcı oluyorsun.",
+  "Bugün de seriye bir gün daha ekleyelim.",
+  "Az kaldı, devam et — harika gidiyorsun!"
+];
+function renderContinueList(){
+  var wrap=document.getElementById("continueList"); wrap.innerHTML="";
+  var due=dueWords().length;
+  var items=[
+    {ic:"i-cards",bg:"var(--tint)",fg:"var(--purple)",t:"Kelime",s:due?(due+" kart bekliyor"):"Hepsi güncel",pct:S.words.length?Math.round(S.words.filter(function(w){return w.box>=3;}).length/S.words.length*100):0,go:"vocab"}
+  ];
+  if(typeof GRAMMAR_LEVELS!=="undefined"){
+    var gfr=grammarFrontier(), glvl=GRAMMAR_LEVELS[gfr.li], gunit=glvl.units[gfr.ui];
+    var gTotal=GRAMMAR_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
+    var gDone=Object.keys(S.grammar.completed).length;
+    items.push({ic:"i-layers",bg:"var(--teal-tint)",fg:"var(--teal)",t:"Dilbilgisi: "+gunit.name,s:glvl.cefr+" · "+glvl.name,pct:gTotal?Math.round(gDone/gTotal*100):0,go:"grammar"});
+  }
+  if(typeof SPEAK_LEVELS!=="undefined"){
+    var sfr=speakFrontier(), slvl=SPEAK_LEVELS[sfr.li], sunit=slvl.units[sfr.ui];
+    var sTotal=SPEAK_LEVELS.reduce(function(n,lv){return n+lv.units.length;},0);
+    var sDone=Object.keys(S.speaking.completed).length;
+    items.push({ic:"i-mic",bg:"var(--gold-tint)",fg:"var(--gold)",t:"Konuşma: "+sunit.name,s:slvl.cefr+" · "+slvl.name,pct:sTotal?Math.round(sDone/sTotal*100):0,go:"speaking"});
+  }
+  items.forEach(function(it){
+    var row=document.createElement("button"); row.type="button"; row.className="continue-row";
+    row.innerHTML='<span class="cr-ic" style="background:'+it.bg+';color:'+it.fg+';"><svg class="icon" aria-hidden="true"><use href="#'+it.ic+'"></use></svg></span>'+
+      '<span class="cr-body"><span class="cr-t">'+esc(it.t)+'</span><span class="cr-s">'+esc(it.s)+'</span>'+
+      '<span class="cr-track"><span class="cr-fill" style="width:'+it.pct+'%;background:'+it.fg+';"></span></span></span>'+
+      '<svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>';
+    row.addEventListener("click",function(){ go(it.go); });
+    wrap.appendChild(row);
+  });
+}
 function renderToday(){
-  document.getElementById("streak").textContent=S.streak;
-  document.getElementById("totalDays").textContent=S.totalDays;
+  document.getElementById("heroMsg").textContent=HERO_MSGS[dayOfYear(new Date())%HERO_MSGS.length];
   var ed=daysBetween(EXAM,new Date());
-  document.getElementById("examDays").innerHTML=ed>0?(ed+"g"):'<svg class="icon icon-sm" aria-hidden="true"><use href="#i-trophy"></use></svg>';
+  document.getElementById("examBadge").textContent=ed>0?("Sınava "+ed+" gün"):"";
   var dt=new Date();
   document.getElementById("todayDate").textContent=DAYS_TR[dt.getDay()]+", "+dt.getDate()+" "+MONTHS_TR[dt.getMonth()];
   var cl=document.getElementById("checklist"); cl.innerHTML="";
@@ -1300,6 +1357,9 @@ function renderToday(){
   });
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
   var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
+  document.getElementById("missionDone").textContent=doneN+"/"+STEPS.length;
+  document.getElementById("missionDue").textContent=dueWords().length;
+  document.getElementById("streak").textContent=S.streak;
   var btn=document.getElementById("completeBtn");
   var checkIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>';
   if(doneToday){ btn.innerHTML=checkIcon+"Bugün tamamlandı — Aferin!"; btn.disabled=true; }
@@ -1308,13 +1368,15 @@ function renderToday(){
   var pct=Math.min(100,Math.round(S.totalDays/GOAL*100));
   document.getElementById("progBar").style.width=pct+"%";
   document.getElementById("progressLabel").textContent=S.totalDays+" / "+GOAL+" gün · alışkanlık hedefi";
-  var due=dueWords().length;
-  document.getElementById("continueSub").textContent=due?(due+" kart bekliyor"):"Hepsi güncel, harika gidiyorsun";
+  renderContinueList();
   S.history[dstr(new Date())]=doneN;
   trimHistory();
   save();
   renderTasks();
 }
+document.getElementById("missionEditLink").addEventListener("click",function(){
+  document.getElementById("todayPlan").scrollIntoView({behavior:"smooth",block:"start"});
+});
 document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
   var y=new Date(); y.setDate(y.getDate()-1);
