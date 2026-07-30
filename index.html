@@ -367,6 +367,11 @@
   .pron .result.ok{ background:var(--green-tint); color:var(--green); } .pron .result.mid{ background:var(--gold-tint); color:var(--gold); } .pron .result.bad{ background:var(--rust-tint); color:var(--rust); }
   .gemini-result{ margin-top:10px; padding:14px 15px; border-radius:var(--radius-md); background:var(--tint); font-size:13.5px; line-height:1.6; color:var(--ink); white-space:pre-wrap; }
   .gemini-result .gr-head{ display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:800; font-size:12.5px; color:var(--purple-deep); margin-bottom:8px; text-transform:uppercase; letter-spacing:.3px; }
+  .dict-result{ margin-top:12px; padding:13px 14px; border-radius:var(--radius-md); font-size:13.5px; line-height:1.6; }
+  .dict-result.ok{ background:var(--green-tint); color:var(--green); } .dict-result.mid{ background:var(--gold-tint); color:var(--gold); } .dict-result.bad{ background:var(--rust-tint); color:var(--rust); }
+  .dict-diff{ margin-top:8px; font-size:14px; line-height:1.8; color:var(--ink); }
+  .dict-diff .ok-w{ color:var(--green); font-weight:600; }
+  .dict-diff .bad-w{ color:var(--rust); font-weight:800; text-decoration:underline; text-decoration-style:wavy; }
   .heard{ font-size:13px; margin-top:7px; opacity:.85; }
   .chat-log{ max-height:230px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px 2px 12px; }
   .chat-msg{ display:flex; gap:8px; align-items:flex-end; }
@@ -1002,6 +1007,29 @@
         <p class="hint" style="margin-top:0;margin-bottom:10px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
         <div class="read-body" id="listeningTranscriptView"></div>
       </div>
+    </div>
+    <div class="card" id="listeningPracticeCard" style="display:none;">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Dikte Pratiği</h2>
+      <p class="mut" style="margin-bottom:10px;">Moonie transkriptten bir cümle okuyor, sen duyduğunu yaz.</p>
+      <div class="row" style="align-items:center;gap:10px;margin-bottom:10px;">
+        <label class="mut" style="font-size:12.5px;font-weight:700;white-space:nowrap;">Okuma hızı</label>
+        <input type="range" id="dictRateSlider" min="0.6" max="1.15" step="0.05" style="flex:1;">
+        <span class="mut" id="dictRateLabel" style="font-size:12.5px;font-weight:700;min-width:36px;text-align:right;">0.95x</span>
+      </div>
+      <p class="mut" id="dictProgress" style="font-size:12.5px;font-weight:700;margin-bottom:8px;">—</p>
+      <button type="button" class="btn sec" id="dictListenBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg>Cümleyi Dinle</button>
+      <textarea class="f" id="dictInput" rows="2" placeholder="Duyduğunu yaz..."></textarea>
+      <div class="row" style="gap:8px;margin-top:8px;">
+        <button type="button" class="btn gold" id="dictCheckBtn" style="flex:1;">Kontrol Et</button>
+        <button type="button" class="btn sec" id="dictNextBtn" style="flex:1;">Sonraki Cümle</button>
+      </div>
+      <div class="dict-result" id="dictResult" style="display:none;"></div>
+    </div>
+    <div class="card" id="listeningQuizCard" style="display:none;">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Anlama Soruları</h2>
+      <p class="mut" style="margin-bottom:10px;">Moonie transkriptten birkaç anlama sorusu hazırlasın, kendini test et.</p>
+      <button type="button" class="btn gold" id="listeningQuizBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'den Soru İste</button>
+      <div class="gemini-result" id="listeningQuizResult" style="display:none;"></div>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Notların</h2>
@@ -2209,6 +2237,7 @@ function renderListening(){
   document.getElementById("listeningTranscript").value=S.listening.transcript||"";
   document.getElementById("listeningNotes").value=S.listening.notes||"";
   renderListeningTranscriptView();
+  renderListeningPractice();
 }
 function renderListeningTranscriptView(){
   var text=(S.listening.transcript||"").trim();
@@ -2224,6 +2253,102 @@ function renderListeningTranscriptView(){
     });
   });
 }
+/* ---------- Dinleme: dikte pratiği + Moonie anlama soruları ---------- */
+var dictState={sentences:[],idx:0};
+function splitIntoSentences(text){
+  return text.replace(/\n+/g," ").split(/(?<=[.!?])\s+/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length>3; });
+}
+function updateDictProgress(){
+  var el=document.getElementById("dictProgress");
+  el.textContent=dictState.sentences.length?("Cümle "+(dictState.idx+1)+"/"+dictState.sentences.length):"Transkriptte cümle bulunamadı.";
+}
+function renderListeningPractice(){
+  var text=(S.listening.transcript||"").trim();
+  var dictCard=document.getElementById("listeningPracticeCard");
+  var quizCard=document.getElementById("listeningQuizCard");
+  if(!text){ dictCard.style.display="none"; quizCard.style.display="none"; return; }
+  dictCard.style.display="block"; quizCard.style.display="block";
+  dictState.sentences=splitIntoSentences(text);
+  dictState.idx=0;
+  var rateSlider=document.getElementById("dictRateSlider");
+  rateSlider.value=S.settings.ttsRate||0.95;
+  document.getElementById("dictRateLabel").textContent=(+rateSlider.value).toFixed(2)+"x";
+  document.getElementById("dictInput").value="";
+  document.getElementById("dictResult").style.display="none";
+  document.getElementById("listeningQuizResult").style.display="none";
+  updateDictProgress();
+}
+function diffWords(target,said){
+  var tWords=target.replace(/[^\w\s']/g,"").toLowerCase().split(/\s+/).filter(Boolean);
+  var sWords=said.replace(/[^\w\s']/g,"").toLowerCase().split(/\s+/).filter(Boolean);
+  return tWords.map(function(w,i){
+    var ok=sWords[i]===w;
+    return '<span class="'+(ok?"ok-w":"bad-w")+'">'+esc(w)+"</span>";
+  }).join(" ");
+}
+document.getElementById("dictRateSlider").addEventListener("input",function(){
+  var v=+this.value;
+  document.getElementById("dictRateLabel").textContent=v.toFixed(2)+"x";
+  S.settings.ttsRate=v; save();
+});
+document.getElementById("dictListenBtn").addEventListener("click",function(){
+  if(!dictState.sentences.length) return;
+  var rate=+document.getElementById("dictRateSlider").value||.95;
+  speakEnglish(dictState.sentences[dictState.idx],rate);
+});
+document.getElementById("dictCheckBtn").addEventListener("click",function(){
+  if(!dictState.sentences.length) return;
+  var target=dictState.sentences[dictState.idx];
+  var said=document.getElementById("dictInput").value.trim();
+  if(!said) return;
+  var score=similarity(norm(said),norm(target));
+  var pct=Math.round(score*100);
+  var cls=pct>=90?"ok":(pct>=65?"mid":"bad");
+  var res=document.getElementById("dictResult");
+  res.className="dict-result "+cls;
+  res.innerHTML="<b>%"+pct+" doğru</b><div class=\"dict-diff\">"+diffWords(target,said)+"</div>"+
+    '<div class="mut" style="margin-top:8px;font-size:12px;">Doğrusu: '+esc(target)+"</div>";
+  res.style.display="block";
+});
+document.getElementById("dictNextBtn").addEventListener("click",function(){
+  if(!dictState.sentences.length) return;
+  dictState.idx=(dictState.idx+1)%dictState.sentences.length;
+  document.getElementById("dictInput").value="";
+  document.getElementById("dictResult").style.display="none";
+  updateDictProgress();
+});
+function renderQuizText(qtext){
+  return qtext.split(/\n+/).map(function(line){
+    if(/^cevap\s*:/i.test(line.trim())) return '<span class="quiz-answer" style="display:none;">'+esc(line)+"</span>";
+    return esc(line)+"<br>";
+  }).join("");
+}
+document.getElementById("listeningQuizBtn").addEventListener("click",function(){
+  if(!(S.settings.geminiApiKey||"").trim()){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
+  var text=(S.listening.transcript||"").trim(); if(!text) return;
+  var btn=this, orig=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML=MOONIE_LISTEN_CHIP+"Moonie soruları hazırlıyor...";
+  var resultEl=document.getElementById("listeningQuizResult");
+  resultEl.style.display="none";
+  var prompt="Aşağıdaki İngilizce transkripti oku. Öğrencinin dinleme/okuma anlamasını test etmek için İngilizce 4 kısa anlama sorusu hazırla (karışık zorlukta). "+
+    "Her sorunun altına YENİ SATIRDA \"Cevap: \" ile başlayan kısa doğru cevabı Türkçe olarak ekle. Sadece soru+cevap listesi ver, başka açıklama ekleme.\n\nTranskript:\n"+text;
+  callGeminiText([{role:"user",parts:[{text:prompt}]}]).then(function(qtext){
+    btn.disabled=false; btn.innerHTML=orig;
+    resultEl.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Moonie'nin Soruları</div>"+
+      '<div id="listeningQuizText">'+renderQuizText(qtext)+"</div>"+
+      '<button type="button" class="btn sec sm" id="listeningQuizToggle" style="margin-top:10px;">Cevapları Göster</button>';
+    resultEl.style.display="block";
+    document.getElementById("listeningQuizToggle").addEventListener("click",function(){
+      var showing=this.textContent==="Cevapları Gizle";
+      document.querySelectorAll("#listeningQuizText .quiz-answer").forEach(function(s){ s.style.display=showing?"none":"inline"; });
+      this.textContent=showing?"Cevapları Göster":"Cevapları Gizle";
+    });
+  }).catch(function(err){
+    btn.disabled=false; btn.innerHTML=orig;
+    resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert"></use></svg>Hata</div>'+esc(err.message||String(err));
+    resultEl.style.display="block";
+  });
+});
 document.getElementById("spotifyConnectBtn").addEventListener("click",function(){
   if(spotifyTokens()) spotifyDisconnect(); else spotifyConnect();
 });
@@ -2231,6 +2356,7 @@ document.getElementById("listeningTranscriptSave").addEventListener("click",func
   S.listening.transcript=document.getElementById("listeningTranscript").value.trim();
   save();
   renderListeningTranscriptView();
+  renderListeningPractice();
   var btn=document.getElementById("listeningTranscriptSave"), orig=btn.textContent;
   btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
 });
@@ -2239,6 +2365,7 @@ document.getElementById("listeningTranscriptClear").addEventListener("click",fun
   S.listening.transcript=""; save();
   document.getElementById("listeningTranscript").value="";
   renderListeningTranscriptView();
+  renderListeningPractice();
 });
 document.getElementById("listeningNotesSave").addEventListener("click",function(){
   S.listening.notes=document.getElementById("listeningNotes").value.trim();
