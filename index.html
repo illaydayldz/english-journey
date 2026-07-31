@@ -74,7 +74,12 @@
     --pink:#B5459A; --pink-tint:#FAEAF5; --blue:#3B6FE0; --blue-tint:#E7EDFC; --teal:#1B8C8C; --teal-tint:#E2F5F5; --coral:#D9754F; --coral-tint:#FBEBE4;
   }
   *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; min-width:0; }
-  body{ font-family:var(--font-body); background:var(--bg); color:var(--ink); padding-bottom:112px; line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  /* overflow-x burada, body'de değil html'de duruyor: iOS Safari'de body'ye
+     overflow verilmesi position:fixed elemanları (alt nav gibi) kaydırma
+     sırasında sayfayla birlikte kaymaya, "sürüklenmeye" zorluyor — bilinen
+     bir WebKit tuhaflığı. */
+  html{ overflow-x:hidden; }
+  body{ font-family:var(--font-body); background:var(--bg); color:var(--ink); padding-bottom:112px; line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased; }
   .wrap{ max-width:560px; margin:0 auto; padding:max(16px, env(safe-area-inset-top)) 16px 10px; }
 
   /* ---- icon system ---- */
@@ -559,7 +564,7 @@
   .heatmap-legend .hm-cell{ width:10px; height:10px; }
 
   /* ---- nav ---- */
-  nav{ position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; max-width:560px; margin:0 auto; padding:8px 4px calc(8px + env(safe-area-inset-bottom)); border-radius:var(--radius-lg) var(--radius-lg) 0 0; box-shadow:var(--shadow-2); z-index:20; }
+  nav{ position:fixed; bottom:0; left:0; right:0; background:var(--card); display:flex; max-width:560px; margin:0 auto; padding:8px 4px calc(8px + env(safe-area-inset-bottom)); border-radius:var(--radius-lg) var(--radius-lg) 0 0; box-shadow:var(--shadow-2); z-index:20; transform:translateZ(0); -webkit-transform:translateZ(0); }
   nav button{ flex:1; background:none; border:none; padding:5px 0 4px; font-size:10.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-family:inherit; min-height:52px; }
   nav button .ic{ width:36px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:13px; transition:background .2s,color .2s; }
   nav button .ic .icon{ width:21px; height:21px; }
