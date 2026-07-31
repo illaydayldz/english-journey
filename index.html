@@ -1822,21 +1822,6 @@ function openLibRead(id){
   S.readingLib.openId=id; save();
   go("libread");
 }
-function claudeHandoff(el,prompt){
-  el.href="https://claude.ai/new";
-  var projectUrl=(S.settings.claudeProjectUrl||"").trim();
-  if(projectUrl) el.href=projectUrl;
-  // Not: href zaten gerçek bir <a> navigasyonu — pop-up engelleyiciler bunu asla durduramaz.
-  el.addEventListener("click",function(){
-    var original=el.innerHTML;
-    navigator.clipboard.writeText(prompt).then(function(){
-      el.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Kopyalandı — Claude\'da yapıştır!';
-      setTimeout(function(){ el.innerHTML=original; },3000);
-    }).catch(function(){
-      window.prompt("Panoya otomatik kopyalanamadı — bu metni seç, kopyala ve Claude'a yapıştır:", prompt);
-    });
-  },{once:true});
-}
 function libReadFullText(r){
   return r.paras.map(function(p){ return p.indexOf("##")===0 ? p.slice(2)+":" : p; }).join("\n\n");
 }
@@ -2777,10 +2762,21 @@ function renderWriting(){
   var feedBtn=document.getElementById("writingFeedbackBtn");
   var freshBtn=feedBtn.cloneNode(true);
   feedBtn.parentNode.replaceChild(freshBtn,feedBtn);
-  freshBtn.addEventListener("click",function(){
+  var projectUrl=(S.settings.claudeProjectUrl||"").trim();
+  freshBtn.href=projectUrl||"https://claude.ai/new";
+  freshBtn.addEventListener("click",function(e){
     var text=document.getElementById("writingText").value.trim();
-    if(!text){ alert("Önce birkaç cümle yaz."); return; }
-    claudeHandoff(freshBtn,buildWritingFeedbackPrompt(promptText,text));
+    if(!text){ e.preventDefault(); alert("Önce birkaç cümle yaz."); return; }
+    var prompt=buildWritingFeedbackPrompt(promptText,text);
+    var original=freshBtn.innerHTML;
+    // Not: href zaten doğru hedefe ayarlı — panoya kopyalama, linkin normal
+    // <a> navigasyonunu engellemeden arka planda yapılıyor.
+    navigator.clipboard.writeText(prompt).then(function(){
+      freshBtn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Kopyalandı — Claude\'da yapıştır!';
+      setTimeout(function(){ if(freshBtn) freshBtn.innerHTML=original; },3000);
+    }).catch(function(){
+      window.prompt("Panoya otomatik kopyalanamadı — bu metni seç, kopyala ve Claude'a yapıştır:",prompt);
+    });
   });
   document.getElementById("writingSaveBtn").onclick=function(){
     var text=document.getElementById("writingText").value.trim();
