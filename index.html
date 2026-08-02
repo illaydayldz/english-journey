@@ -349,6 +349,7 @@
   .lib-row.done .lr-t{ color:var(--ink-soft); }
   .read-body{ font-size:15px; line-height:1.85; color:var(--ink); }
   .read-body .rp{ margin-bottom:14px; }
+  #podDetailBody .rp.current-para{ background:var(--gold-tint); border-radius:8px; padding:3px 6px; margin-left:-6px; margin-right:-6px; transition:background .3s; }
   .read-body .rsub{ display:block; font-family:var(--font-display); font-weight:800; font-size:13.5px; color:var(--purple-deep); margin-bottom:6px; letter-spacing:.1px; }
   .rw{ border-radius:4px; padding:0 1px; cursor:pointer; transition:background .15s; }
   .rw:active{ background:var(--tint-strong); }
@@ -479,6 +480,8 @@
   .podrow .pod-sub{ font-size:11.5px; color:var(--ink-soft); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .podrow .pod-type{ font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; color:var(--blue); background:var(--blue-tint); padding:2px 7px; border-radius:99px; margin-top:4px; display:inline-block; }
   .podrow .pod-play{ width:40px; height:40px; border-radius:50%; border:none; background:var(--blue); color:#fff; box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .podrow .pod-add{ width:40px; height:40px; border-radius:50%; border:none; background:var(--tint); color:var(--purple-deep); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .podrow .pod-add:disabled{ opacity:.6; cursor:default; }
   .player-frame{ border-radius:18px; overflow:hidden; background:var(--tint); margin-top:12px; }
   .player-frame iframe{ display:block; width:100%; border:none; }
 
@@ -1031,46 +1034,16 @@
       <p class="hint">Tam parça/bölüm dinlemek için widget içinden Spotify hesabınla (Premium) giriş yapman gerekebilir.</p>
     </div>
     <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Transkript</h2>
-      <p class="mut" style="margin-bottom:10px;">Dinlediğin bölümün transkriptini (varsa) buraya yapıştır.</p>
-      <textarea class="f" id="listeningTranscript" rows="6" placeholder="Transkripti buraya yapıştır..."></textarea>
-      <div class="row">
-        <button type="button" class="btn sec" id="listeningTranscriptSave" style="flex:1;">Kaydet</button>
-        <button type="button" class="btn sec" id="listeningTranscriptClear" style="flex:1;">Temizle</button>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Podcastlerim <span class="mut" id="podcastCount"></span></h2>
+      <p class="mut" style="margin-bottom:10px;">Dinlediğin bölümleri transkriptiyle ekle — her birinin kendi notu olur, çalarken transkriptte kaldığın yeri takip eder.</p>
+      <div id="podcastList"></div>
+      <button type="button" class="btn sec" id="podcastAddToggle" style="margin-top:10px;">+ Yeni Podcast Ekle</button>
+      <div id="podcastAddForm" style="display:none;margin-top:12px;">
+        <input class="f" id="podcastTitleInput" placeholder="Podcast/bölüm adı">
+        <input class="f" id="podcastUriInput" placeholder="Spotify linki (opsiyonel, ör. open.spotify.com/episode/...)">
+        <textarea class="f" id="podcastTranscriptInput" rows="6" placeholder="Transkripti buraya yapıştır (istersen sonra da eklenebilir)..."></textarea>
+        <button type="button" class="btn" id="podcastSaveBtn">Kaydet</button>
       </div>
-      <div id="listeningTranscriptViewWrap" style="display:none;margin-top:16px;">
-        <p class="hint" style="margin-top:0;margin-bottom:10px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
-        <div class="read-body" id="listeningTranscriptView"></div>
-      </div>
-    </div>
-    <div class="card" id="listeningPracticeCard" style="display:none;">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Dikte Pratiği</h2>
-      <p class="mut" style="margin-bottom:10px;">Moonie transkriptten bir cümle okuyor, sen duyduğunu yaz.</p>
-      <div class="row" style="align-items:center;gap:10px;margin-bottom:10px;">
-        <label class="mut" style="font-size:12.5px;font-weight:700;white-space:nowrap;">Okuma hızı</label>
-        <input type="range" id="dictRateSlider" min="0.6" max="1.15" step="0.05" style="flex:1;">
-        <span class="mut" id="dictRateLabel" style="font-size:12.5px;font-weight:700;min-width:36px;text-align:right;">0.95x</span>
-      </div>
-      <p class="mut" id="dictProgress" style="font-size:12.5px;font-weight:700;margin-bottom:8px;">—</p>
-      <button type="button" class="btn sec" id="dictListenBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg>Cümleyi Dinle</button>
-      <textarea class="f" id="dictInput" rows="2" placeholder="Duyduğunu yaz..."></textarea>
-      <div class="row" style="gap:8px;margin-top:8px;">
-        <button type="button" class="btn gold" id="dictCheckBtn" style="flex:1;">Kontrol Et</button>
-        <button type="button" class="btn sec" id="dictNextBtn" style="flex:1;">Sonraki Cümle</button>
-      </div>
-      <div class="dict-result" id="dictResult" style="display:none;"></div>
-    </div>
-    <div class="card" id="listeningQuizCard" style="display:none;">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Anlama Soruları</h2>
-      <p class="mut" style="margin-bottom:10px;">Moonie transkriptten birkaç anlama sorusu hazırlasın, kendini test et.</p>
-      <button type="button" class="btn gold" id="listeningQuizBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'den Soru İste</button>
-      <div class="gemini-result" id="listeningQuizResult" style="display:none;"></div>
-    </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Notların</h2>
-      <p class="mut" style="margin-bottom:10px;">Dinlerken öğrendiğin kelimeler, Claude'dan aldığın notlar ya da aklında kalanlar.</p>
-      <textarea class="f" id="listeningNotes" rows="4" placeholder="Notunu yaz..."></textarea>
-      <button type="button" class="btn sec" id="listeningNotesSave">Notu Kaydet</button>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Podcast ara</h2>
@@ -1079,6 +1052,60 @@
         <input id="spotifySearchInput" placeholder="ör. English learning podcast">
       </div>
       <div id="spotifyPodcastList" class="spotify-empty">Aramak için yaz ve Enter'a bas.</div>
+    </div>
+  </section>
+
+  <!-- ===== PODCAST DETAY ===== -->
+  <section class="view" id="v-podcastdetail">
+    <div class="page-head">
+      <button class="back" onclick="go('listening')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1 id="podDetailTitle" class="tight">—</h1>
+    </div>
+    <div class="card" id="podDetailPlayerCard" style="display:none;">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Çalar</h2>
+      <div id="podDetailPlayer"></div>
+      <p class="hint" id="podDetailSyncHint"></p>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Transkript</h2>
+      <textarea class="f" id="podDetailTranscriptInput" rows="6" placeholder="Transkripti buraya yapıştır..."></textarea>
+      <button type="button" class="btn sec" id="podDetailTranscriptSave" style="margin-top:8px;">Kaydet</button>
+      <div id="podDetailTranscriptViewWrap" style="display:none;margin-top:16px;">
+        <p class="hint" style="margin-top:0;margin-bottom:10px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
+        <div class="read-body" id="podDetailBody"></div>
+      </div>
+    </div>
+    <div class="card" id="podDetailDictCard" style="display:none;">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Dikte Pratiği</h2>
+      <p class="mut" style="margin-bottom:10px;">Moonie transkriptten bir cümle okuyor, sen duyduğunu yaz.</p>
+      <div class="row" style="align-items:center;gap:10px;margin-bottom:10px;">
+        <label class="mut" style="font-size:12.5px;font-weight:700;white-space:nowrap;">Okuma hızı</label>
+        <input type="range" id="podDictRateSlider" min="0.6" max="1.15" step="0.05" style="flex:1;">
+        <span class="mut" id="podDictRateLabel" style="font-size:12.5px;font-weight:700;min-width:36px;text-align:right;">0.95x</span>
+      </div>
+      <p class="mut" id="podDictProgress" style="font-size:12.5px;font-weight:700;margin-bottom:8px;">—</p>
+      <button type="button" class="btn sec" id="podDictListenBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg>Cümleyi Dinle</button>
+      <textarea class="f" id="podDictInput" rows="2" placeholder="Duyduğunu yaz..."></textarea>
+      <div class="row" style="gap:8px;margin-top:8px;">
+        <button type="button" class="btn gold" id="podDictCheckBtn" style="flex:1;">Kontrol Et</button>
+        <button type="button" class="btn sec" id="podDictNextBtn" style="flex:1;">Sonraki Cümle</button>
+      </div>
+      <div class="dict-result" id="podDictResult" style="display:none;"></div>
+    </div>
+    <div class="card" id="podQuizCard" style="display:none;">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Anlama Soruları</h2>
+      <p class="mut" style="margin-bottom:10px;">Moonie transkriptten birkaç anlama sorusu hazırlasın, kendini test et.</p>
+      <button type="button" class="btn gold" id="podQuizBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'den Soru İste</button>
+      <div class="gemini-result" id="podQuizResult" style="display:none;"></div>
+    </div>
+    <div class="card">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Notların</h2>
+      <p class="mut" style="margin-bottom:10px;">Bu podcast/bölümle ilgili notların.</p>
+      <textarea class="f" id="podDetailNotes" rows="4" placeholder="Notunu yaz..."></textarea>
+      <button type="button" class="btn sec" id="podDetailNotesSave">Notu Kaydet</button>
+    </div>
+    <div class="card">
+      <button type="button" class="btn sec" id="podDetailDeleteBtn" style="color:var(--rust);">Bu podcasti sil</button>
     </div>
   </section>
 
@@ -1427,6 +1454,7 @@ S.writings=S.writings||[];
 S.readingLib=S.readingLib||{completed:{}};
 S.readingLib.notes=S.readingLib.notes||{};
 S.listening=S.listening||{notes:"",transcript:""};
+migrateListeningToPodcasts();
 S.pronunciationNotes=S.pronunciationNotes||[];
 S.tasks=S.tasks||{};
 S.trCache=S.trCache||{};
@@ -1468,7 +1496,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",notes:"learn",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",podcastdetail:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",notes:"learn",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
@@ -1481,6 +1509,7 @@ function go(v){
   if(v==="reading") renderReading();
   if(v==="libread") renderLibRead();
   if(v==="listening") renderListening();
+  if(v==="podcastdetail") renderPodcastDetail();
   if(v==="speaking") renderSpeaking();
   if(v==="grammar") renderGrammar();
   if(v==="writing") renderWriting();
@@ -2233,8 +2262,16 @@ async function spotifySearch(q){
           '<div class="pod-sub">'+esc(item.publisher||(item.show&&item.show.name)||"")+'</div>'+
           '<span class="pod-type">'+(isEpisode?"Bölüm":"Podcast")+'</span>'+
         '</div>'+
-        '<button class="pod-play" aria-label="Çal"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg></button>';
-      row.querySelector("button").addEventListener("click",function(){ spotifyPlayUri(item.uri); });
+        '<button type="button" class="pod-add" aria-label="Listeme ekle"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg></button>'+
+        '<button type="button" class="pod-play" aria-label="Çal"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg></button>';
+      row.querySelector(".pod-play").addEventListener("click",function(){ spotifyPlayUri(item.uri); });
+      row.querySelector(".pod-add").addEventListener("click",function(){
+        S.listening.podcasts.push({id:"pod"+Date.now(),title:item.name,uri:item.uri,transcript:"",notes:"",createdAt:isoDate(new Date())});
+        save();
+        var addBtn=row.querySelector(".pod-add");
+        addBtn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>';
+        addBtn.disabled=true;
+      });
       list.appendChild(row);
     });
   }catch(e){ list.className="spotify-empty"; list.textContent="Arama başarısız oldu."; }
@@ -2249,54 +2286,89 @@ function spotifyPlayUri(uri){
   box.innerHTML='<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&autoplay=1" width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
   box.scrollIntoView({behavior:"smooth",block:"center"});
 }
+function migrateListeningToPodcasts(){
+  if(S.listening.podcasts) return;
+  var legacyTranscript=(S.listening.transcript||"").trim();
+  var legacyNotes=(S.listening.notes||"").trim();
+  S.listening.podcasts=[];
+  if(legacyTranscript||legacyNotes){
+    S.listening.podcasts.push({id:"pod"+Date.now(),title:"İlk transkriptin",uri:"",transcript:legacyTranscript,notes:legacyNotes,createdAt:isoDate(new Date())});
+  }
+  delete S.listening.transcript; delete S.listening.notes;
+  S.listening.selectedId=S.listening.selectedId||null;
+}
+function parseSpotifyUri(raw){
+  if(!raw) return "";
+  raw=raw.trim();
+  if(/^spotify:(episode|track|show):/.test(raw)) return raw;
+  var m=raw.match(/open\.spotify\.com\/(episode|track|show)\/([A-Za-z0-9]+)/);
+  if(m) return "spotify:"+m[1]+":"+m[2];
+  return "";
+}
 function renderListening(){
   var st=document.getElementById("spotifyStatus"), btn=document.getElementById("spotifyConnectBtn");
   if(spotifyTokens()){ st.innerHTML='<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#i-check"></use></svg> Spotify\'a bağlı'; btn.textContent="Bağlantıyı kes"; }
   else if(spotifyClientId()){ st.textContent="Client ID kaydedildi, bağlanmaya hazır."; btn.textContent="Spotify'a bağlan"; }
   else{ st.textContent="Henüz bağlı değil."; btn.textContent="Spotify'a bağlan"; }
-  document.getElementById("listeningTranscript").value=S.listening.transcript||"";
-  document.getElementById("listeningNotes").value=S.listening.notes||"";
-  renderListeningTranscriptView();
-  renderListeningPractice();
+  renderPodcastList();
 }
-function renderListeningTranscriptView(){
-  var text=(S.listening.transcript||"").trim();
-  var wrap=document.getElementById("listeningTranscriptViewWrap");
-  var view=document.getElementById("listeningTranscriptView");
-  if(!text){ wrap.style.display="none"; view.innerHTML=""; return; }
-  wrap.style.display="block";
-  view.innerHTML=text.split(/\n+/).map(function(p){ return p.trim()?'<p class="rp">'+wrapWords(p)+'</p>':""; }).join("");
-  view.querySelectorAll(".rw").forEach(function(span){
-    span.addEventListener("click",function(){
-      span.classList.add("tapped");
-      openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
-    });
+function renderPodcastList(){
+  var wrap=document.getElementById("podcastList");
+  var pods=S.listening.podcasts||[];
+  document.getElementById("podcastCount").textContent=pods.length?("· "+pods.length):"";
+  if(!pods.length){
+    wrap.innerHTML='<div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-headphones"></use></svg><div class="t">Henüz podcast eklemedin</div><div class="d">Dinlediğin bir bölümü transkriptiyle ekle, kendi notunu tut.</div></div>';
+    return;
+  }
+  wrap.innerHTML="";
+  pods.slice().reverse().forEach(function(p){
+    var hasTranscript=(p.transcript||"").trim().length>0;
+    var row=document.createElement("button"); row.type="button"; row.className="unit-row";
+    row.innerHTML='<span class="u-stat" style="color:var(--blue);border-color:var(--blue-tint);"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span>'+
+      '<span class="u-name">'+esc(p.title)+(hasTranscript?"":' <span class="mut" style="font-weight:600;">· transkript yok</span>')+'</span>'+
+      '<svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>';
+    row.addEventListener("click",function(){ S.listening.selectedId=p.id; save(); go("podcastdetail"); });
+    wrap.appendChild(row);
   });
 }
-/* ---------- Dinleme: dikte pratiği + Moonie anlama soruları ---------- */
-var dictState={sentences:[],idx:0};
+document.getElementById("podcastAddToggle").addEventListener("click",function(){
+  var form=document.getElementById("podcastAddForm");
+  form.style.display=form.style.display==="none"?"block":"none";
+});
+document.getElementById("podcastSaveBtn").addEventListener("click",function(){
+  var title=document.getElementById("podcastTitleInput").value.trim();
+  if(!title){ alert("Podcast adını gir."); return; }
+  S.listening.podcasts.push({
+    id:"pod"+Date.now(),
+    title:title,
+    uri:parseSpotifyUri(document.getElementById("podcastUriInput").value.trim()),
+    transcript:document.getElementById("podcastTranscriptInput").value.trim(),
+    notes:"",
+    createdAt:isoDate(new Date())
+  });
+  save();
+  document.getElementById("podcastTitleInput").value="";
+  document.getElementById("podcastUriInput").value="";
+  document.getElementById("podcastTranscriptInput").value="";
+  document.getElementById("podcastAddForm").style.display="none";
+  renderPodcastList();
+});
+document.getElementById("spotifyConnectBtn").addEventListener("click",function(){
+  if(spotifyTokens()) spotifyDisconnect(); else spotifyConnect();
+});
+document.getElementById("spotifySearchInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter") spotifySearch(e.target.value.trim());
+});
+
+/* ---------- PODCAST DETAY: transkript + dikte + Moonie anlama soruları + senkron takip ---------- */
+var podDictState={sentences:[],idx:0};
+var podSpotifyController=null, lastSyncParaIdx=-1;
+function currentPodcast(){
+  var pods=S.listening.podcasts||[];
+  return pods.filter(function(p){ return p.id===S.listening.selectedId; })[0]||null;
+}
 function splitIntoSentences(text){
   return text.replace(/\n+/g," ").split(/(?<=[.!?])\s+/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length>3; });
-}
-function updateDictProgress(){
-  var el=document.getElementById("dictProgress");
-  el.textContent=dictState.sentences.length?("Cümle "+(dictState.idx+1)+"/"+dictState.sentences.length):"Transkriptte cümle bulunamadı.";
-}
-function renderListeningPractice(){
-  var text=(S.listening.transcript||"").trim();
-  var dictCard=document.getElementById("listeningPracticeCard");
-  var quizCard=document.getElementById("listeningQuizCard");
-  if(!text){ dictCard.style.display="none"; quizCard.style.display="none"; return; }
-  dictCard.style.display="block"; quizCard.style.display="block";
-  dictState.sentences=splitIntoSentences(text);
-  dictState.idx=0;
-  var rateSlider=document.getElementById("dictRateSlider");
-  rateSlider.value=S.settings.ttsRate||0.95;
-  document.getElementById("dictRateLabel").textContent=(+rateSlider.value).toFixed(2)+"x";
-  document.getElementById("dictInput").value="";
-  document.getElementById("dictResult").style.display="none";
-  document.getElementById("listeningQuizResult").style.display="none";
-  updateDictProgress();
 }
 function diffWords(target,said){
   var tWords=target.replace(/[^\w\s']/g,"").toLowerCase().split(/\s+/).filter(Boolean);
@@ -2306,61 +2378,156 @@ function diffWords(target,said){
     return '<span class="'+(ok?"ok-w":"bad-w")+'">'+esc(w)+"</span>";
   }).join(" ");
 }
-document.getElementById("dictRateSlider").addEventListener("input",function(){
-  var v=+this.value;
-  document.getElementById("dictRateLabel").textContent=v.toFixed(2)+"x";
-  S.settings.ttsRate=v; save();
-});
-document.getElementById("dictListenBtn").addEventListener("click",function(){
-  if(!dictState.sentences.length) return;
-  var rate=+document.getElementById("dictRateSlider").value||.95;
-  speakEnglish(dictState.sentences[dictState.idx],rate);
-});
-document.getElementById("dictCheckBtn").addEventListener("click",function(){
-  if(!dictState.sentences.length) return;
-  var target=dictState.sentences[dictState.idx];
-  var said=document.getElementById("dictInput").value.trim();
-  if(!said) return;
-  var score=similarity(norm(said),norm(target));
-  var pct=Math.round(score*100);
-  var cls=pct>=90?"ok":(pct>=65?"mid":"bad");
-  var res=document.getElementById("dictResult");
-  res.className="dict-result "+cls;
-  res.innerHTML="<b>%"+pct+" doğru</b><div class=\"dict-diff\">"+diffWords(target,said)+"</div>"+
-    '<div class="mut" style="margin-top:8px;font-size:12px;">Doğrusu: '+esc(target)+"</div>";
-  res.style.display="block";
-});
-document.getElementById("dictNextBtn").addEventListener("click",function(){
-  if(!dictState.sentences.length) return;
-  dictState.idx=(dictState.idx+1)%dictState.sentences.length;
-  document.getElementById("dictInput").value="";
-  document.getElementById("dictResult").style.display="none";
-  updateDictProgress();
-});
 function renderQuizText(qtext){
   return qtext.split(/\n+/).map(function(line){
     if(/^cevap\s*:/i.test(line.trim())) return '<span class="quiz-answer" style="display:none;">'+esc(line)+"</span>";
     return esc(line)+"<br>";
   }).join("");
 }
-document.getElementById("listeningQuizBtn").addEventListener("click",function(){
+function renderPodcastDetail(){
+  var p=currentPodcast();
+  if(!p){ go("listening"); return; }
+  document.getElementById("podDetailTitle").textContent=p.title;
+  document.getElementById("podDetailTranscriptInput").value=p.transcript||"";
+  document.getElementById("podDetailNotes").value=p.notes||"";
+  renderPodDetailTranscriptView();
+  renderPodDetailPractice();
+  renderPodDetailPlayer();
+}
+function renderPodDetailTranscriptView(){
+  var p=currentPodcast(); if(!p) return;
+  var text=(p.transcript||"").trim();
+  var wrap=document.getElementById("podDetailTranscriptViewWrap");
+  var view=document.getElementById("podDetailBody");
+  lastSyncParaIdx=-1;
+  if(!text){ wrap.style.display="none"; view.innerHTML=""; return; }
+  wrap.style.display="block";
+  view.innerHTML=text.split(/\n+/).map(function(para,i){ return para.trim()?'<p class="rp" data-pidx="'+i+'">'+wrapWords(para)+'</p>':""; }).join("");
+  view.querySelectorAll(".rw").forEach(function(span){
+    span.addEventListener("click",function(){
+      span.classList.add("tapped");
+      openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
+    });
+  });
+}
+function updatePodDictProgress(){
+  var el=document.getElementById("podDictProgress");
+  el.textContent=podDictState.sentences.length?("Cümle "+(podDictState.idx+1)+"/"+podDictState.sentences.length):"Transkriptte cümle bulunamadı.";
+}
+function renderPodDetailPractice(){
+  var p=currentPodcast(); if(!p) return;
+  var text=(p.transcript||"").trim();
+  var dictCard=document.getElementById("podDetailDictCard");
+  var quizCard=document.getElementById("podQuizCard");
+  if(!text){ dictCard.style.display="none"; quizCard.style.display="none"; return; }
+  dictCard.style.display="block"; quizCard.style.display="block";
+  podDictState.sentences=splitIntoSentences(text);
+  podDictState.idx=0;
+  var rateSlider=document.getElementById("podDictRateSlider");
+  rateSlider.value=S.settings.ttsRate||0.95;
+  document.getElementById("podDictRateLabel").textContent=(+rateSlider.value).toFixed(2)+"x";
+  document.getElementById("podDictInput").value="";
+  document.getElementById("podDictResult").style.display="none";
+  document.getElementById("podQuizResult").style.display="none";
+  updatePodDictProgress();
+}
+var spotifyIframeApiPromise=null;
+function loadSpotifyIframeApi(cb){
+  if(window.SpotifyIframeAPIInstance){ cb(window.SpotifyIframeAPIInstance); return; }
+  if(!spotifyIframeApiPromise){
+    spotifyIframeApiPromise=new Promise(function(resolve){
+      window.onSpotifyIframeApiReady=function(IFrameAPI){ window.SpotifyIframeAPIInstance=IFrameAPI; resolve(IFrameAPI); };
+      var script=document.createElement("script");
+      script.src="https://open.spotify.com/embed/iframe-api/v1";
+      script.async=true;
+      document.body.appendChild(script);
+    });
+  }
+  spotifyIframeApiPromise.then(cb);
+}
+function onPodPlaybackUpdate(data){
+  if(!data||!data.duration) return;
+  var paras=document.querySelectorAll("#podDetailBody .rp");
+  if(!paras.length) return;
+  var frac=Math.max(0,Math.min(1,data.position/data.duration));
+  var idx=Math.min(paras.length-1,Math.floor(frac*paras.length));
+  if(idx===lastSyncParaIdx) return;
+  lastSyncParaIdx=idx;
+  paras.forEach(function(el){ el.classList.remove("current-para"); });
+  var target=paras[idx];
+  if(target){ target.classList.add("current-para"); target.scrollIntoView({behavior:"smooth",block:"center"}); }
+}
+function renderPodDetailPlayer(){
+  var p=currentPodcast(); if(!p) return;
+  podSpotifyController=null; lastSyncParaIdx=-1;
+  var card=document.getElementById("podDetailPlayerCard");
+  var container=document.getElementById("podDetailPlayer");
+  var syncHint=document.getElementById("podDetailSyncHint");
+  container.innerHTML="";
+  if(!p.uri){ card.style.display="none"; return; }
+  card.style.display="block";
+  syncHint.textContent="Çalarken transkriptte yaklaşık konumunu takip eder (dakika bazlı tahmin, kelime kelime değil).";
+  loadSpotifyIframeApi(function(IFrameAPI){
+    if(currentPodcast()!==p) return; // kullanıcı başka podcaste geçmiş olabilir
+    var el=document.createElement("div");
+    container.appendChild(el);
+    IFrameAPI.createController(el,{uri:p.uri,width:"100%",height:152},function(controller){
+      if(currentPodcast()!==p) return;
+      podSpotifyController=controller;
+      controller.addListener("playback_update",function(e){ onPodPlaybackUpdate(e.data); });
+    });
+  });
+}
+document.getElementById("podDictRateSlider").addEventListener("input",function(){
+  var v=+this.value;
+  document.getElementById("podDictRateLabel").textContent=v.toFixed(2)+"x";
+  S.settings.ttsRate=v; save();
+});
+document.getElementById("podDictListenBtn").addEventListener("click",function(){
+  if(!podDictState.sentences.length) return;
+  var rate=+document.getElementById("podDictRateSlider").value||.95;
+  speakEnglish(podDictState.sentences[podDictState.idx],rate);
+});
+document.getElementById("podDictCheckBtn").addEventListener("click",function(){
+  if(!podDictState.sentences.length) return;
+  var target=podDictState.sentences[podDictState.idx];
+  var said=document.getElementById("podDictInput").value.trim();
+  if(!said) return;
+  var score=similarity(norm(said),norm(target));
+  var pct=Math.round(score*100);
+  var cls=pct>=90?"ok":(pct>=65?"mid":"bad");
+  var res=document.getElementById("podDictResult");
+  res.className="dict-result "+cls;
+  res.innerHTML="<b>%"+pct+" doğru</b><div class=\"dict-diff\">"+diffWords(target,said)+"</div>"+
+    '<div class="mut" style="margin-top:8px;font-size:12px;">Doğrusu: '+esc(target)+"</div>";
+  res.style.display="block";
+});
+document.getElementById("podDictNextBtn").addEventListener("click",function(){
+  if(!podDictState.sentences.length) return;
+  podDictState.idx=(podDictState.idx+1)%podDictState.sentences.length;
+  document.getElementById("podDictInput").value="";
+  document.getElementById("podDictResult").style.display="none";
+  updatePodDictProgress();
+});
+document.getElementById("podQuizBtn").addEventListener("click",function(){
+  var p=currentPodcast(); if(!p) return;
   if(!(S.settings.geminiApiKey||"").trim()){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
-  var text=(S.listening.transcript||"").trim(); if(!text) return;
+  var text=(p.transcript||"").trim(); if(!text) return;
   var btn=this, orig=btn.innerHTML;
   btn.disabled=true; btn.innerHTML=MOONIE_LISTEN_CHIP+"Moonie soruları hazırlıyor...";
-  var resultEl=document.getElementById("listeningQuizResult");
+  var resultEl=document.getElementById("podQuizResult");
   resultEl.style.display="none";
   var prompt="Aşağıdaki İngilizce transkripti oku. Öğrencinin dinleme/okuma anlamasını test etmek için İngilizce 4 kısa anlama sorusu hazırla (karışık zorlukta). "+
     "Her sorunun altına YENİ SATIRDA \"Cevap: \" ile başlayan kısa doğru cevabı Türkçe olarak ekle. Sadece soru+cevap listesi ver, başka açıklama ekleme.\n\nTranskript:\n"+text;
   callGeminiText([{role:"user",parts:[{text:prompt}]}]).then(function(qtext){
     btn.disabled=false; btn.innerHTML=orig;
     resultEl.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Moonie'nin Soruları</div>"+
-      '<div id="listeningQuizText">'+renderQuizText(qtext)+"</div>"+
-      '<button type="button" class="btn sec sm" id="listeningQuizToggle" style="margin-top:10px;">Cevapları Göster</button>';
+      '<div id="podQuizText">'+renderQuizText(qtext)+"</div>"+
+      '<button type="button" class="btn sec sm" id="podQuizToggle" style="margin-top:10px;">Cevapları Göster</button>';
     resultEl.style.display="block";
-    document.getElementById("listeningQuizToggle").addEventListener("click",function(){
+    document.getElementById("podQuizToggle").addEventListener("click",function(){
       var showing=this.textContent==="Cevapları Gizle";
-      document.querySelectorAll("#listeningQuizText .quiz-answer").forEach(function(s){ s.style.display=showing?"none":"inline"; });
+      document.querySelectorAll("#podQuizText .quiz-answer").forEach(function(s){ s.style.display=showing?"none":"inline"; });
       this.textContent=showing?"Cevapları Göster":"Cevapları Gizle";
     });
   }).catch(function(err){
@@ -2369,32 +2536,29 @@ document.getElementById("listeningQuizBtn").addEventListener("click",function(){
     resultEl.style.display="block";
   });
 });
-document.getElementById("spotifyConnectBtn").addEventListener("click",function(){
-  if(spotifyTokens()) spotifyDisconnect(); else spotifyConnect();
-});
-document.getElementById("listeningTranscriptSave").addEventListener("click",function(){
-  S.listening.transcript=document.getElementById("listeningTranscript").value.trim();
+document.getElementById("podDetailTranscriptSave").addEventListener("click",function(){
+  var p=currentPodcast(); if(!p) return;
+  p.transcript=document.getElementById("podDetailTranscriptInput").value.trim();
   save();
-  renderListeningTranscriptView();
-  renderListeningPractice();
-  var btn=document.getElementById("listeningTranscriptSave"), orig=btn.textContent;
-  btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
+  renderPodDetailTranscriptView();
+  renderPodDetailPractice();
+  var btn=document.getElementById("podDetailTranscriptSave"), orig=btn.textContent;
+  btn.textContent="Kaydedildi"; setTimeout(function(){ if(btn) btn.textContent=orig; },1500);
 });
-document.getElementById("listeningTranscriptClear").addEventListener("click",function(){
-  if(!confirm("Transkripti silmek istediğine emin misin?")) return;
-  S.listening.transcript=""; save();
-  document.getElementById("listeningTranscript").value="";
-  renderListeningTranscriptView();
-  renderListeningPractice();
-});
-document.getElementById("listeningNotesSave").addEventListener("click",function(){
-  S.listening.notes=document.getElementById("listeningNotes").value.trim();
+document.getElementById("podDetailNotesSave").addEventListener("click",function(){
+  var p=currentPodcast(); if(!p) return;
+  p.notes=document.getElementById("podDetailNotes").value.trim();
   save();
-  var btn=document.getElementById("listeningNotesSave"), orig=btn.textContent;
-  btn.textContent="Kaydedildi"; setTimeout(function(){ btn.textContent=orig; },1500);
+  var btn=document.getElementById("podDetailNotesSave"), orig=btn.textContent;
+  btn.textContent="Kaydedildi"; setTimeout(function(){ if(btn) btn.textContent=orig; },1500);
 });
-document.getElementById("spotifySearchInput").addEventListener("keydown",function(e){
-  if(e.key==="Enter") spotifySearch(e.target.value.trim());
+document.getElementById("podDetailDeleteBtn").addEventListener("click",function(){
+  var p=currentPodcast(); if(!p) return;
+  if(!confirm('"'+p.title+'" silinsin mi? Transkript ve notlar da silinecek.')) return;
+  S.listening.podcasts=S.listening.podcasts.filter(function(x){ return x.id!==p.id; });
+  S.listening.selectedId=null;
+  save();
+  go("listening");
 });
 
 /* ---------- SPEAKING LEVELS (CEFR-based, functional units — content grounded in
@@ -3301,10 +3465,10 @@ function collectAllNotes(){
     var text=(w.feedback||"").trim(); if(!text) return;
     items.push({cat:"Yazma",ic:"i-edit",bg:"var(--pink-tint)",fg:"var(--pink)",title:w.prompt,sub:fmtDate(w.date),text:text,go:function(){ go("writing"); }});
   });
-  var listenNote=(S.listening.notes||"").trim();
-  if(listenNote){
-    items.push({cat:"Dinleme",ic:"i-headphones",bg:"var(--blue-tint)",fg:"var(--blue)",title:"Dinleme notların",sub:"",text:listenNote,go:function(){ go("listening"); }});
-  }
+  (S.listening.podcasts||[]).forEach(function(p){
+    var text=(p.notes||"").trim(); if(!text) return;
+    items.push({cat:"Dinleme",ic:"i-headphones",bg:"var(--blue-tint)",fg:"var(--blue)",title:p.title,sub:"",text:text,go:function(){ S.listening.selectedId=p.id; save(); go("podcastdetail"); }});
+  });
   (S.pronunciationNotes||[]).forEach(function(n){
     var text=(n.analysis||"").trim(); if(!text) return;
     items.push({cat:"Telaffuz",ic:"i-mic",bg:"var(--gold-tint)",fg:"var(--gold)",title:n.target,sub:fmtDate(n.date),text:text,go:function(){ go("speaking"); }});
@@ -3827,7 +3991,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
-      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.listening=S.listening||{notes:"",transcript:""}; S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
+      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
