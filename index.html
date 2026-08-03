@@ -1498,6 +1498,7 @@ function trimHistory(){
 /* ---------- NAV ---------- */
 var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",podcastdetail:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",notes:"learn",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
+  if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
   if(el) el.classList.add("active");
@@ -2362,7 +2363,10 @@ document.getElementById("spotifySearchInput").addEventListener("keydown",functio
 
 /* ---------- PODCAST DETAY: transkript + dikte + Moonie anlama soruları + senkron takip ---------- */
 var podDictState={sentences:[],idx:0};
-var podSpotifyController=null, lastSyncParaIdx=-1;
+var podSpotifyController=null, lastSyncSentIdx=-1;
+var sentWordRanges=[], sentTotalWords=0;
+var syncPlayback={position:0,duration:0,receivedAt:0,isPaused:true};
+var syncTickInterval=null;
 function currentPodcast(){
   var pods=S.listening.podcasts||[];
   return pods.filter(function(p){ return p.id===S.listening.selectedId; })[0]||null;
@@ -2399,16 +2403,27 @@ function renderPodDetailTranscriptView(){
   var text=(p.transcript||"").trim();
   var wrap=document.getElementById("podDetailTranscriptViewWrap");
   var view=document.getElementById("podDetailBody");
-  lastSyncParaIdx=-1;
+  lastSyncSentIdx=-1; sentWordRanges=[]; sentTotalWords=0;
   if(!text){ wrap.style.display="none"; view.innerHTML=""; return; }
   wrap.style.display="block";
-  view.innerHTML=text.split(/\n+/).map(function(para,i){ return para.trim()?'<p class="rp" data-pidx="'+i+'">'+wrapWords(para)+'</p>':""; }).join("");
+  var sentences=splitIntoSentences(text);
+  view.innerHTML=sentences.map(function(s,i){ return '<p class="rp" data-sidx="'+i+'">'+wrapWords(s)+'</p>'; }).join("");
   view.querySelectorAll(".rw").forEach(function(span){
     span.addEventListener("click",function(){
       span.classList.add("tapped");
       openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
     });
   });
+  // Senkron tahmini cümle bazında, kelime sayısına göre ağırlıklı kümülatif
+  // konuma göre yapılıyor — uzun cümle kısa cümleyle aynı süreyi "kaplamamalı".
+  var cum=0;
+  sentWordRanges=sentences.map(function(s){
+    var wc=s.split(/\s+/).filter(Boolean).length||1;
+    var range={start:cum,end:cum+wc};
+    cum+=wc;
+    return range;
+  });
+  sentTotalWords=cum;
 }
 function updatePodDictProgress(){
   var el=document.getElementById("podDictProgress");
@@ -2447,26 +2462,53 @@ function loadSpotifyIframeApi(cb){
 }
 function onPodPlaybackUpdate(data){
   if(!data||!data.duration) return;
+  syncPlayback={position:data.position,duration:data.duration,receivedAt:Date.now(),isPaused:!!data.isPaused};
+  applySyncHighlight();
+  if(!syncPlayback.isPaused) startSyncTicker(); else stopSyncTicker();
+}
+function estimatedPlaybackPosition(){
+  if(!syncPlayback.duration) return 0;
+  var pos=syncPlayback.position;
+  if(!syncPlayback.isPaused) pos+=(Date.now()-syncPlayback.receivedAt);
+  return Math.max(0,Math.min(syncPlayback.duration,pos));
+}
+function applySyncHighlight(){
+  if(!syncPlayback.duration||!sentTotalWords||!sentWordRanges.length) return;
+  var frac=estimatedPlaybackPosition()/syncPlayback.duration;
+  var targetWord=frac*sentTotalWords;
+  var idx=sentWordRanges.length-1;
+  for(var i=0;i<sentWordRanges.length;i++){
+    if(targetWord<sentWordRanges[i].end){ idx=i; break; }
+  }
+  if(idx===lastSyncSentIdx) return;
+  lastSyncSentIdx=idx;
   var paras=document.querySelectorAll("#podDetailBody .rp");
-  if(!paras.length) return;
-  var frac=Math.max(0,Math.min(1,data.position/data.duration));
-  var idx=Math.min(paras.length-1,Math.floor(frac*paras.length));
-  if(idx===lastSyncParaIdx) return;
-  lastSyncParaIdx=idx;
   paras.forEach(function(el){ el.classList.remove("current-para"); });
   var target=paras[idx];
   if(target){ target.classList.add("current-para"); target.scrollIntoView({behavior:"smooth",block:"center"}); }
 }
+function startSyncTicker(){
+  stopSyncTicker();
+  syncTickInterval=setInterval(function(){
+    if(syncPlayback.isPaused){ stopSyncTicker(); return; }
+    applySyncHighlight();
+  },700);
+}
+function stopSyncTicker(){
+  if(syncTickInterval){ clearInterval(syncTickInterval); syncTickInterval=null; }
+}
 function renderPodDetailPlayer(){
   var p=currentPodcast(); if(!p) return;
-  podSpotifyController=null; lastSyncParaIdx=-1;
+  stopSyncTicker();
+  podSpotifyController=null; lastSyncSentIdx=-1;
+  syncPlayback={position:0,duration:0,receivedAt:0,isPaused:true};
   var card=document.getElementById("podDetailPlayerCard");
   var container=document.getElementById("podDetailPlayer");
   var syncHint=document.getElementById("podDetailSyncHint");
   container.innerHTML="";
   if(!p.uri){ card.style.display="none"; return; }
   card.style.display="block";
-  syncHint.textContent="Çalarken transkriptte yaklaşık konumunu takip eder (dakika bazlı tahmin, kelime kelime değil).";
+  syncHint.textContent="Çalarken transkriptte yaklaşık konumunu takip eder (kelime sayısına göre tahmin, saniye saniye güncellenir — yine de dakika bazlı bir tahmin, kelime kelime senkron değil).";
   loadSpotifyIframeApi(function(IFrameAPI){
     if(currentPodcast()!==p) return; // kullanıcı başka podcaste geçmiş olabilir
     var el=document.createElement("div");
