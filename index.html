@@ -856,6 +856,15 @@
   #v-learn .hub-modes,#v-learn .hub-cta,#v-learn .hub-ic-plus{ display:none; }
   #v-learn .hubgrid{ gap:14px; }
   #v-learn .hubcard{ padding:18px 16px; }
+
+  .onb-sec{ font-size:12px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin:16px 2px 8px; }
+  #v-obbasics .onb-opt,#v-obgoals .onb-opt{ padding-top:11px; padding-bottom:11px; margin-bottom:8px; }
+
+  .onb-skill-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px 12px; width:100%; max-width:300px; margin:0 auto 6px; }
+  .onb-skill{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .onb-skill .onb-icon-chip{ width:64px; height:64px; border-radius:20px; background-image:linear-gradient(160deg,rgba(255,255,255,.18),rgba(255,255,255,.02)); box-shadow:0 5px 0 rgba(0,0,0,.3), 0 14px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.2); }
+  .onb-skill .onb-icon-chip .icon{ width:28px; height:28px; }
+  .onb-skill-t{ font-size:12px; font-weight:700; color:var(--ink-2); }
 </style>
 </head>
 <body>
@@ -946,16 +955,9 @@
         <button type="button" class="onb-skip" onclick="obGo('authchoice')">Geç</button>
       </div>
       <div class="onb-center">
-        <div class="onb-icon-row">
-          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span>
-          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span>
-          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></span>
-          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg></span>
-          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></span>
-          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></span>
-        </div>
-        <div class="onb-title" style="margin-top:6px;">6 beceriyi dengeli geliştir.</div>
-        <div class="onb-sub">Reading, Listening, Speaking, Grammar, Vocabulary, Writing.</div>
+        <div class="onb-skill-grid"><span class="onb-skill"><span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span><span class="onb-skill-t">Reading</span></span><span class="onb-skill"><span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span><span class="onb-skill-t">Listening</span></span><span class="onb-skill"><span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></span><span class="onb-skill-t">Speaking</span></span><span class="onb-skill"><span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg></span><span class="onb-skill-t">Grammar</span></span><span class="onb-skill"><span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></span><span class="onb-skill-t">Vocabulary</span></span><span class="onb-skill"><span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></span><span class="onb-skill-t">Writing</span></span></div>
+        <div class="onb-title" style="margin-top:10px;">6 beceriyi dengeli geliştir.</div>
+        <div class="onb-sub">Okuma, dinleme, konuşma, gramer, kelime ve yazma — hepsi tek yerde.</div>
       </div>
       <div class="onb-foot"><button type="button" class="btn" onclick="obGo('onb3')">İleri</button></div>
     </div>
@@ -1035,52 +1037,37 @@
 
 
   <!-- ===== ONBOARDING: SEVİYE ===== -->
-  <section class="view" id="v-oblevel">
-    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
+  <section class="view" id="v-obbasics">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
       <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="onb-steplabel">Adım 1/5</div>
-      <div class="onb-h">Şu anki İngilizce seviyen hangisi?</div>
-      <div class="onb-p">Daha sonra da değiştirebilirsin.</div>
+      <div class="onb-steplabel">Adım 1/2</div>
+      <div class="onb-h">Seviyen ve günlük süren</div>
+      <div class="onb-p">Daha sonra Profil'den değiştirebilirsin.</div>
+      <div class="onb-sec">İngilizce seviyen</div>
       <div id="obLevelOpts"></div>
-      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obLevelNext" disabled>Devam →</button></div>
-    </div>
-  </section>
-
-  <!-- ===== ONBOARDING: HEDEF ===== -->
-  <section class="view" id="v-obgoals">
-    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
-      <button type="button" class="onb-back-btn" onclick="obGo('oblevel')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="onb-steplabel">Adım 2/5</div>
-      <div class="onb-h">İngilizceyi hangi amaçla öğrenmek istiyorsun?</div>
-      <div class="onb-p">Birden çok seçebilirsin.</div>
-      <div id="obGoalOpts"></div>
-      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obGoalsNext">Devam →</button></div>
-    </div>
-  </section>
-
-  <!-- ===== ONBOARDING: GÜNLÜK SÜRE ===== -->
-  <section class="view" id="v-obtime">
-    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
-      <button type="button" class="onb-back-btn" onclick="obGo('obgoals')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="onb-steplabel">Adım 3/5</div>
-      <div class="onb-h">Günde ne kadar zaman ayırmak istersin?</div>
+      <div class="onb-sec">Günde ne kadar zaman ayırırsın?</div>
       <div id="obTimeOpts"></div>
-      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obTimeNext" disabled>Devam →</button></div>
+      <button type="button" id="obLevelNext" style="display:none;" disabled></button>
+      <button type="button" id="obTimeNext" style="display:none;" disabled></button>
+      <div class="onb-foot" style="padding:0;margin-top:12px;"><button type="button" class="btn" id="obBasicsNext" disabled>Devam →</button></div>
     </div>
   </section>
 
-  <!-- ===== ONBOARDING: ODAK BECERİLER ===== -->
-  <section class="view" id="v-obfocus">
-    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
-      <button type="button" class="onb-back-btn" onclick="obGo('obtime')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="onb-steplabel">Adım 4/5</div>
-      <div class="onb-h">Hangi becerilere daha fazla odaklanmak istersin?</div>
-      <div class="onb-p">İstediğin kadar seçebilirsin.</div>
+  <section class="view" id="v-obgoals">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
+      <button type="button" class="onb-back-btn" onclick="obGo('obbasics')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Adım 2/2</div>
+      <div class="onb-h">Hedefin ve odağın</div>
+      <div class="onb-p">Birden çok seçebilirsin.</div>
+      <div class="onb-sec">Neden öğreniyorsun?</div>
+      <div id="obGoalOpts"></div>
+      <div class="onb-sec">Hangi becerilere odaklanalım?</div>
       <div id="obFocusOpts"></div>
-      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obFocusNext">Devam →</button></div>
+      <button type="button" id="obGoalsNext" style="display:none;"></button>
+      <button type="button" id="obFocusNext" style="display:none;"></button>
+      <div class="onb-foot" style="padding:0;margin-top:12px;"><button type="button" class="btn" id="obGoalsDone">Devam →</button></div>
     </div>
   </section>
-
 
   <!-- ===== ONBOARDING: PODCAST LİNKİ ===== -->
   <section class="view" id="v-obpod">
@@ -5025,10 +5012,8 @@ function obGo(id){
   var el=document.getElementById("v-"+id);
   if(el) el.classList.add("active");
   window.scrollTo(0,0);
-  if(id==="oblevel") obRenderLevel();
-  if(id==="obgoals") obRenderGoals();
-  if(id==="obtime") obRenderTime();
-  if(id==="obfocus") obRenderFocus();
+  if(id==="obbasics"){ obRenderLevel(); obRenderTime(); obUpdateBasics(); }
+  if(id==="obgoals"){ obRenderGoals(); obRenderFocus(); }
   if(id==="obmeet") obRenderMeet();
   if(id==="obready") obRenderReady();
   if(id==="obpod") obRenderPod();
@@ -5231,7 +5216,7 @@ document.getElementById("obRegSubmit").addEventListener("click",function(){
   err.style.display="none";
   S.settings.userName=name; S.settings.userEmail=email.toLowerCase(); S.settings.authMethod="email";
   save();
-  obGo("oblevel");
+  obGo("obbasics");
 });
 document.getElementById("obLoginSubmit").addEventListener("click",function(){
   var email=document.getElementById("obLoginEmail").value.trim().toLowerCase();
@@ -5241,12 +5226,17 @@ document.getElementById("obLoginSubmit").addEventListener("click",function(){
     err.style.display="block"; return;
   }
   err.style.display="none";
-  obGo("oblevel");
+  obGo("obbasics");
 });
+function obUpdateBasics(){ document.getElementById("obBasicsNext").disabled=!(obState.level&&obState.dailyMinutes); }
+document.getElementById("obLevelOpts").addEventListener("click",function(){ setTimeout(obUpdateBasics,0); });
+document.getElementById("obTimeOpts").addEventListener("click",function(){ setTimeout(obUpdateBasics,0); });
+document.getElementById("obBasicsNext").addEventListener("click",function(){ obGo("obgoals"); });
+document.getElementById("obGoalsDone").addEventListener("click",function(){ obGo("obmeet"); });
 document.getElementById("obLevelNext").addEventListener("click",function(){ obGo("obgoals"); });
-document.getElementById("obGoalsNext").addEventListener("click",function(){ obGo("obtime"); });
-document.getElementById("obTimeNext").addEventListener("click",function(){ obGo("obfocus"); });
-document.getElementById("obFocusNext").addEventListener("click",function(){ obGo("obpod"); });
+document.getElementById("obGoalsNext").addEventListener("click",function(){ obGo("obmeet"); });
+document.getElementById("obTimeNext").addEventListener("click",function(){ obGo("obgoals"); });
+document.getElementById("obFocusNext").addEventListener("click",function(){ obGo("obmeet"); });
 document.getElementById("obPodNext").addEventListener("click",function(){
   var spCid=document.getElementById("obSpotifyClientId").value.trim();
   var gKey=document.getElementById("obGeminiKey").value.trim();
