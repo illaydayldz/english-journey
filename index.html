@@ -823,6 +823,40 @@
   .wprompt-card{ box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 24px 36px -16px rgba(90,79,207,.8); }
   .wp-start{ background:linear-gradient(180deg,#FFE9A6,#F2B94B); color:#2A1F5C; box-shadow:0 4px 0 #B07E1C, 0 10px 16px -6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.6); }
   .wp-start:active{ box-shadow:0 1px 0 #B07E1C; }
+
+  /* ===== v22: sakin, profesyonel görünüm ===== */
+  .card,.hubcard,.quick-item{ background-image:none; border:none; border-radius:22px; box-shadow:0 12px 28px -18px rgba(0,0,0,.6); }
+  :root[data-theme="light"] .card,:root[data-theme="light"] .hubcard,:root[data-theme="light"] .quick-item{ background-image:none; box-shadow:0 10px 26px -18px rgba(60,50,120,.35); }
+  .card{ padding:20px; margin-bottom:16px; }
+  .card h2,.card>h2{ font-size:16px; font-weight:700; letter-spacing:-.1px; }
+  .page-head h1{ font-size:26px; font-weight:800; letter-spacing:-.4px; }
+  .mut,.hint{ line-height:1.5; }
+  /* bugün */
+  .topbar{ margin-bottom:16px; }
+  .today-hero{ position:relative; overflow:hidden; border-radius:28px; margin-bottom:18px; min-height:210px; color:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 26px 40px -22px rgba(90,79,207,.9); }
+  .today-hero .wart{ opacity:1; }
+  .th-body{ position:relative; padding:22px 22px 20px; max-width:66%; display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+  .th-eyebrow{ font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; opacity:.8; }
+  .today-hero .goal-num{ color:#fff; font-size:40px; line-height:1; }
+  .today-hero .goal-dots{ justify-content:flex-start; gap:6px; margin:2px 0 4px; }
+  .today-hero .goal-dot{ width:9px; height:9px; border:none; background:rgba(255,255,255,.25); }
+  .today-hero .goal-dot.done{ background:#FFE9A6; box-shadow:0 0 8px rgba(255,233,166,.8); }
+  .th-msg{ font-size:13px; opacity:.88; line-height:1.4; }
+  .th-btn{ margin-top:8px; border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:14px; color:#2A1F5C; padding:11px 20px; border-radius:14px; background:linear-gradient(180deg,#FFE9A6,#F2B94B); box-shadow:0 4px 0 #B07E1C, 0 10px 16px -6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6); }
+  .th-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #B07E1C; }
+  .th-moon{ position:absolute; right:-6px; bottom:-4px; width:42%; max-width:170px; height:auto; filter:drop-shadow(0 12px 14px rgba(0,0,0,.4)); }
+  .quickgrid{ display:flex; gap:12px; overflow-x:auto; margin:0 -16px 18px; padding:4px 16px 10px; scrollbar-width:none; }
+  .quickgrid::-webkit-scrollbar{ display:none; }
+  .quickgrid .quick-item{ flex:0 0 78px; padding:12px 4px 10px; border-radius:20px; }
+  .quick-item .hub-ic{ width:42px; height:42px; }
+  .quick-item .qi-t{ font-size:11px; font-weight:600; color:var(--ink-2); }
+  .mini-h{ font-size:12px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin:18px 0 8px; }
+  .more-details>summary{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; cursor:pointer; list-style:none; }
+  .more-details>summary::-webkit-details-marker{ display:none; }
+  /* çalış: kartlar sade */
+  #v-learn .hub-modes,#v-learn .hub-cta,#v-learn .hub-ic-plus{ display:none; }
+  #v-learn .hubgrid{ gap:14px; }
+  #v-learn .hubcard{ padding:18px 16px; }
 </style>
 </head>
 <body>
@@ -1133,17 +1167,15 @@
       <button class="bell-btn" aria-label="Bildirimler"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></button>
     </div>
 
-    <div class="hero">
-      <div class="hero-bubble"><div class="hero-bubble-text" id="heroMsg">Bugünü harika bir öğrenme günü yapalım!</div></div>
-      <img class="hero-img" src="assets/mascot/hero-happy.png" alt="Moonie kitap okuyor">
-    </div>
-
-    <div class="card goalcard">
-      <div>
-        <h2 style="margin-bottom:6px;"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün Hedefi</h2>
+    <div class="today-hero"><svg class="wart" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="thA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A2170"/><stop offset="1" stop-color="#5B49D6"/></linearGradient><radialGradient id="thC" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE9A6" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9A6" stop-opacity="0"/></radialGradient></defs><rect width="320" height="180" fill="url(#thA)"/><circle cx="262" cy="40" r="60" fill="url(#thC)"/><g fill="#FFE9A6"><circle cx="40" cy="30" r="1.6" opacity=".9"/><circle cx="120" cy="18" r="1.3" opacity=".7"/><circle cx="200" cy="56" r="1.5" opacity=".8"/><circle cx="90" cy="70" r="1.1" opacity=".6"/><path d="M158 26l1.8 4.2 4.4.4-3.4 2.9 1.1 4.3-3.9-2.4-3.9 2.4 1.1-4.3-3.4-2.9 4.4-.4z" opacity=".85"/></g><path d="M-10 140 C 60 118, 130 160, 200 138 S 290 126, 330 142 L330 190 L-10 190Z" fill="#8B7FFF" opacity=".35"/></svg>
+      <div class="th-body">
+        <div class="th-eyebrow">Bugünün hedefi</div>
         <div class="goal-num" id="missionDone">0/6</div>
+        <div class="goal-dots" id="goalDots"></div>
+        <div class="th-msg" id="heroMsg">Bugünü harika bir öğrenme günü yapalım!</div>
+        <button type="button" class="th-btn" id="thStart">Devam et</button>
       </div>
-      <div class="goal-dots" id="goalDots"></div>
+      <img class="th-moon" src="assets/mascot/hero-happy.png" alt="Moonie">
     </div>
 
     <div class="quickgrid">
@@ -1153,11 +1185,6 @@
       <button type="button" class="quick-item" onclick="go('grammar')"><span class="hub-ic hub-teal"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg></span><span class="qi-t">Grammar</span></button>
       <button type="button" class="quick-item" onclick="go('vocab')"><span class="hub-ic hub-rust"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span><span class="qi-t">Vocabulary</span></button>
       <button type="button" class="quick-item" onclick="go('writing')"><span class="hub-ic hub-blue"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></span><span class="qi-t">Writing</span></button>
-    </div>
-
-    <div class="card">
-      <h2>Devam Et <span class="mut" id="examBadge"></span></h2>
-      <div id="continueList"></div>
     </div>
 
     <div class="card" id="todayPlan">
@@ -1173,13 +1200,11 @@
     </div>
 
     <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Bugünün ödevleri</h2>
-      <div id="taskList"></div>
-    </div>
-
-    <div class="card">
-      <details>
-        <summary><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Bugünün 60 dk modülü</summary>
+      <details class="more-details">
+        <summary><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Daha fazla <span class="mut" id="examBadge"></span></summary>
+        <h3 class="mini-h">Devam et</h3><div id="continueList"></div>
+        <h3 class="mini-h">Bugünün ödevleri</h3><div id="taskList"></div>
+        <h3 class="mini-h">Bugünün 60 dk modülü</h3>
         <div class="phase"><span class="chip-num">1</span><div class="ph-body"><div class="h">Isınma — 5 dk <span class="tag">Akıcılık</span></div><div class="d">Dünkü dersi İngilizce anlat.</div></div></div>
         <div class="phase"><span class="chip-num">2</span><div class="ph-body"><div class="h">Kelime — 10 dk <span class="tag">Aralıklı tekrar</span></div><div class="d">Kartları çalış (Kelime), yeni 5-7 kelime ekle.</div></div></div>
         <div class="phase"><span class="chip-num">3</span><div class="ph-body"><div class="h">Grammar — 10 dk <span class="tag">Dil odaklı</span></div><div class="d">Günün tek kuralı + örnek + mini alıştırma.</div></div></div>
@@ -2083,6 +2108,11 @@ function go(v){
 }
 document.querySelectorAll("nav button").forEach(function(b){ b.addEventListener("click",function(){ go(b.dataset.v); }); });
 
+document.querySelectorAll("#v-learn .hubcard").forEach(function(c){
+  var cta=c.querySelector(".hub-cta"); if(!cta) return;
+  c.addEventListener("click",function(e){ if(e.target.closest(".hub-cta")) return; cta.click(); });
+  c.style.cursor="pointer";
+});
 /* ---------- TODAY ---------- */
 var HERO_MSGS=[
   "Bugünü harika bir öğrenme günü yapalım!",
@@ -2143,6 +2173,7 @@ function renderToday(){
     dot.className="goal-dot"+(S.checks[di]?" done":"");
     dotsWrap.appendChild(dot);
   });
+  (function(){ var nx=-1; for(var k=0;k<STEPS.length;k++){ if(!S.checks[k]){ nx=k; break; } } var tb=document.getElementById("thStart"); tb.textContent=nx<0?"Bugünü tamamla":("Sıradaki: "+STEPS[nx][0]); })();
   var btn=document.getElementById("completeBtn");
   var checkIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>';
   if(doneToday){ btn.innerHTML=checkIcon+"Bugün tamamlandı — Aferin!"; btn.disabled=true; }
@@ -2157,6 +2188,12 @@ function renderToday(){
   save();
   renderTasks();
 }
+var STEP_VIEW=["speaking","vocab","grammar","reading","writing","speaking"];
+document.getElementById("thStart").addEventListener("click",function(){
+  var i=-1; for(var k=0;k<STEPS.length;k++){ if(!S.checks[k]){ i=k; break; } }
+  if(i<0){ document.getElementById("todayPlan").scrollIntoView({behavior:"smooth",block:"center"}); return; }
+  go(STEP_VIEW[i]);
+});
 document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
   var y=new Date(); y.setDate(y.getDate()-1);
