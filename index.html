@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#FAFAFC" id="themeColorMeta">
+<meta name="theme-color" content="#121016" id="themeColorMeta">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -145,6 +145,12 @@
   .mission-edit{ font-size:12px; font-weight:700; color:var(--purple-deep); text-decoration:none; }
   .continue-row{ display:flex; align-items:center; gap:11px; width:100%; background:none; border:none; padding:10px 2px; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit; min-height:52px; }
   .continue-row:last-child{ border-bottom:none; }
+  .ready-row{ display:flex; align-items:center; gap:11px; padding:9px 2px; border-bottom:1px solid var(--line); }
+  .ready-row:last-child{ border-bottom:none; }
+  .ready-row .rr-ic{ width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--tint); color:var(--purple); }
+  .ready-row .rr-ic .icon{ width:15px; height:15px; }
+  .ready-row .rr-label{ font-size:12.5px; color:var(--ink-soft); font-weight:600; }
+  .ready-row .rr-value{ margin-left:auto; font-size:12.5px; font-weight:700; color:var(--ink); text-align:right; max-width:55%; }
   .continue-row .cr-ic{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .continue-row .cr-ic .icon{ width:16px; height:16px; }
   .continue-row .cr-body{ flex:1; min-width:0; }
@@ -283,6 +289,16 @@
   .hubcard.wide{ grid-column:1/-1; flex-direction:row; align-items:center; gap:14px; cursor:pointer; }
   .hubcard.wide .hub-txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
   .hubcard.wide .hub-arrow{ margin-left:auto; color:var(--purple); flex-shrink:0; }
+  .hub-rust{ background:var(--rust-tint); color:var(--rust); }
+  .goalcard{ display:flex; align-items:center; justify-content:space-between; gap:14px; }
+  .goal-num{ font-family:var(--font-display); font-weight:800; font-size:30px; color:var(--ink); white-space:nowrap; }
+  .goal-dots{ display:flex; gap:7px; flex-wrap:wrap; justify-content:flex-end; }
+  .goal-dot{ width:13px; height:13px; border-radius:50%; border:2px solid var(--line); flex-shrink:0; }
+  .goal-dot.done{ background:var(--purple); border-color:var(--purple); }
+  .quickgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:14px 0; }
+  .quick-item{ display:flex; flex-direction:column; align-items:center; gap:8px; background:var(--card); border-radius:var(--radius-lg); padding:16px 6px 12px; box-shadow:var(--shadow-sm); border:none; font-family:inherit; cursor:pointer; }
+  .quick-item .hub-ic{ width:48px; height:48px; }
+  .quick-item .qi-t{ font-size:11.5px; font-weight:700; color:var(--ink); }
 
   /* ---- KELİME ---- */
   .searchbar{ position:relative; display:flex; align-items:center; margin-bottom:12px; }
@@ -312,6 +328,19 @@
   #studyArea > .btn{ margin-top:12px; }
   .grade{ display:flex; gap:8px; margin-top:16px; }
   .grade button{ flex:1; padding:12px 4px; border:none; border-radius:var(--radius-md); font-weight:700; font-size:12.5px; color:#fff; cursor:pointer; min-height:44px; display:flex; align-items:center; justify-content:center; gap:5px; }
+  .paper-card{ background:#F7F5F2; border-radius:var(--radius-lg); padding:18px 16px; --ink:#2A2730; --ink-soft:#716C7A; --ink-2:#443F4D; --purple-deep:#4A3FC7; --line:#EAE6DF; --tint:#EDEBFC; --tint-strong:#E0DCF9; --rust:#C4433F; --rust-tint:#FBEAE9; --green:#1C9C6E; --green-tint:#E4F5EE; --gold:#B9750F; --gold-tint:#FBF0DD; --blue:#3B6FE0; --blue-tint:#E7EDFC; --teal:#1B8C8C; --teal-tint:#E2F5F5; --pink:#B5459A; --pink-tint:#FAEAF5; }
+  .grade-v2{ display:flex; justify-content:center; gap:24px; margin-top:18px; }
+  .grade-v2 button{ display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; cursor:pointer; font-family:inherit; padding:0; }
+  .grade-v2 .gv-circle{ width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:var(--shadow-sm); }
+  .grade-v2 .gv-circle .icon{ width:22px; height:22px; }
+  .grade-v2 .gv-label{ font-size:11px; font-weight:700; color:var(--ink); }
+  .gv-green{ background:var(--green); }
+  .gv-purple{ background:var(--purple); }
+  .gv-rust{ background:var(--rust); }
+  .flash-speak{ width:38px; height:38px; border-radius:50%; background:var(--tint); color:var(--purple); display:flex; align-items:center; justify-content:center; margin:6px auto 10px; cursor:pointer; border:none; }
+  .flash-speak .icon{ width:18px; height:18px; }
+  .read-progress-bar{ height:5px; border-radius:5px; background:var(--tint); overflow:hidden; margin-bottom:14px; }
+  .read-progress-bar .fill{ height:100%; background:var(--purple); border-radius:5px; }
   .g-again{ background:var(--rust); } .g-good{ background:var(--green); } .g-easy{ background:var(--blue); }
   .empty-mascot{ text-align:center; padding:14px 0 6px; }
   .empty-mascot .mchip{ width:64px; height:64px; margin:0 auto 10px; border-radius:var(--radius-lg); }
@@ -397,6 +426,11 @@
   .cp-avatar{ position:relative; width:84px; height:84px; display:flex; align-items:center; justify-content:center; }
   .cp-pulse{ position:absolute; inset:-14px; border-radius:50%; border:2px solid var(--accent); opacity:.4; animation:cppulse 2.2s ease-out infinite; }
   @keyframes cppulse{ 0%{ transform:scale(.72); opacity:.5; } 100%{ transform:scale(1.35); opacity:0; } }
+  .mic-btn{ width:72px; height:72px; border-radius:50%; background:var(--purple); color:#fff; border:none; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-2); cursor:pointer; position:relative; margin:0 auto; }
+  .mic-btn .icon{ width:28px; height:28px; }
+  .mic-btn.recording{ background:var(--purple-deep); }
+  .mic-btn.recording::after{ content:""; position:absolute; inset:-8px; border-radius:50%; border:2px solid var(--purple); opacity:.5; animation:cppulse 1.4s ease-out infinite; }
+  .mic-btn:disabled{ opacity:.6; cursor:default; }
   .convo-partner .mchip{ position:relative; z-index:1; width:84px; height:84px; border-radius:50%; box-shadow:var(--shadow-2); flex-shrink:0; }
   .convo-partner span{ font-size:12.5px; font-weight:700; color:var(--purple-deep); line-height:1.4; max-width:260px; }
   .convo-partner .cp-sub{ font-size:11px; font-weight:600; color:var(--ink-soft); }
@@ -431,6 +465,8 @@
   .gx-opt.wrong{ border-color:var(--rust); background:var(--rust-tint); color:var(--rust); font-weight:700; }
   .gx-opt:disabled{ cursor:default; }
   .gx-score{ display:flex; align-items:center; gap:10px; background:var(--tint); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:14px; font-weight:800; color:var(--purple-deep); font-family:var(--font-data); }
+  .quiz-bar{ height:6px; border-radius:6px; background:var(--tint); overflow:hidden; }
+  .quiz-bar-fill{ height:100%; background:var(--purple); border-radius:6px; transition:width .3s; width:0%; }
   .level-block{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--line); }
   .level-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
   .level-block.locked{ opacity:.55; }
@@ -608,6 +644,47 @@
     #v-vocab.active,#v-notes.active{ column-count:1; }
     .hubgrid{ grid-template-columns:1fr 1fr 1fr; }
   }
+
+  /* ==== ONBOARDING FLOW (added) ==== */
+  body.onb-active{ padding-bottom:0; }
+  body.onb-active nav{ display:none; }
+  .onb-wrap{ min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; padding:max(24px,env(safe-area-inset-top)) 4px calc(24px + env(safe-area-inset-bottom)); }
+  .onb-center{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px; }
+  .onb-logo{ width:112px; height:112px; border-radius:28px; overflow:hidden; box-shadow:var(--shadow-2); }
+  .onb-logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .onb-title{ font-family:var(--font-display); font-weight:800; font-size:22px; color:var(--ink); }
+  .onb-sub{ font-size:13.5px; color:var(--ink-soft); max-width:280px; line-height:1.5; }
+  .onb-dots{ display:flex; gap:6px; justify-content:center; margin:16px 0; }
+  .onb-dot{ width:7px; height:7px; border-radius:50%; background:var(--tint-strong); transition:background .2s,width .2s; }
+  .onb-dot.active{ background:var(--purple); width:20px; border-radius:99px; }
+  .onb-icon-row{ display:flex; gap:10px; justify-content:center; margin:6px 0 2px; flex-wrap:wrap; max-width:320px; }
+  .onb-icon-chip{ width:52px; height:52px; border-radius:16px; background:var(--tint); color:var(--purple); display:flex; align-items:center; justify-content:center; }
+  .onb-icon-chip .icon{ width:22px; height:22px; }
+  .onb-foot{ display:flex; flex-direction:column; gap:10px; padding:0 16px; }
+  .onb-skip{ text-align:center; font-size:12.5px; color:var(--ink-soft); font-weight:700; background:none; border:none; padding:10px; cursor:pointer; }
+  .onb-topbar{ display:flex; align-items:center; justify-content:space-between; padding:0 8px; }
+  .onb-topbar .onb-dots{ margin:0; }
+  .onb-topbar .onb-skip{ padding:6px 4px; }
+  .onb-social-btn{ display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; padding:13px; border-radius:var(--radius-md); border:1.5px solid var(--line); background:var(--surface); color:var(--ink); font-family:var(--font-display); font-weight:700; font-size:14px; cursor:pointer; margin-bottom:10px; }
+  .onb-social-left{ display:flex; align-items:center; gap:10px; }
+  .onb-label{ font-size:12px; font-weight:700; color:var(--ink-2); text-align:left; margin:0 0 -2px; }
+  .onb-chkrow{ display:flex; align-items:center; justify-content:space-between; margin:2px 0 10px; font-size:12.5px; }
+  .onb-chkrow .onb-remember{ display:flex; align-items:center; gap:8px; color:var(--ink); font-weight:600; cursor:pointer; }
+  .onb-chkrow a{ color:var(--purple-deep); font-weight:700; }
+  .onb-divider{ display:flex; align-items:center; gap:10px; margin:14px 0; color:var(--ink-soft); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
+  .onb-divider::before,.onb-divider::after{ content:""; flex:1; height:1px; background:var(--line); }
+  .onb-opt{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:14px 15px; border-radius:var(--radius-md); border:1.5px solid var(--line); background:var(--surface); font-family:inherit; font-size:14px; color:var(--ink); cursor:pointer; margin-bottom:9px; min-height:44px; }
+  .onb-opt.sel{ border-color:var(--purple); background:var(--tint); }
+  .onb-opt .ob-check{ margin-left:auto; width:20px; height:20px; border-radius:50%; border:2px solid var(--line); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:transparent; }
+  .onb-opt.sel .ob-check{ background:var(--purple); border-color:var(--purple); color:#fff; }
+  .onb-opt .ob-check .icon{ width:11px; height:11px; stroke-width:3; }
+  .onb-opt.multi .ob-check{ border-radius:6px; }
+  .onb-opt .opt-ic{ width:22px; height:22px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--purple); }
+  .onb-steplabel{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:var(--purple-deep); margin-bottom:4px; }
+  .onb-h{ font-family:var(--font-ui); font-weight:800; font-size:19px; color:var(--ink); margin-bottom:4px; line-height:1.3; }
+  .onb-p{ font-size:13px; color:var(--ink-soft); margin-bottom:16px; }
+  .onb-back-btn{ background:var(--card); border:none; width:40px; height:40px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; cursor:pointer; margin-bottom:14px; }
+  .onb-err{ font-size:12px; color:var(--rust); font-weight:700; margin:-2px 0 8px; display:none; }
 </style>
 </head>
 <body>
@@ -663,8 +740,253 @@
 
 <div class="wrap">
 
+
+  <!-- ===== ONBOARDING: SPLASH ===== -->
+  <section class="view active" id="v-splash">
+    <div class="onb-wrap">
+      <div class="onb-center" onclick="obGo('onb1')" style="cursor:pointer;">
+        <div class="onb-logo"><img src="icon-512-v3.png" alt="Moonie"></div>
+        <div class="onb-title">English Journey</div>
+        <div class="onb-sub">Small steps. Big progress. A more you.</div>
+      </div>
+      <div class="onb-foot"><button type="button" class="btn" onclick="obGo('onb1')">İleri</button></div>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: TANITIM 1-3 ===== -->
+  <section class="view" id="v-onb1">
+    <div class="onb-wrap">
+      <div class="onb-topbar">
+        <div class="onb-dots"><span class="onb-dot active"></span><span class="onb-dot"></span><span class="onb-dot"></span></div>
+        <button type="button" class="onb-skip" onclick="obGo('authchoice')">Geç</button>
+      </div>
+      <div class="onb-center">
+        <div class="onb-logo"><img src="icon-512-v3.png" alt=""></div>
+        <div class="onb-title">Kendi hızında öğren.</div>
+        <div class="onb-sub">Günlük hayatına uyumlu, sürdürülebilir bir şekilde İngilizceni geliştir.</div>
+      </div>
+      <div class="onb-foot"><button type="button" class="btn" onclick="obGo('onb2')">İleri</button></div>
+    </div>
+  </section>
+  <section class="view" id="v-onb2">
+    <div class="onb-wrap">
+      <div class="onb-topbar">
+        <div class="onb-dots"><span class="onb-dot"></span><span class="onb-dot active"></span><span class="onb-dot"></span></div>
+        <button type="button" class="onb-skip" onclick="obGo('authchoice')">Geç</button>
+      </div>
+      <div class="onb-center">
+        <div class="onb-icon-row">
+          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span>
+          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span>
+          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></span>
+          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg></span>
+          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg></span>
+          <span class="onb-icon-chip"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></span>
+        </div>
+        <div class="onb-title" style="margin-top:6px;">6 beceriyi dengeli geliştir.</div>
+        <div class="onb-sub">Reading, Listening, Speaking, Grammar, Vocabulary, Writing.</div>
+      </div>
+      <div class="onb-foot"><button type="button" class="btn" onclick="obGo('onb3')">İleri</button></div>
+    </div>
+  </section>
+  <section class="view" id="v-onb3">
+    <div class="onb-wrap">
+      <div class="onb-topbar">
+        <div class="onb-dots"><span class="onb-dot"></span><span class="onb-dot"></span><span class="onb-dot active"></span></div>
+        <button type="button" class="onb-skip" onclick="obGo('authchoice')">Geç</button>
+      </div>
+      <div class="onb-center">
+        <div class="onb-logo"><img src="assets/mascot/pose-motivated.png" alt="" onerror="this.src='assets/mascot/hero-happy.png'"></div>
+        <div class="onb-title">İlerlemeni takip et.</div>
+        <div class="onb-sub">Küçük adımlar, büyük sonuçlar.</div>
+      </div>
+      <div class="onb-foot"><button type="button" class="btn" onclick="obGo('authchoice')">İleri</button></div>
+    </div>
+  </section>
+
+
+  <!-- ===== ONBOARDING: AUTH CHOICE ===== -->
+  <section class="view" id="v-authchoice">
+    <div class="onb-wrap" style="padding-left:8px;padding-right:8px;">
+      <button type="button" class="onb-back-btn" onclick="obGo('onb3')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-center" style="flex:0 0 auto;padding:20px 16px 10px;">
+        <div class="onb-title">English Journey</div>
+        <div class="onb-sub">Hesabınla devam et</div>
+      </div>
+      <div class="onb-foot" style="flex:1;justify-content:center;">
+        <button type="button" class="onb-social-btn" id="obEmailBtn"><span class="onb-social-left"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>E-posta ile devam et</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+        <button type="button" class="onb-social-btn" id="obGoogleBtn"><span class="onb-social-left"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Google ile devam et</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+        <button type="button" class="onb-social-btn" id="obAppleBtn"><span class="onb-social-left"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-moon"></use></svg>Apple ile devam et</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+        <p class="hint" id="obSocialNote" style="display:none;">Bu özellik yakında geliyor — şimdilik e-posta ile devam et.</p>
+        <p class="hint" style="margin-top:16px;">Zaten hesabın var mı? <a href="javascript:void(0)" id="obGoLoginLink" style="color:var(--purple-deep);font-weight:700;">Giriş yap</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: KAYIT OL ===== -->
+  <section class="view" id="v-register">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
+      <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Kayıt Ol</div>
+      <div class="onb-h">Hesabını oluştur</div>
+      <div class="onb-p">Verilerin bu cihazda saklanır, sunucuya gönderilmez.</div>
+      <label class="onb-label" for="obRegName">Ad</label>
+      <input class="f" id="obRegName" placeholder="Ad">
+      <label class="onb-label" for="obRegEmail">E-posta</label>
+      <input class="f" id="obRegEmail" type="email" placeholder="E-posta">
+      <label class="onb-label" for="obRegPass">Şifre</label>
+      <input class="f" id="obRegPass" type="password" placeholder="Şifre">
+      <p class="onb-err" id="obRegErr"></p>
+      <button type="button" class="btn" id="obRegSubmit">Kayıt Ol</button>
+      <p class="hint">Zaten hesabın var mı? <a href="javascript:void(0)" id="obRegGoLogin" style="color:var(--purple-deep);font-weight:700;">Giriş yap</a></p>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: GİRİŞ YAP ===== -->
+  <section class="view" id="v-login">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
+      <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Giriş Yap</div>
+      <div class="onb-h">Tekrar hoş geldin</div>
+      <label class="onb-label" for="obLoginEmail">E-posta</label>
+      <input class="f" id="obLoginEmail" type="email" placeholder="E-posta">
+      <label class="onb-label" for="obLoginPass">Şifre</label>
+      <input class="f" id="obLoginPass" type="password" placeholder="Şifre">
+      <div class="onb-chkrow">
+        <label class="onb-remember"><input type="checkbox" id="obLoginRemember" checked>Beni hatırla</label>
+        <a href="javascript:void(0)" id="obForgotLink">Şifremi unuttum?</a>
+      </div>
+      <p class="onb-err" id="obLoginErr"></p>
+      <button type="button" class="btn" id="obLoginSubmit">Giriş Yap</button>
+      <p class="hint">Hesabın yok mu? <a href="javascript:void(0)" id="obLoginGoReg" style="color:var(--purple-deep);font-weight:700;">Kayıt ol</a></p>
+    </div>
+  </section>
+
+
+  <!-- ===== ONBOARDING: SEVİYE ===== -->
+  <section class="view" id="v-oblevel">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
+      <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Adım 1/5</div>
+      <div class="onb-h">Şu anki İngilizce seviyen hangisi?</div>
+      <div class="onb-p">Daha sonra da değiştirebilirsin.</div>
+      <div id="obLevelOpts"></div>
+      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obLevelNext" disabled>Devam →</button></div>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: HEDEF ===== -->
+  <section class="view" id="v-obgoals">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
+      <button type="button" class="onb-back-btn" onclick="obGo('oblevel')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Adım 2/5</div>
+      <div class="onb-h">İngilizceyi hangi amaçla öğrenmek istiyorsun?</div>
+      <div class="onb-p">Birden çok seçebilirsin.</div>
+      <div id="obGoalOpts"></div>
+      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obGoalsNext">Devam →</button></div>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: GÜNLÜK SÜRE ===== -->
+  <section class="view" id="v-obtime">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
+      <button type="button" class="onb-back-btn" onclick="obGo('obgoals')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Adım 3/5</div>
+      <div class="onb-h">Günde ne kadar zaman ayırmak istersin?</div>
+      <div id="obTimeOpts"></div>
+      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obTimeNext" disabled>Devam →</button></div>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: ODAK BECERİLER ===== -->
+  <section class="view" id="v-obfocus">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;">
+      <button type="button" class="onb-back-btn" onclick="obGo('obtime')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Adım 4/5</div>
+      <div class="onb-h">Hangi becerilere daha fazla odaklanmak istersin?</div>
+      <div class="onb-p">İstediğin kadar seçebilirsin.</div>
+      <div id="obFocusOpts"></div>
+      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obFocusNext">Devam →</button></div>
+    </div>
+  </section>
+
+
+  <!-- ===== ONBOARDING: PODCAST LİNKİ ===== -->
+  <section class="view" id="v-obpod">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
+      <button type="button" class="onb-back-btn" onclick="obGo('obfocus')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Adım 5/5</div>
+      <div class="onb-h">Bağlantıları ayarla</div>
+      <div class="onb-p">Bu ikisi opsiyonel — istersen atlayıp sonra Ayarlar'dan da ekleyebilirsin.</div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <h2 style="font-size:13.5px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify (podcast dinlemek için)</h2>
+        <p class="mut" style="margin-bottom:8px;text-align:left;">Nasıl alınır: <b>developer.spotify.com/dashboard</b> → giriş yap → <b>Create app</b> → app'e bir isim ver → oluşan <b>Client ID</b>'yi kopyala. Ardından aynı app ayarlarında <b>Redirect URI</b> olarak aşağıdaki adresi ekle.</p>
+        <input class="f" id="obSpotifyClientId" placeholder="Spotify Client ID">
+        <input class="f" id="obSpotifyRedirectDisplay" readonly style="font-size:11px;color:var(--ink-soft);">
+        <p class="hint" style="text-align:left;margin-top:2px;">Bu adresi Spotify Dashboard'daki Redirect URI alanına yapıştır.</p>
+        <div style="margin-top:8px;"><a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener" class="btn sec sm" style="margin:0;">Spotify Dashboard'ı Aç</a></div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <h2 style="font-size:13.5px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Gemini (telaffuz analizi için)</h2>
+        <p class="mut" style="margin-bottom:8px;text-align:left;">Nasıl alınır: <b>aistudio.google.com/apikey</b> → Google hesabınla giriş yap → <b>Create API key</b> → anahtarı kopyala. Ücretsiz katman günlük pratik için fazlasıyla yeterli.</p>
+        <input class="f" id="obGeminiKey" type="password" placeholder="Gemini API Key">
+        <div style="margin-top:2px;"><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn sec sm" style="margin:0;">Google AI Studio'yu Aç</a></div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <h2 style="font-size:13.5px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-headphones"></use></svg>Bir podcast ekle (opsiyonel)</h2>
+        <p class="mut" style="margin-bottom:8px;text-align:left;">Dinleme pratiğin için Spotify'da bir podcast ara ve seç.</p>
+        <div class="searchbar">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+          <input id="obPodSearchInput" placeholder="ör. English learning podcast">
+        </div>
+        <div id="obPodSearchList" class="spotify-empty">Aramak için yaz ve Enter'a bas.</div>
+        <div id="obPodPicked" style="display:none;margin-top:10px;"></div>
+      </div>
+
+      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obPodNext">Devam →</button></div>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: MOONIE İLE TANIŞ ===== -->
+  <section class="view" id="v-obmeet">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;align-items:center;">
+      <div class="onb-center" style="flex:0 0 auto;gap:12px;padding-top:4px;">
+        <div class="hero-bubble" style="margin:0;"><div class="hero-bubble-text">Hi! I'm Moonie 👋 Let's practice together.</div></div>
+        <div class="mchip" style="width:92px;height:92px;"><img src="assets/mascot/hero-happy.png" alt=""></div>
+      </div>
+      <div class="card" id="obMeetQCard" style="text-align:left;width:100%;margin:10px 0 18px;">
+        <p style="margin:0;font-size:14px;color:var(--ink);" id="obMeetQText">What's your name and what do you like to do in your free time?</p>
+      </div>
+      <div id="obMeetAnswered" style="display:none;width:100%;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div class="onb-foot" style="padding:0;width:100%;flex:0 0 auto;align-items:center;text-align:center;">
+        <button type="button" class="mic-btn" id="obMeetMicBtn" aria-label="Konuşmak için dokun"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button>
+        <p class="hint" id="obMeetMicHint" style="margin-top:10px;">Konuşmak için dokun</p>
+        <button type="button" class="btn" id="obMeetContinue" style="display:none;margin-top:14px;width:100%;">Devam →</button>
+        <button type="button" class="onb-skip" id="obMeetSkip" style="margin-top:2px;">Şimdilik geç</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ONBOARDING: HAZIRSIN ===== -->
+  <section class="view" id="v-obready">
+    <div class="onb-wrap">
+      <div class="onb-center">
+        <div class="mchip" style="width:96px;height:96px;"><img src="assets/mascot/pose-goalachieved.png" alt="" onerror="this.src='assets/mascot/hero-happy.png'"></div>
+        <div class="onb-title">Her şey hazır! ✨</div>
+        <div class="onb-sub">Şimdi senin için kişiselleştirilmiş bir plan oluşturuyoruz.</div>
+        <div class="card" style="text-align:left;width:100%;margin-top:10px;">
+          <div id="obReadySummary" style="font-size:13px;line-height:2;color:var(--ink);"></div>
+        </div>
+      </div>
+      <div class="onb-foot"><button type="button" class="btn" id="obFinishBtn">Bugünkü planımı oluştur</button></div>
+    </div>
+  </section>
+
   <!-- ===== BUGÜN ===== -->
-  <section class="view active" id="v-today">
+  <section class="view" id="v-today">
     <div class="topbar">
       <div>
         <div class="hero-greet"><span id="greetText">Merhaba</span> <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></div>
@@ -673,22 +995,26 @@
       <button class="bell-btn" aria-label="Bildirimler"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg></button>
     </div>
 
-    <h1 class="home-q">Bugün ne öğrenelim?</h1>
     <div class="hero">
       <div class="hero-bubble"><div class="hero-bubble-text" id="heroMsg">Bugünü harika bir öğrenme günü yapalım!</div></div>
       <img class="hero-img" src="assets/mascot/hero-happy.png" alt="Moonie kitap okuyor">
     </div>
 
-    <div class="card">
-      <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün Görevi</h2>
-        <a href="javascript:void(0)" class="mission-edit" id="missionEditLink">Düzenle</a>
+    <div class="card goalcard">
+      <div>
+        <h2 style="margin-bottom:6px;"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün Hedefi</h2>
+        <div class="goal-num" id="missionDone">0/6</div>
       </div>
-      <div class="mission-row">
-        <div class="mission-item"><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg><div class="n" id="missionDone">0/0</div><div class="l">Görev</div></div>
-        <div class="mission-item"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg><div class="n" id="missionDue">0</div><div class="l">Kart</div></div>
-        <div class="mission-item"><svg class="icon" aria-hidden="true"><use href="#i-flame"></use></svg><div class="n" id="streak">0</div><div class="l">Seri</div></div>
-      </div>
+      <div class="goal-dots" id="goalDots"></div>
+    </div>
+
+    <div class="quickgrid">
+      <button type="button" class="quick-item" onclick="go('reading')"><span class="hub-ic hub-purple"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span><span class="qi-t">Reading</span></button>
+      <button type="button" class="quick-item" onclick="go('listening')"><span class="hub-ic hub-teal"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span><span class="qi-t">Listening</span></button>
+      <button type="button" class="quick-item" onclick="go('speaking')"><span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></span><span class="qi-t">Speaking</span></button>
+      <button type="button" class="quick-item" onclick="go('grammar')"><span class="hub-ic hub-teal"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg></span><span class="qi-t">Grammar</span></button>
+      <button type="button" class="quick-item" onclick="go('vocab')"><span class="hub-ic hub-rust"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span><span class="qi-t">Vocabulary</span></button>
+      <button type="button" class="quick-item" onclick="go('writing')"><span class="hub-ic hub-blue"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></span><span class="qi-t">Writing</span></button>
     </div>
 
     <div class="card">
@@ -697,7 +1023,7 @@
     </div>
 
     <div class="card" id="todayPlan">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün hedefi</h2>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün Adımları</h2>
       <div id="checklist"></div>
       <button class="btn" id="completeBtn">Bugünü tamamla</button>
       <div class="donewrap" id="doneWrap" style="display:none;">
@@ -846,7 +1172,7 @@
           <div class="hub-goal-row"><span>İlerleme</span><span id="hubWritingGoalTxt">0/10</span></div>
           <div class="hub-goal-track"><div class="hub-goal-fill" id="hubWritingGoalFill" style="width:0%;background:var(--pink);"></div></div>
         </div>
-        <div class="hub-modes"><span class="hub-mode">Günlük Konu</span><span class="hub-mode">Claude Geri Bildirimi</span></div>
+        <div class="hub-modes"><span class="hub-mode">Günlük Konu</span><span class="hub-mode">Moonie Geri Bildirimi</span></div>
         <button type="button" class="btn pink hub-cta" onclick="go('writing')">Yazmaya Başla</button>
       </div>
       <button class="hubcard wide" onclick="go('achievements')">
@@ -981,11 +1307,12 @@
       <button class="back" onclick="go('reading')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1 id="libReadTitle" class="tight">—</h1>
     </div>
-    <div class="card">
-      <p class="mut" id="libReadSub" style="margin-bottom:6px;">More to Read I</p>
-      <p class="hint" style="margin-top:0;margin-bottom:12px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
-      <div class="read-body" id="libReadBody"></div>
+    <div class="row" style="align-items:center;gap:10px;margin-bottom:12px;">
+      <div class="read-progress-bar" style="flex:1;margin-bottom:0;"><div class="fill" id="libReadProgressFill"></div></div>
+      <span class="mut" id="libReadSub" style="font-weight:700;font-size:12px;white-space:nowrap;">More to Read I</span>
     </div>
+    <p class="hint" style="margin:0 2px 12px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
+    <div class="read-body paper-card" id="libReadBody" style="margin-bottom:16px;"></div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Sesli oku, telaffuzunu kontrol ettir</h2>
       <p class="mut" style="margin-bottom:10px;">Önce Moonie'nin okumasını dinle, sonra sen yüksek sesle oku — Moonie seni dinleyip telaffuzunu değerlendirsin.</p>
@@ -1005,6 +1332,11 @@
         <textarea class="f note-ta" id="libReadNoteTa" rows="3" placeholder="Bu metinle ilgili aklında kalanları, öğrendiğin ifadeleri buraya yaz..."></textarea>
         <button type="button" class="btn sec sm note-save" id="libReadNoteSave">Notu Kaydet</button>
       </details>
+    </div>
+    <div class="card" id="libReadQuizCard">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Anlama Testi</h2>
+      <p class="mut" style="margin-bottom:10px;">Moonie bu metinden 5 soruluk bir anlama testi hazırlasın, kendini test et.</p>
+      <button type="button" class="btn gold" id="libReadQuizBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Testi Başlat</button>
     </div>
     <div class="card">
       <button class="btn" id="libReadCompleteBtn"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu metni tamamladım</button>
@@ -1072,7 +1404,7 @@
       <button type="button" class="btn sec" id="podDetailTranscriptSave" style="margin-top:8px;">Kaydet</button>
       <div id="podDetailTranscriptViewWrap" style="display:none;margin-top:16px;">
         <p class="hint" style="margin-top:0;margin-bottom:10px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
-        <div class="read-body" id="podDetailBody"></div>
+        <div class="read-body paper-card" id="podDetailBody"></div>
       </div>
     </div>
     <div class="card" id="podDetailDictCard" style="display:none;">
@@ -1106,6 +1438,41 @@
     </div>
     <div class="card">
       <button type="button" class="btn sec" id="podDetailDeleteBtn" style="color:var(--rust);">Bu podcasti sil</button>
+    </div>
+  </section>
+
+  <!-- ===== ANLAMA TESTİ (QUIZ) ===== -->
+  <section class="view" id="v-quiz">
+    <div class="page-head">
+      <button class="back" id="quizBackBtn" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1 class="tight">Anlama Testi</h1>
+    </div>
+    <div class="card" id="quizLoadingCard">
+      <div style="text-align:center;padding:10px 0;">
+        <div class="mchip" style="margin:0 auto 12px;"><img src="assets/mascot/pose-listening.png" alt=""></div>
+        <p class="mut">Moonie metni okuyup senin için sorular hazırlıyor...</p>
+      </div>
+    </div>
+    <div class="card" id="quizErrorCard" style="display:none;">
+      <div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert"></use></svg>Sorular hazırlanamadı</div>
+      <p class="mut" id="quizErrorMsg" style="margin:8px 0 12px;"></p>
+      <button type="button" class="btn sec" id="quizRetryBtn">Tekrar Dene</button>
+    </div>
+    <div class="card" id="quizQCard" style="display:none;">
+      <div class="row" style="align-items:center;margin-bottom:10px;">
+        <span class="mut" id="quizProgress" style="font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-size:11px;color:var(--purple-deep);">Soru 1/5</span>
+      </div>
+      <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBarFill"></div></div>
+      <div class="gx-q" id="quizQText" style="font-size:15.5px;margin:14px 0 12px;"></div>
+      <div class="gx-opts" id="quizOpts"></div>
+      <div id="quizExplain" class="gemini-result" style="display:none;margin-top:12px;"></div>
+      <button type="button" class="btn" id="quizNextBtn" style="margin-top:14px;display:none;">Sonraki Soru</button>
+    </div>
+    <div class="card" id="quizResultCard" style="display:none;text-align:center;">
+      <div class="mchip" id="quizResultMascot" style="width:88px;height:88px;margin:0 auto 12px;"><img src="assets/mascot/pose-goodjob.png" alt=""></div>
+      <div style="font-family:var(--font-display);font-weight:800;font-size:19px;color:var(--ink);margin-bottom:4px;" id="quizResultTitle">Harika!</div>
+      <p class="mut" id="quizResultSub" style="margin-bottom:16px;"></p>
+      <button type="button" class="btn" id="quizFinishBtn">Bitir</button>
     </div>
   </section>
 
@@ -1172,11 +1539,13 @@
         <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>Bugünün konusu</h2>
         <div class="mchip sm"><img src="assets/mascot/extra-pencil.png" alt=""></div>
       </div>
-      <p class="rule-box" id="writingPrompt" style="margin-top:12px;">—</p>
+      <p class="rule-box paper-card" id="writingPrompt" style="margin-top:12px;">—</p>
       <textarea class="f" id="writingText" rows="5" placeholder="En az 3-4 cümle yaz..."></textarea>
+      <p class="mut" id="writingWordCount" style="text-align:right;margin:-4px 0 6px;">0/80-100 kelime</p>
       <button class="btn" id="writingSaveBtn">Kaydet</button>
-      <a class="btn deep" id="writingFeedbackBtn" href="https://claude.ai/new" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude'dan Geri Bildirim Al</a>
-      <p class="hint">Yazdığın metin ve konu panoya kopyalanır, Claude'da yapıştırıp gönder — düzeltme ve daha doğal bir alternatif önerir.</p>
+      <button type="button" class="btn deep" id="writingFeedbackBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'den Geri Bildirim Al</button>
+      <p class="hint">Moonie yazdığını doğrudan kontrol eder — dil bilgisi/kelime hatalarını gösterir ve daha doğal bir alternatif önerir.</p>
+      <div class="gemini-result" id="writingGeminiResult" style="display:none;"></div>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Yazıların <span class="mut" id="writingCount"></span></h2>
@@ -1187,7 +1556,7 @@
   <!-- ===== NOTLARIM ===== -->
   <section class="view" id="v-notes">
     <div class="page-head">
-      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <button class="back" onclick="go('profile')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Notlarım</h1>
     </div>
     <p class="hint" style="margin:0 2px 14px;text-align:left;">Konuşma, Grammar Path, Okuma, Yazma ve Dinleme'de kaydettiğin Claude geri bildirimlerinin ve notlarının tümü burada.</p>
@@ -1197,7 +1566,7 @@
   <!-- ===== ROZETLER ===== -->
   <section class="view" id="v-achievements">
     <div class="page-head">
-      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <button class="back" onclick="go('profile')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Rozetler</h1>
     </div>
 
@@ -1273,19 +1642,48 @@
     <div class="page-head">
       <h1>Profil</h1>
     </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-person"></use></svg>İsim</h2>
-      <input class="f" id="userNameInput" placeholder="Adın">
-      <button class="btn sec" id="userNameSave">Kaydet</button>
-    </div>
-    <button type="button" class="card continue-card" onclick="go('settings')">
-      <span class="hub-ic hub-purple" style="width:44px;height:44px;"><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg></span>
-      <div>
-        <div class="cc-t">Ayarlar</div>
-        <div class="cc-s">Spotify ve Claude bağlantıları</div>
+    <div class="card" style="display:flex;align-items:center;gap:14px;">
+      <div class="mchip" style="width:56px;height:56px;border-radius:50%;"><img src="assets/mascot/hero-happy.png" alt="" onerror="this.style.display='none'"></div>
+      <div style="flex:1;min-width:0;">
+        <input class="f" id="userNameInput" placeholder="Adın" style="margin-bottom:6px;">
+        <div class="mut" id="profileLevelBadge">–</div>
       </div>
-      <span class="cc-arrow"><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
-    </button>
+    </div>
+    <button type="button" class="btn sec sm" id="userNameSave" style="margin:0 0 13px;width:100%;">Kaydet</button>
+
+    <div class="card" id="obGoalsSummaryCard" style="display:none;">
+      <h2 style="font-size:13px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-target"></use></svg>Hedeflerim</h2>
+      <div id="profileGoalsSummary" style="font-size:12.5px;line-height:1.9;color:var(--ink-2);"></div>
+    </div>
+
+    <div class="card" style="padding:6px 8px;">
+      <button type="button" class="continue-row" onclick="go('progress')">
+        <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">İlerleme</span><span class="cr-s">İstatistikler, seri, aktivite haritası</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
+      <button type="button" class="continue-row" onclick="go('journal')">
+        <span class="cr-ic" style="background:var(--gold-tint);color:var(--gold);"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">Günlük</span><span class="cr-s">Ruh halini ve notlarını kaydet</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
+      <button type="button" class="continue-row" onclick="go('achievements')">
+        <span class="cr-ic" style="background:var(--teal-tint);color:var(--teal);"><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">Rozetler</span><span class="cr-s">Kazandığın rozetler ve hedefler</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
+      <button type="button" class="continue-row" onclick="go('notes')">
+        <span class="cr-ic" style="background:var(--blue-tint);color:var(--blue);"><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">Notlarım</span><span class="cr-s">Tüm geri bildirim ve notların</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
+      <button type="button" class="continue-row" onclick="go('settings')">
+        <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">Ayarlar</span><span class="cr-s">Spotify, Gemini, Claude bağlantıları</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
+    </div>
+
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-sun"></use></svg>Görünüm</h2>
       <p class="mut" id="profileSummary" style="margin-bottom:12px;">–</p>
@@ -1373,11 +1771,11 @@
 </div>
 
 <nav>
-  <button class="active" data-v="today"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg></span>Bugün</button>
-  <button data-v="progress"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg></span>İlerleme</button>
+  <button class="active" data-v="today" aria-label="Bugün"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg></span>Bugün</button>
+  <button data-v="progress" aria-label="İlerleme"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg></span>İlerleme</button>
   <button class="fab" data-v="learn" aria-label="Çalış"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></button>
-  <button data-v="journal"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span>Günlük</button>
-  <button data-v="profile"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-person"></use></svg></span>Profil</button>
+  <button data-v="journal" aria-label="Günlük"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span>Günlük</button>
+  <button data-v="profile" aria-label="Profil"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-person"></use></svg></span>Profil</button>
 </nav>
 
 <div class="word-backdrop" id="onboardBackdrop"></div>
@@ -1475,7 +1873,7 @@ function applyTheme(mode){
     if(paper) meta.setAttribute("content",paper);
   }
 }
-applyTheme(S.settings.theme||"light");
+applyTheme(S.settings.theme||"dark");
 try{
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){
     if((S.settings.theme||"light")==="system") applyTheme("system");
@@ -1496,7 +1894,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"learn",vocab:"learn",reading:"learn",libread:"learn",listening:"learn",podcastdetail:"learn",speaking:"learn",grammar:"learn",writing:"learn",achievements:"learn",notes:"learn",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",reading:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -1577,8 +1975,12 @@ function renderToday(){
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
   var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
   document.getElementById("missionDone").textContent=doneN+"/"+STEPS.length;
-  document.getElementById("missionDue").textContent=dueWords().length;
-  document.getElementById("streak").textContent=S.streak;
+  var dotsWrap=document.getElementById("goalDots"); dotsWrap.innerHTML="";
+  STEPS.forEach(function(_,di){
+    var dot=document.createElement("span");
+    dot.className="goal-dot"+(S.checks[di]?" done":"");
+    dotsWrap.appendChild(dot);
+  });
   var btn=document.getElementById("completeBtn");
   var checkIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>';
   if(doneToday){ btn.innerHTML=checkIcon+"Bugün tamamlandı — Aferin!"; btn.disabled=true; }
@@ -1593,9 +1995,6 @@ function renderToday(){
   save();
   renderTasks();
 }
-document.getElementById("missionEditLink").addEventListener("click",function(){
-  document.getElementById("todayPlan").scrollIntoView({behavior:"smooth",block:"start"});
-});
 document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
   var y=new Date(); y.setDate(y.getDate()-1);
@@ -1647,19 +2046,23 @@ function renderVocab(){
   else{
     if(studyIdx===null||studyIdx>=due.length) studyIdx=0;
     var w=due[studyIdx];
+    var progLabel='<p class="mut" style="text-align:center;margin-bottom:8px;font-weight:700;">'+(studyIdx+1)+"/"+due.length+"</p>";
     if(!flipped){
-      sa.innerHTML='<div class="flash"><div class="q">Türkçesi — İngilizcesini hatırla</div><div class="big">'+esc(w.tr)+'</div></div>'+
+      sa.innerHTML=progLabel+'<div class="flash paper-card"><div class="q">Türkçesi — İngilizcesini hatırla</div><div class="big">'+esc(w.tr)+'</div></div>'+
         '<button class="btn sec" id="flipBtn" style="display:flex;align-items:center;justify-content:center;gap:7px;">Çevir <svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg></button>';
       document.getElementById("flipBtn").addEventListener("click",function(){ flipped=true; renderVocab(); });
     } else {
-      sa.innerHTML='<div class="flash"><div class="big">'+esc(w.en)+'</div>'+
+      sa.innerHTML=progLabel+'<div class="flash paper-card"><div class="big">'+esc(w.en)+'</div>'+
+        '<button type="button" class="flash-speak" id="flashSpeakBtn" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
         '<div class="flash-sec"><span class="flash-lbl">Anlamı</span><div class="flash-val">'+esc(w.tr)+'</div></div>'+
         (w.ex?'<div class="flash-sec"><span class="flash-lbl">Örnek</span><div class="flash-val ex">"'+esc(w.ex)+'"</div></div>':'')+'</div>'+
-        '<div class="grade">'+
-        '<button class="g-again" data-g="0"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg>Tekrar</button>'+
-        '<button class="g-good" data-g="1"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bildim</button>'+
-        '<button class="g-easy" data-g="2"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Kolay</button></div>';
-      sa.querySelectorAll(".grade button").forEach(function(b){
+        '<div class="grade-v2">'+
+        '<button data-g="1"><span class="gv-circle gv-green"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><span class="gv-label">Biliyorum</span></button>'+
+        '<button data-g="2"><span class="gv-circle gv-purple"><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></span><span class="gv-label">Kolay</span></button>'+
+        '<button data-g="0"><span class="gv-circle gv-rust"><svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg></span><span class="gv-label">Bilmiyorum</span></button>'+
+        '</div>';
+      document.getElementById("flashSpeakBtn").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
+      sa.querySelectorAll(".grade-v2 button").forEach(function(b){
         b.addEventListener("click",function(){ gradeCard(w,parseInt(b.dataset.g)); });
       });
     }
@@ -1866,6 +2269,7 @@ function renderLibRead(){
   var r=READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
   document.getElementById("libReadTitle").textContent=r.title;
   document.getElementById("libReadSub").textContent="More to Read I · "+r.id+"/"+READING_LIBRARY.length;
+  document.getElementById("libReadProgressFill").style.width=Math.round(r.id/READING_LIBRARY.length*100)+"%";
   var body=document.getElementById("libReadBody");
   body.innerHTML=r.paras.map(function(p){
     if(p.indexOf("##")===0){ return '<span class="rsub">'+esc(p.slice(2))+'</span>'; }
@@ -2360,6 +2764,9 @@ document.getElementById("spotifyConnectBtn").addEventListener("click",function()
 document.getElementById("spotifySearchInput").addEventListener("keydown",function(e){
   if(e.key==="Enter") spotifySearch(e.target.value.trim());
 });
+document.getElementById("obPodSearchInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter"){ obPodSearch(this.value.trim()); }
+});
 
 /* ---------- PODCAST DETAY: transkript + dikte + Moonie anlama soruları + senkron takip ---------- */
 var podDictState={sentences:[],idx:0};
@@ -2553,30 +2960,8 @@ document.getElementById("podDictNextBtn").addEventListener("click",function(){
 });
 document.getElementById("podQuizBtn").addEventListener("click",function(){
   var p=currentPodcast(); if(!p) return;
-  if(!(S.settings.geminiApiKey||"").trim()){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
   var text=(p.transcript||"").trim(); if(!text) return;
-  var btn=this, orig=btn.innerHTML;
-  btn.disabled=true; btn.innerHTML=MOONIE_LISTEN_CHIP+"Moonie soruları hazırlıyor...";
-  var resultEl=document.getElementById("podQuizResult");
-  resultEl.style.display="none";
-  var prompt="Aşağıdaki İngilizce transkripti oku. Öğrencinin dinleme/okuma anlamasını test etmek için İngilizce 4 kısa anlama sorusu hazırla (karışık zorlukta). "+
-    "Her sorunun altına YENİ SATIRDA \"Cevap: \" ile başlayan kısa doğru cevabı Türkçe olarak ekle. Sadece soru+cevap listesi ver, başka açıklama ekleme.\n\nTranskript:\n"+text;
-  callGeminiText([{role:"user",parts:[{text:prompt}]}]).then(function(qtext){
-    btn.disabled=false; btn.innerHTML=orig;
-    resultEl.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Moonie'nin Soruları</div>"+
-      '<div id="podQuizText">'+renderQuizText(qtext)+"</div>"+
-      '<button type="button" class="btn sec sm" id="podQuizToggle" style="margin-top:10px;">Cevapları Göster</button>';
-    resultEl.style.display="block";
-    document.getElementById("podQuizToggle").addEventListener("click",function(){
-      var showing=this.textContent==="Cevapları Gizle";
-      document.querySelectorAll("#podQuizText .quiz-answer").forEach(function(s){ s.style.display=showing?"none":"inline"; });
-      this.textContent=showing?"Cevapları Göster":"Cevapları Gizle";
-    });
-  }).catch(function(err){
-    btn.disabled=false; btn.innerHTML=orig;
-    resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert"></use></svg>Hata</div>'+esc(err.message||String(err));
-    resultEl.style.display="block";
-  });
+  startQuiz(text,"podcastdetail");
 });
 document.getElementById("podDetailTranscriptSave").addEventListener("click",function(){
   var p=currentPodcast(); if(!p) return;
@@ -2961,27 +3346,56 @@ function buildWritingFeedbackPrompt(promptText,userText){
     "Sonunda, aynı fikri daha doğal/akıcı İngilizce ile nasıl ifade edebileceğine dair alternatif bir versiyon öner.\n\n"+
     "Konu: "+promptText+"\n\nYazdığım metin:\n"+userText;
 }
+function updateWritingWordCount(){
+  var el=document.getElementById("writingWordCount");
+  var text=document.getElementById("writingText").value.trim();
+  var n=text?text.split(/\s+/).filter(Boolean).length:0;
+  el.textContent=n+"/80-100 kelime";
+  el.style.color=(n>=80&&n<=100)?"var(--green)":"var(--ink-soft)";
+}
 function renderWriting(){
   var promptText=todaysWritingPrompt();
   document.getElementById("writingPrompt").textContent=promptText;
   document.getElementById("writingText").value="";
+  updateWritingWordCount();
+  var wt=document.getElementById("writingText");
+  var freshWt=wt.cloneNode(true);
+  wt.parentNode.replaceChild(freshWt,wt);
+  freshWt.addEventListener("input",updateWritingWordCount);
   var feedBtn=document.getElementById("writingFeedbackBtn");
   var freshBtn=feedBtn.cloneNode(true);
   feedBtn.parentNode.replaceChild(freshBtn,feedBtn);
-  var projectUrl=(S.settings.claudeProjectUrl||"").trim();
-  freshBtn.href=projectUrl||"https://claude.ai/new";
-  freshBtn.addEventListener("click",function(e){
+  document.getElementById("writingGeminiResult").style.display="none";
+  freshBtn.addEventListener("click",function(){
     var text=document.getElementById("writingText").value.trim();
-    if(!text){ e.preventDefault(); alert("Önce birkaç cümle yaz."); return; }
-    var prompt=buildWritingFeedbackPrompt(promptText,text);
+    if(!text){ alert("Önce birkaç cümle yaz."); return; }
+    if(!(S.settings.geminiApiKey||"").trim()){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
+    var resultEl=document.getElementById("writingGeminiResult");
     var original=freshBtn.innerHTML;
-    // Not: href zaten doğru hedefe ayarlı — panoya kopyalama, linkin normal
-    // <a> navigasyonunu engellemeden arka planda yapılıyor.
-    navigator.clipboard.writeText(prompt).then(function(){
-      freshBtn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Kopyalandı — Claude\'da yapıştır!';
-      setTimeout(function(){ if(freshBtn) freshBtn.innerHTML=original; },3000);
-    }).catch(function(){
-      window.prompt("Panoya otomatik kopyalanamadı — bu metni seç, kopyala ve Claude'a yapıştır:",prompt);
+    freshBtn.disabled=true; freshBtn.innerHTML=MOONIE_LISTEN_CHIP+"Moonie kontrol ediyor...";
+    resultEl.style.display="none";
+    var prompt=buildWritingFeedbackPrompt(promptText,text);
+    callGeminiText([{role:"user",parts:[{text:prompt}]}]).then(function(feedback){
+      freshBtn.disabled=false; freshBtn.innerHTML=original;
+      resultEl.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Moonie\'nin Geri Bildirimi</div>"+esc(feedback)+
+        '<button type="button" class="btn sec sm gr-save-btn" style="margin-top:12px;">Bu Yazıya Kaydet</button>';
+      resultEl.style.display="block";
+      resultEl.querySelector(".gr-save-btn").addEventListener("click",function(){
+        var btn=this;
+        var existing=S.writings.filter(function(w){ return w.prompt===promptText && w.text===text; }).pop();
+        if(!existing){
+          existing={date:isoDate(new Date()),prompt:promptText,text:text};
+          S.writings.push(existing);
+        }
+        existing.feedback=feedback;
+        save();
+        renderWritingList();
+        btn.textContent="Kaydedildi"; btn.disabled=true;
+      });
+    }).catch(function(err){
+      freshBtn.disabled=false; freshBtn.innerHTML=original;
+      resultEl.innerHTML='<div class="gr-head"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-alert"></use></svg>Hata</div>'+esc(err.message||String(err));
+      resultEl.style.display="block";
     });
   });
   document.getElementById("writingSaveBtn").onclick=function(){
@@ -2992,7 +3406,7 @@ function renderWriting(){
     save();
     document.getElementById("writingText").value="";
     renderWritingList();
-    alert("Kaydedildi! İstersen şimdi Claude'dan geri bildirim al.");
+    alert("Kaydedildi! İstersen şimdi Moonie'den geri bildirim al.");
   };
   renderWritingList();
 }
@@ -3010,8 +3424,8 @@ function renderWritingList(){
       '<div class="mut" style="margin-bottom:4px;">'+esc(w.prompt)+'</div>'+
       '<p class="read-text">'+esc(w.text)+'</p>'+
       '<details class="note-details"'+(w.feedback?" open":"")+'>'+
-        '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirimi'+(w.feedback?"":" ekle")+'</summary>'+
-        '<textarea class="f note-ta" rows="3" placeholder="Claude\'dan aldığın geri bildirimi buraya yapıştır...">'+esc(w.feedback||"")+'</textarea>'+
+        '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Geri bildirim'+(w.feedback?"":" ekle")+'</summary>'+
+        '<textarea class="f note-ta" rows="3" placeholder="Moonie\'nin geri bildirimi burada görünür, istersen elle de düzenleyebilirsin...">'+esc(w.feedback||"")+'</textarea>'+
         '<button type="button" class="btn sec sm note-save">Notu Kaydet</button>'+
       '</details>';
     row.querySelector(".del").addEventListener("click",function(){
@@ -3093,6 +3507,125 @@ function callGeminiText(contents){
     return text;
   });
 }
+/* ---------- ANLAMA TESTİ (Reading/Listening comprehension quiz, Gemini JSON) ---------- */
+var quizState={questions:[],idx:0,score:0,returnView:"libread",sourceText:""};
+function callGeminiJSON(prompt){
+  var apiKey=(S.settings.geminiApiKey||"").trim();
+  return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+GEMINI_MODEL+":generateContent?key="+encodeURIComponent(apiKey),{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:{responseMimeType:"application/json"}})
+  }).then(function(r){ return r.json(); }).then(function(data){
+    var text=data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+      data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+    if(!text) throw new Error((data&&data.error&&data.error.message)||"Moonie şu an yanıt veremedi.");
+    var cleaned=text.trim().replace(/^```json\s*/i,"").replace(/^```\s*/,"").replace(/```\s*$/,"");
+    var parsed;
+    try{ parsed=JSON.parse(cleaned); }
+    catch(e){
+      var m=cleaned.match(/\[[\s\S]*\]/);
+      if(m){ try{ parsed=JSON.parse(m[0]); }catch(e2){ throw new Error("Sorular okunamadı, tekrar dene."); } }
+      else throw new Error("Sorular okunamadı, tekrar dene.");
+    }
+    return parsed;
+  });
+}
+function buildQuizPrompt(text){
+  return "Aşağıdaki İngilizce metni/transkripti oku. Öğrencinin okuma/dinleme anlamasını test etmek için tam olarak 5 tane çoktan seçmeli anlama sorusu hazırla. "+
+    "Her soru İngilizce olsun, 4 seçenekli olsun, sadece bir tanesi doğru olsun, karışık zorlukta olsun (kelime, ana fikir, detay, çıkarım). "+
+    "SADECE şu JSON formatında bir dizi döndür, başka hiçbir açıklama, markdown ya da metin ekleme:\n"+
+    '[{"q":"soru metni (İngilizce)","options":["A","B","C","D"],"correct":0,"explain":"doğru cevabın neden doğru olduğuna dair kısa Türkçe açıklama"}]\n\n'+
+    "correct alanı doğru seçeneğin dizideki index'i olmalı (0-3, 0'dan başlar). Metin:\n\n"+text;
+}
+function startQuiz(text,returnView){
+  if(!(S.settings.geminiApiKey||"").trim()){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
+  if(!text||!text.trim()){ alert("Önce metin/transkript eklemelisin."); return; }
+  quizState={questions:[],idx:0,score:0,returnView:returnView,sourceText:text};
+  NAVMAP.quiz=NAVMAP[returnView]||returnView;
+  go("quiz");
+  loadQuizQuestions();
+}
+function loadQuizQuestions(){
+  document.getElementById("quizLoadingCard").style.display="block";
+  document.getElementById("quizErrorCard").style.display="none";
+  document.getElementById("quizQCard").style.display="none";
+  document.getElementById("quizResultCard").style.display="none";
+  callGeminiJSON(buildQuizPrompt(quizState.sourceText)).then(function(qs){
+    if(!Array.isArray(qs)||!qs.length) throw new Error("Sorular okunamadı, tekrar dene.");
+    quizState.questions=qs.filter(function(x){ return x&&x.q&&Array.isArray(x.options)&&x.options.length>=2; }).slice(0,5);
+    if(!quizState.questions.length) throw new Error("Sorular okunamadı, tekrar dene.");
+    quizState.idx=0; quizState.score=0;
+    document.getElementById("quizLoadingCard").style.display="none";
+    renderQuizQuestion();
+  }).catch(function(err){
+    document.getElementById("quizLoadingCard").style.display="none";
+    document.getElementById("quizErrorCard").style.display="block";
+    document.getElementById("quizErrorMsg").textContent=err.message||String(err);
+  });
+}
+function renderQuizQuestion(){
+  var total=quizState.questions.length;
+  var i=quizState.idx;
+  var q=quizState.questions[i];
+  document.getElementById("quizQCard").style.display="block";
+  document.getElementById("quizResultCard").style.display="none";
+  document.getElementById("quizProgress").textContent="Soru "+(i+1)+"/"+total;
+  document.getElementById("quizBarFill").style.width=Math.round((i/total)*100)+"%";
+  document.getElementById("quizQText").textContent=q.q;
+  var optsWrap=document.getElementById("quizOpts");
+  optsWrap.innerHTML=q.options.map(function(o,oi){
+    return '<button type="button" class="gx-opt" data-opt="'+oi+'">'+esc(o)+'</button>';
+  }).join("");
+  optsWrap.dataset.answered="";
+  document.getElementById("quizExplain").style.display="none";
+  document.getElementById("quizNextBtn").style.display="none";
+  document.getElementById("quizNextBtn").textContent=(i===total-1)?"Sonuçları Gör":"Sonraki Soru";
+  optsWrap.querySelectorAll(".gx-opt").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      if(optsWrap.dataset.answered) return;
+      optsWrap.dataset.answered="1";
+      var oi=parseInt(btn.dataset.opt,10);
+      var correct=typeof q.correct==="number"?q.correct:0;
+      optsWrap.querySelectorAll(".gx-opt").forEach(function(b){
+        b.disabled=true;
+        var boi=parseInt(b.dataset.opt,10);
+        if(boi===correct) b.classList.add("correct");
+        else if(boi===oi) b.classList.add("wrong");
+      });
+      if(oi===correct) quizState.score++;
+      if(q.explain){
+        var ex=document.getElementById("quizExplain");
+        ex.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Açıklama</div>"+esc(q.explain);
+        ex.style.display="block";
+      }
+      document.getElementById("quizNextBtn").style.display="block";
+    });
+  });
+}
+function renderQuizResult(){
+  document.getElementById("quizQCard").style.display="none";
+  document.getElementById("quizBarFill").style.width="100%";
+  var total=quizState.questions.length, score=quizState.score;
+  var pct=total?Math.round(score/total*100):0;
+  var pose="pose-goodjob.png", title="Harika iş!";
+  if(pct<40){ pose="pose-motivated.png"; title="Fena değil, devam!"; }
+  else if(pct<80){ pose="pose-proud.png"; title="Güzel gidiyorsun!"; }
+  else { pose="pose-goalachieved.png"; title="Mükemmel!"; }
+  document.getElementById("quizResultMascot").innerHTML='<img src="assets/mascot/'+pose+'" alt="">';
+  document.getElementById("quizResultTitle").textContent=title;
+  document.getElementById("quizResultSub").textContent=score+"/"+total+" doğru cevapladın.";
+  document.getElementById("quizResultCard").style.display="block";
+}
+document.getElementById("quizNextBtn").addEventListener("click",function(){
+  if(quizState.idx<quizState.questions.length-1){ quizState.idx++; renderQuizQuestion(); }
+  else{ renderQuizResult(); }
+});
+document.getElementById("quizRetryBtn").addEventListener("click",function(){ loadQuizQuestions(); });
+document.getElementById("quizBackBtn").addEventListener("click",function(){ go(quizState.returnView); });
+document.getElementById("quizFinishBtn").addEventListener("click",function(){ go(quizState.returnView); });
+document.getElementById("libReadQuizBtn").addEventListener("click",function(){
+  var r=currentLibReadPassage(); if(!r) return;
+  startQuiz(libReadFullText(r),"libread");
+});
 function appendConvoBubble(role,text,note){
   var log=document.getElementById("speakConvoLog");
   var b=document.createElement("div");
@@ -3122,35 +3655,57 @@ function wireSpeakConvo(level,unit,sel){
   var controls=document.getElementById("speakConvoControls");
   var intro=document.getElementById("speakConvoIntro");
   var log=document.getElementById("speakConvoLog");
-  var micIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>';
+  var timerEl=document.getElementById("speakConvoTimer");
   var SRClass=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var timerInterval=null, timerStart=0;
+
+  function fmtMMSS(ms){
+    var s=Math.floor(ms/1000); var mm=Math.floor(s/60), ss=s%60;
+    return (mm<10?"0":"")+mm+":"+(ss<10?"0":"")+ss;
+  }
+  function startTimer(){
+    timerStart=Date.now();
+    timerEl.textContent="00:00";
+    timerInterval=setInterval(function(){ timerEl.textContent=fmtMMSS(Date.now()-timerStart); },500);
+  }
+  function stopTimer(label){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+    timerEl.textContent=label||"Konuşmak için dokun";
+  }
 
   function talkTurn(){
     if(!SRClass) return;
     var rec=new SRClass(); rec.lang="en-US"; rec.interimResults=false; rec.maxAlternatives=1;
     speakConvo.recognizer=rec; speakConvo.recognizing=true;
-    talkBtn.innerHTML=micIcon+"Dinliyorum...";
+    talkBtn.classList.add("recording");
+    startTimer();
     rec.onresult=function(e){
       var said=e.results[0][0].transcript;
       appendConvoBubble("user",said,"");
       speakConvo.contents.push({role:"user",parts:[{text:said}]});
       appendConvoLoading("Moonie düşünüyor...");
-      talkBtn.disabled=true; talkBtn.innerHTML=micIcon+"Moonie yanıtlıyor...";
+      talkBtn.disabled=true; stopTimer("Moonie yanıtlıyor...");
       callGeminiText(speakConvo.contents).then(function(text){
         removeConvoLoading();
         speakConvo.contents.push({role:"model",parts:[{text:text}]});
         var parts=splitMoonieReply(text);
         appendConvoBubble("model",parts.speak,parts.note);
         speakEnglish(parts.speak,.95);
-        talkBtn.disabled=false; talkBtn.innerHTML=micIcon+"Konuş";
+        talkBtn.disabled=false; stopTimer();
       }).catch(function(err){
         removeConvoLoading();
         appendConvoBubble("model","(Bağlantı hatası: "+err.message+")","");
-        talkBtn.disabled=false; talkBtn.innerHTML=micIcon+"Konuş";
+        talkBtn.disabled=false; stopTimer();
       });
     };
-    rec.onerror=function(e){ speakConvo.recognizing=false; talkBtn.innerHTML=micIcon+"Konuş"; if(e.error!=="aborted"&&e.error!=="no-speech") alert("Hata: "+e.error); };
-    rec.onend=function(){ speakConvo.recognizing=false; if(talkBtn.innerHTML.indexOf("Dinliyorum")!==-1) talkBtn.innerHTML=micIcon+"Konuş"; };
+    rec.onerror=function(e){
+      speakConvo.recognizing=false; talkBtn.classList.remove("recording"); stopTimer();
+      if(e.error!=="aborted"&&e.error!=="no-speech") alert("Hata: "+e.error);
+    };
+    rec.onend=function(){
+      speakConvo.recognizing=false; talkBtn.classList.remove("recording");
+      if(timerInterval) stopTimer();
+    };
     rec.start();
   }
 
@@ -3168,7 +3723,7 @@ function wireSpeakConvo(level,unit,sel){
       var parts=splitMoonieReply(text);
       appendConvoBubble("model",parts.speak,parts.note);
       speakEnglish(parts.speak,.95);
-      controls.style.display="flex";
+      controls.style.display="block";
     }).catch(function(err){
       removeConvoLoading();
       appendConvoBubble("model","(Bağlantı hatası: "+err.message+")","");
@@ -3238,9 +3793,10 @@ function renderSpeaking(){
     '</div>'+
     '<div class="convo-log" id="speakConvoLog" style="display:none;"></div>'+
     '<button type="button" class="btn gold" id="speakConvoStart" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Sohbeti Başlat</button>'+
-    '<div class="row" id="speakConvoControls" style="display:none;gap:8px;">'+
-      '<button type="button" class="btn gold" id="speakConvoTalk" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Konuş</button>'+
-      '<button type="button" class="btn sec" id="speakConvoEnd" style="flex:1;">Sohbeti Bitir</button>'+
+    '<div id="speakConvoControls" style="display:none;text-align:center;">'+
+      '<button type="button" class="mic-btn" id="speakConvoTalk" aria-label="Konuş"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button>'+
+      '<p class="hint" id="speakConvoTimer" style="margin-top:8px;">Konuşmak için dokun</p>'+
+      '<button type="button" class="btn sec sm" id="speakConvoEnd" style="margin-top:6px;">Sohbeti Bitir</button>'+
     '</div>'+
     '<details class="note-details" id="speakNoteDetails"'+(S.speaking.notes[unitKey(sel.li,sel.ui)]?" open":"")+'>'+
       '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Bu üniteyle ilgili notların</summary>'+
@@ -3316,7 +3872,7 @@ function renderGrammar(){
     var optsHtml=ex.opts.map(function(o,oi){
       return '<button type="button" class="gx-opt" data-ex="'+i+'" data-opt="'+oi+'">'+esc(o)+'</button>';
     }).join("");
-    return '<div class="gx-block"><div class="gx-q">'+(i+1)+'. '+esc(ex.q)+'</div><div class="gx-opts">'+optsHtml+'</div></div>';
+    return '<div class="gx-block"><div class="mut" style="font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-size:10.5px;color:var(--purple-deep);margin-bottom:5px;">Soru '+(i+1)+'/'+unit.exercises.length+'</div><div class="gx-q">'+esc(ex.q)+'</div><div class="gx-opts">'+optsHtml+'</div></div>';
   }).join("");
 
   document.getElementById("grammarCurrent").innerHTML=
@@ -3324,11 +3880,13 @@ function renderGrammar(){
       '<span class="cefr-badge lg">'+level.cefr+'</span>'+
       '<span class="mut" style="margin-left:8px;">'+esc(level.name)+' · Konu '+(sel.ui+1)+'/'+level.units.length+'</span>'+
     '</div>'+
-    '<div style="font-family:var(--font-ui);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:10px;">'+esc(unit.name)+'</div>'+
-    '<div class="rule-box">'+esc(unit.rule)+'</div>'+
-    '<h2 style="font-size:12.5px;margin-bottom:4px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-book"></use></svg>Örnekler</h2>'+
-    examplesHtml+
-    '<div class="mistake-box"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg><div><b>Sık yapılan hata:</b> '+esc(unit.mistake)+'</div></div>'+
+    '<div class="paper-card" style="margin-bottom:16px;">'+
+      '<div style="font-family:var(--font-ui);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:10px;">'+esc(unit.name)+'</div>'+
+      '<div class="rule-box">'+esc(unit.rule)+'</div>'+
+      '<h2 style="font-size:12.5px;margin-bottom:4px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-book"></use></svg>Örnekler</h2>'+
+      examplesHtml+
+      '<div class="mistake-box"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg><div><b>Sık yapılan hata:</b> '+esc(unit.mistake)+'</div></div>'+
+    '</div>'+
     '<h2 style="font-size:12.5px;margin:16px 0 4px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Alıştırmalar</h2>'+
     '<div id="grammarExList">'+exHtml+'</div>'+
     '<div id="grammarScore" style="display:none;"></div>'+
@@ -3521,7 +4079,7 @@ function renderNotes(){
   var items=collectAllNotes();
   var wrap=document.getElementById("notesList");
   if(!items.length){
-    wrap.innerHTML='<div class="card"><div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-chat"></use></svg><div class="t">Henüz not yok</div><div class="d">Konuşma, Grammar Path, Okuma, Yazma ya da Dinleme\'de Claude geri bildirimi kaydettiğinde burada görünecek.</div></div></div>';
+    wrap.innerHTML='<div class="card"><div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-chat"></use></svg><div class="t">Henüz not yok</div><div class="d">Konuşma, Grammar Path, Okuma, Yazma ya da Dinleme\'de Moonie geri bildirimi kaydettiğinde burada görünecek.</div></div></div>';
     return;
   }
   wrap.innerHTML="";
@@ -3973,8 +4531,27 @@ function renderProfile(){
     (ed>0?ed+" gün sonra sınav":"Sınav zamanı geldi!")+" · "+S.streak+" günlük seri · "+S.words.length+" kelime";
   document.getElementById("userNameInput").value=S.settings.userName||"";
   document.getElementById("examDateInput").value=isoDate(examDate());
-  var curTheme=S.settings.theme||"light";
+  var curTheme=S.settings.theme||"dark";
   document.querySelectorAll("#themeSegTabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.theme===curTheme); });
+
+  var lvlBadge=document.getElementById("profileLevelBadge");
+  if(S.settings.level){
+    var lvlName={A1:"Başlangıç",A2:"Temel",B1:"Orta",B2:"İleri",C1:"İleri +"}[S.settings.level]||"";
+    lvlBadge.textContent=S.settings.level+" · "+lvlName;
+  } else {
+    lvlBadge.textContent="Seviye henüz seçilmedi";
+  }
+  var goalsCard=document.getElementById("obGoalsSummaryCard");
+  if(S.settings.level||((S.settings.goals||[]).length)||S.settings.dailyMinutes||((S.settings.focusSkills||[]).length)){
+    goalsCard.style.display="block";
+    var rows=[];
+    if(S.settings.goals&&S.settings.goals.length) rows.push("<b>Hedef:</b> "+esc(S.settings.goals.join(", ")));
+    if(S.settings.dailyMinutes) rows.push("<b>Günlük süre:</b> "+S.settings.dailyMinutes+" dakika");
+    if(S.settings.focusSkills&&S.settings.focusSkills.length) rows.push("<b>Odak beceriler:</b> "+esc(S.settings.focusSkills.join(", ")));
+    document.getElementById("profileGoalsSummary").innerHTML=rows.join("<br>")||"—";
+  } else {
+    goalsCard.style.display="none";
+  }
 }
 function renderSettings(){
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
@@ -4069,10 +4646,267 @@ document.getElementById("onboardSkip").addEventListener("click",function(){
   S.settings.onboardShown=true; save(); closeOnboard();
 });
 document.getElementById("onboardBackdrop").addEventListener("click",closeOnboard);
-if(!S.settings.onboardShown){
-  document.getElementById("onboardSheet").classList.add("open");
-  document.getElementById("onboardBackdrop").classList.add("open");
+// old name-only onboarding sheet superseded by full onboarding flow below
+
+
+/* ==== ONBOARDING FLOW LOGIC (added) ==== */
+var obState={level:null,goals:[],dailyMinutes:null,focus:[],podcastPick:null,interest:""};
+var OB_LEVELS=[["A1","Başlangıç"],["A2","Temel"],["B1","Orta"],["B2","İleri"],["C1","İleri +"]];
+var OB_GOALS=["Günlük konuşma","YDS / Sınav","İş İngilizcesi","Akademik","Seyahat","Diğer"];
+var OB_TIMES=[[10,"10 dakika"],[20,"20 dakika"],[30,"30 dakika"],[45,"45 dakika"],[60,"1 saat+"]];
+var OB_FOCUS=["Reading","Listening","Speaking","Grammar","Vocabulary","Writing"];
+
+function obGo(id){
+  document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+  var el=document.getElementById("v-"+id);
+  if(el) el.classList.add("active");
+  window.scrollTo(0,0);
+  if(id==="oblevel") obRenderLevel();
+  if(id==="obgoals") obRenderGoals();
+  if(id==="obtime") obRenderTime();
+  if(id==="obfocus") obRenderFocus();
+  if(id==="obmeet") obRenderMeet();
+  if(id==="obready") obRenderReady();
+  if(id==="obpod") obRenderPod();
 }
+function obCheckIcon(){ return '<span class="ob-check"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'; }
+
+function obRenderLevel(){
+  var wrap=document.getElementById("obLevelOpts"); wrap.innerHTML="";
+  OB_LEVELS.forEach(function(lv){
+    var btn=document.createElement("button"); btn.type="button";
+    btn.className="onb-opt"+(obState.level===lv[0]?" sel":"");
+    btn.innerHTML='<span class="cefr-badge">'+lv[0]+'</span><span>'+lv[1]+'</span>'+obCheckIcon();
+    btn.addEventListener("click",function(){
+      obState.level=lv[0];
+      obRenderLevel();
+      document.getElementById("obLevelNext").disabled=false;
+    });
+    wrap.appendChild(btn);
+  });
+}
+function obRenderGoals(){
+  var wrap=document.getElementById("obGoalOpts"); wrap.innerHTML="";
+  OB_GOALS.forEach(function(g){
+    var sel=obState.goals.indexOf(g)!==-1;
+    var btn=document.createElement("button"); btn.type="button";
+    btn.className="onb-opt multi"+(sel?" sel":"");
+    btn.innerHTML='<span>'+g+'</span>'+obCheckIcon();
+    btn.addEventListener("click",function(){
+      var i=obState.goals.indexOf(g);
+      if(i===-1) obState.goals.push(g); else obState.goals.splice(i,1);
+      obRenderGoals();
+    });
+    wrap.appendChild(btn);
+  });
+}
+function obRenderTime(){
+  var wrap=document.getElementById("obTimeOpts"); wrap.innerHTML="";
+  OB_TIMES.forEach(function(t){
+    var btn=document.createElement("button"); btn.type="button";
+    btn.className="onb-opt"+(obState.dailyMinutes===t[0]?" sel":"");
+    btn.innerHTML='<span>'+t[1]+'</span>'+obCheckIcon();
+    btn.addEventListener("click",function(){
+      obState.dailyMinutes=t[0];
+      obRenderTime();
+      document.getElementById("obTimeNext").disabled=false;
+    });
+    wrap.appendChild(btn);
+  });
+}
+var OB_FOCUS_ICONS={Reading:"i-book-open",Listening:"i-headphones",Speaking:"i-mic",Grammar:"i-layers",Vocabulary:"i-cards",Writing:"i-edit"};
+function obRenderFocus(){
+  var wrap=document.getElementById("obFocusOpts"); wrap.innerHTML="";
+  OB_FOCUS.forEach(function(f){
+    var sel=obState.focus.indexOf(f)!==-1;
+    var btn=document.createElement("button"); btn.type="button";
+    btn.className="onb-opt multi"+(sel?" sel":"");
+    btn.innerHTML='<span class="opt-ic"><svg class="icon" aria-hidden="true"><use href="#'+OB_FOCUS_ICONS[f]+'"></use></svg></span><span>'+f+'</span>'+obCheckIcon();
+    btn.addEventListener("click",function(){
+      var i=obState.focus.indexOf(f);
+      if(i!==-1){ obState.focus.splice(i,1); }
+      else{ obState.focus.push(f); }
+      obRenderFocus();
+    });
+    wrap.appendChild(btn);
+  });
+}
+function obRenderPod(){
+  var el=document.getElementById("obSpotifyRedirectDisplay");
+  if(el) el.value=SPOTIFY_REDIRECT_URI;
+  var cid=document.getElementById("obSpotifyClientId"); if(cid && !cid.value) cid.value=S.settings.spotifyClientId||"";
+  var gk=document.getElementById("obGeminiKey"); if(gk && !gk.value) gk.value=S.settings.geminiApiKey||"";
+  obRenderPodPicked();
+}
+function obRenderPodPicked(){
+  var wrap=document.getElementById("obPodPicked");
+  if(obState.podcastPick){
+    wrap.style.display="block";
+    wrap.innerHTML='<div class="podrow"><span class="pod-art"></span><div class="pod-txt"><div class="pod-name">'+esc(obState.podcastPick.title)+'</div><div class="pod-sub">Seçildi</div></div>'+
+      '<button type="button" class="pod-add" id="obPodUnpick" aria-label="Kaldır"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg></button></div>';
+    document.getElementById("obPodUnpick").addEventListener("click",function(){ obState.podcastPick=null; obRenderPodPicked(); });
+  } else {
+    wrap.style.display="none"; wrap.innerHTML="";
+  }
+}
+async function obPodSearch(q){
+  var list=document.getElementById("obPodSearchList");
+  if(!q){ list.className="spotify-empty"; list.textContent="Aramak için yaz ve Enter'a bas."; return; }
+  var cidNow=document.getElementById("obSpotifyClientId").value.trim();
+  if(cidNow) S.settings.spotifyClientId=cidNow;
+  var token=await spotifyEnsureToken();
+  if(!token){ list.className="spotify-empty"; list.textContent="Sonuçların çıkması için önce Spotify Client ID'ni gir ve Ayarlar'dan Spotify'a bağlan — şimdilik bu adımı atlayıp devam edebilirsin."; return; }
+  list.className="spotify-empty"; list.textContent="Aranıyor...";
+  try{
+    var res=await fetch("https://api.spotify.com/v1/search?type=episode,show&limit=8&q="+encodeURIComponent(q),{headers:{Authorization:"Bearer "+token}});
+    var data=await res.json();
+    var items=[].concat((data.episodes&&data.episodes.items)||[]).concat((data.shows&&data.shows.items)||[]).filter(Boolean);
+    if(!items.length){ list.className="spotify-empty"; list.textContent="Sonuç bulunamadı."; return; }
+    list.className=""; list.innerHTML="";
+    items.forEach(function(item){
+      var img=item.images&&item.images[0]?item.images[0].url:"";
+      var row=document.createElement("div"); row.className="podrow";
+      row.innerHTML=
+        (img?'<img class="pod-art" src="'+img+'" alt="">':'<span class="pod-art"></span>')+
+        '<div class="pod-txt"><div class="pod-name">'+esc(item.name)+'</div><div class="pod-sub">'+esc(item.publisher||(item.show&&item.show.name)||"")+'</div></div>'+
+        '<button type="button" class="pod-add" aria-label="Seç"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg></button>';
+      row.querySelector(".pod-add").addEventListener("click",function(){
+        obState.podcastPick={title:item.name,uri:item.uri};
+        list.className="spotify-empty"; list.innerHTML=""; list.textContent="Aramak için yaz ve Enter'a bas.";
+        document.getElementById("obPodSearchInput").value="";
+        obRenderPodPicked();
+      });
+      list.appendChild(row);
+    });
+  }catch(e){ list.className="spotify-empty"; list.textContent="Arama başarısız oldu."; }
+}
+var obMeetRecognizer=null;
+function obRenderMeet(){
+  var name=(S.settings.userName||"").trim()||"orada";
+  document.getElementById("obMeetQText").textContent="What's your name and what do you like to do in your free time, "+name+"?";
+  document.getElementById("obMeetAnswered").style.display="none";
+  document.getElementById("obMeetAnswered").innerHTML="";
+  document.getElementById("obMeetQCard").style.display="block";
+  var micBtn=document.getElementById("obMeetMicBtn");
+  micBtn.style.display="flex"; micBtn.disabled=false; micBtn.classList.remove("recording");
+  document.getElementById("obMeetMicHint").textContent="Konuşmak için dokun";
+  document.getElementById("obMeetContinue").style.display="none";
+  document.getElementById("obMeetSkip").style.display="block";
+  if("speechSynthesis" in window){
+    try{ speakEnglish("Hi! I'm Moonie. Let's practice together.",.95); }catch(e){}
+  }
+}
+function obMeetShowAnswer(said){
+  obState.interest=said;
+  var wrap=document.getElementById("obMeetAnswered");
+  wrap.innerHTML='<div class="convo-bubble me">'+esc(said)+'</div><div class="convo-bubble moonie">That\'s great! We\'ll use topics like that in your speaking practice.</div>';
+  wrap.style.display="flex";
+  document.getElementById("obMeetMicBtn").style.display="none";
+  document.getElementById("obMeetMicHint").style.display="none";
+  document.getElementById("obMeetContinue").style.display="block";
+  document.getElementById("obMeetSkip").style.display="none";
+}
+document.getElementById("obMeetMicBtn").addEventListener("click",function(){
+  var micBtn=this;
+  var SRClass=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SRClass){ alert("Sesli yanıt için tarayıcının ses tanımayı desteklemesi gerekiyor. Şimdilik atlayabilirsin."); return; }
+  if(micBtn.classList.contains("recording")){ if(obMeetRecognizer) obMeetRecognizer.stop(); return; }
+  var rec=new SRClass(); rec.lang="en-US"; rec.interimResults=false; rec.maxAlternatives=1;
+  obMeetRecognizer=rec;
+  micBtn.classList.add("recording");
+  document.getElementById("obMeetMicHint").textContent="Dinliyorum...";
+  rec.onresult=function(e){ obMeetShowAnswer(e.results[0][0].transcript); };
+  rec.onerror=function(e){
+    micBtn.classList.remove("recording");
+    document.getElementById("obMeetMicHint").textContent="Konuşmak için dokun";
+    if(e.error!=="aborted"&&e.error!=="no-speech") alert("Hata: "+e.error);
+  };
+  rec.onend=function(){
+    micBtn.classList.remove("recording");
+    if(document.getElementById("obMeetMicHint").textContent==="Dinliyorum...") document.getElementById("obMeetMicHint").textContent="Konuşmak için dokun";
+  };
+  rec.start();
+});
+document.getElementById("obMeetSkip").addEventListener("click",function(){ obGo("obready"); });
+document.getElementById("obMeetContinue").addEventListener("click",function(){ obGo("obready"); });
+
+function obRenderReady(){
+  var lvl=obState.level||"—";
+  var goals=obState.goals.length?obState.goals.join(", "):"—";
+  var mins=obState.dailyMinutes?(obState.dailyMinutes+" dakika"):"—";
+  var focus=obState.focus.length?obState.focus.join(", "):"—";
+  var rows=[
+    ["i-star","Seviye",lvl],
+    ["i-target","Hedef",goals],
+    ["i-calendar","Günlük süre",mins],
+    ["i-layers","Odak beceriler",focus]
+  ];
+  if(obState.podcastPick) rows.push(["i-headphones","Podcast",obState.podcastPick.title]);
+  document.getElementById("obReadySummary").innerHTML=rows.map(function(r){
+    return '<div class="ready-row"><span class="rr-ic"><svg class="icon" aria-hidden="true"><use href="#'+r[0]+'"></use></svg></span><span class="rr-label">'+esc(r[1])+'</span><span class="rr-value">'+esc(r[2])+'</span></div>';
+  }).join("");
+}
+
+/* auth wiring */
+document.getElementById("obEmailBtn").addEventListener("click",function(){ obGo("register"); });
+function obSocialNote(){
+  var n=document.getElementById("obSocialNote"); n.style.display="block";
+  setTimeout(function(){ n.style.display="none"; },2500);
+}
+document.getElementById("obGoogleBtn").addEventListener("click",obSocialNote);
+document.getElementById("obAppleBtn").addEventListener("click",obSocialNote);
+document.getElementById("obGoLoginLink").addEventListener("click",function(){ obGo("login"); });
+document.getElementById("obRegGoLogin").addEventListener("click",function(){ obGo("login"); });
+document.getElementById("obLoginGoReg").addEventListener("click",function(){ obGo("register"); });
+document.getElementById("obForgotLink").addEventListener("click",function(){ alert("Bu özellik yakında geliyor. Şimdilik verilerin bu cihazda saklandığı için şifre sıfırlamaya gerek yok — giriş yapamıyorsan yeni bir hesap oluşturabilirsin."); });
+document.getElementById("obRegSubmit").addEventListener("click",function(){
+  var name=document.getElementById("obRegName").value.trim();
+  var email=document.getElementById("obRegEmail").value.trim();
+  var err=document.getElementById("obRegErr");
+  if(!name||!email){ err.textContent="Ad ve e-posta gerekli."; err.style.display="block"; return; }
+  err.style.display="none";
+  S.settings.userName=name; S.settings.userEmail=email.toLowerCase(); S.settings.authMethod="email";
+  save();
+  obGo("oblevel");
+});
+document.getElementById("obLoginSubmit").addEventListener("click",function(){
+  var email=document.getElementById("obLoginEmail").value.trim().toLowerCase();
+  var err=document.getElementById("obLoginErr");
+  if(!email||!S.settings.userEmail||S.settings.userEmail!==email){
+    err.textContent="Bu e-posta ile hesap bulunamadı. Bu cihazda kayıtlı hesap: "+(S.settings.userEmail||"yok")+" — önce kayıt ol.";
+    err.style.display="block"; return;
+  }
+  err.style.display="none";
+  obGo("oblevel");
+});
+document.getElementById("obLevelNext").addEventListener("click",function(){ obGo("obgoals"); });
+document.getElementById("obGoalsNext").addEventListener("click",function(){ obGo("obtime"); });
+document.getElementById("obTimeNext").addEventListener("click",function(){ obGo("obfocus"); });
+document.getElementById("obFocusNext").addEventListener("click",function(){ obGo("obpod"); });
+document.getElementById("obPodNext").addEventListener("click",function(){
+  var spCid=document.getElementById("obSpotifyClientId").value.trim();
+  var gKey=document.getElementById("obGeminiKey").value.trim();
+  if(spCid) S.settings.spotifyClientId=spCid;
+  if(gKey) S.settings.geminiApiKey=gKey;
+  save();
+  obGo("obmeet");
+});
+document.getElementById("obFinishBtn").addEventListener("click",function(){
+  S.settings.level=obState.level;
+  S.settings.goals=obState.goals;
+  S.settings.dailyMinutes=obState.dailyMinutes;
+  S.settings.focusSkills=obState.focus;
+  S.settings.userInterest=obState.interest;
+  if(obState.podcastPick){
+    S.listening=S.listening||{podcasts:[]}; S.listening.podcasts=S.listening.podcasts||[];
+    S.listening.podcasts.push({id:"pod"+Date.now(),title:obState.podcastPick.title,uri:obState.podcastPick.uri,transcript:"",notes:"",createdAt:isoDate(new Date())});
+  }
+  S.settings.onboardDone=true;
+  S.settings.onboardShown=true;
+  save();
+  document.body.classList.remove("onb-active");
+  go("today");
+});
 
 /* ---------- INIT ---------- */
 syncTarget(); renderToday(); renderVocab();
@@ -4092,6 +4926,15 @@ if("serviceWorker" in navigator){
   });
 }
 window.go=go;
+
+/* new onboarding gate */
+if(S.settings.onboardDone){
+  document.body.classList.remove("onb-active");
+  document.getElementById("v-splash").classList.remove("active");
+  document.getElementById("v-today").classList.add("active");
+} else {
+  document.body.classList.add("onb-active");
+}
 </script>
 </body>
 </html>
