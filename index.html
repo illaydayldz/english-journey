@@ -685,6 +685,144 @@
   .onb-p{ font-size:13px; color:var(--ink-soft); margin-bottom:16px; }
   .onb-back-btn{ background:var(--card); border:none; width:40px; height:40px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; cursor:pointer; margin-bottom:14px; }
   .onb-err{ font-size:12px; color:var(--rust); font-weight:700; margin:-2px 0 8px; display:none; }
+
+  /* ===== 3D / depth pass (v19) ===== */
+  body{ background:radial-gradient(900px 520px at 50% -8%, rgba(139,127,255,.20), transparent 62%), var(--bg); background-attachment:fixed; }
+  .card,.hubcard,.quick-item,.lib-next{ background-image:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 45%); border:1px solid rgba(255,255,255,.06); border-radius:20px; box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 16px 30px -14px rgba(0,0,0,.6), 0 3px 8px rgba(0,0,0,.22); }
+  :root[data-theme="light"] .card,:root[data-theme="light"] .hubcard,:root[data-theme="light"] .quick-item{ background-image:linear-gradient(180deg,#fff,rgba(255,255,255,0)); border-color:rgba(23,21,31,.06); box-shadow:inset 0 1px 0 #fff, 0 14px 28px -14px rgba(60,50,120,.28), 0 2px 6px rgba(60,50,120,.08); }
+  .hubcard,.quick-item,.lib-row,.continue-row{ transition:transform .12s, box-shadow .12s; }
+  .hubcard:active,.quick-item:active{ transform:translateY(2px) scale(.985); }
+  .btn{ border-radius:14px; background-image:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,0) 55%); box-shadow:0 4px 0 rgba(0,0,0,.30), 0 12px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.32); margin-bottom:5px; }
+  .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.30), 0 4px 8px -4px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.25); }
+  .btn.sec{ box-shadow:0 4px 0 rgba(0,0,0,.22), 0 10px 16px -8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12); }
+  .page-head .back{ background-image:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0)); box-shadow:0 4px 0 rgba(0,0,0,.25), 0 10px 14px -6px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.14); }
+  nav{ background:rgba(25,23,31,.80); -webkit-backdrop-filter:blur(20px) saturate(1.5); backdrop-filter:blur(20px) saturate(1.5); border-top:1px solid rgba(255,255,255,.09); box-shadow:0 -14px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); }
+  :root[data-theme="light"] nav{ background:rgba(255,255,255,.82); border-top-color:rgba(23,21,31,.06); box-shadow:0 -10px 30px rgba(60,50,120,.14); }
+  nav button.fab .ic{ background:linear-gradient(160deg,#A99CFF 0%,var(--purple) 45%,#4C3FC4 100%); box-shadow:0 8px 0 -2px rgba(40,30,120,.55), 0 14px 22px rgba(90,79,207,.55), inset 0 2px 0 rgba(255,255,255,.4); }
+  nav button.fab:active .ic{ transform:translateY(3px); }
+  .hub-ic{ background-image:linear-gradient(160deg,rgba(255,255,255,.28),rgba(255,255,255,0) 60%); box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 6px 10px -4px rgba(0,0,0,.45); }
+  .mchip img,.hero img,img[src*="assets/mascot"]{ filter:drop-shadow(0 8px 8px rgba(0,0,0,.38)); }
+  .onb-logo img{ border-radius:26px; box-shadow:0 18px 34px -8px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.08); }
+  .goalcard{ background-image:linear-gradient(135deg,rgba(139,127,255,.22),rgba(139,127,255,.04)); }
+  .bar>div,.read-progress-bar .fill{ box-shadow:0 0 10px rgba(139,127,255,.55); }
+
+  /* ----- kitap rafı ----- */
+  .shelf-section{ margin:0 0 18px; }
+  .shelf-head{ display:flex; align-items:baseline; gap:8px; margin:0 4px 10px; }
+  .shelf-head h2{ font-family:var(--font-display); font-size:17px; font-weight:800; color:var(--ink); }
+  .shelf{ position:relative; display:flex; gap:16px; overflow-x:auto; padding:8px 14px 30px; margin:0 -2px; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+    background:linear-gradient(to bottom,transparent calc(100% - 20px),#F0B25A calc(100% - 20px),#D98C2B 100%) no-repeat; background-size:100% 100%; border-radius:0 0 12px 12px; box-shadow:0 14px 16px -12px rgba(0,0,0,.65); }
+  .shelf::-webkit-scrollbar{ display:none; }
+  .book-btn{ background:none; border:none; padding:0; cursor:pointer; flex-shrink:0; font-family:inherit; transition:transform .15s; }
+  .book-btn:active{ transform:translateY(-4px) scale(.97); }
+  .book{ position:relative; display:flex; flex-direction:column; justify-content:space-between; width:104px; height:150px; padding:14px 10px 12px 16px; text-align:left; border-radius:3px 10px 10px 3px; color:#fff;
+    background:linear-gradient(135deg,var(--b1,#7B6CF6),var(--b2,#4B3FB8)); box-shadow:0 14px 16px -6px rgba(0,0,0,.6), 0 4px 6px rgba(0,0,0,.3), inset -3px 0 6px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.3); }
+  .book-spine{ position:absolute; left:0; top:0; bottom:0; width:9px; border-radius:3px 0 0 3px; background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.14) 60%,rgba(0,0,0,.12)); }
+  .book-title{ font-family:Georgia,"Times New Roman",serif; font-size:15px; font-weight:700; line-height:1.15; letter-spacing:.2px; text-shadow:0 1px 2px rgba(0,0,0,.35); word-break:break-word; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .book-sub{ font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; opacity:.85; }
+  .book-done{ position:absolute; top:-6px; right:-6px; width:24px; height:24px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; box-shadow:0 3px 6px rgba(0,0,0,.4); }
+  .book-done .icon{ width:13px; height:13px; color:#fff; }
+  .book-add .book{ background:rgba(255,255,255,.05); border:2px dashed rgba(255,255,255,.28); box-shadow:none; align-items:center; justify-content:center; color:var(--ink-soft); padding:10px; }
+  .book-add .book-sub{ opacity:1; }
+  .book-plus{ width:42px; height:42px; border-radius:50%; background:var(--purple); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 12px rgba(90,79,207,.5); }
+  .book-plus .icon{ width:20px; height:20px; }
+  .book-hero{ display:flex; gap:16px; align-items:flex-end; margin:0 2px 18px; }
+  .book-hero .book{ width:112px; height:160px; flex-shrink:0; }
+  .book-meta{ flex:1; min-width:0; }
+  .bm-sub{ font-weight:700; color:var(--ink); font-size:14px; }
+
+  /* ----- kelime kartı (yığın) ----- */
+  .vc-head{ display:flex; align-items:center; gap:12px; margin:2px 4px 18px; }
+  .vc-lvl{ display:flex; align-items:center; gap:6px; font-weight:800; font-size:13px; color:var(--ink-2); white-space:nowrap; }
+  .vc-lvl .icon{ color:var(--gold); fill:var(--gold); }
+  .vc-bar{ flex:1; height:7px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .vc-bar>div{ height:100%; background:linear-gradient(90deg,#4ade80,#22c55e); border-radius:99px; box-shadow:0 0 10px rgba(74,222,128,.6); transition:width .4s; }
+  .vc-stack{ position:relative; height:250px; margin:6px 6px 18px; perspective:900px; }
+  .vc-card{ position:absolute; inset:0; border-radius:26px; background:linear-gradient(150deg,#A394FF 0%,#7A68F0 50%,#5646C9 100%); }
+  .vc-b2{ transform:rotate(7deg) translateY(-6px) scale(.94); opacity:.45; box-shadow:0 10px 20px rgba(60,40,160,.3); }
+  .vc-b1{ transform:rotate(3.5deg) translateY(-3px) scale(.97); opacity:.7; box-shadow:0 12px 24px rgba(60,40,160,.35); }
+  .vc-front{ transform:rotate(-4deg); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:26px 22px; color:#fff;
+    box-shadow:0 24px 40px -10px rgba(80,60,200,.65), 0 8px 14px rgba(0,0,0,.3), inset 0 2px 0 rgba(255,255,255,.35), inset 0 -6px 14px rgba(40,25,120,.35); }
+  .vc-hint{ font-size:11.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; opacity:.75; margin-bottom:12px; }
+  .vc-word{ font-family:var(--font-display); font-size:32px; font-weight:800; line-height:1.15; text-shadow:0 3px 8px rgba(0,0,0,.3); word-break:break-word; }
+  .vc-mean{ margin-top:12px; font-size:15px; font-weight:600; opacity:.9; }
+  .vc-speak{ position:absolute; top:16px; right:16px; width:42px; height:42px; border-radius:50%; border:none; background:rgba(255,255,255,.22); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 4px 8px rgba(0,0,0,.25); }
+  .vc-speak .icon{ width:20px; height:20px; }
+  .vc-use{ background:var(--card); border:1px solid rgba(255,255,255,.07); border-radius:18px; padding:13px 16px; margin:0 6px 16px; box-shadow:0 12px 22px -10px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.07); }
+  .vc-use-t{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800; color:var(--ink); margin-bottom:5px; }
+  .vc-use-t .icon{ color:var(--gold); }
+  .vc-use-b{ font-size:14px; font-style:italic; color:var(--ink-2); line-height:1.5; }
+  .vc-grade{ display:flex; justify-content:center; gap:22px; margin:4px 0 8px; }
+  .vc-grade button{ background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; font-family:inherit; padding:0; }
+  .vc-face .icon{ width:30px; height:30px; color:var(--ink); }
+  .vc-grade button:nth-child(3) .vc-face .icon{ color:#4ade80; }
+  .vc-face{ width:62px; height:62px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0; background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04)); box-shadow:0 5px 0 rgba(0,0,0,.35), 0 12px 16px -6px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.25); transition:transform .1s, box-shadow .1s; }
+  .vc-grade button:active .vc-face{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.35); }
+  .vc-grade button:nth-child(3) .vc-face{ box-shadow:0 5px 0 rgba(0,0,0,.35), 0 0 0 3px #4ade80, 0 12px 16px -6px rgba(0,0,0,.5); }
+  .vc-gl{ font-size:12px; font-weight:800; color:var(--ink-soft); }
+
+  /* ----- günlük (hafta şeridi + kartlar) ----- */
+  .jw-card{ padding:14px 12px 12px; }
+  .jw-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+  .jw-strip{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .jw-day{ display:flex; flex-direction:column; align-items:center; gap:5px; background:none; border:none; padding:6px 0 4px; border-radius:18px; cursor:pointer; font-family:inherit; color:var(--ink-soft); }
+  .jw-dn{ font-size:11px; font-weight:700; letter-spacing:.3px; }
+  .jw-num{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:var(--ink); }
+  .jw-day.today .jw-num{ box-shadow:inset 0 0 0 1.5px var(--purple); }
+  .jw-day.sel .jw-num{ color:#fff; background:linear-gradient(160deg,#A99CFF,var(--purple) 55%,#4C3FC4); box-shadow:0 5px 0 rgba(40,30,120,.5), 0 10px 14px -4px rgba(90,79,207,.6), inset 0 1px 0 rgba(255,255,255,.4); transform:translateY(-2px); }
+  .jw-dot{ width:6px; height:6px; border-radius:50%; background:transparent; }
+  .jw-dot.on{ background:var(--green); box-shadow:0 0 6px var(--green); }
+  .jcard{ display:flex; flex-direction:column; gap:12px; width:100%; text-align:left; font-family:inherit; cursor:pointer; padding:15px 16px 12px; margin-bottom:12px; border:1px solid rgba(139,127,255,.16); border-radius:20px;
+    background:linear-gradient(180deg,rgba(139,127,255,.16),rgba(139,127,255,.07)); color:var(--ink); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 14px 22px -14px rgba(0,0,0,.6); }
+  .jcard.sel{ border-color:var(--purple); box-shadow:0 0 0 1px var(--purple), 0 14px 22px -14px rgba(90,79,207,.7); }
+  .jc-text{ font-size:14.5px; line-height:1.55; color:var(--ink-2); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .jc-text i{ color:var(--ink-soft); }
+  .jc-foot{ display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid rgba(255,255,255,.08); }
+  .jc-when{ display:flex; align-items:center; gap:7px; font-size:12px; font-weight:700; color:var(--ink-soft); }
+  .jc-when .icon{ color:var(--purple); }
+  .jc-mood .icon{ width:20px; height:20px; color:var(--purple); }
+  .jc-mood{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04)); box-shadow:0 3px 0 rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.25); }
+  :root[data-theme="light"] .jcard{ background:linear-gradient(180deg,#F1EEFF,#F8F6FF); border-color:rgba(90,79,207,.16); }
+  :root[data-theme="light"] .jc-foot{ border-top-color:rgba(23,21,31,.08); }
+
+  /* ----- yazma: günlük konu ----- */
+  .wart{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .wlines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .wcount-card{ display:flex; flex-direction:column; gap:2px; padding:14px 18px; border-radius:20px; margin-bottom:14px; color:#2B1710; background:linear-gradient(135deg,#FFB08A,#F08A72 60%,#E6769A); box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 14px 22px -12px rgba(230,118,154,.7); }
+  .wc-lbl{ font-size:11.5px; font-weight:700; opacity:.8; }
+  .wc-time{ font-family:var(--font-display); font-size:24px; font-weight:800; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.2); }
+  .wprompt-card{ position:relative; overflow:hidden; border-radius:26px; min-height:300px; margin-bottom:14px; background:linear-gradient(160deg,#4B3FB8,#7B6CF6); box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 24px 36px -16px rgba(90,79,207,.8); }
+  .wprompt-card .wart{ opacity:.9; }
+  .wp-body{ position:relative; display:flex; flex-direction:column; justify-content:flex-end; min-height:300px; padding:20px 20px 18px; background:linear-gradient(to top,rgba(24,16,66,.78) 0%,rgba(24,16,66,.35) 55%,transparent 100%); color:#fff; }
+  .wp-title{ font-family:var(--font-display); font-size:26px; font-weight:800; line-height:1.2; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.35); }
+  .wp-title.dark{ color:var(--ink); text-shadow:none; font-size:23px; }
+  .wp-desc{ font-size:13px; opacity:.9; margin:8px 0 16px; line-height:1.5; }
+  .wp-foot{ display:flex; align-items:center; justify-content:space-between; }
+  .wp-tag{ font-size:12px; font-weight:800; letter-spacing:.3px; opacity:.9; }
+  .wp-start{ border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:14px; color:#fff; padding:11px 26px; border-radius:14px; background:#2A1F5C; box-shadow:0 4px 0 #170F38, 0 10px 16px -6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.2); }
+  .wp-start:active{ transform:translateY(3px); box-shadow:0 1px 0 #170F38; }
+  .wgreen{ position:relative; overflow:hidden; display:block; width:100%; text-align:left; font-family:inherit; border:none; cursor:pointer; padding:16px 52px 16px 18px; margin-bottom:12px; border-radius:20px; color:#fff; background:linear-gradient(135deg,#2FA59A,#1B8C8C 60%,#177A7A); box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 14px 22px -12px rgba(27,140,140,.7); }
+  .wgreen .wg-t{ position:relative; display:block; font-weight:800; font-size:15px; }
+  .wgreen .wg-d{ position:relative; display:block; font-size:12px; opacity:.88; margin-top:3px; }
+  .wgreen .wg-ch{ position:absolute; right:16px; top:50%; transform:translateY(-50%); width:20px; height:20px; }
+  .wband{ position:relative; height:150px; border-radius:26px 26px 0 0; overflow:hidden; background:linear-gradient(160deg,#4B3FB8,#7B6CF6); margin-bottom:-24px; }
+  .wsheet{ position:relative; background:var(--card); border-radius:26px; padding:12px 16px 16px; box-shadow:0 -10px 24px -10px rgba(0,0,0,.4), 0 20px 30px -16px rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.07); }
+  .wsheet-grip{ width:38px; height:4px; border-radius:4px; background:var(--gray-300); margin:0 auto 14px; }
+  .wtext-wrap{ position:relative; margin-bottom:12px; }
+  .wtext-wrap textarea{ width:100%; min-height:210px; padding-bottom:40px; margin-bottom:0; }
+  .wcount-pill{ position:absolute; right:12px; bottom:12px; font-size:11.5px; font-weight:800; padding:5px 11px; border-radius:99px; background:var(--tint-strong); color:var(--purple-deep); }
+  :root[data-theme="light"] .wcount-card .wc-lbl{ color:#4A2418; }
+
+  /* yazma: tema uyumu (mor/ay-yıldız) */
+  .wcount-card{ color:#3A2A08; background:linear-gradient(135deg,#FFE9A6,#F6C65B 70%,#E8A93A); box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 14px 22px -12px rgba(240,185,75,.6); }
+  .wc-lbl{ color:#5A4210; opacity:1; }
+  .wc-time{ color:#2A1F5C; text-shadow:none; }
+  .wprompt-card,.wband{ background:linear-gradient(180deg,#2A2170,#5B49D6); }
+  .wp-body{ background:linear-gradient(to top,rgba(20,14,60,.85) 0%,rgba(20,14,60,.4) 55%,transparent 100%); }
+  .wgreen{ background:linear-gradient(135deg,#4B3FB8,#6A5AE0 70%,#7B6CF6); box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 14px 22px -12px rgba(90,79,207,.75); border:1px solid rgba(201,194,255,.25); }
+  .wprompt-card{ box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 24px 36px -16px rgba(90,79,207,.8); }
+  .wp-start{ background:linear-gradient(180deg,#FFE9A6,#F2B94B); color:#2A1F5C; box-shadow:0 4px 0 #B07E1C, 0 10px 16px -6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.6); }
+  .wp-start:active{ box-shadow:0 1px 0 #B07E1C; }
 </style>
 </head>
 <body>
@@ -1253,25 +1391,11 @@
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Okuma</h1>
     </div>
-    <div class="card" id="libCard">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Kitaplığım <span class="mut" id="libCount"></span></h2>
-      <div id="libSkeleton" class="lib-skel" style="display:none;">
-        <div class="skeleton" style="height:9px;border-radius:99px;margin:11px 0 12px;"></div>
-        <div class="skeleton" style="height:58px;"></div>
-      </div>
-      <div id="libReal">
-        <div class="bar"><div id="libProgressBar" style="width:0%"></div></div>
-        <p class="hint" id="libProgressHint" style="margin-bottom:12px;"></p>
-        <button type="button" class="lib-next" id="libNextBtn">
-          <span class="ln-num" id="libNextNum">1</span>
-          <span class="ln-body"><span class="ln-label">Sıradaki metin</span><span class="ln-title" id="libNextTitle">—</span><p class="ln-preview" id="libNextPreview"></p></span>
-          <span class="mchip sm ln-mascot"><img src="assets/mascot/pose-reading.png" alt=""></span>
-          <svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
-        </button>
-        <button type="button" class="btn green" id="libNextCta" style="margin-top:10px;">Okumaya Devam Et</button>
-        <button type="button" class="lib-toggle" id="libToggle">Tüm metinler (More to Read I)<svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
-        <div class="lib-list" id="libList"></div>
-      </div>
+    <div class="shelf-section">
+      <div class="shelf-head"><h2>Kitaplığım</h2><span class="mut" id="libCount"></span></div>
+      <div class="shelf" id="shelfLib"></div>
+      <input type="file" id="pdfFile" accept="application/pdf" style="display:none;">
+      <p class="hint" id="pdfStatus" style="display:none;"></p>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Yeni kayıt</h2>
@@ -1299,6 +1423,24 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- ===== OKUMA: Kitap içeriği ===== -->
+  <section class="view" id="v-book">
+    <div class="page-head">
+      <button class="back" onclick="go('reading')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1 id="bookTitle" class="tight">—</h1>
+    </div>
+    <div class="book-hero">
+      <div id="bookHeroCover"></div>
+      <div class="book-meta">
+        <div class="bm-sub" id="bookSub"></div>
+        <div class="bar"><div id="bookBar" style="width:0%"></div></div>
+        <button type="button" class="btn" id="bookContinue">Okumaya Başla</button>
+        <button type="button" class="btn sec sm" id="bookDelete" style="display:none;">Kitabı sil</button>
+      </div>
+    </div>
+    <div class="card"><div id="bookList"></div></div>
   </section>
 
   <!-- ===== OKUMA: Kitaplık metni ===== -->
@@ -1531,25 +1673,42 @@
   <!-- ===== YAZMA ===== -->
   <section class="view" id="v-writing">
     <div class="page-head">
-      <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <h1>Yazma</h1>
+      <button class="back" id="writingBack" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1 id="writingHead">Yazma</h1>
     </div>
-    <div class="card">
-      <div class="row" style="justify-content:space-between;align-items:center;">
-        <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>Bugünün konusu</h2>
-        <div class="mchip sm"><img src="assets/mascot/extra-pencil.png" alt=""></div>
+    <div id="wPhaseA">
+      <div class="wcount-card"><span class="wc-lbl">Bugünün konusu</span><span class="wc-time" id="wCountdown">--</span></div>
+      <div class="wprompt-card"><svg class="wart" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wxa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A2170"/><stop offset="1" stop-color="#5B49D6"/></linearGradient><linearGradient id="wxb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE9A6"/><stop offset="1" stop-color="#F2B94B"/></linearGradient><radialGradient id="wxc" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE9A6" stop-opacity=".45"/><stop offset="1" stop-color="#FFE9A6" stop-opacity="0"/></radialGradient></defs><rect width="320" height="160" fill="url(#wxa)"/><circle cx="250" cy="52" r="46" fill="url(#wxc)"/><path d="M262 22a34 34 0 1 0 22 52 27 27 0 1 1-22-52z" fill="url(#wxb)"/><g fill="#FFE9A6"><path d="M70 34l2.6 6.2 6.4.5-4.9 4.2 1.6 6.3-5.7-3.5-5.7 3.5 1.6-6.3-4.9-4.2 6.4-.5z" opacity=".95"/><circle cx="130" cy="22" r="1.8"/><circle cx="168" cy="48" r="1.4" opacity=".8"/><circle cx="36" cy="82" r="1.6" opacity=".8"/><circle cx="205" cy="26" r="1.3" opacity=".7"/><path d="M118 70l1.6 3.8 3.9.3-3 2.6 1 3.8-3.5-2.1-3.5 2.1 1-3.8-3-2.6 3.9-.3z" opacity=".8"/></g><path d="M-10 120 C 50 92, 110 140, 180 112 S 290 96, 330 118 L330 170 L-10 170Z" fill="#8B7FFF" opacity=".55"/><path d="M-10 138 C 60 116, 130 156, 200 134 S 290 124, 330 140 L330 170 L-10 170Z" fill="#B3A9FF" opacity=".4"/></svg>
+        <div class="wp-body">
+          <h2 class="wp-title" id="wpTitle">—</h2>
+          <p class="wp-desc">Kısa bir İngilizce paragraf yaz (80–100 kelime). Bitirince Moonie yazını kontrol eder.</p>
+          <div class="wp-foot"><span class="wp-tag" id="wpTag">Günün Konusu</span><button type="button" class="wp-start" id="wpStart">Başla</button></div>
+        </div>
       </div>
-      <p class="rule-box paper-card" id="writingPrompt" style="margin-top:12px;">—</p>
-      <textarea class="f" id="writingText" rows="5" placeholder="En az 3-4 cümle yaz..."></textarea>
-      <p class="mut" id="writingWordCount" style="text-align:right;margin:-4px 0 6px;">0/80-100 kelime</p>
-      <button class="btn" id="writingSaveBtn">Kaydet</button>
-      <button type="button" class="btn deep" id="writingFeedbackBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'den Geri Bildirim Al</button>
-      <p class="hint">Moonie yazdığını doğrudan kontrol eder — dil bilgisi/kelime hatalarını gösterir ve daha doğal bir alternatif önerir.</p>
-      <div class="gemini-result" id="writingGeminiResult" style="display:none;"></div>
+      <button type="button" class="wgreen" id="wMoreBtn"><svg class="wlines" viewBox="0 0 200 100" preserveAspectRatio="xMaxYMid slice" aria-hidden="true"><g fill="none" stroke="#C9C2FF" stroke-width="1.1" opacity=".28"><circle cx="170" cy="50" r="18"/><circle cx="170" cy="50" r="30"/><circle cx="170" cy="50" r="42"/><circle cx="170" cy="50" r="54"/><circle cx="170" cy="50" r="66"/></g><g fill="#FFE9A6" opacity=".7"><circle cx="150" cy="22" r="1.4"/><circle cx="188" cy="30" r="1.1"/><circle cx="160" cy="80" r="1.2"/><circle cx="192" cy="72" r="1.5"/></g></svg><span class="wg-t">Daha fazla konuya göz at</span><span class="wg-d">Günlük yazma konuları kitaplığından kendi konunu seç.</span><svg class="icon wg-ch" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+      <div class="card" id="wPicker" style="display:none;"><div id="wPickerList"></div></div>
+      <button type="button" class="wgreen" id="wOwnBtn"><svg class="wlines" viewBox="0 0 200 100" preserveAspectRatio="xMaxYMid slice" aria-hidden="true"><g fill="none" stroke="#C9C2FF" stroke-width="1.1" opacity=".28"><circle cx="170" cy="50" r="18"/><circle cx="170" cy="50" r="30"/><circle cx="170" cy="50" r="42"/><circle cx="170" cy="50" r="54"/><circle cx="170" cy="50" r="66"/></g><g fill="#FFE9A6" opacity=".7"><circle cx="150" cy="22" r="1.4"/><circle cx="188" cy="30" r="1.1"/><circle cx="160" cy="80" r="1.2"/><circle cx="192" cy="72" r="1.5"/></g></svg><span class="wg-t">Kendi konunu yaz</span><span class="wg-d">Üzerinde yazmak istediğin bir konu belirle.</span><svg class="icon wg-ch" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+      <div class="card" id="wOwn" style="display:none;"><input class="f" id="wOwnInput" placeholder="Konu (ör. Describe your dream house)"><button type="button" class="btn sm" id="wOwnUse">Bu konuyla yaz</button></div>
+      <div class="card">
+        <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Yazıların <span class="mut" id="writingCount"></span></h2>
+        <div id="writingList"></div>
+      </div>
     </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Yazıların <span class="mut" id="writingCount"></span></h2>
-      <div id="writingList"></div>
+    <div id="wPhaseB" style="display:none;">
+      <div class="wband"><svg class="wart" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wya" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A2170"/><stop offset="1" stop-color="#5B49D6"/></linearGradient><linearGradient id="wyb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE9A6"/><stop offset="1" stop-color="#F2B94B"/></linearGradient><radialGradient id="wyc" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE9A6" stop-opacity=".45"/><stop offset="1" stop-color="#FFE9A6" stop-opacity="0"/></radialGradient></defs><rect width="320" height="160" fill="url(#wya)"/><circle cx="250" cy="52" r="46" fill="url(#wyc)"/><path d="M262 22a34 34 0 1 0 22 52 27 27 0 1 1-22-52z" fill="url(#wyb)"/><g fill="#FFE9A6"><path d="M70 34l2.6 6.2 6.4.5-4.9 4.2 1.6 6.3-5.7-3.5-5.7 3.5 1.6-6.3-4.9-4.2 6.4-.5z" opacity=".95"/><circle cx="130" cy="22" r="1.8"/><circle cx="168" cy="48" r="1.4" opacity=".8"/><circle cx="36" cy="82" r="1.6" opacity=".8"/><circle cx="205" cy="26" r="1.3" opacity=".7"/><path d="M118 70l1.6 3.8 3.9.3-3 2.6 1 3.8-3.5-2.1-3.5 2.1 1-3.8-3-2.6 3.9-.3z" opacity=".8"/></g><path d="M-10 120 C 50 92, 110 140, 180 112 S 290 96, 330 118 L330 170 L-10 170Z" fill="#8B7FFF" opacity=".55"/><path d="M-10 138 C 60 116, 130 156, 200 134 S 290 124, 330 140 L330 170 L-10 170Z" fill="#B3A9FF" opacity=".4"/></svg></div>
+      <div class="wsheet">
+        <div class="wsheet-grip"></div>
+        <h2 class="wp-title dark" id="writingPrompt">—</h2>
+        <p class="mut" style="margin:6px 0 14px;">Aşağıya İngilizce yaz. Hedef 80–100 kelime.</p>
+        <div class="wtext-wrap">
+          <textarea class="f" id="writingText" rows="9" placeholder="Hikayeni buraya yaz..."></textarea>
+          <span class="wcount-pill" id="writingWordCount">0/80-100 kelime</span>
+        </div>
+        <button class="btn" id="writingSaveBtn">Bitir ve Kaydet</button>
+        <button type="button" class="btn deep" id="writingFeedbackBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Moonie'den Geri Bildirim Al</button>
+        <p class="hint">Moonie yazdığını doğrudan kontrol eder — dil bilgisi/kelime hatalarını gösterir ve daha doğal bir alternatif önerir.</p>
+        <div class="gemini-result" id="writingGeminiResult" style="display:none;"></div>
+      </div>
     </div>
   </section>
 
@@ -1606,12 +1765,13 @@
     <div class="page-head">
       <h1>Günlük</h1>
     </div>
-    <div class="card">
-      <div class="datestrip">
-        <button class="dstep" id="journalPrev" aria-label="Önceki gün"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+    <div class="card jw-card">
+      <div class="jw-top">
+        <button class="dstep" id="journalPrev" aria-label="Önceki hafta"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
         <div class="dcenter"><div class="dlabel" id="journalDateLabel">Bugün</div><div class="ddate" id="journalDateSub"></div></div>
-        <button class="dstep" id="journalNext" aria-label="Sonraki gün"><svg class="icon icon-sm" aria-hidden="true" style="transform:rotate(180deg);"><use href="#i-arrow-left"></use></svg></button>
+        <button class="dstep" id="journalNext" aria-label="Sonraki hafta"><svg class="icon icon-sm" aria-hidden="true" style="transform:rotate(180deg);"><use href="#i-arrow-left"></use></svg></button>
       </div>
+      <div class="jw-strip" id="weekStrip"></div>
     </div>
     <div class="card">
       <h2>Bugün nasıl geçti?</h2>
@@ -1850,6 +2010,7 @@ S.grammar=S.grammar||{completed:{},selected:null};
 S.grammar.notes=S.grammar.notes||{};
 S.writings=S.writings||[];
 S.readingLib=S.readingLib||{completed:{}};
+S.books=S.books||[];
 S.readingLib.notes=S.readingLib.notes||{};
 S.listening=S.listening||{notes:"",transcript:""};
 migrateListeningToPodcasts();
@@ -1894,7 +2055,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",reading:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -1906,6 +2067,7 @@ function go(v){
   if(v==="learn") renderLearnHub();
   if(v==="progress") renderProgress();
   if(v==="reading") renderReading();
+  if(v==="book") renderBook();
   if(v==="libread") renderLibRead();
   if(v==="listening") renderListening();
   if(v==="podcastdetail") renderPodcastDetail();
@@ -2046,23 +2208,25 @@ function renderVocab(){
   else{
     if(studyIdx===null||studyIdx>=due.length) studyIdx=0;
     var w=due[studyIdx];
-    var progLabel='<p class="mut" style="text-align:center;margin-bottom:8px;font-weight:700;">'+(studyIdx+1)+"/"+due.length+"</p>";
+    var pct=Math.round((studyIdx)/due.length*100);
+    var progLabel='<div class="vc-head"><span class="vc-lvl"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>'+(studyIdx+1)+'/'+due.length+'</span><div class="vc-bar"><div style="width:'+Math.max(6,pct)+'%"></div></div></div>';
+    var stack='<span class="vc-card vc-b2"></span><span class="vc-card vc-b1"></span>';
     if(!flipped){
-      sa.innerHTML=progLabel+'<div class="flash paper-card"><div class="q">Türkçesi — İngilizcesini hatırla</div><div class="big">'+esc(w.tr)+'</div></div>'+
+      sa.innerHTML=progLabel+'<div class="vc-stack">'+stack+'<div class="vc-card vc-front"><div class="vc-hint">Türkçesi — İngilizcesini hatırla</div><div class="vc-word">'+esc(w.tr)+'</div></div></div>'+
         '<button class="btn sec" id="flipBtn" style="display:flex;align-items:center;justify-content:center;gap:7px;">Çevir <svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg></button>';
       document.getElementById("flipBtn").addEventListener("click",function(){ flipped=true; renderVocab(); });
     } else {
-      sa.innerHTML=progLabel+'<div class="flash paper-card"><div class="big">'+esc(w.en)+'</div>'+
-        '<button type="button" class="flash-speak" id="flashSpeakBtn" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
-        '<div class="flash-sec"><span class="flash-lbl">Anlamı</span><div class="flash-val">'+esc(w.tr)+'</div></div>'+
-        (w.ex?'<div class="flash-sec"><span class="flash-lbl">Örnek</span><div class="flash-val ex">"'+esc(w.ex)+'"</div></div>':'')+'</div>'+
-        '<div class="grade-v2">'+
-        '<button data-g="1"><span class="gv-circle gv-green"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><span class="gv-label">Biliyorum</span></button>'+
-        '<button data-g="2"><span class="gv-circle gv-purple"><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></span><span class="gv-label">Kolay</span></button>'+
-        '<button data-g="0"><span class="gv-circle gv-rust"><svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg></span><span class="gv-label">Bilmiyorum</span></button>'+
+      sa.innerHTML=progLabel+'<div class="vc-stack">'+stack+'<div class="vc-card vc-front">'+
+        '<button type="button" class="vc-speak" id="flashSpeakBtn" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
+        '<div class="vc-word">'+esc(w.en)+'</div><div class="vc-mean">'+esc(w.tr)+'</div></div></div>'+
+        (w.ex?'<div class="vc-use"><div class="vc-use-t"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Örnek cümle</div><div class="vc-use-b">'+esc(w.ex)+'</div></div>':'')+
+        '<div class="vc-grade">'+
+        '<button data-g="0"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-1"></use></svg></span><span class="vc-gl">Zor</span></button>'+
+        '<button data-g="1"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-3"></use></svg></span><span class="vc-gl">Orta</span></button>'+
+        '<button data-g="2"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-4"></use></svg></span><span class="vc-gl">Kolay</span></button>'+
         '</div>';
       document.getElementById("flashSpeakBtn").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
-      sa.querySelectorAll(".grade-v2 button").forEach(function(b){
+      sa.querySelectorAll(".vc-grade button").forEach(function(b){
         b.addEventListener("click",function(){ gradeCard(w,parseInt(b.dataset.g)); });
       });
     }
@@ -2201,57 +2365,156 @@ function libFrontierId(){
   for(var i=0;i<READING_LIBRARY.length;i++){ if(!S.readingLib.completed[READING_LIBRARY[i].id]) return READING_LIBRARY[i].id; }
   return READING_LIBRARY[READING_LIBRARY.length-1].id;
 }
+var OPEN_BOOK=null, OPEN_PDF=null, PDF_CHAPTER_CACHE={};
+var BOOK_COLORS=[["#7B6CF6","#4B3FB8"],["#EC7A57","#B34A2E"],["#25AE9A","#146E61"],["#E3AE45","#A7741A"],["#4A7BEA","#274FAE"],["#CC5189","#8E2B5B"]];
+function bookCoverHtml(title,sub,ci,done){
+  var c=BOOK_COLORS[ci%BOOK_COLORS.length];
+  return '<span class="book" style="--b1:'+c[0]+';--b2:'+c[1]+';"><span class="book-spine"></span>'+
+    '<span class="book-title">'+esc(title)+'</span><span class="book-sub">'+esc(sub||"")+'</span>'+
+    (done?'<span class="book-done"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>':'')+'</span>';
+}
 function renderReadingLib(){
-  var skel=document.getElementById("libSkeleton"), real=document.getElementById("libReal");
-  if(!READING_LIBRARY){
-    if(skel) skel.style.display="block";
-    if(real) real.style.display="none";
-    return;
-  }
-  if(skel) skel.style.display="none";
-  if(real) real.style.display="block";
-  var total=READING_LIBRARY.length;
+  var shelf=document.getElementById("shelfLib");
+  shelf.innerHTML="";
+  var total=READING_LIBRARY?READING_LIBRARY.length:0;
   var doneN=Object.keys(S.readingLib.completed).length;
-  document.getElementById("libCount").textContent="· "+doneN+"/"+total;
-  document.getElementById("libProgressBar").style.width=Math.round(doneN/total*100)+"%";
-  var frontierId=libFrontierId();
-  var frontier=READING_LIBRARY.filter(function(r){return r.id===frontierId;})[0]||READING_LIBRARY[0];
-  var allDone=doneN>=total;
-  document.getElementById("libProgressHint").textContent=allDone
-    ? "Kitaptaki tüm metinleri tamamladın!"
-    : (doneN+"/"+total+" metin tamamlandı — sırada "+frontier.id+". metin var.");
-  document.getElementById("libNextNum").textContent=frontier.id;
-  document.getElementById("libNextTitle").textContent=frontier.title;
-  var previewEl=document.getElementById("libNextPreview");
-  if(previewEl){
-    var firstPara=(frontier.paras||[]).filter(function(p){ return p.indexOf("##")!==0; })[0]||"";
-    previewEl.textContent=firstPara;
-  }
-  var nextBtn=document.getElementById("libNextBtn");
-  nextBtn.onclick=function(){ openLibRead(frontier.id); };
-  var nextCta=document.getElementById("libNextCta");
-  if(nextCta) nextCta.onclick=function(){ openLibRead(frontier.id); };
-
-  var toggle=document.getElementById("libToggle"), listEl=document.getElementById("libList");
-  if(!toggle.dataset.wired){
-    toggle.dataset.wired="1";
-    toggle.addEventListener("click",function(){
-      var open=listEl.classList.toggle("open");
-      toggle.classList.toggle("open",open);
-    });
-  }
-  listEl.innerHTML="";
-  READING_LIBRARY.forEach(function(r){
-    var done=!!S.readingLib.completed[r.id];
-    var row=document.createElement("button"); row.type="button"; row.className="lib-row"+(done?" done":"");
-    row.innerHTML='<span class="lr-n">'+r.id+'</span>'+
-      '<span class="u-stat"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'+
-      '<span class="lr-t">'+esc(r.title)+'</span>';
-    row.addEventListener("click",function(){ openLibRead(r.id); });
-    listEl.appendChild(row);
+  document.getElementById("libCount").textContent=total?("· "+doneN+"/"+total):"";
+  var b=document.createElement("button"); b.type="button"; b.className="book-btn";
+  b.innerHTML=bookCoverHtml("More to Read I",total?(total+" metin"):"Yükleniyor...",0,total&&doneN>=total);
+  b.addEventListener("click",function(){ if(!READING_LIBRARY) return; OPEN_BOOK={kind:"lib"}; go("book"); });
+  shelf.appendChild(b);
+  var pshelf=shelf;
+  S.books.forEach(function(bk){
+    var n=Object.keys(S.readingLib.pdfDone).filter(function(k){ return k.indexOf("pdf"+bk.id+"-")===0; }).length;
+    var el=document.createElement("button"); el.type="button"; el.className="book-btn";
+    el.innerHTML=bookCoverHtml(bk.title,bk.chapters+" bölüm",bk.colorIdx,n>=bk.chapters);
+    el.addEventListener("click",function(){ OPEN_BOOK={kind:"pdf",id:bk.id}; go("book"); });
+    pshelf.appendChild(el);
+  });
+  var add=document.createElement("button"); add.type="button"; add.className="book-btn book-add";
+  add.innerHTML='<span class="book"><span class="book-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span><span class="book-sub" style="margin-top:6px;">PDF Ekle</span></span>';
+  add.addEventListener("click",function(){ document.getElementById("pdfFile").click(); });
+  pshelf.appendChild(add);
+}
+function findBook(id){ return S.books.filter(function(x){return x.id===id;})[0]; }
+function loadBookChapters(bk){
+  if(PDF_CHAPTER_CACHE[bk.id]) return Promise.resolve(PDF_CHAPTER_CACHE[bk.id]);
+  return idbGet("book-"+bk.id).then(function(blob){
+    if(!blob) return [];
+    return blob.text().then(function(t){ var c=JSON.parse(t); PDF_CHAPTER_CACHE[bk.id]=c; return c; });
   });
 }
+function renderBook(){
+  if(!OPEN_BOOK){ go("reading"); return; }
+  var listEl=document.getElementById("bookList"); listEl.innerHTML="";
+  var delBtn=document.getElementById("bookDelete"), cont=document.getElementById("bookContinue");
+  if(OPEN_BOOK.kind==="lib"){
+    if(!READING_LIBRARY){ go("reading"); return; }
+    var total=READING_LIBRARY.length, doneN=Object.keys(S.readingLib.completed).length;
+    document.getElementById("bookTitle").textContent="More to Read I";
+    document.getElementById("bookHeroCover").innerHTML=bookCoverHtml("More to Read I",total+" metin",0,false);
+    document.getElementById("bookSub").textContent=doneN+"/"+total+" metin tamamlandı";
+    document.getElementById("bookBar").style.width=Math.round(doneN/total*100)+"%";
+    delBtn.style.display="none";
+    var fid=libFrontierId();
+    cont.textContent=doneN>=total?"Baştan oku":"Okumaya Devam Et ("+fid+")";
+    cont.onclick=function(){ openLibRead(fid); };
+    READING_LIBRARY.forEach(function(r){
+      var done=!!S.readingLib.completed[r.id];
+      var row=document.createElement("button"); row.type="button"; row.className="lib-row"+(done?" done":"");
+      row.innerHTML='<span class="lr-n">'+r.id+'</span><span class="u-stat"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><span class="lr-t">'+esc(r.title)+'</span>';
+      row.addEventListener("click",function(){ openLibRead(r.id); });
+      listEl.appendChild(row);
+    });
+    return;
+  }
+  var bk=findBook(OPEN_BOOK.id);
+  if(!bk){ go("reading"); return; }
+  document.getElementById("bookTitle").textContent=bk.title;
+  document.getElementById("bookHeroCover").innerHTML=bookCoverHtml(bk.title,bk.chapters+" bölüm",bk.colorIdx,false);
+  delBtn.style.display="inline-flex";
+  delBtn.onclick=function(){
+    if(!confirm("Bu kitap silinsin mi?")) return;
+    idbDelete("book-"+bk.id); delete PDF_CHAPTER_CACHE[bk.id];
+    S.books=S.books.filter(function(x){return x.id!==bk.id;}); save(); OPEN_BOOK=null; go("reading");
+  };
+  listEl.innerHTML='<p class="mut" style="text-align:center;">Yükleniyor...</p>';
+  loadBookChapters(bk).then(function(ch){
+    listEl.innerHTML="";
+    var doneN=0;
+    ch.forEach(function(c,i){
+      var key="pdf"+bk.id+"-"+i, done=!!S.readingLib.pdfDone[key]; if(done) doneN++;
+      var row=document.createElement("button"); row.type="button"; row.className="lib-row"+(done?" done":"");
+      row.innerHTML='<span class="lr-n">'+(i+1)+'</span><span class="u-stat"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><span class="lr-t">'+esc(c.title)+'</span>';
+      row.addEventListener("click",function(){ openPdfChapter(bk,ch,i); });
+      listEl.appendChild(row);
+    });
+    document.getElementById("bookSub").textContent=doneN+"/"+ch.length+" bölüm tamamlandı";
+    document.getElementById("bookBar").style.width=(ch.length?Math.round(doneN/ch.length*100):0)+"%";
+    var next=0; for(var i=0;i<ch.length;i++){ if(!S.readingLib.pdfDone["pdf"+bk.id+"-"+i]){ next=i; break; } }
+    cont.textContent=doneN>=ch.length?"Baştan oku":"Okumaya Devam Et ("+(next+1)+")";
+    cont.onclick=function(){ openPdfChapter(bk,ch,next); };
+  });
+}
+function openPdfChapter(bk,ch,i){
+  var c=ch[i];
+  OPEN_PDF={book:bk,idx:i,chapters:ch.map(function(x,j){ return {id:"pdf"+bk.id+"-"+j,title:x.title,paras:x.paras}; })};
+  go("libread");
+}
+/* PDF -> metin */
+function loadPdfJs(){
+  if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  var base="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  return new Promise(function(res,rej){
+    var sc=document.createElement("script"); sc.src=base+"pdf.min.js";
+    sc.onload=function(){
+      fetch(base+"pdf.worker.min.js").then(function(r){ return r.text(); }).then(function(t){
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([t],{type:"text/javascript"}));
+        res(window.pdfjsLib);
+      }).catch(function(){ window.pdfjsLib.GlobalWorkerOptions.workerSrc=base+"pdf.worker.min.js"; res(window.pdfjsLib); });
+    };
+    sc.onerror=function(){ rej(new Error("PDF okuyucu yüklenemedi. İnternet bağlantını kontrol et.")); };
+    document.head.appendChild(sc);
+  });
+}
+function splitPdfParas(t){
+  var sents=t.match(/[^.!?]+[.!?]+["')\]]*\s*|[^.!?]+$/g)||[t], out=[], cur="";
+  sents.forEach(function(x){ if((cur+x).length>550&&cur){ out.push(cur.trim()); cur=x; } else cur+=x; });
+  if(cur.trim()) out.push(cur.trim());
+  return out;
+}
+async function extractPdfChapters(file,onProgress){
+  var lib=await loadPdfJs();
+  var pdf=await lib.getDocument({data:await file.arrayBuffer()}).promise;
+  var chapters=[], cur="", start=1;
+  for(var p=1;p<=pdf.numPages;p++){
+    var page=await pdf.getPage(p), tc=await page.getTextContent(), txt="";
+    tc.items.forEach(function(it){ txt+=it.str+(it.hasEOL?"\n":" "); });
+    txt=txt.replace(/-\n(?=[a-z])/g,"").replace(/\s*\n\s*/g," ").replace(/\s{2,}/g," ").trim();
+    cur+=(cur?" ":"")+txt;
+    if(cur.length>=1800||p===pdf.numPages){
+      if(cur.trim().length>40) chapters.push({title:"Sayfa "+start+(p>start?"–"+p:""),paras:splitPdfParas(cur)});
+      cur=""; start=p+1;
+    }
+    if(onProgress) onProgress(p,pdf.numPages);
+  }
+  return {chapters:chapters,pages:pdf.numPages};
+}
+document.getElementById("pdfFile").addEventListener("change",async function(e){
+  var file=e.target.files[0]; e.target.value="";
+  if(!file) return;
+  var st=document.getElementById("pdfStatus"); st.style.display="block"; st.textContent="PDF okunuyor...";
+  try{
+    var r=await extractPdfChapters(file,function(p,n){ st.textContent="PDF okunuyor... "+p+"/"+n; });
+    if(!r.chapters.length){ st.textContent="Bu PDF'den metin çıkarılamadı (taranmış/fotoğraf PDF olabilir)."; return; }
+    var id="b"+Date.now().toString(36);
+    await idbPut("book-"+id,new Blob([JSON.stringify(r.chapters)],{type:"application/json"}));
+    S.books.push({id:id,title:file.name.replace(/\.pdf$/i,"").slice(0,60),chapters:r.chapters.length,pages:r.pages,colorIdx:S.books.length+1,added:isoDate(new Date())});
+    save(); st.style.display="none"; renderReadingLib();
+  }catch(err){ st.textContent="Hata: "+(err.message||err); }
+});
 function openLibRead(id){
+  OPEN_PDF=null; if(!OPEN_BOOK||OPEN_BOOK.kind!=="lib") OPEN_BOOK={kind:"lib"};
   S.readingLib.openId=id; save();
   go("libread");
 }
@@ -2259,17 +2522,29 @@ function libReadFullText(r){
   return r.paras.map(function(p){ return p.indexOf("##")===0 ? p.slice(2)+":" : p; }).join("\n\n");
 }
 function currentLibReadPassage(){
+  if(OPEN_PDF) return OPEN_PDF.chapters[OPEN_PDF.idx];
   if(!READING_LIBRARY) return null;
   var id=S.readingLib.openId||libFrontierId();
   return READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
 }
+function isPassageDone(r){ return OPEN_PDF?!!S.readingLib.pdfDone[r.id]:!!S.readingLib.completed[r.id]; }
 function renderLibRead(){
-  if(!READING_LIBRARY) return;
-  var id=S.readingLib.openId||libFrontierId();
-  var r=READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
+  var r, subText, pct;
+  if(OPEN_PDF){
+    r=OPEN_PDF.chapters[OPEN_PDF.idx];
+    subText=OPEN_PDF.book.title+" · "+(OPEN_PDF.idx+1)+"/"+OPEN_PDF.chapters.length;
+    pct=Math.round((OPEN_PDF.idx+1)/OPEN_PDF.chapters.length*100);
+  } else {
+    if(!READING_LIBRARY) return;
+    var id=S.readingLib.openId||libFrontierId();
+    r=READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
+    subText="More to Read I · "+r.id+"/"+READING_LIBRARY.length;
+    pct=Math.round(r.id/READING_LIBRARY.length*100);
+  }
+  document.querySelector("#v-libread .page-head .back").onclick=function(){ go(OPEN_BOOK?"book":"reading"); };
   document.getElementById("libReadTitle").textContent=r.title;
-  document.getElementById("libReadSub").textContent="More to Read I · "+r.id+"/"+READING_LIBRARY.length;
-  document.getElementById("libReadProgressFill").style.width=Math.round(r.id/READING_LIBRARY.length*100)+"%";
+  document.getElementById("libReadSub").textContent=subText;
+  document.getElementById("libReadProgressFill").style.width=pct+"%";
   var body=document.getElementById("libReadBody");
   body.innerHTML=r.paras.map(function(p){
     if(p.indexOf("##")===0){ return '<span class="rsub">'+esc(p.slice(2))+'</span>'; }
@@ -2281,7 +2556,7 @@ function renderLibRead(){
       openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
     });
   });
-  var done=!!S.readingLib.completed[r.id];
+  var done=isPassageDone(r);
   document.getElementById("libReadCompleteBtn").style.display=done?"none":"block";
   document.getElementById("libReadDoneMsg").style.display=done?"flex":"none";
   if(libReadRecording&&libReadRecorder&&libReadRecorder.state!=="inactive"){ libReadRecorder.stop(); }
@@ -2306,8 +2581,8 @@ function renderLibRead(){
   });
   var completeBtn=document.getElementById("libReadCompleteBtn");
   completeBtn.onclick=function(){
-    S.readingLib.completed[r.id]=true;
-    S.readings.push({date:isoDate(new Date()),text:r.title,source:"More to Read I",libraryId:r.id});
+    if(OPEN_PDF){ S.readingLib.pdfDone[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:OPEN_PDF.book.title}); }
+    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"More to Read I",libraryId:r.id}); }
     save();
     renderLibRead(); renderReadingLib(); renderLearnHub();
   };
@@ -3351,10 +3626,40 @@ function updateWritingWordCount(){
   var text=document.getElementById("writingText").value.trim();
   var n=text?text.split(/\s+/).filter(Boolean).length:0;
   el.textContent=n+"/80-100 kelime";
-  el.style.color=(n>=80&&n<=100)?"var(--green)":"var(--ink-soft)";
+  el.style.color=(n>=80&&n<=100)?"var(--green)":"var(--purple-deep)";
+}
+var writingCur=null, writingTimer=null;
+function writingPhase(ph){
+  document.getElementById("wPhaseA").style.display=ph==="A"?"block":"none";
+  document.getElementById("wPhaseB").style.display=ph==="B"?"block":"none";
+  document.getElementById("writingHead").textContent=ph==="A"?"Günlük Konu":"Yazma";
+  document.getElementById("writingBack").onclick=function(){ if(ph==="B") writingPhase("A"); else go("learn"); };
+  window.scrollTo(0,0);
+}
+function tickWritingCountdown(){
+  var el=document.getElementById("wCountdown");
+  if(!el||!document.getElementById("v-writing").classList.contains("active")){ clearInterval(writingTimer); writingTimer=null; return; }
+  var n=new Date(), end=new Date(n); end.setHours(24,0,0,0);
+  var t=Math.floor((end-n)/1000), h=Math.floor(t/3600), m=Math.floor(t%3600/60), sc=t%60;
+  el.textContent=h+" sa "+m+" dk "+sc+" sn";
 }
 function renderWriting(){
-  var promptText=todaysWritingPrompt();
+  var promptText=writingCur||todaysWritingPrompt();
+  document.getElementById("wpTitle").textContent=promptText;
+  document.getElementById("wpTag").textContent=writingCur?"Seçtiğin Konu":"Günün Konusu";
+  tickWritingCountdown(); if(!writingTimer) writingTimer=setInterval(tickWritingCountdown,1000);
+  writingPhase("A");
+  document.getElementById("wpStart").onclick=function(){ writingPhase("B"); };
+  var pl=document.getElementById("wPickerList"); pl.innerHTML="";
+  WRITING_PROMPTS.forEach(function(t){
+    var r=document.createElement("button"); r.type="button"; r.className="lib-row";
+    r.innerHTML='<span class="lr-t">'+esc(t)+'</span>';
+    r.addEventListener("click",function(){ writingCur=t; document.getElementById("wPicker").style.display="none"; renderWriting(); });
+    pl.appendChild(r);
+  });
+  document.getElementById("wMoreBtn").onclick=function(){ var pk=document.getElementById("wPicker"); pk.style.display=pk.style.display==="none"?"block":"none"; };
+  document.getElementById("wOwnBtn").onclick=function(){ var o=document.getElementById("wOwn"); o.style.display=o.style.display==="none"?"block":"none"; };
+  document.getElementById("wOwnUse").onclick=function(){ var v=document.getElementById("wOwnInput").value.trim(); if(!v) return; writingCur=v; document.getElementById("wOwn").style.display="none"; renderWriting(); };
   document.getElementById("writingPrompt").textContent=promptText;
   document.getElementById("writingText").value="";
   updateWritingWordCount();
@@ -4059,7 +4364,7 @@ function collectAllNotes(){
     var text=(S.readingLib.notes[key]||"").trim(); if(!text) return;
     var id=+key;
     var passage=READING_LIBRARY?READING_LIBRARY.filter(function(r){return r.id===id;})[0]:null;
-    items.push({cat:"Okuma",ic:"i-book-open",bg:"var(--green-tint)",fg:"var(--green)",title:passage?passage.title:("Metin #"+id),sub:"More to Read I",text:text,go:function(){ S.readingLib.openId=id; save(); go("libread"); }});
+    items.push({cat:"Okuma",ic:"i-book-open",bg:"var(--green-tint)",fg:"var(--green)",title:passage?passage.title:("Metin #"+id),sub:"More to Read I",text:text,go:function(){ OPEN_PDF=null; OPEN_BOOK={kind:"lib"}; S.readingLib.openId=id; save(); go("libread"); }});
   });
   (S.writings||[]).forEach(function(w){
     var text=(w.feedback||"").trim(); if(!text) return;
@@ -4488,29 +4793,52 @@ function renderLearnHub(){
 
 /* ---------- JOURNAL ---------- */
 var journalCursor=new Date();
+var JW_MOOD={"😞":"i-mood-1","😐":"i-mood-2","🙂":"i-mood-3","😄":"i-mood-4","🤩":"i-mood-5"};
+var JW_SHORT=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+function journalAgo(k){
+  var diff=daysBetween(new Date(today0()),parseDstr(k));
+  if(diff<=0) return "Bugün"; if(diff===1) return "Dün"; if(diff<7) return diff+" gün önce";
+  return fmtDstrKey(k);
+}
 function renderJournal(){
   var key=dstr(journalCursor), isToday=key===dstr(new Date());
   document.getElementById("journalDateLabel").textContent=isToday?"Bugün":DAYS_TR[journalCursor.getDay()];
   document.getElementById("journalDateSub").textContent=journalCursor.getDate()+" "+MONTHS_TR[journalCursor.getMonth()]+" "+journalCursor.getFullYear();
+  // hafta şeridi (Pzt-Paz)
+  var strip=document.getElementById("weekStrip"); strip.innerHTML="";
+  var mon=new Date(journalCursor); mon.setHours(0,0,0,0);
+  mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
+  for(var i=0;i<7;i++){
+    (function(){
+      var d=new Date(mon); d.setDate(mon.getDate()+i);
+      var k=dstr(d), has=!!(S.journal[k]&&(S.journal[k].notes||S.journal[k].mood));
+      var b=document.createElement("button"); b.type="button";
+      b.className="jw-day"+(k===key?" sel":"")+(k===dstr(new Date())?" today":"");
+      b.innerHTML='<span class="jw-dn">'+JW_SHORT[d.getDay()]+'</span><span class="jw-num">'+d.getDate()+'</span><span class="jw-dot'+(has?" on":"")+'"></span>';
+      b.addEventListener("click",function(){ journalCursor=d; renderJournal(); });
+      strip.appendChild(b);
+    })();
+  }
   var entry=S.journal[key]||{mood:"",notes:""};
   document.querySelectorAll("#moodRow .mood").forEach(function(b){ b.classList.toggle("active", b.dataset.m===entry.mood); });
   document.getElementById("journalNotes").value=entry.notes||"";
 
-  var keys=Object.keys(S.journal).sort().reverse().slice(0,7);
+  var keys=Object.keys(S.journal).filter(function(k){ var e=S.journal[k]; return e&&(e.notes||e.mood); }).sort(function(a,b){ return parseDstr(b)-parseDstr(a); }).slice(0,12);
   var hist=document.getElementById("journalHistory");
   if(!keys.length){ hist.innerHTML='<div class="empty">Henüz günlük kaydı yok.</div>'; return; }
   hist.innerHTML="";
   keys.forEach(function(k){
     var e=S.journal[k];
-    var row=document.createElement("button"); row.type="button"; row.className="journal-row";
-    var noteShort=(e.notes||"").slice(0,42)+((e.notes||"").length>42?"…":"");
-    row.innerHTML='<span class="j-mood">'+(e.mood||"—")+'</span><span class="j-date">'+fmtDstrKey(k)+'</span><span class="j-notes">'+esc(noteShort)+'</span>';
-    row.addEventListener("click",function(){ journalCursor=parseDstr(k); renderJournal(); });
-    hist.appendChild(row);
+    var card=document.createElement("button"); card.type="button"; card.className="jcard"+(k===key?" sel":"");
+    card.innerHTML='<span class="jc-text">'+(e.notes?esc(e.notes):'<i>Not yazılmadı</i>')+'</span>'+
+      '<span class="jc-foot"><span class="jc-when"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-calendar"></use></svg>'+journalAgo(k)+'</span>'+
+      '<span class="jc-mood">'+(JW_MOOD[e.mood]?'<svg class="icon" aria-hidden="true"><use href="#'+JW_MOOD[e.mood]+'"></use></svg>':'')+'</span></span>';
+    card.addEventListener("click",function(){ journalCursor=parseDstr(k); renderJournal(); window.scrollTo({top:0,behavior:"smooth"}); });
+    hist.appendChild(card);
   });
 }
-document.getElementById("journalPrev").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()-1); renderJournal(); });
-document.getElementById("journalNext").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()+1); renderJournal(); });
+document.getElementById("journalPrev").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()-7); renderJournal(); });
+document.getElementById("journalNext").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()+7); renderJournal(); });
 document.querySelectorAll("#moodRow .mood").forEach(function(b){
   b.addEventListener("click",function(){
     document.querySelectorAll("#moodRow .mood").forEach(function(x){ x.classList.remove("active"); });
@@ -4610,7 +4938,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
-      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
+      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.readingLib.pdfDone=S.readingLib.pdfDone||{}; S.books=S.books||[]; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
