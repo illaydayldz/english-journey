@@ -1,7 +1,7 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v12-icon-ios-safezone";
+const CACHE = "english-app-v13-new-design";
 const ASSETS = [
-  "./", "./index.html", "./manifest.webmanifest", "./icon-192-v3.png", "./icon-512-v3.png",
+  "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/reading-library.json",
   "./assets/mascot/hero-happy.png",
   "./assets/mascot/pose-motivated.png",
@@ -32,8 +32,6 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
-  // HTML/navigasyon istekleri: önce ağdan taze kopya dene (her deploy hemen yansısın),
-  // sadece çevrimdışıyken önbelleğe düş. Statik varlıklar (ikon/maskot) önbellek-öncelikli kalır.
   const isNav = e.request.mode === "navigate" || e.request.url.endsWith("/index.html") || e.request.url.endsWith(".webmanifest");
   if (isNav) {
     e.respondWith(
