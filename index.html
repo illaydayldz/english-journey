@@ -845,10 +845,9 @@
   .th-btn{ margin-top:8px; border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:14px; color:#2A1F5C; padding:11px 20px; border-radius:14px; background:linear-gradient(180deg,#FFE9A6,#F2B94B); box-shadow:0 4px 0 #B07E1C, 0 10px 16px -6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6); }
   .th-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #B07E1C; }
   .th-moon{ position:absolute; right:-6px; bottom:-4px; width:42%; max-width:170px; height:auto; filter:drop-shadow(0 12px 14px rgba(0,0,0,.4)); }
-  .quickgrid{ display:flex; gap:12px; overflow-x:auto; margin:0 -16px 18px; padding:4px 16px 10px; scrollbar-width:none; }
-  .quickgrid::-webkit-scrollbar{ display:none; }
-  .quickgrid .quick-item{ flex:0 0 78px; padding:12px 4px 10px; border-radius:20px; }
-  .quick-item .hub-ic{ width:42px; height:42px; }
+  .quickgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:0 0 18px; padding:0; }
+  .quickgrid .quick-item{ padding:14px 6px 12px; border-radius:20px; }
+  .quick-item .hub-ic{ width:46px; height:46px; }
   .quick-item .qi-t{ font-size:11px; font-weight:600; color:var(--ink-2); }
   .mini-h{ font-size:12px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin:18px 0 8px; }
   .more-details>summary{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; cursor:pointer; list-style:none; }
