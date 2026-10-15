@@ -1202,6 +1202,36 @@
   .mp-decor{ display:block !important; z-index:1; opacity:1 !important; filter:drop-shadow(0 10px 8px rgba(30,15,90,.28)); }
   .mp-decor svg{ width:100%; height:auto; display:block; }
   .mp-line{ z-index:1; } .mp-node{ z-index:3; }
+
+  /* v41: günlük */
+  .jr-head{ display:flex; align-items:center; gap:12px; margin:4px 2px 14px; }
+  .jr-av{ width:54px; height:54px; border-radius:18px; background:linear-gradient(160deg,#6B5BE6,#4B3FB8); display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 rgba(40,30,120,.5), 0 12px 18px -8px rgba(90,79,207,.7); overflow:hidden; flex-shrink:0; }
+  .jr-av img{ width:86%; height:86%; object-fit:contain; }
+  .jr-title{ flex:1; min-width:0; background:none; border:none; outline:none; font-family:var(--font-display); font-weight:800; font-size:22px; color:var(--ink); }
+  .jr-pen{ width:20px; height:20px; color:var(--ink-soft); }
+  .jr-week{ background:var(--card); border-radius:24px; padding:12px 8px 10px; margin-bottom:14px; box-shadow:0 14px 26px -18px rgba(0,0,0,.7); }
+  .jr-weekrow{ display:flex; align-items:center; gap:2px; }
+  .jr-weekrow .jw-strip{ flex:1; }
+  .jr-nav{ width:26px; height:44px; background:none; border:none; color:var(--ink-soft); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .jr-expand{ display:flex; align-items:center; gap:6px; margin:6px 8px 0 auto; background:none; border:none; font-family:inherit; font-size:12px; font-weight:700; color:var(--ink-soft); cursor:pointer; }
+  .jr-month{ grid-template-columns:repeat(7,1fr); gap:4px; padding:8px 6px 4px; }
+  .jr-mh{ grid-column:1/-1; font-weight:800; font-size:13px; color:var(--ink); margin-bottom:4px; }
+  .jr-mn{ font-size:10.5px; font-weight:700; color:var(--ink-soft); text-align:center; }
+  .jr-md{ height:34px; border:none; border-radius:50%; background:none; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); cursor:pointer; position:relative; }
+  .jr-md.has::after{ content:""; position:absolute; left:50%; bottom:3px; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--green); }
+  .jr-md.sel{ background:linear-gradient(160deg,#A99CFF,var(--purple) 55%,#4C3FC4); color:#fff; }
+  .jr-date{ font-size:12.5px; font-weight:700; color:var(--ink-soft); margin:0 4px 10px; }
+  .jcard{ border-radius:22px !important; padding:18px 18px 14px !important; }
+  .jcard .jc-text{ font-size:14.5px; line-height:1.6; color:var(--ink); }
+  .jcard .jc-foot{ border-top:1px solid rgba(255,255,255,.1); padding-top:10px; margin-top:4px; }
+  .jcard.jc-empty{ align-items:center; text-align:center; border-style:dashed !important; }
+  .jr-fab{ position:fixed; right:18px; bottom:calc(104px + env(safe-area-inset-bottom)); z-index:40; width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; color:#2A1F5C; background:linear-gradient(180deg,#FFE9A6,#F2B94B); box-shadow:0 6px 0 #B07E1C, 0 16px 22px -8px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.6); display:none; align-items:center; justify-content:center; }
+  #v-journal.active .jr-fab{ display:flex; }
+  .jr-fab .icon{ width:26px; height:26px; } .jr-fab:active{ transform:translateY(4px); box-shadow:0 2px 0 #B07E1C; }
+  .jr-sheet{ position:fixed; left:0; right:0; bottom:0; max-width:560px; margin:0 auto; z-index:70; background:var(--card); border-radius:26px 26px 0 0; padding:10px 18px calc(24px + env(safe-area-inset-bottom)); transform:translateY(110%); transition:transform .25s; box-shadow:0 -20px 40px rgba(0,0,0,.55); }
+  .jr-sheet.open{ transform:translateY(0); }
+  #jrBackdrop{ z-index:65; }
+  @media (min-width:900px){ .jr-sheet{ left:216px; } }
 </style>
 </head>
 <body>
@@ -2006,10 +2036,6 @@
       <h2 style="padding:0 6px;"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Moonie'nin dünya turu</h2>
       <div id="speakLevelList" style="margin-top:6px;"></div>
     </div>
-    <div class="card" id="speakUnitCard">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg>Seçili görev</h2>
-      <div id="speakCurrent"></div>
-    </div>
     <div class="card pron">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Telaffuz antrenmanı</h2>
       <p class="mut" style="margin-bottom:10px;">Cümleyi seç ya da yaz → <b>Dinle</b> ile doğrusunu duy → <b>Konuş</b> ile söyle, app ne kadar doğru olduğunu ölçer.</p>
@@ -2028,7 +2054,17 @@
 
   </section>
 
-    <!-- ===== GRAMMAR PATH ===== -->
+    <section class="view" id="v-speakunit">
+    <div class="page-head">
+      <button class="back" onclick="go('speaking')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Görev</h1>
+    </div>
+    <div class="card" id="speakUnitCard">
+      <div id="speakCurrent"></div>
+    </div>
+  </section>
+
+  <!-- ===== GRAMMAR PATH ===== -->
   <section class="view" id="v-grammar">
     <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
@@ -2139,19 +2175,27 @@
 
   <!-- ===== GÜNLÜK ===== -->
   <section class="view" id="v-journal">
-    <div class="page-head">
-      <h1>Günlük</h1>
+    <div class="jr-head">
+      <span class="jr-av"><img src="assets/mascot/pose-writing.png" alt=""></span>
+      <input class="jr-title" id="jrTitle" value="Günlüğüm" maxlength="28" aria-label="Günlük adı">
+      <svg class="icon jr-pen" aria-hidden="true"><use href="#i-edit"></use></svg>
     </div>
-    <div class="card jw-card">
-      <div class="jw-top">
-        <button class="dstep" id="journalPrev" aria-label="Önceki hafta"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-        <div class="dcenter"><div class="dlabel" id="journalDateLabel">Bugün</div><div class="ddate" id="journalDateSub"></div></div>
-        <button class="dstep" id="journalNext" aria-label="Sonraki hafta"><svg class="icon icon-sm" aria-hidden="true" style="transform:rotate(180deg);"><use href="#i-arrow-left"></use></svg></button>
+    <div class="jr-week">
+      <div class="jr-weekrow">
+        <button class="jr-nav" id="journalPrev" aria-label="Önceki hafta"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+        <div class="jw-strip" id="weekStrip"></div>
+        <button class="jr-nav" id="journalNext" aria-label="Sonraki hafta"><svg class="icon icon-sm" aria-hidden="true" style="transform:rotate(180deg);"><use href="#i-arrow-left"></use></svg></button>
       </div>
-      <div class="jw-strip" id="weekStrip"></div>
+      <button type="button" class="jr-expand" id="jrExpand"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-calendar"></use></svg><span id="jrExpandTxt">Takvimi genişlet</span></button>
+      <div class="jr-month" id="jrMonth" style="display:none;"></div>
     </div>
-    <div class="card">
-      <h2>Bugün nasıl geçti?</h2>
+    <div class="jr-date"><span id="journalDateLabel">Bugün</span> · <span id="journalDateSub"></span></div>
+    <div id="journalHistory"></div>
+    <button type="button" class="jr-fab" id="jrFab" aria-label="Yeni giriş"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></button>
+    <div class="word-backdrop" id="jrBackdrop"></div>
+    <div class="jr-sheet" id="jrSheet">
+      <div class="ws-handle" aria-hidden="true"></div>
+      <h2 style="display:flex;align-items:center;">Bugün nasıl geçti?<button type="button" aria-label="Kapat" id="jrClose" style="margin-left:auto;background:var(--tint);border:none;border-radius:50%;width:30px;height:30px;color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg></button></h2>
       <div class="moodrow" id="moodRow">
         <button type="button" class="mood" data-m="😞" aria-label="Çok kötü"><svg class="icon" aria-hidden="true"><use href="#i-mood-1"></use></svg></button>
         <button type="button" class="mood" data-m="😐" aria-label="Kötü"><svg class="icon" aria-hidden="true"><use href="#i-mood-2"></use></svg></button>
@@ -2159,18 +2203,8 @@
         <button type="button" class="mood" data-m="😄" aria-label="İyi"><svg class="icon" aria-hidden="true"><use href="#i-mood-4"></use></svg></button>
         <button type="button" class="mood" data-m="🤩" aria-label="Harika"><svg class="icon" aria-hidden="true"><use href="#i-mood-5"></use></svg></button>
       </div>
-      <textarea class="f" id="journalNotes" rows="4" placeholder="Bugün ne öğrendin, neler hissettin?" style="margin-top:12px;"></textarea>
+      <textarea class="f" id="journalNotes" rows="5" placeholder="Bugün ne öğrendin, neler hissettin? İstersen İngilizce yaz." style="margin-top:12px;"></textarea>
       <button class="btn" id="journalSave">Kaydet</button>
-    </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Son kayıtlar</h2>
-      <div id="journalHistory">
-        <div class="empty-state">
-          <svg class="ic" aria-hidden="true"><use href="#i-book"></use></svg>
-          <div class="t">Henüz günlük kaydın yok</div>
-          <div class="d">Bugün nasıl geçti, yukarıdan ruh halini seç ve birkaç cümle yaz.</div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -2522,7 +2556,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -2538,7 +2572,7 @@ function go(v){
   if(v==="libread") renderLibRead();
   if(v==="listening") renderListening();
   if(v==="podcastdetail") renderPodcastDetail();
-  if(v==="speaking") renderSpeaking();
+  if(v==="speaking"||v==="speakunit") renderSpeaking();
   if(v==="grammar") renderGrammar();
   if(v==="writing") renderWriting();
   if(v==="achievements") renderAchievements();
@@ -4817,7 +4851,7 @@ function renderSpeaking(){
     }
     var addedN=addUnitPhrasesToVocab(unit);
     S.speaking.selected=null; // ilerlemeyi otomatik bir sonraki üniteye taşı
-    save(); renderSpeaking(); renderLearnHub(); renderVocab();
+    save(); renderLearnHub(); renderVocab(); go("speaking");
     if(addedN) alert(addedN+" kalıp ifade Kelime kartlarına eklendi — aralıklı tekrarla karşına çıkacak.");
   });
 
@@ -4865,8 +4899,7 @@ function renderSpeaking(){
   listEl.querySelectorAll(".mp-story").forEach(function(h){ h.addEventListener("click",function(){ var li=parseInt(h.dataset.li,10); S.speaking.openLv=(S.speaking.openLv===li)?-1:li; save(); renderSpeaking(); }); });
   listEl.querySelectorAll(".mp-node").forEach(function(n){
     n.addEventListener("click",function(){
-      S.speaking.selected={li:parseInt(n.dataset.li,10),ui:parseInt(n.dataset.ui,10)}; save(); renderSpeaking();
-      var uc=document.getElementById("speakUnitCard"); if(uc) uc.scrollIntoView({behavior:"smooth",block:"start"});
+      S.speaking.selected={li:parseInt(n.dataset.li,10),ui:parseInt(n.dataset.ui,10)}; save(); go("speakunit");
     });
   });
 }
@@ -5532,11 +5565,13 @@ function journalAgo(k){
   if(diff<=0) return "Bugün"; if(diff===1) return "Dün"; if(diff<7) return diff+" gün önce";
   return fmtDstrKey(k);
 }
+function jrSheet(open){ document.getElementById("jrSheet").classList.toggle("open",open); document.getElementById("jrBackdrop").classList.toggle("open",open); }
+var jrMonthOpen=false;
 function renderJournal(){
   var key=dstr(journalCursor), isToday=key===dstr(new Date());
+  var ti=document.getElementById("jrTitle"); if(ti&&document.activeElement!==ti) ti.value=S.settings.journalTitle||"Günlüğüm";
   document.getElementById("journalDateLabel").textContent=isToday?"Bugün":DAYS_TR[journalCursor.getDay()];
   document.getElementById("journalDateSub").textContent=journalCursor.getDate()+" "+MONTHS_TR[journalCursor.getMonth()]+" "+journalCursor.getFullYear();
-  // hafta şeridi (Pzt-Paz)
   var strip=document.getElementById("weekStrip"); strip.innerHTML="";
   var mon=new Date(journalCursor); mon.setHours(0,0,0,0);
   mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
@@ -5551,26 +5586,46 @@ function renderJournal(){
       strip.appendChild(b);
     })();
   }
+  // ay takvimi
+  var mEl=document.getElementById("jrMonth"); mEl.style.display=jrMonthOpen?"grid":"none";
+  document.getElementById("jrExpandTxt").textContent=jrMonthOpen?"Takvimi daralt":"Takvimi genişlet";
+  if(jrMonthOpen){
+    var y=journalCursor.getFullYear(), m=journalCursor.getMonth(), first=new Date(y,m,1), off=(first.getDay()+6)%7, dim=new Date(y,m+1,0).getDate();
+    var h='<div class="jr-mh">'+MONTHS_TR[m]+' '+y+'</div>'+["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"].map(function(n){return '<span class="jr-mn">'+n+'</span>';}).join("");
+    for(var e=0;e<off;e++) h+='<span></span>';
+    for(var dd=1;dd<=dim;dd++){ var dk=dstr(new Date(y,m,dd)), hs=!!(S.journal[dk]&&(S.journal[dk].notes||S.journal[dk].mood)); h+='<button type="button" class="jr-md'+(dk===key?" sel":"")+(hs?" has":"")+'" data-d="'+dd+'">'+dd+'</button>'; }
+    mEl.innerHTML=h;
+    mEl.querySelectorAll(".jr-md").forEach(function(bt){ bt.addEventListener("click",function(){ journalCursor=new Date(y,m,parseInt(bt.dataset.d,10)); renderJournal(); }); });
+  }
   var entry=S.journal[key]||{mood:"",notes:""};
   document.querySelectorAll("#moodRow .mood").forEach(function(b){ b.classList.toggle("active", b.dataset.m===entry.mood); });
   document.getElementById("journalNotes").value=entry.notes||"";
 
-  var keys=Object.keys(S.journal).filter(function(k){ var e=S.journal[k]; return e&&(e.notes||e.mood); }).sort(function(a,b){ return parseDstr(b)-parseDstr(a); }).slice(0,12);
-  var hist=document.getElementById("journalHistory");
-  if(!keys.length){ hist.innerHTML='<div class="empty">Henüz günlük kaydı yok.</div>'; return; }
-  hist.innerHTML="";
+  var keys=Object.keys(S.journal).filter(function(k){ var e=S.journal[k]; return e&&(e.notes||e.mood); }).sort(function(a,b){ return parseDstr(b)-parseDstr(a); }).slice(0,20);
+  var hist=document.getElementById("journalHistory"); hist.innerHTML="";
+  if(keys.indexOf(key)===-1){
+    var emp=document.createElement("button"); emp.type="button"; emp.className="jcard jc-empty sel";
+    emp.innerHTML='<span class="jc-text"><i>'+(isToday?"Bugün için henüz giriş yok.":"Bu gün için giriş yok.")+' Yazmak için dokun.</i></span>';
+    emp.addEventListener("click",function(){ jrSheet(true); });
+    hist.appendChild(emp);
+  }
   keys.forEach(function(k){
     var e=S.journal[k];
     var card=document.createElement("button"); card.type="button"; card.className="jcard"+(k===key?" sel":"");
     card.innerHTML='<span class="jc-text">'+(e.notes?esc(e.notes):'<i>Not yazılmadı</i>')+'</span>'+
       '<span class="jc-foot"><span class="jc-when"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-calendar"></use></svg>'+journalAgo(k)+'</span>'+
       '<span class="jc-mood">'+(JW_MOOD[e.mood]?'<svg class="icon" aria-hidden="true"><use href="#'+JW_MOOD[e.mood]+'"></use></svg>':'')+'</span></span>';
-    card.addEventListener("click",function(){ journalCursor=parseDstr(k); renderJournal(); window.scrollTo({top:0,behavior:"smooth"}); });
+    card.addEventListener("click",function(){ journalCursor=parseDstr(k); renderJournal(); jrSheet(true); });
     hist.appendChild(card);
   });
 }
 document.getElementById("journalPrev").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()-7); renderJournal(); });
 document.getElementById("journalNext").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()+7); renderJournal(); });
+document.getElementById("jrExpand").addEventListener("click",function(){ jrMonthOpen=!jrMonthOpen; renderJournal(); });
+document.getElementById("jrFab").addEventListener("click",function(){ jrSheet(true); });
+document.getElementById("jrBackdrop").addEventListener("click",function(){ jrSheet(false); });
+document.getElementById("jrClose").addEventListener("click",function(){ jrSheet(false); });
+document.getElementById("jrTitle").addEventListener("change",function(){ S.settings.journalTitle=this.value.trim()||"Günlüğüm"; save(); });
 document.querySelectorAll("#moodRow .mood").forEach(function(b){
   b.addEventListener("click",function(){
     document.querySelectorAll("#moodRow .mood").forEach(function(x){ x.classList.remove("active"); });
@@ -5581,7 +5636,7 @@ document.getElementById("journalSave").addEventListener("click",function(){
   var key=dstr(journalCursor);
   var moodBtn=document.querySelector("#moodRow .mood.active");
   S.journal[key]={mood:moodBtn?moodBtn.dataset.m:"", notes:document.getElementById("journalNotes").value.trim()};
-  save(); renderJournal();
+  save(); jrSheet(false); renderJournal();
 });
 
 /* ---------- PROFILE ---------- */
