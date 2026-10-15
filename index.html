@@ -304,7 +304,8 @@
   .searchbar{ position:relative; display:flex; align-items:center; margin-bottom:12px; }
   .searchbar .icon{ position:absolute; left:14px; color:var(--ink-soft); pointer-events:none; }
   .searchbar input{ width:100%; padding:12px 14px 12px 40px; border:1.5px solid var(--line); border-radius:99px; font-size:14px; font-family:inherit; background:var(--gray-100); color:var(--ink); }
-  .searchbar input:focus{ outline:none; border-color:var(--purple); background:#fff; }
+  .searchbar input:focus{ outline:none; border-color:var(--purple); background:var(--gray-100); color:var(--ink); }
+  .searchbar input::placeholder{ color:var(--ink-soft); }
   .filterchips{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch; }
   .fchip{ flex-shrink:0; border:none; background:var(--tint); color:var(--purple-deep); font-family:inherit; font-size:12.5px; font-weight:700; padding:9px 14px; border-radius:99px; cursor:pointer; min-height:44px; white-space:nowrap; transition:background .18s,color .18s; }
   .fchip .cnt{ opacity:.7; font-weight:600; margin-left:2px; }
