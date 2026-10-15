@@ -2261,16 +2261,6 @@
     <div class="jr-date"><span id="journalDateLabel">Bugün</span> · <span id="journalDateSub"></span></div>
     <div id="journalHistory"></div>
     <button type="button" class="jr-fab" id="jrFab" aria-label="Yeni giriş"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></button>
-    <button type="button" class="qn-fab" id="qnFab" aria-label="Hızlı not"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></button>
-    <div class="word-backdrop" id="qnBackdrop"></div>
-    <div class="jr-sheet" id="qnSheet">
-      <div class="jr-grab"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><b id="qnTitle" style="font-family:var(--font-display);font-size:16px;">Yeni not</b><button type="button" class="jr-tool" id="qnClose" style="flex:none;padding:8px 12px;">Kapat</button></div>
-      <div class="nt-chips" id="qnCats" style="margin-bottom:8px;"></div>
-      <textarea class="f" id="qnText" rows="5" placeholder="Notunu yaz…"></textarea>
-      <div class="jr-tray col" id="qnCols" style="display:flex;margin-top:8px;"></div>
-      <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" id="qnSave" style="flex:1;">Kaydet</button><button type="button" class="jr-tool" id="qnPin" style="flex:none;">Sabitle</button><button type="button" class="jr-tool" id="qnDel" style="flex:none;display:none;">Sil</button></div>
-    </div>
     <div class="word-backdrop" id="jrBackdrop"></div>
     <div class="jr-lightbox" id="jrLight" style="display:none;"><img alt=""></div>
     <div class="jr-sheet" id="jrSheet">
@@ -2455,6 +2445,17 @@
 
 </div>
 
+<button type="button" class="qn-fab" id="qnFab" aria-label="Hızlı not"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></button>
+    <div class="word-backdrop" id="qnBackdrop"></div>
+    <div class="jr-sheet" id="qnSheet">
+      <div class="jr-grab"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><b id="qnTitle" style="font-family:var(--font-display);font-size:16px;">Yeni not</b><button type="button" class="jr-tool" id="qnClose" style="flex:none;padding:8px 12px;">Kapat</button></div>
+      <div class="nt-chips" id="qnCats" style="margin-bottom:8px;"></div>
+      <textarea class="f" id="qnText" rows="5" placeholder="Notunu yaz…"></textarea>
+      <div class="jr-tray col" id="qnCols" style="display:flex;margin-top:8px;"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" id="qnSave" style="flex:1;">Kaydet</button><button type="button" class="jr-tool" id="qnPin" style="flex:none;">Sabitle</button><button type="button" class="jr-tool" id="qnDel" style="flex:none;display:none;">Sil</button></div>
+    </div>
+    
 <nav>
   <button class="active" data-v="today" aria-label="Bugün"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg></span>Bugün</button>
   <button data-v="progress" aria-label="İlerleme"><span class="ic"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg></span>İlerleme</button>
