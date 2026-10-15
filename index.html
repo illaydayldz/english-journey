@@ -1378,6 +1378,10 @@
   .pt-tx{ flex:1; min-width:0; }
   .pt-row{ display:flex; align-items:center; gap:10px; } .pt-file{ font-size:12px; color:var(--ink-2); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #podDetailBody .rp.has-t{ display:flex; gap:8px; align-items:flex-start; } .pt-tm{ flex:none; border:none; border-radius:8px; padding:2px 7px; margin-top:1px; font:inherit; font-size:11px; font-weight:800; background:var(--tint); color:var(--ink-2); cursor:pointer; }
+
+  #spSheet.open{ transform:translateY(0); } #spBackdrop.open{ opacity:1; pointer-events:auto; }
+  .sp-uri{ margin-top:8px; padding:10px 12px; border-radius:12px; background:var(--tint); font-size:12px; word-break:break-all; color:var(--ink-2); cursor:pointer; } .sp-uri.copied{ outline:2px solid #58C98B; }
+  #spCid.bad{ border-color:#FF6B6B; }
 </style>
 </head>
 <body>
@@ -2505,6 +2509,16 @@
   <input class="f" id="wEx" placeholder="Örnek cümle (opsiyonel)" autocomplete="off" style="margin-top:8px;">
   <button type="button" class="btn" id="addWord" style="margin-top:12px;">Kelimeyi ekle</button>
 </div>
+<div class="word-backdrop" id="spBackdrop"></div>
+<div class="jr-sheet" id="spSheet">
+  <div class="jr-grab"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><b style="font-family:var(--font-display);font-size:16px;">Spotify'a bağlan</b><button type="button" class="jr-tool" id="spClose" style="flex:none;padding:8px 12px;">Kapat</button></div>
+  <p class="mut" style="font-size:13px;line-height:1.5;margin:0 0 10px;">Bağlanmak için Spotify Developer'da oluşturduğun uygulamanın <b>Client ID</b>'si gerekir. Redirect URI olarak aşağıdaki adresi uygulamana eklemeyi unutma.</p>
+  <input class="f" id="spCid" placeholder="Spotify Client ID" autocomplete="off" autocapitalize="off">
+  <div class="sp-uri" id="spUri"></div>
+  <button type="button" class="btn" id="spGo" style="margin-top:10px;">Kaydet ve bağlan</button>
+  <a href="javascript:void(0)" class="lis-how" style="display:block;text-align:center;margin-top:10px;color:var(--ink-2);" onclick="spClose();openHowto('spotify')">Adım adım nasıl yapılır?</a>
+</div>
 <button type="button" class="qn-fab" id="qnFab" aria-label="Hızlı not"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></button>
     <div class="word-backdrop" id="qnBackdrop"></div>
     <div class="jr-sheet" id="qnSheet">
@@ -3627,9 +3641,23 @@ function sha256(str){ return crypto.subtle.digest("SHA-256",new TextEncoder().en
 function spotifyClientId(){ return (S.settings.spotifyClientId||"").trim(); }
 function spotifyTokens(){ return S.settings.spotify||null; }
 
+function spOpen(){
+  document.getElementById("spCid").value=S.settings.spotifyClientId||"";
+  document.getElementById("spUri").textContent=SPOTIFY_REDIRECT_URI;
+  document.getElementById("spSheet").classList.add("open"); document.getElementById("spBackdrop").classList.add("open");
+}
+function spClose(){ document.getElementById("spSheet").classList.remove("open"); document.getElementById("spBackdrop").classList.remove("open"); }
+document.getElementById("spClose").addEventListener("click",spClose);
+document.getElementById("spBackdrop").addEventListener("click",spClose);
+document.getElementById("spUri").addEventListener("click",function(){ try{ navigator.clipboard.writeText(this.textContent); this.classList.add("copied"); }catch(e){} });
+document.getElementById("spGo").addEventListener("click",function(){
+  var v=document.getElementById("spCid").value.trim();
+  if(!/^[a-f0-9]{32}$/i.test(v)){ document.getElementById("spCid").classList.add("bad"); return; }
+  S.settings.spotifyClientId=v; save(); spClose(); spotifyConnect();
+});
 async function spotifyConnect(){
   var cid=spotifyClientId();
-  if(!cid){ alert("Önce Profil'den Spotify Client ID'ni gir."); go("profile"); return; }
+  if(!cid){ spOpen(); return; }
   try{
     var verifier=randomVerifier(64);
     sessionStorage.setItem("spotify_verifier",verifier);
@@ -3641,7 +3669,7 @@ async function spotifyConnect(){
       +"&code_challenge_method=S256&code_challenge="+encodeURIComponent(challenge)
       +"&scope="+encodeURIComponent(SPOTIFY_SCOPES);
     location.href=url;
-  }catch(e){ alert("Spotify bağlantısı başlatılamadı: "+e.message); }
+  }catch(e){ var st=document.getElementById("spotifyStatus"); if(st) st.textContent="Bağlantı başlatılamadı: "+e.message; }
 }
 
 async function spotifyHandleCallback(){
