@@ -3649,7 +3649,7 @@ function spotifyTokens(){ return S.settings.spotify||null; }
 
 function spOpen(){
   document.getElementById("spCid").value=S.settings.spotifyClientId||""; spErr("");
-  document.getElementById("spUri").textContent=SPOTIFY_REDIRECT_URI;
+  document.getElementById("spUri").textContent=/^https?:$/.test(location.protocol)?SPOTIFY_REDIRECT_URI:"https://illaydayldz.github.io/english-journey/";
   document.getElementById("spSheet").classList.add("open"); document.getElementById("spBackdrop").classList.add("open");
 }
 function spErr(m){ var e=document.getElementById("spErr"); if(!e) return; e.textContent=m||""; e.style.display=m?"block":"none"; }
@@ -3663,6 +3663,7 @@ document.getElementById("spGo").addEventListener("click",function(){
   if(!/^[a-f0-9]{32}$/i.test(v)){ document.getElementById("spCid").classList.add("bad"); spErr("Client ID 32 karakterlik harf-rakamdan oluşur ("+v.length+" karakter girdin). Spotify Developer'da uygulamanın Settings sayfasındaki Client ID'yi kopyala."); return; }
   document.getElementById("spCid").classList.remove("bad");
   S.settings.spotifyClientId=v; save(); spErr("");
+  if(!/^https?:$/.test(location.protocol)){ spErr("Bu önizlemede Spotify girişi çalışmaz (Spotify bu adrese geri dönemez). Siteyi normal tarayıcıdan aç: https://illaydayldz.github.io/english-journey/"); return; }
   if(!(window.crypto&&window.crypto.subtle)){ spErr("Bu ortamda güvenli bağlantı kullanılamıyor. Siteyi tarayıcıdan https://illaydayldz.github.io/english-journey/ adresiyle aç."); return; }
   spotifyConnect();
 });
