@@ -1945,7 +1945,7 @@
     </div>
     <div id="spGame"></div>
     <div class="card" style="padding:16px 12px;">
-      <h2 style="padding:0 6px;"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Konuşma haritası</h2>
+      <h2 style="padding:0 6px;"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Moonie'nin dünya turu</h2>
       <div id="speakLevelList" style="margin-top:6px;"></div>
     </div>
     <div class="card" id="speakUnitCard">
@@ -3765,12 +3765,12 @@ document.getElementById("podDetailDeleteBtn").addEventListener("click",function(
 /* ---------- SPEAKING LEVELS (CEFR-based, functional units — content grounded in
    Paul Nation's fluency strand + Market Leader-style functional syllabus) ---------- */
 var SPEAK_LEVELS=[
- {cefr:"A1",name:"Başlangıç",cando:"Çok basit kalıplarla kendimi tanıtabilir, harfleri ve sayıları söyleyebilirim.",units:[
-  {name:"Alfabe & Hecelemek",phrases:[["A, B, C, D…","A, B, C, D…"],["How do you spell your name?","Adını nasıl hecelersin?"],["It's M-O-O-N-I-E.","M-O-O-N-I-E."]],scenario:"Moonie harfleri yeni öğreniyor. Ona kendi adını harf harf hecele ve bir kelimeyi hecelemesine yardım et.",topic:"Adını ve bir arkadaşının adını hecele."},
-  {name:"Selamlaşma & Tanışma",phrases:[["Hello! / Hi!","Merhaba!"],["My name is…","Benim adım …"],["Nice to meet you.","Tanıştığımıza memnun oldum."]],scenario:"Moonie ilk kez biriyle tanışıyor. Selamlaşmasına ve adını söylemesine yardım et.",topic:"Kendini üç kısa cümleyle tanıt."},
-  {name:"Sayılar & Yaş",phrases:[["How old are you?","Kaç yaşındasın?"],["I am … years old.","… yaşındayım."],["One, two, three…","Bir, iki, üç…"]],scenario:"Moonie saymayı öğreniyor. Ona yaşını sor ve 1'den 10'a kadar birlikte sayın.",topic:"Yaşını ve ailendeki birinin yaşını söyle."},
-  {name:"Renkler & Eşyalar",phrases:[["It's a red ball.","Bu kırmızı bir top."],["What color is it?","Ne renk?"],["I like blue.","Maviyi severim."]],scenario:"Moonie etrafındaki eşyaları adlandırıyor. Ona renkleri ve eşyaları söylet.",topic:"Odandaki üç eşyayı ve renklerini anlat."},
-  {name:"İstek & Teşekkür",phrases:[["Can I have water, please?","Su alabilir miyim lütfen?"],["Thank you!","Teşekkürler!"],["I don't understand.","Anlamadım."]],scenario:"Moonie bir kafede ilk siparişini veriyor. Ona nazikçe bir şey istemeyi göster.",topic:"Kafede bir içecek siparişi ver."}
+ {cefr:"A1",name:"Başlangıç",cando:"Çok basit kalıplarla yolculuk durumlarında kendimi anlatabilir, sayıları ve harfleri söyleyebilirim.",units:[
+  {name:"Bavul Hazırlığı",phrases:[["I need a suitcase.","Bir bavula ihtiyacım var."],["It's red. / It's blue.","Kırmızı. / Mavi."],["What's in your bag?","Çantanda ne var?"]],scenario:"Moonie geziye çıkıyor ve bavulunu hazırlıyor. Eşyalarını ve renklerini ona söylet.",topic:"Bavuluna koyacağın üç eşyayı ve renklerini anlat."},
+  {name:"Pasaport & Bilet",phrases:[["How do you spell your name?","Adını nasıl hecelersin?"],["Here is my passport.","İşte pasaportum."],["My seat number is…","Koltuk numaram …"]],scenario:"Check-in gişesindesin. Adını harf harf hecele, pasaportunu uzat ve koltuk numaranı söyle.",topic:"Adını hecele ve bir sayı söyle."},
+  {name:"Kapı & Saat",phrases:[["What time is it?","Saat kaç?"],["The gate is number…","Kapı numarası …"],["The flight leaves at…","Uçuş … 'da kalkıyor."]],scenario:"Havalimanında uçuş saatini ve kapı numarasını soruyorsun.",topic:"Uçuş saatini ve kapı numarasını söyle."},
+  {name:"Kafede Mola",phrases:[["Can I have water, please?","Su alabilir miyim lütfen?"],["How much is it?","Ne kadar?"],["Thank you!","Teşekkürler!"]],scenario:"Bekleme salonundaki kafede Moonie ilk siparişini veriyor. Ona nazikçe bir şey istemeyi göster.",topic:"Kafede bir içecek siparişi ver."},
+  {name:"Yardım İste",phrases:[["Excuse me, where is…?","Affedersiniz, … nerede?"],["I don't understand.","Anlamadım."],["Can you help me, please?","Bana yardım eder misiniz?"]],scenario:"Moonie yolunu kaybetti. Birine nazikçe yardım iste ve anlamadığında tekrar etmesini rica et.",topic:"Tuvaletin ya da çıkışın nerede olduğunu sor."}
  ]},
  {cefr:"A2",name:"Temel",cando:"Tanıdık konularda basit bilgi alışverişi yapabiliyorum.",units:[
   {name:"Kendini Tanıtma & Küçük Sohbet",phrases:[["Nice to meet you.","Tanıştığımıza memnun oldum."],["What do you do?","Ne iş yapıyorsun?"],["How's your day going?","Günün nasıl geçiyor?"],["I'm originally from…","Aslen …'lıyım."]],scenario:"Bir networking etkinliğinde yeni biriyle tanışıyorsun. Kendini, mesleğini ve nereli olduğunu anlat.",topic:"Kendini, işini ve boş zamanlarında ne yaptığını anlat."},
@@ -3803,11 +3803,11 @@ var SPEAK_LEVELS=[
 ];
 
 var SPEAK_STAGE={
- A1:{n:"Bebek Moonie",story:"Moonie yeni doğdu! İlk harfleri, sayıları ve selamlaşmayı öğrenmesine yardım et.",pose:"pose-newword.png",sc:.78,c:["#C3A6FF","#9E86F5"]},
- A2:{n:"Çocuk Moonie",story:"Moonie konuşmaya başladı. Günlük hayatta kendini ifade etmeyi öğreniyor.",pose:"pose-learning.png",sc:.9,c:["#AE97F9","#8670EA"]},
- B1:{n:"Genç Moonie",story:"Moonie okula gidiyor: fikirlerini söylüyor, sorun çözüyor, toplantılara katılıyor.",pose:"pose-happy2.png",sc:1,c:["#9683F2","#6D58DA"]},
- B2:{n:"Yetişkin Moonie",story:"Moonie işe girdi. Müzakere ediyor, sunum yapıyor, tartışmayı yönetiyor.",pose:"pose-proud.png",sc:1.1,c:["#7561DC","#4E3DB4"]},
- C1:{n:"Usta Moonie",story:"Moonie artık usta: nüansları, deyimleri ve ikna etmeyi biliyor.",pose:"pose-goalachieved.png",sc:1.2,c:["#4A3EA6","#2A2170"]}
+ A1:{n:"Yola Çıkış",story:"Moonie dünya turuna çıkıyor! Bavulunu hazırlıyor, havalimanına gidiyor; ona yardım et.",pose:"pose-newword.png",sc:.9,c:["#C3A6FF","#9E86F5"]},
+ A2:{n:"Şehir Keşfi",story:"Moonie yeni bir şehre vardı: otel, market, yol sorma. Günlük hayatta yolunu bulsun.",pose:"pose-learning.png",sc:.95,c:["#AE97F9","#8670EA"]},
+ B1:{n:"Yerel Hayat",story:"Moonie yerel halkla tanışıyor; fikirlerini söylüyor, sorun çözüyor, planlar yapıyor.",pose:"pose-happy2.png",sc:1,c:["#9683F2","#6D58DA"]},
+ B2:{n:"Büyük Şehir",story:"Moonie metropoldeki bir toplantıda: müzakere ediyor, sunum yapıyor, tartışmayı yönetiyor.",pose:"pose-proud.png",sc:1.05,c:["#7561DC","#4E3DB4"]},
+ C1:{n:"Zirve",story:"Yolculuğun zirvesi! Moonie nüansları, deyimleri ve ikna etmeyi artık biliyor.",pose:"pose-goalachieved.png",sc:1.1,c:["#4A3EA6","#2A2170"]}
 };
 
 var MP_SVG={
@@ -3828,11 +3828,14 @@ var MP_SVG={
  case:function(){ return '<svg viewBox="0 0 80 66"><ellipse cx="40" cy="62" rx="30" ry="4" fill="rgba(0,0,0,.2)"/><rect x="6" y="18" width="68" height="40" rx="9" fill="#F2B94B"/><rect x="28" y="6" width="24" height="16" rx="6" fill="none" stroke="#B07E1C" stroke-width="5"/><rect x="6" y="34" width="68" height="5" fill="#B07E1C" opacity=".5"/><rect x="35" y="30" width="10" height="12" rx="2" fill="#FFE9A6"/></svg>'; },
  mountain:function(){ return '<svg viewBox="0 0 120 90"><path d="M0 88 L44 18 L66 52 L82 30 L120 88Z" fill="#6A5BD0"/><path d="M44 18 L56 38 L48 34 L40 40 L32 36Z" fill="#fff" opacity=".9"/><path d="M82 30 L90 44 L82 41 L74 45Z" fill="#fff" opacity=".85"/><path d="M44 18V4" stroke="#8A5A1B" stroke-width="2.5"/><path d="M44 4l16 4-16 5Z" fill="#FF6B8A"/></svg>'; },
  trophy:function(){ return '<svg viewBox="0 0 70 84"><ellipse cx="35" cy="80" rx="24" ry="4" fill="rgba(0,0,0,.2)"/><path d="M16 8h38v22a19 19 0 0 1-38 0Z" fill="#FFD36B"/><path d="M16 12H4v8a14 14 0 0 0 14 14M54 12h12v8a14 14 0 0 1-14 14" fill="none" stroke="#E0A93B" stroke-width="5"/><rect x="31" y="48" width="8" height="16" fill="#E0A93B"/><rect x="18" y="64" width="34" height="12" rx="5" fill="#B07E1C"/><path d="M24 14v16" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/></svg>'; },
+ suitcase:function(c1,c2){ return '<svg viewBox="0 0 80 76"><ellipse cx="40" cy="72" rx="30" ry="4" fill="rgba(0,0,0,.2)"/><rect x="26" y="4" width="28" height="16" rx="6" fill="none" stroke="#6B3E91" stroke-width="5"/><rect x="8" y="16" width="64" height="52" rx="10" fill="'+c1+'"/><rect x="8" y="30" width="64" height="6" fill="'+c2+'"/><rect x="34" y="28" width="12" height="12" rx="3" fill="#FFE9A6"/><rect x="14" y="20" width="12" height="5" rx="2.5" fill="#fff" opacity=".45"/><circle cx="20" cy="70" r="4" fill="#3B2F80"/><circle cx="60" cy="70" r="4" fill="#3B2F80"/></svg>'; },
+ plane:function(){ return '<svg viewBox="0 0 100 60"><path d="M6 34 L72 22 C88 20 98 26 96 30 C94 34 84 36 72 36 L30 40Z" fill="#fff"/><path d="M46 30 L30 6 L40 5 L66 28Z" fill="#E4DDFF"/><path d="M44 36 L30 56 L40 56 L62 36Z" fill="#CFC7F5"/><path d="M6 34 L16 20 L22 22 L20 36Z" fill="#9E86F5"/><ellipse cx="70" cy="28" rx="5" ry="3" fill="#8B7FFF"/><ellipse cx="56" cy="30" rx="4" ry="2.5" fill="#8B7FFF"/><path d="M-4 52h26M10 58h20" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/></svg>'; },
+ pin:function(c){ return '<svg viewBox="0 0 50 70"><ellipse cx="25" cy="66" rx="14" ry="3" fill="rgba(0,0,0,.25)"/><path d="M25 62 C8 40 6 32 6 24 a19 19 0 0 1 38 0 c0 8-2 16-19 38Z" fill="'+c+'"/><circle cx="25" cy="24" r="8" fill="#fff"/></svg>'; },
  cloud:function(){ return '<svg viewBox="0 0 90 44"><path d="M18 40a14 14 0 0 1 2-28 18 18 0 0 1 34-4 16 16 0 0 1 24 12 12 12 0 0 1-4 20Z" fill="#fff" opacity=".85"/></svg>'; }
 };
 var MP_SET={
- A1:[["tent","#FFD36B","#C9A0FF"],["block","A","#FFD36B","#E0A93B","#7A4B00"],["balloons"],["block","B","#FF9EC7","#D8709F","#7A1F4B"],["star"],["gift","#C9A0FF","#8B5CF6"]],
- A2:[["tree","#58C98B"],["books"],["rainbow"],["backpack"],["tree","#7FD66B"],["gift","#FF9EC7","#D8709F"]],
+ A1:[["tent","#FFD36B","#C9A0FF"],["suitcase","#FF8FC0","#D8709F"],["plane"],["suitcase","#FFD36B","#E0A93B"],["star"],["gift","#C9A0FF","#8B5CF6"]],
+ A2:[["tree","#58C98B"],["pin","#FF6B8A"],["backpack"],["rainbow"],["tree","#7FD66B"],["gift","#FF9EC7","#D8709F"]],
  B1:[["lamp"],["cup"],["bubbles"],["tree","#58C98B"],["star"],["gift","#7FE0D0","#25AE9A"]],
  B2:[["skyline"],["laptop"],["case"],["bubbles"],["star"],["gift","#FFD36B","#E0A93B"]],
  C1:[["mountain"],["trophy"],["star"],["mountain"],["star"],["gift","#FFE9A6","#F2B94B"]]
@@ -4653,7 +4656,7 @@ function renderSpeakGame(){
   el.innerHTML='<div class="sp-hero"><div class="sp-rings" aria-hidden="true"><i></i><i></i><i></i></div>'+
     '<div class="sp-top"><div class="sp-lv"><small>SEVİYE</small><b>'+lvl+'</b></div><div><div class="sp-rank">'+rank+'</div><div class="sp-xp">'+sp.xp+' XP · sonraki seviyeye '+(per-into)+' XP</div></div></div>'+
     '<div class="sp-bar" style="margin-right:84px;"><div style="width:'+Math.round(into/per*100)+'%"></div></div>'+
-    '<div class="sp-stage">'+(function(){ var f=SPEAK_LEVELS[speakFrontier().li]; return "Evre: "+(SPEAK_STAGE[f.cefr]||{n:f.name}).n; })()+'</div>'+
+    '<div class="sp-stage">'+(function(){ var f=SPEAK_LEVELS[speakFrontier().li]; return "Durak: "+(SPEAK_STAGE[f.cefr]||{n:f.name}).n; })()+'</div>'+
     '<img class="sp-moon" style="--ms:'+(function(){ var f=SPEAK_LEVELS[speakFrontier().li]; return (SPEAK_STAGE[f.cefr]||{sc:1}).sc; })()+';" src="assets/mascot/'+(function(){ var f=SPEAK_LEVELS[speakFrontier().li]; return (SPEAK_STAGE[f.cefr]||{pose:"pose-cheering.png"}).pose; })()+'" alt=""></div>'+
     '<div class="card sp-quests"><div class="sp-qh">Günlük görevler<span>'+doneQ+'/'+SP_QUESTS.length+(doneQ===SP_QUESTS.length?" · +25 bonus alındı":"")+'</span></div>'+
     SP_QUESTS.map(function(q){ var d=!!sp.q[q[0]]; return '<div class="sp-q'+(d?" done":"")+'"><span class="qi"><svg class="icon" aria-hidden="true"><use href="#'+(d?"i-check":q[2])+'"></use></svg></span><span class="qt">'+q[1]+'</span><span class="qx">+'+q[3]+' XP</span></div>'; }).join("")+'</div>';
@@ -4723,7 +4726,7 @@ function renderSpeaking(){
     awardXp(50);
     if(level.units.every(function(_,ui){return !!S.speaking.completed[unitKey(sel.li,ui)];})){
       var nx=SPEAK_LEVELS[sel.li+1]; S.speaking.openLv=nx?sel.li+1:sel.li;
-      setTimeout(function(){ showXpToast(nx?("Moonie büyüdü! "+SPEAK_STAGE[nx.cefr].n):"Moonie usta oldu!"); },1500);
+      setTimeout(function(){ showXpToast(nx?("Yeni durak: "+SPEAK_STAGE[nx.cefr].n):"Zirveye ulaştın!"); },1500);
     }
     var addedN=addUnitPhrasesToVocab(unit);
     S.speaking.selected=null; // ilerlemeyi otomatik bir sonraki üniteye taşı
@@ -4741,7 +4744,7 @@ function renderSpeaking(){
     var open=(S.speaking.openLv===li)&&unlocked;
     var box=document.createElement("div"); box.className="mp-world"+(unlocked?"":" locked")+(open?" open":"");
     var head='<button type="button" class="mp-story" data-li="'+li+'"'+(unlocked?'':' disabled')+'><span class="mp-pin sm" style="--ms:'+st.sc+';"><img src="assets/mascot/'+st.pose+'" alt=""></span>'+
-      '<span class="mp-st"><b>Bölüm '+(li+1)+' · '+st.n+'</b><small>'+(unlocked?esc(st.story):'Önceki bölümü bitirince Moonie büyür ve bu bölüm açılır.')+'</small></span>'+
+      '<span class="mp-st"><b>Durak '+(li+1)+' · '+st.n+'</b><small>'+(unlocked?esc(st.story):'Önceki durağı bitirince Moonie yola devam eder ve bu durak açılır.')+'</small></span>'+
       '<span class="mp-cnt">'+(unlocked?(doneCount+'/'+N):'<svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>')+'</span></button>';
     var body="";
     if(open){
@@ -4762,7 +4765,7 @@ function renderSpeaking(){
         if(q%2===1) body+=mpDecor(lv.cefr,q*2+1,q%4===1?4:70,q*rowH+rowH*.95+30,60);
       }
       var allDone=doneCount===N;
-      body+='<button type="button" class="mp-chest'+(allDone?' open':'')+'" style="top:'+(endY-46)+'px;" data-li="'+li+'" aria-label="Bölüm ödülü"><span class="mp-chest-art">'+MP_SVG.gift(allDone?"#FFE9A6":"#C9A0FF",allDone?"#F2B94B":"#8B5CF6")+'</span><span class="mp-l">'+(allDone?"Moonie büyüdü!":"Bölüm ödülü")+'</span></button>';
+      body+='<button type="button" class="mp-chest'+(allDone?' open':'')+'" style="top:'+(endY-46)+'px;" data-li="'+li+'" aria-label="Durak ödülü"><span class="mp-chest-art">'+MP_SVG.gift(allDone?"#FFE9A6":"#C9A0FF",allDone?"#F2B94B":"#8B5CF6")+'</span><span class="mp-l">'+(allDone?"Durağa vardın!":"Durak ödülü")+'</span></button>';
       lv.units.forEach(function(u,ui){
         var udone=!!S.speaking.completed[unitKey(li,ui)];
         var cur=li===fr0.li&&ui===fr0.ui;
