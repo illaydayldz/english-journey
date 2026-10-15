@@ -953,6 +953,100 @@
   .sh-art{ width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg,#4B3FB8,#7B6CF6); } .sh-play{ margin-left:auto; width:34px; height:34px; border-radius:50%; background:#1ED760; }
   .sh-ok{ background:#132A22; color:#3CC091; border-radius:10px; padding:9px 11px; font-weight:700; }
   .lis-how{ font-size:12.5px; font-weight:700; color:#FFE9A6; text-decoration:underline; }
+
+  /* ===== v30: animasyonlu sayfa başlıkları, oyunlaştırma, ilerleme ===== */
+  .pg-hero{ position:relative; overflow:hidden; border-radius:26px; padding:20px; margin-bottom:16px; min-height:128px; color:#fff; background:linear-gradient(150deg,#1F1A5E 0%,#4B3FB8 55%,#7B6CF6 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.26), 0 22px 34px -22px rgba(90,79,207,.9); }
+  .pg-deco i{ position:absolute; border-radius:50%; background:radial-gradient(circle at 30% 30%,#FFE9A6,rgba(255,233,166,.0) 70%); opacity:.55; animation:pgfloat 7s ease-in-out infinite; }
+  .pg-deco i:nth-child(1){ width:46px; height:46px; left:8%; top:62%; animation-delay:0s; }
+  .pg-deco i:nth-child(2){ width:20px; height:20px; left:34%; top:12%; animation-delay:-2s; }
+  .pg-deco i:nth-child(3){ width:30px; height:30px; left:52%; top:70%; animation-delay:-4s; }
+  .pg-deco i:nth-child(4){ width:14px; height:14px; left:62%; top:20%; animation-delay:-1s; }
+  .pg-deco i:nth-child(5){ width:26px; height:26px; left:20%; top:30%; animation-delay:-5s; }
+  @keyframes pgfloat{ 0%,100%{ transform:translateY(0) scale(1); } 50%{ transform:translateY(-16px) scale(1.12); } }
+  .pg-body{ position:relative; max-width:62%; display:flex; flex-direction:column; gap:6px; }
+  .pg-eyebrow{ font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; opacity:.8; }
+  .pg-title{ font-family:var(--font-display); font-size:22px; font-weight:800; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,.3); }
+  .pg-sub{ font-size:12.5px; opacity:.92; line-height:1.4; }
+  .pg-chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+  .pg-chip{ font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:99px; background:rgba(255,255,255,.16); backdrop-filter:blur(4px); }
+  .pg-moon{ position:absolute; right:-2px; bottom:-6px; width:34%; max-width:130px; height:auto; filter:drop-shadow(0 12px 14px rgba(0,0,0,.4)); animation:pgbob 4.2s ease-in-out infinite; }
+  @keyframes pgbob{ 0%,100%{ transform:translateY(0) rotate(-1deg); } 50%{ transform:translateY(-7px) rotate(1.5deg); } }
+  .view.active > .card, .view.active > .hubgrid > .hubcard{ animation:cardin .45s cubic-bezier(.2,.8,.2,1) both; }
+  .view.active > .card:nth-of-type(2){ animation-delay:.05s; } .view.active > .card:nth-of-type(3){ animation-delay:.1s; } .view.active > .card:nth-of-type(4){ animation-delay:.15s; }
+  @keyframes cardin{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+  #v-learn .hubcard:nth-child(2){ animation-delay:.06s; } #v-learn .hubcard:nth-child(3){ animation-delay:.12s; } #v-learn .hubcard:nth-child(4){ animation-delay:.18s; } #v-learn .hubcard:nth-child(5){ animation-delay:.24s; } #v-learn .hubcard:nth-child(6){ animation-delay:.3s; }
+  #v-learn .hub-ic{ animation:pgbob 5s ease-in-out infinite; }
+  #v-learn .hubcard:active{ transform:scale(.97); }
+  @media (prefers-reduced-motion:reduce){ .pg-deco i,.pg-moon,#v-learn .hub-ic,.view.active > .card{ animation:none !important; } }
+
+  /* yazma konu kartı: küçük ve sade */
+  .wprompt-card{ min-height:0 !important; background:linear-gradient(150deg,#2A2170,#5B49D6) !important; }
+  .wprompt-card .wart,.wband .wart{ display:none !important; }
+  .wp-body{ min-height:0 !important; background:none !important; padding:18px 18px 16px !important; }
+  .wp-ic{ position:absolute; right:14px; top:14px; width:46px; height:46px; border-radius:14px; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; }
+  .wp-ic svg{ width:26px; height:26px; }
+  .wp-title{ font-size:21px !important; padding-right:56px; }
+  .wband{ height:44px !important; margin-bottom:-18px !important; background:linear-gradient(150deg,#2A2170,#5B49D6) !important; }
+
+  /* kelime ekle */
+  .vadd{ position:relative; overflow:hidden; border-radius:24px; padding:18px; margin-bottom:14px; background:linear-gradient(160deg,var(--card),var(--card)); border:1px solid rgba(139,127,255,.28); box-shadow:0 18px 30px -20px rgba(90,79,207,.8); }
+  .vadd::before{ content:""; position:absolute; right:-40px; top:-40px; width:140px; height:140px; border-radius:50%; background:radial-gradient(circle,rgba(139,127,255,.35),transparent 70%); }
+  .vadd-head{ position:relative; display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .vadd-ic{ width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); box-shadow:0 4px 0 rgba(40,30,120,.55), inset 0 1px 0 rgba(255,255,255,.35); }
+  .vadd-ic .icon{ width:22px; height:22px; }
+  .vadd-t{ font-family:var(--font-display); font-weight:800; font-size:16px; color:var(--ink); }
+  .vadd-s{ font-size:12px; color:var(--ink-soft); }
+  .vadd-head .mchip{ margin-left:auto; }
+  .vadd-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .vadd .f{ margin-top:0; margin-bottom:8px; }
+  .vadd-btn{ width:100%; display:flex; align-items:center; justify-content:center; gap:8px; border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:14.5px; color:#2A1F5C; padding:13px; border-radius:16px; background:linear-gradient(180deg,#FFE9A6,#F2B94B); box-shadow:0 5px 0 #B07E1C, 0 12px 18px -8px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6); transition:transform .1s, box-shadow .1s; }
+  .vadd-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #B07E1C; }
+  .vadd-btn .icon{ width:18px; height:18px; }
+
+  /* konuşma oyunu */
+  .sp-hero{ position:relative; overflow:hidden; border-radius:26px; padding:18px; margin-bottom:14px; color:#fff; background:linear-gradient(150deg,#1F1A5E 0%,#4B3FB8 55%,#7B6CF6 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.26), 0 22px 34px -22px rgba(90,79,207,.9); }
+  .sp-rings{ position:absolute; right:26px; top:30px; width:90px; height:90px; }
+  .sp-rings i{ position:absolute; inset:0; border-radius:50%; border:2px solid rgba(255,233,166,.55); animation:cppulse 2.4s ease-out infinite; }
+  .sp-rings i:nth-child(2){ animation-delay:.8s; } .sp-rings i:nth-child(3){ animation-delay:1.6s; }
+  .sp-top{ position:relative; display:flex; align-items:center; gap:12px; }
+  .sp-lv{ width:58px; height:58px; border-radius:18px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(180deg,#FFE9A6,#F2B94B); color:#2A1F5C; box-shadow:0 4px 0 #B07E1C, inset 0 1px 0 rgba(255,255,255,.6); }
+  .sp-lv small{ font-size:9px; font-weight:800; letter-spacing:.5px; } .sp-lv b{ font-family:var(--font-display); font-size:24px; line-height:1; }
+  .sp-rank{ font-family:var(--font-display); font-weight:800; font-size:19px; }
+  .sp-xp{ font-size:12px; opacity:.85; }
+  .sp-bar{ position:relative; height:12px; border-radius:99px; background:rgba(0,0,0,.28); margin-top:14px; overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,.35); }
+  .sp-bar > div{ height:100%; border-radius:99px; background:linear-gradient(90deg,#FFE9A6,#F2B94B); transition:width .8s cubic-bezier(.2,.8,.2,1); box-shadow:0 0 10px rgba(255,233,166,.7); }
+  .sp-moon{ position:absolute; right:-4px; bottom:-8px; width:92px; filter:drop-shadow(0 10px 12px rgba(0,0,0,.4)); animation:pgbob 4s ease-in-out infinite; }
+  .sp-quests{ margin-bottom:14px; }
+  .sp-qh{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-weight:800; color:var(--ink); font-size:14px; }
+  .sp-qh span{ font-size:12px; color:var(--gold); }
+  .sp-q{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:16px; background:var(--tint); margin-top:8px; transition:all .3s; }
+  .sp-q .qi{ width:34px; height:34px; border-radius:11px; display:flex; align-items:center; justify-content:center; background:var(--card); color:var(--purple); flex-shrink:0; }
+  .sp-q .qt{ flex:1; font-weight:700; font-size:13px; color:var(--ink); }
+  .sp-q .qx{ font-size:12px; font-weight:800; color:var(--gold); }
+  .sp-q.done{ background:rgba(37,174,154,.16); } .sp-q.done .qi{ background:var(--green); color:#fff; } .sp-q.done .qt{ text-decoration:line-through; opacity:.7; }
+  #xpToast{ position:fixed; left:50%; top:22%; transform:translateX(-50%); z-index:9999; pointer-events:none; font-family:var(--font-display); font-weight:800; font-size:26px; color:#FFE9A6; text-shadow:0 3px 14px rgba(0,0,0,.6), 0 0 18px rgba(242,185,75,.8); opacity:0; }
+  #xpToast.show{ animation:xpup 1.4s ease-out both; }
+  @keyframes xpup{ 0%{ opacity:0; transform:translate(-50%,16px) scale(.8); } 20%{ opacity:1; transform:translate(-50%,0) scale(1.15); } 100%{ opacity:0; transform:translate(-50%,-50px) scale(1); } }
+  #v-speaking .pron{ border:1px solid rgba(139,127,255,.22); }
+  .gr-top{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .gr-bar{ height:8px; border-radius:99px; background:var(--tint); overflow:hidden; flex:1; } .gr-bar > div{ height:100%; background:linear-gradient(90deg,#A99CFF,#6B5BE6); border-radius:99px; transition:width .6s; }
+  .gr-step{ display:flex; align-items:center; gap:9px; font-weight:800; font-size:13.5px; color:var(--ink); margin:16px 0 8px; }
+  .gr-step span{ width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#fff; background:linear-gradient(160deg,#A99CFF,#6B5BE6); box-shadow:0 2px 0 rgba(40,30,120,.5); }
+
+  /* ilerleme */
+  .prog-hero{ position:relative; overflow:hidden; background:linear-gradient(150deg,#1F1A5E 0%,#4B3FB8 55%,#7B6CF6 100%) !important; color:#fff; border:none !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.26), 0 24px 36px -22px rgba(90,79,207,.9) !important; }
+  .prog-hero .ring{ background:conic-gradient(#FFE9A6 calc(var(--p,0)*1%), rgba(255,255,255,.16) 0) !important; box-shadow:0 0 24px rgba(255,233,166,.25); }
+  .prog-hero .ring::before{ background:#2C2496 !important; }
+  .prog-hero .ring-inner .pct,.prog-hero .ph-v,.prog-hero .ph-v b{ color:#fff !important; } .prog-hero .ring-inner .lbl,.prog-hero .ph-k,.prog-hero .ph-v span{ color:rgba(255,255,255,.78) !important; }
+  .prog-hero .ph-chip{ background:linear-gradient(180deg,#FFE9A6,#F2B94B); color:#2A1F5C; box-shadow:0 3px 0 #B07E1C; }
+  .prog-hero .ph-moon{ position:absolute; right:-6px; top:-4px; width:78px; opacity:.95; animation:pgbob 4.5s ease-in-out infinite; filter:drop-shadow(0 8px 10px rgba(0,0,0,.35)); }
+  .prog-tiles{ gap:12px !important; }
+  .ptile{ position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:linear-gradient(160deg,var(--card),rgba(139,127,255,.08)) !important; }
+  .ptile::after{ content:""; position:absolute; right:-18px; bottom:-18px; width:70px; height:70px; border-radius:50%; background:radial-gradient(circle,var(--c,#8B7FFF),transparent 70%); opacity:.28; }
+  .ptile .pt-n{ font-family:var(--font-display); font-size:28px !important; font-weight:800; }
+  .weekchart{ height:130px !important; }
+  .wk-fill{ max-width:26px !important; background:linear-gradient(180deg,rgba(169,156,255,.55),rgba(107,91,230,.35)) !important; }
+  .wk-bar.is-today .wk-fill{ background:linear-gradient(180deg,#FFE9A6,#F2B94B) !important; box-shadow:0 0 14px rgba(242,185,75,.5); }
 </style>
 </head>
 <body>
@@ -1300,7 +1394,7 @@
     </div>
 
     <div class="segpanel active" id="progPanelOverview">
-      <div class="card prog-hero">
+      <div class="card prog-hero"><img class="ph-moon" src="assets/mascot/pose-greatprogress.png" alt="">
         <div class="ring" id="progRing"><div class="ring-inner"><div class="pct" id="progRingPct">0%</div><div class="lbl">alışkanlık hedefi</div></div></div>
         <div class="ph-info">
           <div class="ph-k">60 günlük hedef</div>
@@ -1354,6 +1448,7 @@
     <div class="page-head">
       <h1>Çalış</h1>
     </div>
+    <div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Bugün</div><div class="pg-title">Ne çalışalım?</div><div class="pg-sub" id="hubHeroSub">Bir beceri seç, küçük adımlarla ilerle.</div><div class="pg-chips"><span class="pg-chip" id="hubHeroChip">0 gün seri</span></div></div><img class="pg-moon" src="assets/mascot/pose-motivated.png" alt=""></div>
     <div class="hubgrid">
       <div class="hubcard">
         <span class="hub-ic hub-purple"><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg><span class="hub-ic-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></span>
@@ -1444,15 +1539,18 @@
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Kelime</h1>
     </div>
-    <div class="card">
-      <div class="row" style="justify-content:space-between;align-items:center;">
-        <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime ekle</h2>
-        <div class="mchip sm"><img src="assets/mascot/pose-newword.png" alt=""></div>
+    <div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Kelime Hazinesi</div><div class="pg-title">Her gün birkaç kelime</div><div class="pg-sub">Kartları çevir, aralıklı tekrarla kalıcı hale getir.</div></div><img class="pg-moon" src="assets/mascot/pose-newword.png" alt=""></div>
+    <div class="vadd">
+      <div class="vadd-head">
+        <span class="vadd-ic"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span>
+        <div><div class="vadd-t">Yeni kelime ekle</div><div class="vadd-s">Tekrar zamanı geldiğinde karşına çıkar</div></div>
       </div>
-      <input class="f" id="wEn" placeholder="İngilizce (ör. meeting)" style="margin-top:12px;">
-      <input class="f" id="wTr" placeholder="Türkçe (ör. toplantı)">
+      <div class="vadd-grid">
+        <input class="f" id="wEn" placeholder="English">
+        <input class="f" id="wTr" placeholder="Türkçe">
+      </div>
       <input class="f" id="wEx" placeholder="Örnek cümle (opsiyonel)">
-      <button class="btn" id="addWord">Ekle</button>
+      <button type="button" class="vadd-btn" id="addWord"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Kelimeyi ekle</button>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg>Çalış <span class="mut" id="dueCount"></span></h2>
@@ -1495,6 +1593,7 @@
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Okuma</h1>
     </div>
+    <div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Okuma</div><div class="pg-title">Bir kitap seç, oku</div><div class="pg-sub">Bilmediğin kelimeye dokun, anlamını gör ve defterine ekle.</div></div><img class="pg-moon" src="assets/mascot/pose-reading.png" alt=""></div>
     <div class="shelf-section">
       <div class="shelf-head"><h2>Kitaplığım</h2><span class="mut" id="libCount"></span></div>
       <div class="shelf" id="shelfLib"></div>
@@ -1735,8 +1834,9 @@
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Konuşma</h1>
     </div>
+    <div id="spGame"></div>
     <div class="card pron">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Telaffuz pratiği</h2>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Telaffuz antrenmanı</h2>
       <p class="mut" style="margin-bottom:10px;">Cümleyi seç ya da yaz → <b>Dinle</b> ile doğrusunu duy → <b>Konuş</b> ile söyle, app ne kadar doğru olduğunu ölçer.</p>
       <textarea class="f" id="pronText" rows="2" placeholder="Söylemek istediğin cümleyi yaz...">I have an important meeting today.</textarea>
       <div class="row" style="margin-bottom:8px;">
@@ -1769,12 +1869,13 @@
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Grammar Path</h1>
     </div>
+    <div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Senin seviyen</div><div class="pg-title" id="grHeroTitle">—</div><div class="pg-sub" id="grHeroSub">Kural, örnek, alıştırma. Üç adımda öğren.</div></div><img class="pg-moon" src="assets/mascot/pose-learning.png" alt=""></div>
     <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Konun</h2>
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Bugünün konusu</h2>
       <div id="grammarCurrent"></div>
     </div>
     <div class="card">
-      <details id="grammarAllLevelsBox" open>
+      <details id="grammarAllLevelsBox">
         <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Grammar Path — Tüm konular</summary>
         <div id="grammarLevelList" style="margin-top:14px;"></div>
       </details>
@@ -1789,7 +1890,7 @@
     </div>
     <div id="wPhaseA">
       <div class="wcount-card"><span class="wc-lbl">Bugünün konusu</span><span class="wc-time" id="wCountdown">--</span></div>
-      <div class="wprompt-card"><svg class="wart" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wxa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A2170"/><stop offset="1" stop-color="#5B49D6"/></linearGradient><linearGradient id="wxb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE9A6"/><stop offset="1" stop-color="#F2B94B"/></linearGradient><radialGradient id="wxc" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE9A6" stop-opacity=".45"/><stop offset="1" stop-color="#FFE9A6" stop-opacity="0"/></radialGradient></defs><rect width="320" height="160" fill="url(#wxa)"/><circle cx="250" cy="52" r="46" fill="url(#wxc)"/><path d="M262 22a34 34 0 1 0 22 52 27 27 0 1 1-22-52z" fill="url(#wxb)"/><g fill="#FFE9A6"><path d="M70 34l2.6 6.2 6.4.5-4.9 4.2 1.6 6.3-5.7-3.5-5.7 3.5 1.6-6.3-4.9-4.2 6.4-.5z" opacity=".95"/><circle cx="130" cy="22" r="1.8"/><circle cx="168" cy="48" r="1.4" opacity=".8"/><circle cx="36" cy="82" r="1.6" opacity=".8"/><circle cx="205" cy="26" r="1.3" opacity=".7"/><path d="M118 70l1.6 3.8 3.9.3-3 2.6 1 3.8-3.5-2.1-3.5 2.1 1-3.8-3-2.6 3.9-.3z" opacity=".8"/></g><path d="M-10 120 C 50 92, 110 140, 180 112 S 290 96, 330 118 L330 170 L-10 170Z" fill="#8B7FFF" opacity=".55"/><path d="M-10 138 C 60 116, 130 156, 200 134 S 290 124, 330 140 L330 170 L-10 170Z" fill="#B3A9FF" opacity=".4"/></svg>
+      <div class="wprompt-card"><span class="wp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 7l3 3"/></svg></span>
         <div class="wp-body">
           <h2 class="wp-title" id="wpTitle">—</h2>
           <p class="wp-desc">Kısa bir İngilizce paragraf yaz (80–100 kelime). Bitirince Moonie yazını kontrol eder.</p>
@@ -1806,7 +1907,7 @@
       </div>
     </div>
     <div id="wPhaseB" style="display:none;">
-      <div class="wband"><svg class="wart" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wya" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A2170"/><stop offset="1" stop-color="#5B49D6"/></linearGradient><linearGradient id="wyb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE9A6"/><stop offset="1" stop-color="#F2B94B"/></linearGradient><radialGradient id="wyc" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE9A6" stop-opacity=".45"/><stop offset="1" stop-color="#FFE9A6" stop-opacity="0"/></radialGradient></defs><rect width="320" height="160" fill="url(#wya)"/><circle cx="250" cy="52" r="46" fill="url(#wyc)"/><path d="M262 22a34 34 0 1 0 22 52 27 27 0 1 1-22-52z" fill="url(#wyb)"/><g fill="#FFE9A6"><path d="M70 34l2.6 6.2 6.4.5-4.9 4.2 1.6 6.3-5.7-3.5-5.7 3.5 1.6-6.3-4.9-4.2 6.4-.5z" opacity=".95"/><circle cx="130" cy="22" r="1.8"/><circle cx="168" cy="48" r="1.4" opacity=".8"/><circle cx="36" cy="82" r="1.6" opacity=".8"/><circle cx="205" cy="26" r="1.3" opacity=".7"/><path d="M118 70l1.6 3.8 3.9.3-3 2.6 1 3.8-3.5-2.1-3.5 2.1 1-3.8-3-2.6 3.9-.3z" opacity=".8"/></g><path d="M-10 120 C 50 92, 110 140, 180 112 S 290 96, 330 118 L330 170 L-10 170Z" fill="#8B7FFF" opacity=".55"/><path d="M-10 138 C 60 116, 130 156, 200 134 S 290 124, 330 140 L330 170 L-10 170Z" fill="#B3A9FF" opacity=".4"/></svg></div>
+      <div class="wband"></div>
       <div class="wsheet">
         <div class="wsheet-grip"></div>
         <h2 class="wp-title dark" id="writingPrompt">—</h2>
@@ -3572,14 +3673,20 @@ var SPEAK_LEVELS=[
  ]}
 ];
 function unitKey(li,ui){ return li+"-"+ui; }
+var CEFR_ORDER=["A1","A2","B1","B2","C1","C2"];
+function startLevelIdx(levels){
+  var u=CEFR_ORDER.indexOf((S.settings&&S.settings.level)||"A2");
+  for(var i=0;i<levels.length;i++){ if(CEFR_ORDER.indexOf(levels[i].cefr)>=u) return i; }
+  return levels.length-1;
+}
 function levelUnlocked(li){
-  if(li<=0) return true;
+  if(li<=startLevelIdx(SPEAK_LEVELS)) return true;
   var prev=SPEAK_LEVELS[li-1];
   for(var i=0;i<prev.units.length;i++){ if(!S.speaking.completed[unitKey(li-1,i)]) return false; }
   return true;
 }
 function speakFrontier(){
-  for(var li=0;li<SPEAK_LEVELS.length;li++){
+  for(var li=startLevelIdx(SPEAK_LEVELS);li<SPEAK_LEVELS.length;li++){
     if(!levelUnlocked(li)) break;
     for(var ui=0;ui<SPEAK_LEVELS[li].units.length;ui++){
       if(!S.speaking.completed[unitKey(li,ui)]) return {li:li,ui:ui};
@@ -3844,13 +3951,13 @@ var GRAMMAR_LEVELS=[
 ];
 function grammarUnitKey(li,ui){ return li+"-"+ui; }
 function grammarLevelUnlocked(li){
-  if(li<=0) return true;
+  if(li<=startLevelIdx(GRAMMAR_LEVELS)) return true;
   var prev=GRAMMAR_LEVELS[li-1];
   for(var i=0;i<prev.units.length;i++){ if(!S.grammar.completed[grammarUnitKey(li-1,i)]) return false; }
   return true;
 }
 function grammarFrontier(){
-  for(var li=0;li<GRAMMAR_LEVELS.length;li++){
+  for(var li=startLevelIdx(GRAMMAR_LEVELS);li<GRAMMAR_LEVELS.length;li++){
     if(!grammarLevelUnlocked(li)) break;
     for(var ui=0;ui<GRAMMAR_LEVELS[li].units.length;ui++){
       if(!S.grammar.completed[grammarUnitKey(li,ui)]) return {li:li,ui:ui};
@@ -4040,6 +4147,7 @@ function start432Timer(minutes){
     if(remaining<0){
       stop432Timer();
       if(disp) disp.textContent="Bitti — şimdi bir sonraki turu dene.";
+      awardXp(20,"timer");
       if(disp) disp.style.display="block";
       if(navigator.vibrate) navigator.vibrate([200,100,200]);
       return;
@@ -4342,7 +4450,44 @@ function wireSpeakConvo(level,unit,sel){
     startBtn.style.display="flex";
   });
 }
+
+var SP_RANKS=["Çaylak","Meraklı","Konuşkan","Akıcı","Usta","Efsane"];
+var SP_QUESTS=[["say","Bir cümle söyle (%60+)","i-mic",10],["timer","4/3/2 turunu bitir","i-refresh",20],["convo","Moonie ile sohbet et","i-chat",30]];
+function spState(){
+  S.speaking=S.speaking||{completed:{},selected:null};
+  S.speaking.xp=S.speaking.xp||0;
+  var d=dstr(new Date());
+  if(!S.speaking.q||S.speaking.q.d!==d) S.speaking.q={d:d};
+  return S.speaking;
+}
+function showXpToast(txt){
+  var t=document.getElementById("xpToast"); if(!t) return;
+  t.textContent=txt; t.classList.remove("show"); void t.offsetWidth; t.classList.add("show");
+}
+function awardXp(n,quest){
+  var sp=spState(), msg=n, bonus=0;
+  if(quest){ if(sp.q[quest]) { n=Math.min(n,3); } else { sp.q[quest]=1; } }
+  sp.xp+=n;
+  var all=SP_QUESTS.every(function(q){return sp.q[q[0]];});
+  if(all&&!sp.q.bonus){ sp.q.bonus=1; sp.xp+=25; bonus=25; }
+  save();
+  showXpToast("+"+(n+bonus)+" XP"+(bonus?" · Günlük bonus!":""));
+  renderSpeakGame();
+}
+function renderSpeakGame(){
+  var el=document.getElementById("spGame"); if(!el) return;
+  var sp=spState(), per=120, lvl=Math.floor(sp.xp/per)+1, into=sp.xp%per;
+  var rank=SP_RANKS[Math.min(SP_RANKS.length-1,Math.floor((lvl-1)/2))];
+  var doneQ=SP_QUESTS.filter(function(q){return sp.q[q[0]];}).length;
+  el.innerHTML='<div class="sp-hero"><div class="sp-rings" aria-hidden="true"><i></i><i></i><i></i></div>'+
+    '<div class="sp-top"><div class="sp-lv"><small>SEVİYE</small><b>'+lvl+'</b></div><div><div class="sp-rank">'+rank+'</div><div class="sp-xp">'+sp.xp+' XP · sonraki seviyeye '+(per-into)+' XP</div></div></div>'+
+    '<div class="sp-bar" style="margin-right:84px;"><div style="width:'+Math.round(into/per*100)+'%"></div></div>'+
+    '<img class="sp-moon" src="assets/mascot/pose-cheering.png" alt=""></div>'+
+    '<div class="card sp-quests"><div class="sp-qh">Günlük görevler<span>'+doneQ+'/'+SP_QUESTS.length+(doneQ===SP_QUESTS.length?" · +25 bonus alındı":"")+'</span></div>'+
+    SP_QUESTS.map(function(q){ var d=!!sp.q[q[0]]; return '<div class="sp-q'+(d?" done":"")+'"><span class="qi"><svg class="icon" aria-hidden="true"><use href="#'+(d?"i-check":q[2])+'"></use></svg></span><span class="qt">'+q[1]+'</span><span class="qx">+'+q[3]+' XP</span></div>'; }).join("")+'</div>';
+}
 function renderSpeaking(){
+  renderSpeakGame();
   stop432Timer();
   resetSpeakConvo();
   var sel=S.speaking.selected||speakFrontier();
@@ -4388,6 +4533,7 @@ function renderSpeaking(){
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın</span></div>'
       : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu üniteyi tamamladım</button>');
   wireSpeakConvo(level,unit,sel);
+  document.getElementById("speakConvoEnd").addEventListener("click",function(){ var lg=document.getElementById("speakConvoLog"); if(lg&&lg.children.length>0) awardXp(30,"convo"); });
   document.getElementById("speakNoteTa").value=S.speaking.notes[unitKey(sel.li,sel.ui)]||"";
   document.getElementById("speakNoteSave").addEventListener("click",function(){
     S.speaking.notes[unitKey(sel.li,sel.ui)]=document.getElementById("speakNoteTa").value.trim();
@@ -4402,6 +4548,7 @@ function renderSpeaking(){
   var cb=document.getElementById("speakCompleteBtn");
   if(cb) cb.addEventListener("click",function(){
     S.speaking.completed[unitKey(sel.li,sel.ui)]=true;
+    awardXp(50);
     var addedN=addUnitPhrasesToVocab(unit);
     S.speaking.selected=null; // ilerlemeyi otomatik bir sonraki üniteye taşı
     save(); renderSpeaking(); renderLearnHub(); renderVocab();
@@ -4444,6 +4591,7 @@ function renderGrammar(){
   var level=GRAMMAR_LEVELS[sel.li], unit=level.units[sel.ui];
   var done=!!S.grammar.completed[grammarUnitKey(sel.li,sel.ui)];
   grammarAnswers={}; grammarChecked=false;
+  (function(){ var t=document.getElementById("grHeroTitle"); if(t) t.textContent=level.cefr+" · "+level.name; var sb=document.getElementById("grHeroSub"); if(sb) sb.textContent=level.cando; })();
 
   var examplesHtml=unit.examples.map(function(ex){
     return '<div class="example-row"><div class="ex-en">'+esc(ex[0])+'</div><div class="ex-tr">'+esc(ex[1])+'</div></div>';
@@ -4457,18 +4605,20 @@ function renderGrammar(){
   }).join("");
 
   document.getElementById("grammarCurrent").innerHTML=
-    '<div class="row" style="align-items:center;margin-bottom:10px;">'+
+    '<div class="gr-top">'+
       '<span class="cefr-badge lg">'+level.cefr+'</span>'+
-      '<span class="mut" style="margin-left:8px;">'+esc(level.name)+' · Konu '+(sel.ui+1)+'/'+level.units.length+'</span>'+
+      '<div class="gr-bar"><div style="width:'+Math.round((sel.ui+(done?1:0))/level.units.length*100)+'%"></div></div>'+
+      '<span class="mut">Konu '+(sel.ui+1)+'/'+level.units.length+'</span>'+
     '</div>'+
     '<div class="paper-card" style="margin-bottom:16px;">'+
-      '<div style="font-family:var(--font-ui);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:10px;">'+esc(unit.name)+'</div>'+
+      '<div style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink);margin-bottom:4px;">'+esc(unit.name)+'</div>'+
+      '<div class="gr-step"><span>1</span>Kuralı oku</div>'+
       '<div class="rule-box">'+esc(unit.rule)+'</div>'+
-      '<h2 style="font-size:12.5px;margin-bottom:4px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-book"></use></svg>Örnekler</h2>'+
+      '<div class="gr-step"><span>2</span>Örneklere bak</div>'+
       examplesHtml+
       '<div class="mistake-box"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg><div><b>Sık yapılan hata:</b> '+esc(unit.mistake)+'</div></div>'+
     '</div>'+
-    '<h2 style="font-size:12.5px;margin:16px 0 4px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Alıştırmalar</h2>'+
+    '<div class="gr-step"><span>3</span>Alıştır</div>'+
     '<div id="grammarExList">'+exHtml+'</div>'+
     '<div id="grammarScore" style="display:none;"></div>'+
     '<button type="button" class="btn sec" id="grammarCheckBtn" style="margin-top:6px;">Cevapları Kontrol Et</button>'+
@@ -4836,6 +4986,7 @@ function showPron(score,said){
   res.innerHTML=(mascot?'<div class="mchip sm" style="float:right;margin-left:8px;"><img src="assets/mascot/'+mascot+'" alt=""></div>':"")+
     '<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#'+ic+'"></use></svg> <b>%'+pct+" eşleşme</b> — "+msg+'<div class="heard">Duydum: "'+esc(said)+'"</div>';
   updateGeminiBtnVisibility();
+  if(pct>=85) awardXp(15,"say"); else if(pct>=60) awardXp(10,"say"); else awardXp(3);
 }
 var GEMINI_MODEL="gemini-3.6-flash";
 function blobToBase64(blob){
@@ -5026,6 +5177,7 @@ function renderProgress(){
 
 /* ---------- LEARN HUB ---------- */
 function renderLearnHub(){
+  (function(){ var dn=STEPS.filter(function(_,i){return S.checks[i];}).length; var a=document.getElementById("hubHeroSub"), c=document.getElementById("hubHeroChip"); if(a) a.textContent="Bugünün planı: "+dn+"/"+STEPS.length+" adım tamam"; if(c) c.textContent=(S.streak||0)+" gün seri"; })();
   var due=dueWords().length;
   document.getElementById("hubVocabSub").textContent=due?(due+" kart bekliyor"):"Hepsi güncel";
   var knownN=S.words.filter(function(w){return w.reps>=2;}).length;
@@ -5552,6 +5704,7 @@ document.getElementById("obFinishBtn").addEventListener("click",function(){
   S.settings.focusSkills=obState.focus;
   S.settings.examType=obState.goals.indexOf("Sınav")!==-1?(obState.exam||"YDS / YÖKDİL"):"";
   S.checks={}; STEPS=buildPlan();
+  S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.selected=null; S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.selected=null;
   S.settings.userInterest=obState.interest;
   if(obState.podcastPick){
     S.listening=S.listening||{podcasts:[]}; S.listening.podcasts=S.listening.podcasts||[];
@@ -5600,5 +5753,6 @@ if(/[?&#]onboarding/.test(location.href)){
   document.body.classList.add("onb-active"); obGo("obbasics");
 }
 </script>
+<div id="xpToast" aria-live="polite"></div>
 </body>
 </html>
