@@ -1190,6 +1190,18 @@
 
   .mp-motif{ position:absolute; width:104px; height:104px; color:#fff; opacity:.13; pointer-events:none; }
   .mp-motif svg{ width:100%; height:100%; stroke-width:1.1; }
+
+  /* v39: sahneli, bütünlüklü */
+  .mp-band{ display:block !important; left:0 !important; right:0 !important; border-radius:0 !important; opacity:.62 !important; -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28%,#000 72%,transparent 100%) !important; mask-image:linear-gradient(to bottom,transparent 0,#000 28%,#000 72%,transparent 100%) !important; }
+  .mp-motif{ display:none !important; }
+  .mp-line .road{ stroke:rgba(255,255,255,.4) !important; }
+  .mp-line .roadsh{ stroke:rgba(20,10,70,.28); }
+
+  /* v40: dengeli — hafif sahne + sade süsler */
+  .mp-band{ opacity:.2 !important; }
+  .mp-decor{ display:block !important; z-index:1; opacity:1 !important; filter:drop-shadow(0 10px 8px rgba(30,15,90,.28)); }
+  .mp-decor svg{ width:100%; height:auto; display:block; }
+  .mp-line{ z-index:1; } .mp-node{ z-index:3; }
 </style>
 </head>
 <body>
@@ -4838,9 +4850,10 @@ function renderSpeaking(){
       var ly=pts[N-1][1]; d+=" C"+pts[N-1][0]+" "+(ly+rowH*.7)+" "+endX+" "+(endY-rowH*.7)+" "+endX+" "+endY;
       var night=(lv.cefr==="A1"||lv.cefr==="C1");
       body='<div class="mp-board'+(night?' night':'')+' st-'+lv.cefr+'" style="height:'+H+'px;--b1:'+st.c[0]+';--b2:'+st.c[1]+';">'+
-        ''+
+        lv.units.map(function(u,ui){ var sc=(MP_UNIT_SCENE[lv.cefr]||MP_UNIT_SCENE.B1)[ui%5]; return '<div class="mp-band" style="top:'+(ui*rowH+40)+'px;height:'+(rowH+6)+'px;">'+MP_SCENE[sc]+'</div>'; }).join("")+
         '<svg viewBox="0 0 100 '+H+'" preserveAspectRatio="none" class="mp-line"><path class="roadsh" d="'+d+'" vector-effect="non-scaling-stroke"/><path class="road" d="'+d+'" vector-effect="non-scaling-stroke"/><path class="dash" d="'+d+'" vector-effect="non-scaling-stroke"/></svg>';
       for(var q=0;q<N;q++){ body+='<span class="mp-motif" style="left:'+((q%2===0)?'60%':'4%')+';top:'+(q*rowH+rowH*.35+58)+'px;">'+mpIcon((MP_UNIT_ICON[lv.cefr]||MP_UNIT_ICON.B1)[q%5])+'</span>'; }
+      for(var q=0;q<N;q++){ body+=mpDecor(lv.cefr,q,(q%2===0)?66:3,q*rowH+60,(q%2===0)?72:80); }
       var allDone=doneCount===N;
       body+='<button type="button" class="mp-chest'+(allDone?' open':'')+'" style="top:'+(endY-46)+'px;" data-li="'+li+'" aria-label="Durak ödülü"><span class="mp-chest-art">'+MP_SVG.gift(allDone?"#FFE9A6":"#C9A0FF",allDone?"#F2B94B":"#8B5CF6")+'</span><span class="mp-l">'+(allDone?"Durağa vardın!":"Durak ödülü")+'</span></button>';
       lv.units.forEach(function(u,ui){
