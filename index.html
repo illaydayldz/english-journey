@@ -1299,6 +1299,18 @@
   .nt-go{ width:32px; height:32px; border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; color:var(--ink); box-shadow:0 2px 6px rgba(0,0,0,.25); }
   .nt-pinmark{ position:absolute; top:10px; right:12px; color:#F2B94B; }
   .nt-back{ border:none; background:transparent; color:var(--ink); font:inherit; font-weight:800; font-size:15px; display:flex; align-items:center; gap:6px; margin:0 0 10px; cursor:pointer; }
+
+  /* v46: grammar hub */
+  .gh-next{ border-radius:24px; padding:18px; margin-bottom:16px; background:linear-gradient(150deg,#4FD1C555,#6B5BE633 70%,transparent); border:1px solid #4FD1C566; }
+  .gh-nl{ font-size:11px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; color:var(--teal); } .gh-nt{ font-family:var(--font-display); font-size:20px; font-weight:800; line-height:1.25; margin:4px 0; color:var(--ink); } .gh-nm{ font-size:12.5px; color:var(--ink-2); }
+  .gh-start{ margin-top:14px; border:none; border-radius:999px; padding:11px 20px; font:inherit; font-weight:800; font-size:14px; color:#fff; background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); box-shadow:0 4px 0 #3A2F9E; display:inline-flex; align-items:center; gap:6px; cursor:pointer; } .gh-start:active{ transform:translateY(3px); box-shadow:0 1px 0 #3A2F9E; }
+  .gh-lv{ margin-bottom:20px; } .gh-lv.lock{ opacity:.6; } .gh-lh{ display:flex; align-items:center; gap:8px; margin-bottom:7px; } .gh-lh b{ flex:1; font-family:var(--font-display); font-size:15px; }
+  .gh-bar{ height:6px; border-radius:6px; background:var(--tint); overflow:hidden; margin-bottom:10px; } .gh-bar div{ height:100%; background:linear-gradient(90deg,#4FD1C5,#6B5BE6); border-radius:6px; }
+  .gh-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .gh-tile{ text-align:left; border:1px solid var(--line,rgba(255,255,255,.08)); border-radius:18px; padding:12px; background:var(--card); font:inherit; color:var(--ink); display:flex; flex-direction:column; gap:6px; cursor:pointer; min-height:112px; }
+  .gh-tile:disabled{ cursor:default; } .gh-tile.cur{ border-color:#6B5BE6; box-shadow:0 0 0 2px #6B5BE655; } .gh-tile.done{ background:linear-gradient(180deg,#58C98B26,var(--card)); }
+  .gh-n{ width:30px; height:30px; border-radius:50%; background:var(--tint); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; } .gh-n .icon{ width:16px; height:16px; } .gh-tile.done .gh-n{ background:#58C98B; color:#0F2A1C; } .gh-tile.cur .gh-n{ background:#6B5BE6; color:#fff; }
+  .gh-tt{ font-weight:700; font-size:13px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; } .gh-ts{ margin-top:auto; font-size:11px; color:var(--ink-2); }
 </style>
 </head>
 <body>
@@ -2138,16 +2150,14 @@
       <h1>Grammar Path</h1>
     </div>
     <div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Senin seviyen</div><div class="pg-title" id="grHeroTitle">—</div><div class="pg-sub" id="grHeroSub">Kural, örnek, alıştırma. Üç adımda öğren.</div></div><img class="pg-moon" src="assets/mascot/pose-learning.png" alt=""></div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Bugünün konusu</h2>
-      <div id="grammarCurrent"></div>
+    <div id="grHub"></div>
+  </section>
+  <section class="view" id="v-grammarunit">
+    <div class="page-head">
+      <button class="back" onclick="go('grammar')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1 id="guTitle">Grammar</h1>
     </div>
-    <div class="card">
-      <details id="grammarAllLevelsBox">
-        <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Grammar Path — Tüm konular</summary>
-        <div id="grammarLevelList" style="margin-top:14px;"></div>
-      </details>
-    </div>
+    <div id="grammarCurrent"></div>
   </section>
 
   <!-- ===== YAZMA ===== -->
@@ -2645,7 +2655,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",grammarunit:"today",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -2662,7 +2672,8 @@ function go(v){
   if(v==="listening") renderListening();
   if(v==="podcastdetail") renderPodcastDetail();
   if(v==="speaking"||v==="speakunit") renderSpeaking();
-  if(v==="grammar") renderGrammar();
+  if(v==="grammar") renderGrammarHub();
+  if(v==="grammarunit") renderGrammar();
   if(v==="writing") renderWriting();
   if(v==="achievements") renderAchievements();
   if(v==="notes") renderNotes();
@@ -5013,7 +5024,7 @@ function renderGrammar(){
   var level=GRAMMAR_LEVELS[sel.li], unit=level.units[sel.ui];
   var done=!!S.grammar.completed[grammarUnitKey(sel.li,sel.ui)];
   grammarAnswers={}; grammarChecked=false;
-  (function(){ var t=document.getElementById("grHeroTitle"); if(t) t.textContent=level.cefr+" · "+level.name; var sb=document.getElementById("grHeroSub"); if(sb) sb.textContent=level.cando; })();
+  var gt=document.getElementById("guTitle"); if(gt) gt.textContent=level.cefr+" · Konu "+(sel.ui+1);
 
   var examplesHtml=unit.examples.map(function(ex){
     return '<div class="example-row"><div class="ex-en">'+esc(ex[0])+'</div><div class="ex-tr">'+esc(ex[1])+'</div></div>';
@@ -5049,7 +5060,7 @@ function renderGrammar(){
       '<button type="button" class="btn sec sm note-save" id="grammarNoteSave">Notu kaydet</button>'+
     '</div></div>'+
     (done
-      ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu konuyu tamamladın</span></div>'
+      ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu konuyu tamamladın</span></div><button class="btn" id="grNextBtn" style="margin-top:10px;">Sıradaki konu →</button>'
       : '<button class="btn" id="grammarCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu konuyu tamamladım</button>');
 
   function grTab(t){
@@ -5091,58 +5102,37 @@ function renderGrammar(){
     scoreEl.innerHTML='<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>'+correctN+'/'+unit.exercises.length+' doğru';
     document.getElementById("grammarCheckBtn").style.display="none";
   });
+  var nb=document.getElementById("grNextBtn"); if(nb) nb.addEventListener("click",function(){ S.grammar.selected=null; save(); renderGrammar(); window.scrollTo(0,0); });
   var cb=document.getElementById("grammarCompleteBtn");
   if(cb) cb.addEventListener("click",function(){
     S.grammar.completed[grammarUnitKey(sel.li,sel.ui)]=true;
-    S.grammar.selected=null;
+    S.grammar.selected={li:sel.li,ui:sel.ui};
     save(); renderGrammar(); renderLearnHub();
   });
-
-  var listEl=document.getElementById("grammarLevelList"); listEl.innerHTML="";
-  var frontier=grammarFrontier();
+}
+function renderGrammarHub(){
+  var fr=grammarFrontier(), total=0, doneN=0;
+  var t=document.getElementById("grHeroTitle"), sb=document.getElementById("grHeroSub");
+  GRAMMAR_LEVELS.forEach(function(lv,li){ lv.units.forEach(function(u,ui){ total++; if(S.grammar.completed[grammarUnitKey(li,ui)]) doneN++; }); });
+  var flv=GRAMMAR_LEVELS[fr.li], fu=flv.units[fr.ui];
+  if(t) t.textContent=flv.cefr+" · "+flv.name; if(sb) sb.textContent=doneN+"/"+total+" konu tamamlandı";
+  var h='<div class="gh-next"><div class="gh-nl">Sıradaki konu</div><div class="gh-nt">'+esc(fu.name)+'</div><div class="gh-nm">'+flv.cefr+' · Konu '+(fr.ui+1)+'/'+flv.units.length+' · Kural, örnek, test</div>'+
+    '<button type="button" class="gh-start" id="ghStart">Başla<svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button></div>';
   GRAMMAR_LEVELS.forEach(function(lv,li){
-    var unlocked=grammarLevelUnlocked(li);
-    var box=document.createElement("div"); box.className="level-block"+(unlocked?"":" locked");
-    var doneCount=lv.units.filter(function(_,ui){return !!S.grammar.completed[grammarUnitKey(li,ui)];}).length;
-    var levelComplete=unlocked&&doneCount===lv.units.length;
-    box.innerHTML='<div class="level-head">'+
-      '<span class="cefr-badge'+(unlocked?"":" locked")+'">'+lv.cefr+'</span>'+
-      '<span class="lv-name">'+esc(lv.name)+'</span>'+
-      (levelComplete?'<div class="mchip sm"><img src="assets/mascot/extra-flying.png" alt=""></div>':"")+
-      (unlocked
-        ? '<span class="lv-count">'+doneCount+'/'+lv.units.length+'</span>'
-        : '<span class="lv-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>Kilitli</span>')+
-    '</div>';
-    if(unlocked){
-      var path=document.createElement("div"); path.className="path-track";
-      lv.units.forEach(function(u,ui){
-        var udone=!!S.grammar.completed[grammarUnitKey(li,ui)];
-        var isCurrent=!udone&&li===frontier.li&&ui===frontier.ui;
-        var node=document.createElement("button"); node.type="button";
-        node.className="path-node"+(udone?" done":"")+(isCurrent?" current":"");
-        var markerIcon=udone?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(ui+1);
-        node.innerHTML='<span class="path-line" aria-hidden="true"></span>'+
-          '<span class="path-marker">'+markerIcon+'</span>'+
-          '<span class="path-body"><span class="pn-t">'+esc(u.name)+'</span>'+
-          (isCurrent?'<span class="pn-s">Sıradaki konu</span>':(udone?'<span class="pn-s">Tamamlandı</span>':'<span class="pn-s">Hazır</span>'))+
-          '</span>';
-        node.addEventListener("click",function(){ S.grammar.selected={li:li,ui:ui}; save(); renderGrammar(); window.scrollTo(0,0); });
-        path.appendChild(node);
-      });
-      box.appendChild(path);
-    } else {
-      var lockedPath=document.createElement("div"); lockedPath.className="path-track";
-      lv.units.forEach(function(u,ui){
-        var node=document.createElement("div"); node.className="path-node locked";
-        node.innerHTML='<span class="path-line" aria-hidden="true"></span>'+
-          '<span class="path-marker"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg></span>'+
-          '<span class="path-body"><span class="pn-t">'+esc(u.name)+'</span><span class="pn-s">Önce '+GRAMMAR_LEVELS[li-1].cefr+' seviyesini bitir</span></span>';
-        lockedPath.appendChild(node);
-      });
-      box.appendChild(lockedPath);
-    }
-    listEl.appendChild(box);
+    var unl=grammarLevelUnlocked(li), dn=lv.units.filter(function(_,ui){ return !!S.grammar.completed[grammarUnitKey(li,ui)]; }).length;
+    h+='<div class="gh-lv'+(unl?"":" lock")+'"><div class="gh-lh"><span class="cefr-badge'+(unl?"":" locked")+'">'+lv.cefr+'</span><b>'+esc(lv.name)+'</b><span class="mut">'+(unl?dn+"/"+lv.units.length:"Kilitli")+'</span></div>'+
+      '<div class="gh-bar"><div style="width:'+Math.round(dn/lv.units.length*100)+'%"></div></div><div class="gh-grid">';
+    lv.units.forEach(function(u,ui){
+      var d=!!S.grammar.completed[grammarUnitKey(li,ui)], cur=unl&&!d&&li===fr.li&&ui===fr.ui;
+      var ic=!unl?'<svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>':(d?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(ui+1));
+      h+='<button type="button" class="gh-tile'+(d?" done":"")+(cur?" cur":"")+'" data-li="'+li+'" data-ui="'+ui+'"'+(unl?"":" disabled")+'><span class="gh-n">'+ic+'</span><span class="gh-tt">'+esc(u.name)+'</span><span class="gh-ts">'+(!unl?"Önce "+GRAMMAR_LEVELS[li-1].cefr+" bitir":(d?"Tamamlandı":(cur?"Sıradaki":"Hazır")))+'</span></button>';
+    });
+    h+='</div></div>';
   });
+  var el=document.getElementById("grHub"); el.innerHTML=h;
+  function open(li,ui){ S.grammar.selected={li:li,ui:ui}; save(); go("grammarunit"); }
+  document.getElementById("ghStart").addEventListener("click",function(){ open(fr.li,fr.ui); });
+  el.querySelectorAll(".gh-tile:not([disabled])").forEach(function(b){ b.addEventListener("click",function(){ open(parseInt(b.dataset.li,10),parseInt(b.dataset.ui,10)); }); });
 }
 
 /* ---------- ROZETLER (achievements — gerçek S verisinden hesaplanan rozetler) ---------- */
@@ -5211,7 +5201,7 @@ function collectAllNotes(){
     var text=(S.grammar.notes[key]||"").trim(); if(!text) return;
     var p=key.split("-"), li=+p[0], ui=+p[1];
     var lv=GRAMMAR_LEVELS[li]; if(!lv) return; var unit=lv.units[ui]; if(!unit) return;
-    items.push({cat:"Grammar Path",ic:"i-layers",bg:"var(--teal-tint)",fg:"var(--teal)",title:unit.name,sub:lv.cefr+" · "+lv.name,text:text,go:function(){ S.grammar.selected={li:li,ui:ui}; save(); go("grammar"); }});
+    items.push({cat:"Grammar Path",ic:"i-layers",bg:"var(--teal-tint)",fg:"var(--teal)",title:unit.name,sub:lv.cefr+" · "+lv.name,text:text,go:function(){ S.grammar.selected={li:li,ui:ui}; save(); go("grammarunit"); }});
   });
   Object.keys(S.readingLib.notes||{}).forEach(function(key){
     var text=(S.readingLib.notes[key]||"").trim(); if(!text) return;
