@@ -1326,6 +1326,12 @@
   .qz-res{ text-align:center; } .qz-res img{ width:120px; height:auto; margin:4px auto 0; display:block; }
   .qz-score{ font-family:var(--font-display); font-size:52px; font-weight:800; line-height:1; margin-top:6px; } .qz-score small{ font-size:22px; opacity:.6; } .qz-msg{ margin:6px 0 16px; color:var(--ink-2); font-size:14px; }
   .qz-wl{ text-align:left; background:var(--card); border-radius:20px; padding:14px; margin-bottom:14px; } .qz-wl b{ font-size:13px; } .qz-w{ margin-top:10px; } .qz-wq{ font-size:13px; color:var(--ink-2); } .qz-wa{ display:flex; align-items:center; gap:6px; font-weight:700; font-size:13.5px; color:var(--green); margin-top:2px; }
+
+  /* v48: grammar notlar */
+  .gn-add{ width:100%; display:flex; align-items:center; justify-content:center; gap:8px; border:2px dashed #6B5BE688; border-radius:18px; padding:14px; margin-bottom:12px; background:transparent; font:inherit; font-weight:800; font-size:14px; color:var(--ink); cursor:pointer; } .gn-add .icon{ width:18px; height:18px; color:#8B7FFF; }
+  .gn-empty{ display:flex; align-items:center; gap:12px; padding:14px; border-radius:20px; background:var(--card); } .gn-empty img{ width:64px; height:auto; flex:none; } .gn-empty b{ display:block; font-size:14px; margin-bottom:2px; } .gn-empty span{ font-size:12.5px; color:var(--ink-2); line-height:1.4; }
+  .gn-card{ width:100%; display:flex; flex-direction:column; gap:8px; text-align:left; border:1px solid; border-radius:20px; padding:14px; margin-bottom:10px; font:inherit; color:var(--ink); cursor:pointer; }
+  .gn-t{ font-size:14px; line-height:1.5; white-space:pre-wrap; } .gn-d{ font-size:11px; color:var(--ink-2); }
 </style>
 </head>
 <body>
@@ -5068,10 +5074,7 @@ function renderGrammar(){
       '<div class="mistake-box"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg><div><b>Sık yapılan hata:</b> '+esc(unit.mistake)+'</div></div>'+
     '</div><button type="button" class="btn" id="grToTest">Kendini test et →</button></div>'+
     '<div class="gr-panel" data-gp="test"><div id="grQuiz"></div></div>'+
-    '<div class="gr-panel" data-gp="notes"><div class="paper-card">'+
-      '<textarea class="f note-ta" id="grammarNoteTa" rows="6" placeholder="Bu konuyla ilgili notların ve Moonie geri bildirimleri..."></textarea>'+
-      '<button type="button" class="btn sec sm note-save" id="grammarNoteSave">Notu kaydet</button>'+
-    '</div></div>'+
+    '<div class="gr-panel" data-gp="notes"><div id="grNotes"></div></div>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu konuyu tamamladın</span></div><button class="btn" id="grNextBtn" style="margin-top:10px;">Sıradaki konu →</button>'
       : '<button class="btn" id="grammarCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu konuyu tamamladım</button>');
@@ -5082,13 +5085,19 @@ function renderGrammar(){
   }
   document.querySelectorAll("#grTabs .seg").forEach(function(b){ b.addEventListener("click",function(){ grTab(b.dataset.gt); }); });
   document.getElementById("grToTest").addEventListener("click",function(){ grTab("test"); window.scrollTo(0,0); });
-  document.getElementById("grammarNoteTa").value=S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]||"";
-  document.getElementById("grammarNoteSave").addEventListener("click",function(){
-    S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]=document.getElementById("grammarNoteTa").value.trim();
-    save();
-    var btn=document.getElementById("grammarNoteSave"), orig=btn.textContent;
-    btn.textContent="Kaydedildi"; setTimeout(function(){ if(btn) btn.textContent=orig; },1500);
-  });
+  var gKey=grammarUnitKey(sel.li,sel.ui);
+  (function(){ var old=(S.grammar.notes[gKey]||"").trim(); if(old){ S.qnotes.unshift({id:"g"+Date.now(),text:old,cat:"grammar",color:"#4FD1C5",pin:false,ts:new Date().toISOString(),ref:gKey}); delete S.grammar.notes[gKey]; save(); } })();
+  function grNotesRender(){
+    var list=S.qnotes.filter(function(n){ return n.ref===gKey; });
+    var box=document.getElementById("grNotes"); if(!box) return;
+    var h='<button type="button" class="gn-add" id="gnAdd"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Bu konuya not ekle</button>';
+    if(!list.length) h+='<div class="gn-empty"><img src="assets/mascot/pose-writing.png" alt=""><div><b>Henüz notun yok</b><span>Kuralı kendi cümlenle yaz, örnek ekle ya da Moonie geri bildirimini kaydet.</span></div></div>';
+    list.forEach(function(n,i){ var c=n.color||"#4FD1C5"; h+='<button type="button" class="gn-card" data-id="'+n.id+'" style="background:linear-gradient(180deg,'+c+'33,'+c+'0d);border-color:'+c+'66;"><span class="gn-t">'+esc(n.text)+'</span><span class="gn-d">'+esc(fmtDate((n.ts||"").slice(0,10)))+'</span></button>'; });
+    box.innerHTML=h;
+    document.getElementById("gnAdd").addEventListener("click",function(){ qnOpen(null,gKey); });
+    box.querySelectorAll(".gn-card").forEach(function(b){ b.addEventListener("click",function(){ qnOpen(b.dataset.id); }); });
+  }
+  qnAfter=grNotesRender; grNotesRender();
   var qz={i:0,picked:null,score:0,wrong:[]};
   function qzRender(){
     var box=document.getElementById("grQuiz"), N=unit.exercises.length;
@@ -5247,13 +5256,13 @@ function collectAllNotes(){
 S.qnotes=S.qnotes||[];
 var QN_CATS=[["Genel","genel"],["Konuşma","konusma"],["Grammar","grammar"],["Okuma","okuma"],["Yazma","yazma"],["Dinleme","dinleme"],["Kelime","kelime"]];
 var QN_VIEWCAT={speaking:"konusma",speakunit:"konusma",grammar:"grammar",reading:"okuma",book:"okuma",libread:"okuma",writing:"yazma",listening:"dinleme",podcastdetail:"dinleme",vocab:"kelime"};
-var qnPin=false, curView="today", qnEdit=null, qnCat="genel", qnColor="";
+var qnAfter=null, qnRef="", qnPin=false, curView="today", qnEdit=null, qnCat="genel", qnColor="";
 var _go=go; go=function(v){ curView=v; _go(v); qnFabUpdate(); };
 function qnFabUpdate(){ var f=document.getElementById("qnFab"); if(!f) return; var hide=/^(onb|auth|register|login|ob|splash|journal|notes|placement)/.test(curView); f.style.display=hide?"none":"flex"; }
 function qnCatName(c){ var r=QN_CATS.filter(function(x){return x[1]===c;})[0]; return r?r[0]:"Genel"; }
-function qnOpen(id){
-  qnEdit=id||null; var n=id?S.qnotes.filter(function(x){return x.id===id;})[0]:null;
-  qnCat=n?n.cat:(QN_VIEWCAT[curView]||"genel"); qnColor=n?(n.color||""):""; qnPin=!!(n&&n.pin); document.getElementById("qnPin").classList.toggle("on",qnPin);
+function qnOpen(id,ref){
+  qnEdit=id||null; qnRef=ref||""; var n=id?S.qnotes.filter(function(x){return x.id===id;})[0]:null;
+  qnCat=n?n.cat:(ref&&/^\d+-\d+$/.test(ref)?"grammar":(QN_VIEWCAT[curView]||"genel")); if(n) qnRef=n.ref||""; qnColor=n?(n.color||""):""; qnPin=!!(n&&n.pin); document.getElementById("qnPin").classList.toggle("on",qnPin);
   document.getElementById("qnText").value=n?n.text:"";
   document.getElementById("qnTitle").textContent=n?"Notu düzenle":"Yeni not";
   document.getElementById("qnDel").style.display=n?"":"none";
@@ -5277,10 +5286,10 @@ document.getElementById("qnBackdrop").addEventListener("click",qnClose);
 document.getElementById("qnSave").addEventListener("click",function(){
   var t=document.getElementById("qnText").value.trim(); if(!t){ qnClose(); return; }
   if(qnEdit){ var n=S.qnotes.filter(function(x){return x.id===qnEdit;})[0]; if(n){ n.text=t; n.cat=qnCat; n.color=qnColor; n.pin=qnPin; } }
-  else S.qnotes.unshift({id:"q"+Date.now(),text:t,cat:qnCat,color:qnColor,pin:qnPin,ts:new Date().toISOString()});
-  save(); qnClose(); if(curView==="notes") renderNotes();
+  else S.qnotes.unshift({id:"q"+Date.now(),ref:qnRef,text:t,cat:qnCat,color:qnColor,pin:qnPin,ts:new Date().toISOString()});
+  save(); qnClose(); if(curView==="notes") renderNotes(); if(qnAfter&&(curView==="grammarunit")) qnAfter();
 });
-document.getElementById("qnDel").addEventListener("click",function(){ if(!qnEdit||!confirm("Bu not silinsin mi?")) return; S.qnotes=S.qnotes.filter(function(x){return x.id!==qnEdit;}); save(); qnClose(); renderNotes(); });
+document.getElementById("qnDel").addEventListener("click",function(){ if(!qnEdit||!confirm("Bu not silinsin mi?")) return; S.qnotes=S.qnotes.filter(function(x){return x.id!==qnEdit;}); save(); qnClose(); if(curView==="notes") renderNotes(); if(qnAfter&&curView==="grammarunit") qnAfter(); });
 var ntFilter="all";
 document.getElementById("ntSearch").addEventListener("input",function(){ renderNotes(); });
 var NT_G={"Genel":["i-edit","#8B7FFF"],"Konuşma":["i-mic","#F2B94B"],"Grammar":["i-layers","#4FD1C5"],"Okuma":["i-book-open","#58C98B"],"Yazma":["i-edit","#FF8FC0"],"Dinleme":["i-headphones","#7FA8FF"],"Kelime":["i-cards","#A99CFF"]};
