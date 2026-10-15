@@ -1311,6 +1311,21 @@
   .gh-tile:disabled{ cursor:default; } .gh-tile.cur{ border-color:#6B5BE6; box-shadow:0 0 0 2px #6B5BE655; } .gh-tile.done{ background:linear-gradient(180deg,#58C98B26,var(--card)); }
   .gh-n{ width:30px; height:30px; border-radius:50%; background:var(--tint); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; } .gh-n .icon{ width:16px; height:16px; } .gh-tile.done .gh-n{ background:#58C98B; color:#0F2A1C; } .gh-tile.cur .gh-n{ background:#6B5BE6; color:#fff; }
   .gh-tt{ font-weight:700; font-size:13px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; } .gh-ts{ margin-top:auto; font-size:11px; color:var(--ink-2); }
+
+  /* v47: grammar quiz */
+  .qz-top{ display:flex; justify-content:space-between; font-size:12.5px; font-weight:800; color:var(--ink-2); margin-bottom:8px; } .qz-sc{ color:var(--green); }
+  .qz-dots{ display:flex; gap:5px; margin-bottom:14px; } .qz-dots i{ flex:1; height:6px; border-radius:6px; background:var(--tint); } .qz-dots i.done{ background:#58C98B; } .qz-dots i.cur{ background:#6B5BE6; }
+  .qz-card{ background:var(--card); border-radius:24px; padding:18px 16px; margin-bottom:12px; box-shadow:var(--shadow-sm); }
+  .qz-q{ font-family:var(--font-display); font-size:19px; font-weight:800; line-height:1.35; color:var(--ink); margin-bottom:16px; }
+  .qz-opt{ width:100%; display:flex; align-items:center; gap:12px; text-align:left; border:2px solid transparent; border-radius:16px; padding:12px; margin-bottom:9px; background:var(--tint); font:inherit; font-size:14.5px; font-weight:600; color:var(--ink); cursor:pointer; }
+  .qz-opt:active:not([disabled]){ transform:scale(.98); }
+  .qz-l{ width:28px; height:28px; border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex:none; }
+  .qz-opt.correct{ background:#58C98B30; border-color:#58C98B; } .qz-opt.correct .qz-l{ background:#58C98B; color:#0F2A1C; }
+  .qz-opt.wrong{ background:#FF6B6B2e; border-color:#FF6B6B; } .qz-opt.wrong .qz-l{ background:#FF6B6B; color:#fff; } .qz-opt.dim{ opacity:.5; }
+  .qz-fb{ font-weight:800; font-size:14px; margin:0 2px 10px; } .qz-fb.ok{ color:var(--green); } .qz-fb.no{ color:#FF8A8A; }
+  .qz-res{ text-align:center; } .qz-res img{ width:120px; height:auto; margin:4px auto 0; display:block; }
+  .qz-score{ font-family:var(--font-display); font-size:52px; font-weight:800; line-height:1; margin-top:6px; } .qz-score small{ font-size:22px; opacity:.6; } .qz-msg{ margin:6px 0 16px; color:var(--ink-2); font-size:14px; }
+  .qz-wl{ text-align:left; background:var(--card); border-radius:20px; padding:14px; margin-bottom:14px; } .qz-wl b{ font-size:13px; } .qz-w{ margin-top:10px; } .qz-wq{ font-size:13px; color:var(--ink-2); } .qz-wa{ display:flex; align-items:center; gap:6px; font-weight:700; font-size:13.5px; color:var(--green); margin-top:2px; }
 </style>
 </head>
 <body>
@@ -5052,9 +5067,7 @@ function renderGrammar(){
       examplesHtml+
       '<div class="mistake-box"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg><div><b>Sık yapılan hata:</b> '+esc(unit.mistake)+'</div></div>'+
     '</div><button type="button" class="btn" id="grToTest">Kendini test et →</button></div>'+
-    '<div class="gr-panel" data-gp="test"><div id="grammarExList">'+exHtml+'</div>'+
-    '<div id="grammarScore" style="display:none;"></div>'+
-    '<button type="button" class="btn" id="grammarCheckBtn" style="margin-top:6px;">Cevapları kontrol et</button></div>'+
+    '<div class="gr-panel" data-gp="test"><div id="grQuiz"></div></div>'+
     '<div class="gr-panel" data-gp="notes"><div class="paper-card">'+
       '<textarea class="f note-ta" id="grammarNoteTa" rows="6" placeholder="Bu konuyla ilgili notların ve Moonie geri bildirimleri..."></textarea>'+
       '<button type="button" class="btn sec sm note-save" id="grammarNoteSave">Notu kaydet</button>'+
@@ -5076,32 +5089,38 @@ function renderGrammar(){
     var btn=document.getElementById("grammarNoteSave"), orig=btn.textContent;
     btn.textContent="Kaydedildi"; setTimeout(function(){ if(btn) btn.textContent=orig; },1500);
   });
-  document.querySelectorAll("#grammarExList .gx-opt").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      if(grammarChecked) return;
-      var exi=btn.dataset.ex;
-      grammarAnswers[exi]=parseInt(btn.dataset.opt,10);
-      document.querySelectorAll('.gx-opt[data-ex="'+exi+'"]').forEach(function(b){ b.classList.toggle("sel",b===btn); });
-    });
-  });
-  document.getElementById("grammarCheckBtn").addEventListener("click",function(){
-    grammarChecked=true;
-    var correctN=0;
-    unit.exercises.forEach(function(ex,i){
-      var answered=grammarAnswers[i];
-      if(answered===ex.a) correctN++;
-      document.querySelectorAll('.gx-opt[data-ex="'+i+'"]').forEach(function(b){
-        var oi=parseInt(b.dataset.opt,10);
-        b.disabled=true;
-        if(oi===ex.a) b.classList.add("correct");
-        else if(oi===answered) b.classList.add("wrong");
-      });
-    });
-    var scoreEl=document.getElementById("grammarScore");
-    scoreEl.style.display="flex"; scoreEl.className="gx-score";
-    scoreEl.innerHTML='<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>'+correctN+'/'+unit.exercises.length+' doğru';
-    document.getElementById("grammarCheckBtn").style.display="none";
-  });
+  var qz={i:0,picked:null,score:0,wrong:[]};
+  function qzRender(){
+    var box=document.getElementById("grQuiz"), N=unit.exercises.length;
+    if(qz.i>=N){
+      var pct=Math.round(qz.score/N*100), pose=pct>=75?"pose-goalachieved.png":(pct>=50?"pose-goodjob.png":"pose-motivated.png");
+      var msg=pct>=75?"Harika! Bu konu oturdu.":(pct>=50?"İyi gidiyorsun, yanlışlara göz at.":"Sorun değil, kuralı tekrar okuyup yeniden dene.");
+      box.innerHTML='<div class="qz-res"><img src="assets/mascot/'+pose+'" alt=""><div class="qz-score">'+qz.score+'<small>/'+N+'</small></div><div class="qz-msg">'+msg+'</div>'+
+        (qz.wrong.length?'<div class="qz-wl"><b>Gözden geçir</b>'+qz.wrong.map(function(w){ return '<div class="qz-w"><div class="qz-wq">'+esc(w.q)+'</div><div class="qz-wa"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>'+esc(w.a)+'</div></div>'; }).join("")+'</div>':'')+
+        '<div style="display:flex;gap:8px;"><button type="button" class="btn sec" id="qzAgain" style="flex:1;">Tekrar dene</button><button type="button" class="btn" id="qzRule" style="flex:1;">Kuralı oku</button></div></div>';
+      document.getElementById("qzAgain").addEventListener("click",function(){ qz={i:0,picked:null,score:0,wrong:[]}; qzRender(); });
+      document.getElementById("qzRule").addEventListener("click",function(){ grTab("rule"); window.scrollTo(0,0); });
+      return;
+    }
+    var ex=unit.exercises[qz.i], ans=qz.picked!==null;
+    var dots="";
+    for(var d=0;d<N;d++) dots+='<i class="'+(d<qz.i?"done":(d===qz.i?"cur":""))+'"></i>';
+    box.innerHTML='<div class="qz-top"><span>Soru '+(qz.i+1)+'/'+N+'</span><span class="qz-sc">'+qz.score+' doğru</span></div><div class="qz-dots">'+dots+'</div>'+
+      '<div class="qz-card"><div class="qz-q">'+esc(ex.q)+'</div>'+
+      ex.opts.map(function(o,oi){
+        var cls="qz-opt";
+        if(ans){ if(oi===ex.a) cls+=" correct"; else if(oi===qz.picked) cls+=" wrong"; else cls+=" dim"; }
+        return '<button type="button" class="'+cls+'" data-o="'+oi+'"'+(ans?" disabled":"")+'><span class="qz-l">'+String.fromCharCode(65+oi)+'</span><span>'+esc(o)+'</span></button>';
+      }).join("")+'</div>'+
+      (ans?'<div class="qz-fb '+(qz.picked===ex.a?"ok":"no")+'">'+(qz.picked===ex.a?"Doğru!":"Doğru cevap: "+esc(ex.opts[ex.a]))+'</div><button type="button" class="btn" id="qzNext">'+(qz.i===N-1?"Sonucu gör":"Sonraki soru →")+'</button>':'');
+    box.querySelectorAll(".qz-opt:not([disabled])").forEach(function(b){ b.addEventListener("click",function(){
+      var oi=parseInt(b.dataset.o,10); qz.picked=oi;
+      if(oi===ex.a) qz.score++; else qz.wrong.push({q:ex.q,a:ex.opts[ex.a]});
+      qzRender();
+    }); });
+    var nx=document.getElementById("qzNext"); if(nx) nx.addEventListener("click",function(){ qz.i++; qz.picked=null; qzRender(); });
+  }
+  qzRender();
   var nb=document.getElementById("grNextBtn"); if(nb) nb.addEventListener("click",function(){ S.grammar.selected=null; save(); renderGrammar(); window.scrollTo(0,0); });
   var cb=document.getElementById("grammarCompleteBtn");
   if(cb) cb.addEventListener("click",function(){
