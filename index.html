@@ -1256,6 +1256,24 @@
   .su-bar{ position:sticky; bottom:calc(96px + env(safe-area-inset-bottom)); z-index:5; margin-top:12px; }
   .su-bar .btn{ box-shadow:0 14px 24px -8px rgba(0,0,0,.6); }
   #speakUnitCard .convo-partner{ padding:6px 0 10px; }
+
+  /* v43: günlük çıkartma / fotoğraf */
+  .jr-sheet{ max-height:88vh; overflow-y:auto; }
+  .jr-tools{ display:flex; gap:8px; margin:10px 0 8px; }
+  .jr-tool{ flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 6px; border:none; border-radius:14px; font-family:inherit; font-weight:700; font-size:12.5px; color:var(--ink); background:var(--tint); cursor:pointer; }
+  .jr-tool.on{ background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); color:#fff; }
+  .jr-tray{ flex-wrap:wrap; gap:8px; padding:10px; border-radius:16px; background:var(--tint); margin-bottom:8px; max-height:170px; overflow-y:auto; }
+  .jr-pick{ width:52px; height:52px; border:none; border-radius:14px; background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:4px; }
+  .jr-pick:active{ transform:scale(.92); }
+  .jr-stk{ width:44px; height:44px; object-fit:contain; display:inline-flex; align-items:center; justify-content:center; border-radius:12px; filter:drop-shadow(0 4px 4px rgba(0,0,0,.3)); }
+  .jr-stk.ic .icon{ width:24px; height:24px; } .jr-stk.sm{ width:34px; height:34px; }
+  .jr-col{ width:38px; height:38px; border-radius:50%; border:2px solid transparent; cursor:pointer; font-family:inherit; font-size:11px; font-weight:700; color:var(--ink); } .jr-col.sel{ border-color:#fff; box-shadow:0 0 0 2px var(--purple); }
+  .jr-draft{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
+  .jr-dchip{ position:relative; display:inline-flex; } .jr-dchip button{ position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; border:none; background:#2A2170; color:#fff; font-size:12px; line-height:1; cursor:pointer; }
+  .jr-dchip.ph img{ width:54px; height:54px; object-fit:cover; border-radius:12px; }
+  .jc-stk{ display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; } .jc-stk .jr-stk{ width:46px; height:46px; } .jc-stk .r0{ transform:rotate(-7deg); } .jc-stk .r1{ transform:rotate(5deg); } .jc-stk .r2{ transform:rotate(-3deg); } .jc-stk .r3{ transform:rotate(8deg); }
+  .jc-ph{ display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:8px; } .jc-ph img{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:14px; box-shadow:0 6px 10px -6px rgba(0,0,0,.6); }
+  .jr-lightbox{ position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.88); align-items:center; justify-content:center; padding:16px; } .jr-lightbox img{ max-width:100%; max-height:100%; border-radius:16px; }
 </style>
 </head>
 <body>
@@ -2217,6 +2235,7 @@
     <div id="journalHistory"></div>
     <button type="button" class="jr-fab" id="jrFab" aria-label="Yeni giriş"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></button>
     <div class="word-backdrop" id="jrBackdrop"></div>
+    <div class="jr-lightbox" id="jrLight" style="display:none;"><img alt=""></div>
     <div class="jr-sheet" id="jrSheet">
       <div class="ws-handle" aria-hidden="true"></div>
       <h2 style="display:flex;align-items:center;">Bugün nasıl geçti?<button type="button" aria-label="Kapat" id="jrClose" style="margin-left:auto;background:var(--tint);border:none;border-radius:50%;width:30px;height:30px;color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg></button></h2>
@@ -2227,7 +2246,15 @@
         <button type="button" class="mood" data-m="😄" aria-label="İyi"><svg class="icon" aria-hidden="true"><use href="#i-mood-4"></use></svg></button>
         <button type="button" class="mood" data-m="🤩" aria-label="Harika"><svg class="icon" aria-hidden="true"><use href="#i-mood-5"></use></svg></button>
       </div>
-      <textarea class="f" id="journalNotes" rows="5" placeholder="Bugün ne öğrendin, neler hissettin? İstersen İngilizce yaz." style="margin-top:12px;"></textarea>
+      <textarea class="f" id="journalNotes" rows="4" placeholder="Bugün ne öğrendin, neler hissettin? İstersen İngilizce yaz." style="margin-top:12px;"></textarea>
+      <div class="jr-tools">
+        <button type="button" class="jr-tool" id="jrToolSt"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Çıkartma</button>
+        <button type="button" class="jr-tool" id="jrToolPh"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-camera"></use></svg>Fotoğraf</button>
+        <button type="button" class="jr-tool" id="jrToolCol"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-leaf"></use></svg>Renk</button>
+      </div>
+      <input type="file" id="jrPhoto" accept="image/*" style="display:none;">
+      <div class="jr-tray" id="jrTray" style="display:none;"></div>
+      <div class="jr-draft" id="jrDraft"></div>
       <button class="btn" id="journalSave">Kaydet</button>
     </div>
   </section>
@@ -5602,6 +5629,70 @@ function journalAgo(k){
   if(diff<=0) return "Bugün"; if(diff===1) return "Dün"; if(diff<7) return diff+" gün önce";
   return fmtDstrKey(k);
 }
+
+var JR_STK=["m:pose-cheering.png","m:pose-goodjob.png","m:pose-greatprogress.png","m:pose-goalachieved.png","m:pose-learning.png","m:pose-reading.png","m:pose-writing.png","m:pose-listening.png","m:pose-happy2.png","m:pose-proud.png","m:pose-sleepy.png","m:pose-confused.png","m:extra-pencil.png","m:extra-flying.png","i:i-star:#F2B94B","i:i-flame:#FF8A4C","i:i-trophy:#F2B94B","i:i-target:#8B7FFF","i:i-leaf:#58C98B","i:i-gift:#FF8FC0","i:i-book:#8B7FFF","i:i-headphones:#7FE0D0"];
+var JR_COL=[["Mor","#8B7FFF"],["Pembe","#FF8FC0"],["Yeşil","#58C98B"],["Altın","#F2B94B"],["Turkuaz","#4FD1C5"]];
+function jrStk(k,cls){
+  var p=k.split(":");
+  if(p[0]==="m") return '<img class="'+(cls||"jr-stk")+'" src="assets/mascot/'+p[1]+'" alt="">';
+  return '<span class="'+(cls||"jr-stk")+' ic" style="background:'+p[2]+'22;color:'+p[2]+';"><svg class="icon" aria-hidden="true"><use href="#'+p[1]+'"></use></svg></span>';
+}
+var jrDraft={stickers:[],photos:[],color:""};
+function jrLoadDraft(entry){ jrDraft={stickers:(entry.stickers||[]).slice(),photos:(entry.photos||[]).slice(),color:entry.color||""}; jrRenderDraft(); jrTray(""); }
+function jrRenderDraft(){
+  var el=document.getElementById("jrDraft"); if(!el) return;
+  var h="";
+  jrDraft.stickers.forEach(function(k,i){ h+='<span class="jr-dchip">'+jrStk(k,"jr-stk sm")+'<button type="button" data-rs="'+i+'" aria-label="Kaldır">×</button></span>'; });
+  jrDraft.photos.forEach(function(id,i){ h+='<span class="jr-dchip ph"><img data-ph="'+id+'" alt=""><button type="button" data-rp="'+i+'" aria-label="Kaldır">×</button></span>'; });
+  el.innerHTML=h;
+  el.querySelectorAll("[data-rs]").forEach(function(b){ b.addEventListener("click",function(){ jrDraft.stickers.splice(parseInt(b.dataset.rs,10),1); jrRenderDraft(); }); });
+  el.querySelectorAll("[data-rp]").forEach(function(b){ b.addEventListener("click",function(){ var id=jrDraft.photos.splice(parseInt(b.dataset.rp,10),1)[0]; jrRenderDraft(); }); });
+  jrFillPhotos(el);
+}
+var jrUrlCache={};
+function jrFillPhotos(root){
+  root.querySelectorAll("img[data-ph]").forEach(function(img){
+    var id=img.dataset.ph;
+    if(jrUrlCache[id]){ img.src=jrUrlCache[id]; return; }
+    idbGet(id).then(function(blob){ if(!blob) return; jrUrlCache[id]=URL.createObjectURL(blob); img.src=jrUrlCache[id]; }).catch(function(){});
+  });
+}
+function jrTray(t){
+  var el=document.getElementById("jrTray"); if(!el) return;
+  document.querySelectorAll(".jr-tool").forEach(function(b){ b.classList.remove("on"); });
+  if(!t){ el.style.display="none"; return; }
+  el.style.display="flex"; el.className="jr-tray "+t;
+  document.getElementById(t==="st"?"jrToolSt":"jrToolCol").classList.add("on");
+  if(t==="st"){
+    el.innerHTML=JR_STK.map(function(k,i){ return '<button type="button" class="jr-pick" data-k="'+i+'">'+jrStk(k)+'</button>'; }).join("");
+    el.querySelectorAll(".jr-pick").forEach(function(b){ b.addEventListener("click",function(){ if(jrDraft.stickers.length>=10) return; jrDraft.stickers.push(JR_STK[parseInt(b.dataset.k,10)]); jrRenderDraft(); }); });
+  } else {
+    el.innerHTML='<button type="button" class="jr-col'+(jrDraft.color?"":" sel")+'" data-c="" style="background:var(--tint);">Yok</button>'+JR_COL.map(function(c){ return '<button type="button" class="jr-col'+(jrDraft.color===c[1]?" sel":"")+'" data-c="'+c[1]+'" style="background:'+c[1]+';" aria-label="'+c[0]+'"></button>'; }).join("");
+    el.querySelectorAll(".jr-col").forEach(function(b){ b.addEventListener("click",function(){ jrDraft.color=b.dataset.c; jrTray("col"); }); });
+  }
+}
+function jrResize(file){
+  return new Promise(function(resolve,reject){
+    var url=URL.createObjectURL(file), img=new Image();
+    img.onload=function(){
+      var max=1000, r=Math.min(1,max/Math.max(img.width,img.height)), w=Math.round(img.width*r), h=Math.round(img.height*r);
+      var c=document.createElement("canvas"); c.width=w; c.height=h; c.getContext("2d").drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      c.toBlob(function(b){ b?resolve(b):reject(new Error("blob")); },"image/jpeg",.82);
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); reject(new Error("img")); };
+    img.src=url;
+  });
+}
+function jrLightbox(url){ var lb=document.getElementById("jrLight"); lb.querySelector("img").src=url; lb.style.display="flex"; }
+document.getElementById("jrLight").addEventListener("click",function(){ this.style.display="none"; });
+document.getElementById("jrToolSt").addEventListener("click",function(){ jrTray(document.getElementById("jrTray").className.indexOf("st")>-1&&document.getElementById("jrTray").style.display!=="none"?"":"st"); });
+document.getElementById("jrToolCol").addEventListener("click",function(){ jrTray(document.getElementById("jrTray").className.indexOf("col")>-1&&document.getElementById("jrTray").style.display!=="none"?"":"col"); });
+document.getElementById("jrToolPh").addEventListener("click",function(){ if(jrDraft.photos.length>=4){ alert("En fazla 4 fotoğraf ekleyebilirsin."); return; } document.getElementById("jrPhoto").click(); });
+document.getElementById("jrPhoto").addEventListener("change",function(e){
+  var f=e.target.files[0]; e.target.value=""; if(!f) return;
+  jrResize(f).then(function(blob){ var id="jr-"+Date.now()+"-"+Math.floor(Math.random()*1000); return idbPut(id,blob).then(function(){ jrDraft.photos.push(id); jrRenderDraft(); }); }).catch(function(){ alert("Fotoğraf eklenemedi."); });
+});
 function jrSheet(open){ document.getElementById("jrSheet").classList.toggle("open",open); document.getElementById("jrBackdrop").classList.toggle("open",open); }
 var jrMonthOpen=false;
 function renderJournal(){
@@ -5615,7 +5706,7 @@ function renderJournal(){
   for(var i=0;i<7;i++){
     (function(){
       var d=new Date(mon); d.setDate(mon.getDate()+i);
-      var k=dstr(d), has=!!(S.journal[k]&&(S.journal[k].notes||S.journal[k].mood));
+      var k=dstr(d), has=!!(S.journal[k]&&(S.journal[k].notes||S.journal[k].mood||(S.journal[k].stickers||[]).length||(S.journal[k].photos||[]).length));
       var b=document.createElement("button"); b.type="button";
       b.className="jw-day"+(k===key?" sel":"")+(k===dstr(new Date())?" today":"");
       b.innerHTML='<span class="jw-dn">'+JW_SHORT[d.getDay()]+'</span><span class="jw-num">'+d.getDate()+'</span><span class="jw-dot'+(has?" on":"")+'"></span>';
@@ -5630,15 +5721,16 @@ function renderJournal(){
     var y=journalCursor.getFullYear(), m=journalCursor.getMonth(), first=new Date(y,m,1), off=(first.getDay()+6)%7, dim=new Date(y,m+1,0).getDate();
     var h='<div class="jr-mh">'+MONTHS_TR[m]+' '+y+'</div>'+["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"].map(function(n){return '<span class="jr-mn">'+n+'</span>';}).join("");
     for(var e=0;e<off;e++) h+='<span></span>';
-    for(var dd=1;dd<=dim;dd++){ var dk=dstr(new Date(y,m,dd)), hs=!!(S.journal[dk]&&(S.journal[dk].notes||S.journal[dk].mood)); h+='<button type="button" class="jr-md'+(dk===key?" sel":"")+(hs?" has":"")+'" data-d="'+dd+'">'+dd+'</button>'; }
+    for(var dd=1;dd<=dim;dd++){ var dk=dstr(new Date(y,m,dd)), hs=!!(S.journal[dk]&&(S.journal[dk].notes||S.journal[dk].mood||(S.journal[dk].stickers||[]).length||(S.journal[dk].photos||[]).length)); h+='<button type="button" class="jr-md'+(dk===key?" sel":"")+(hs?" has":"")+'" data-d="'+dd+'">'+dd+'</button>'; }
     mEl.innerHTML=h;
     mEl.querySelectorAll(".jr-md").forEach(function(bt){ bt.addEventListener("click",function(){ journalCursor=new Date(y,m,parseInt(bt.dataset.d,10)); renderJournal(); }); });
   }
   var entry=S.journal[key]||{mood:"",notes:""};
   document.querySelectorAll("#moodRow .mood").forEach(function(b){ b.classList.toggle("active", b.dataset.m===entry.mood); });
   document.getElementById("journalNotes").value=entry.notes||"";
+  jrLoadDraft(entry);
 
-  var keys=Object.keys(S.journal).filter(function(k){ var e=S.journal[k]; return e&&(e.notes||e.mood); }).sort(function(a,b){ return parseDstr(b)-parseDstr(a); }).slice(0,20);
+  var keys=Object.keys(S.journal).filter(function(k){ var e=S.journal[k]; return e&&(e.notes||e.mood||(e.stickers||[]).length||(e.photos||[]).length); }).sort(function(a,b){ return parseDstr(b)-parseDstr(a); }).slice(0,20);
   var hist=document.getElementById("journalHistory"); hist.innerHTML="";
   if(keys.indexOf(key)===-1){
     var emp=document.createElement("button"); emp.type="button"; emp.className="jcard jc-empty sel";
@@ -5649,11 +5741,14 @@ function renderJournal(){
   keys.forEach(function(k){
     var e=S.journal[k];
     var card=document.createElement("button"); card.type="button"; card.className="jcard"+(k===key?" sel":"");
+    if(e.color){ card.style.background="linear-gradient(180deg,"+e.color+"2e,"+e.color+"0f)"; card.style.borderColor=e.color+"88"; }
     card.innerHTML='<span class="jc-text">'+(e.notes?esc(e.notes):'<i>Not yazılmadı</i>')+'</span>'+
+      ((e.stickers&&e.stickers.length)?'<span class="jc-stk">'+e.stickers.map(function(k,i){ return jrStk(k,"jr-stk r"+(i%4)); }).join("")+'</span>':"")+
+      ((e.photos&&e.photos.length)?'<span class="jc-ph">'+e.photos.map(function(id){ return '<img data-ph="'+id+'" alt="">'; }).join("")+'</span>':"")+
       '<span class="jc-foot"><span class="jc-when"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-calendar"></use></svg>'+journalAgo(k)+'</span>'+
       '<span class="jc-mood">'+(JW_MOOD[e.mood]?'<svg class="icon" aria-hidden="true"><use href="#'+JW_MOOD[e.mood]+'"></use></svg>':'')+'</span></span>';
-    card.addEventListener("click",function(){ journalCursor=parseDstr(k); renderJournal(); jrSheet(true); });
-    hist.appendChild(card);
+    card.addEventListener("click",function(ev){ var t=ev.target; if(t&&t.tagName==="IMG"&&t.dataset&&t.dataset.ph){ ev.stopPropagation(); if(t.src) jrLightbox(t.src); return; } journalCursor=parseDstr(k); renderJournal(); jrSheet(true); });
+    hist.appendChild(card); jrFillPhotos(card);
   });
 }
 document.getElementById("journalPrev").addEventListener("click",function(){ journalCursor.setDate(journalCursor.getDate()-7); renderJournal(); });
@@ -5672,7 +5767,7 @@ document.querySelectorAll("#moodRow .mood").forEach(function(b){
 document.getElementById("journalSave").addEventListener("click",function(){
   var key=dstr(journalCursor);
   var moodBtn=document.querySelector("#moodRow .mood.active");
-  S.journal[key]={mood:moodBtn?moodBtn.dataset.m:"", notes:document.getElementById("journalNotes").value.trim()};
+  S.journal[key]={mood:moodBtn?moodBtn.dataset.m:"", notes:document.getElementById("journalNotes").value.trim(), stickers:jrDraft.stickers.slice(), photos:jrDraft.photos.slice(), color:jrDraft.color};
   save(); jrSheet(false); renderJournal();
 });
 
