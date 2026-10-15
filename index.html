@@ -1332,6 +1332,21 @@
   .gn-empty{ display:flex; align-items:center; gap:12px; padding:14px; border-radius:20px; background:var(--card); } .gn-empty img{ width:64px; height:auto; flex:none; } .gn-empty b{ display:block; font-size:14px; margin-bottom:2px; } .gn-empty span{ font-size:12.5px; color:var(--ink-2); line-height:1.4; }
   .gn-card{ width:100%; display:flex; flex-direction:column; gap:8px; text-align:left; border:1px solid; border-radius:20px; padding:14px; margin-bottom:10px; font:inherit; color:var(--ink); cursor:pointer; }
   .gn-t{ font-size:14px; line-height:1.5; white-space:pre-wrap; } .gn-d{ font-size:11px; color:var(--ink-2); }
+
+  /* v49: kelime ekranı */
+  .vh-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px; }
+  .vh-st{ background:var(--card); border-radius:18px; padding:12px 8px; text-align:center; } .vh-st b{ display:block; font-family:var(--font-display); font-size:24px; line-height:1.1; } .vh-st span{ font-size:11.5px; color:var(--ink-2); font-weight:700; }
+  .vh-due{ display:flex; align-items:center; gap:6px; border-radius:24px; padding:16px 8px 16px 18px; margin-bottom:18px; background:linear-gradient(150deg,#8B7FFF55,#F2B94B33 75%,transparent); border:1px solid #8B7FFF66; }
+  .vh-dt{ flex:1; min-width:0; } .vh-dl{ font-size:11px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; color:#A99CFF; } .vh-dt b{ display:block; font-family:var(--font-display); font-size:19px; margin:3px 0; color:var(--ink); } .vh-dt small{ display:block; font-size:12.5px; color:var(--ink-2); line-height:1.4; }
+  .vh-due img{ width:92px; height:auto; flex:none; }
+  .vh-sec{ margin-bottom:14px; } .vh-sh{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; } .vh-sh b{ font-family:var(--font-display); font-size:16px; }
+  .vh-add{ display:flex; align-items:center; gap:5px; border:none; border-radius:999px; padding:8px 14px; font:inherit; font-weight:800; font-size:13px; color:#fff; background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); cursor:pointer; }
+  #vaSheet.open{ transform:translateY(0); } #vaBackdrop.open{ opacity:1; pointer-events:auto; }
+  .wcard{ display:flex; align-items:flex-start; gap:12px; background:var(--card); border-radius:20px; padding:12px; margin-bottom:9px; }
+  .wc-sp{ width:40px; height:40px; border-radius:50%; border:none; background:var(--tint); color:#A99CFF; display:flex; align-items:center; justify-content:center; flex:none; cursor:pointer; } .wc-sp .icon{ width:18px; height:18px; }
+  .wc-b{ flex:1; min-width:0; } .wc-en{ font-family:var(--font-display); font-weight:800; font-size:16px; color:var(--ink); } .wc-tr{ font-size:13.5px; color:var(--ink-2); margin-top:1px; } .wc-ex{ font-size:12px; color:var(--ink-2); opacity:.8; font-style:italic; margin-top:4px; line-height:1.4; }
+  .wc-m{ display:flex; align-items:center; gap:8px; margin-top:7px; } .wc-st{ font-size:10.5px; font-weight:800; border-radius:999px; padding:3px 9px; } .wc-due{ font-size:11px; color:var(--ink-2); }
+  .wcard .del{ flex:none; opacity:.6; }
 </style>
 </head>
 <body>
@@ -1834,52 +1849,26 @@
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Kelime</h1>
     </div>
-    <div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Kelime Hazinesi</div><div class="pg-title">Her gün birkaç kelime</div><div class="pg-sub">Kartları çevir, aralıklı tekrarla kalıcı hale getir.</div></div><img class="pg-moon" src="assets/mascot/pose-newword.png" alt=""></div>
-    <div class="vadd">
-      <div class="vadd-head">
-        <span class="vadd-ic"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span>
-        <div><div class="vadd-t">Yeni kelime ekle</div><div class="vadd-s">Tekrar zamanı geldiğinde karşına çıkar</div></div>
+    <div class="vh-stats" id="vhStats"></div>
+    <div class="vh-due" id="vhDue"></div>
+    <div class="vh-sec">
+      <div class="vh-sh"><b>Kelimelerim <span class="mut" id="wordCount"></span></b><button type="button" class="vh-add" id="vaOpen"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Ekle</button></div>
+      <div class="nt-search"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-search"></use></svg><input id="vocabSearch" placeholder="Kelime ara"></div>
+      <div class="nt-chips" id="vocabFilterChips">
+        <button type="button" class="nt-chip fchip on active" data-f="all">Tümü <i id="fCountAll"></i></button>
+        <button type="button" class="nt-chip fchip" data-f="learning">Öğreniliyor <i id="fCountLearning"></i></button>
+        <button type="button" class="nt-chip fchip" data-f="known">Biliniyor <i id="fCountKnown"></i></button>
       </div>
-      <div class="vadd-grid">
-        <input class="f" id="wEn" placeholder="English">
-        <input class="f" id="wTr" placeholder="Türkçe">
-      </div>
-      <input class="f" id="wEx" placeholder="Örnek cümle (opsiyonel)">
-      <button type="button" class="vadd-btn" id="addWord"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Kelimeyi ekle</button>
+      <div id="wordList"></div>
     </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-cards"></use></svg>Çalış <span class="mut" id="dueCount"></span></h2>
-      <div id="studyArea">
-        <div class="empty-state">
-          <div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div>
-          <div class="t">Çalışılacak kart yok</div>
-          <div class="d">Bugün için tüm kartları bitirdin. Yeni kelime ekle ya da yarın tekrar gel.</div>
-          <button type="button" class="btn sec sm" onclick="document.getElementById('wEn').focus();document.getElementById('wEn').scrollIntoView({behavior:'smooth',block:'center'});">Kelime ekle</button>
-        </div>
-      </div>
+    <span id="dueCount" hidden></span>
+  </section>
+  <section class="view" id="v-vocabstudy">
+    <div class="page-head">
+      <button class="back" onclick="go('vocab')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Kelime çalış</h1>
     </div>
-    <div class="card">
-      <div class="searchbar">
-        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
-        <input id="vocabSearch" placeholder="Kelime ara...">
-      </div>
-      <div class="filterchips" id="vocabFilterChips">
-        <button type="button" class="fchip active" data-f="all">Tümü <span class="cnt" id="fCountAll"></span></button>
-        <button type="button" class="fchip" data-f="learning">Öğreniliyor <span class="cnt" id="fCountLearning"></span></button>
-        <button type="button" class="fchip" data-f="known">Biliniyor <span class="cnt" id="fCountKnown"></span></button>
-      </div>
-    </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Tüm kelimeler <span class="mut" id="wordCount"></span></h2>
-      <div id="wordList">
-        <div class="empty-state">
-          <svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg>
-          <div class="t">Henüz kelime yok</div>
-          <div class="d">İlk kelimeni yukarıdan ekle, aralıklı tekrarla kalıcı hale getir.</div>
-          <button type="button" class="btn sec sm" onclick="document.getElementById('wEn').focus();document.getElementById('wEn').scrollIntoView({behavior:'smooth',block:'center'});">İlk kelimeni ekle</button>
-        </div>
-      </div>
-    </div>
+    <div id="studyArea"></div>
   </section>
 
   <!-- ===== OKUMA ===== -->
@@ -2476,6 +2465,15 @@
 
 </div>
 
+<div class="word-backdrop" id="vaBackdrop"></div>
+<div class="jr-sheet" id="vaSheet">
+  <div class="jr-grab"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><b style="font-family:var(--font-display);font-size:16px;">Yeni kelime</b><button type="button" class="jr-tool" id="vaClose" style="flex:none;padding:8px 12px;">Kapat</button></div>
+  <input class="f" id="wEn" placeholder="English" autocomplete="off">
+  <input class="f" id="wTr" placeholder="Türkçe" autocomplete="off" style="margin-top:8px;">
+  <input class="f" id="wEx" placeholder="Örnek cümle (opsiyonel)" autocomplete="off" style="margin-top:8px;">
+  <button type="button" class="btn" id="addWord" style="margin-top:12px;">Kelimeyi ekle</button>
+</div>
 <button type="button" class="qn-fab" id="qnFab" aria-label="Hızlı not"><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg></button>
     <div class="word-backdrop" id="qnBackdrop"></div>
     <div class="jr-sheet" id="qnSheet">
@@ -2676,7 +2674,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",grammarunit:"today",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",grammarunit:"today",vocabstudy:"today",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -2684,7 +2682,7 @@ function go(v){
   if(el) el.classList.add("active");
   var navKey=NAVMAP[v]||v;
   document.querySelectorAll("nav button").forEach(function(b){ b.classList.toggle("active", b.dataset.v===navKey); });
-  if(v==="vocab") renderVocab();
+  if(v==="vocab"||v==="vocabstudy") renderVocab();
   if(v==="learn") renderLearnHub();
   if(v==="progress") renderProgress();
   if(v==="reading") renderReading();
@@ -2832,9 +2830,14 @@ function addWord(en,tr,ex){
   S.words.push({en:en,tr:tr,ex:ex.trim(),ef:2.5,reps:0,interval:0,due:today0()});
   save(); renderVocab();
 }
+function vaOpen(){ document.getElementById("vaSheet").classList.add("open"); document.getElementById("vaBackdrop").classList.add("open"); setTimeout(function(){ document.getElementById("wEn").focus(); },250); }
+function vaClose(){ document.getElementById("vaSheet").classList.remove("open"); document.getElementById("vaBackdrop").classList.remove("open"); }
+document.getElementById("vaOpen").addEventListener("click",vaOpen);
+document.getElementById("vaClose").addEventListener("click",vaClose);
+document.getElementById("vaBackdrop").addEventListener("click",vaClose);
 document.getElementById("addWord").addEventListener("click",function(){
   var en=document.getElementById("wEn"),tr=document.getElementById("wTr"),ex=document.getElementById("wEx");
-  addWord(en.value,tr.value,ex.value); en.value=tr.value=ex.value="";
+  addWord(en.value,tr.value,ex.value); en.value=tr.value=ex.value=""; vaClose();
 });
 function dueWords(){ var t=today0(); return S.words.filter(function(w){return w.due<=t;}); }
 var studyIdx=null, flipped=false;
@@ -2842,13 +2845,19 @@ var vocabQ="", vocabFilter="all";
 var DEL_ICON='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg>';
 function renderVocab(){
   var due=dueWords();
-  document.getElementById("dueCount").textContent=due.length?("· "+due.length+" kart"):"";
   document.getElementById("wordCount").textContent="· "+S.words.length;
+  var knownAll=S.words.filter(function(w){return w.reps>=2;}).length;
+  document.getElementById("vhStats").innerHTML=[["Toplam",S.words.length,"#8B7FFF"],["Bugün",due.length,"#F2B94B"],["Biliniyor",knownAll,"#58C98B"]].map(function(x){ return '<div class="vh-st"><b style="color:'+x[2]+';">'+x[1]+'</b><span>'+x[0]+'</span></div>'; }).join("");
+  var vd=document.getElementById("vhDue");
+  if(due.length) vd.innerHTML='<div class="vh-dt"><span class="vh-dl">Bugünün tekrarı</span><b>'+due.length+' kart seni bekliyor</b><small>Kartı çevir, ne kadar hatırladığını işaretle.</small><button type="button" class="gh-start" id="vhStart">Çalışmaya başla<svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button></div><img src="assets/mascot/pose-newword.png" alt="">';
+  else vd.innerHTML='<div class="vh-dt"><span class="vh-dl">Bugünün tekrarı</span><b>'+(S.words.length?"Bugünlük bitti":"İlk kelimeni ekle")+'</b><small>'+(S.words.length?"Yeni kelime ekleyebilir ya da yarın tekrar gelebilirsin.":"Eklediğin kelimeler aralıklı tekrarla karşına çıkar.")+'</small><button type="button" class="gh-start" id="vhStart2">Kelime ekle<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg></button></div><img src="assets/mascot/pose-sleepy.png" alt="">';
+  var b1=document.getElementById("vhStart"); if(b1) b1.addEventListener("click",function(){ flipped=false; studyIdx=0; go("vocabstudy"); });
+  var b2=document.getElementById("vhStart2"); if(b2) b2.addEventListener("click",vaOpen);
   // study
   var sa=document.getElementById("studyArea");
   if(!due.length){
     sa.innerHTML='<div class="empty-state"><div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div><div class="t">Çalışılacak kart yok</div><div class="d">Bugün için tüm kartları bitirdin. Yeni kelime ekle ya da yarın tekrar gel.</div>'+
-      '<button type="button" class="btn sec sm" onclick="document.getElementById(\'wEn\').focus();document.getElementById(\'wEn\').scrollIntoView({behavior:\'smooth\',block:\'center\'});">Kelime ekle</button></div>';
+      '<button type="button" class="btn sec sm" onclick="go(\'vocab\')">Listeye dön</button></div>';
     studyIdx=null;
   }
   else{
@@ -2880,9 +2889,9 @@ function renderVocab(){
   // filter chip counts
   var learningN=S.words.filter(function(w){return w.reps<2;}).length;
   var knownN=S.words.filter(function(w){return w.reps>=2;}).length;
-  document.getElementById("fCountAll").textContent="("+S.words.length+")";
-  document.getElementById("fCountLearning").textContent="("+learningN+")";
-  document.getElementById("fCountKnown").textContent="("+knownN+")";
+  document.getElementById("fCountAll").textContent=S.words.length;
+  document.getElementById("fCountLearning").textContent=learningN;
+  document.getElementById("fCountKnown").textContent=knownN;
   // list (filtered by search + category)
   var wl=document.getElementById("wordList");
   var q=vocabQ;
@@ -2894,7 +2903,7 @@ function renderVocab(){
   });
   if(!S.words.length){
     wl.innerHTML='<div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg><div class="t">Henüz kelime yok</div><div class="d">İlk kelimeni yukarıdan ekle, aralıklı tekrarla kalıcı hale getir.</div>'+
-      '<button type="button" class="btn sec sm" onclick="document.getElementById(\'wEn\').focus();document.getElementById(\'wEn\').scrollIntoView({behavior:\'smooth\',block:\'center\'});">İlk kelimeni ekle</button></div>';
+      '<button type="button" class="btn sec sm" onclick="vaOpen()">İlk kelimeni ekle</button></div>';
   }
   else if(!filtered.length){
     wl.innerHTML='<div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg><div class="t">Eşleşen kelime yok</div><div class="d">Arama ya da filtreyi değiştirip tekrar dene.</div>'+
@@ -2903,7 +2912,7 @@ function renderVocab(){
     if(clearBtn) clearBtn.addEventListener("click",function(){
       vocabQ=""; document.getElementById("vocabSearch").value="";
       vocabFilter="all";
-      document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(x){ x.classList.toggle("active", x.dataset.f==="all"); });
+      document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(x){ x.classList.toggle("active", x.dataset.f==="all"); x.classList.toggle("on", x.dataset.f==="all"); });
       renderVocab();
     });
   }
@@ -2913,11 +2922,13 @@ function renderVocab(){
       var idx=S.words.indexOf(w), isDue=w.due<=today0();
       var daysLeft=Math.max(0,Math.round((w.due-today0())/86400000));
       var dueLabel=isDue?"bugün":(daysLeft===1?"yarın":daysLeft+" gün sonra");
-      var row=document.createElement("div"); row.className="word";
-      row.innerHTML='<div><div class="en">'+esc(w.en)+'</div><div class="tr">'+esc(w.tr)+'</div></div>'+
-        '<div style="display:flex;align-items:center;gap:6px;">'+
-        '<span class="due'+(isDue?"":" future")+'" title="Aralık: '+(w.interval||0)+' gün · Kolaylık: '+(w.ef||2.5).toFixed(1)+'">'+dueLabel+'</span>'+
-        '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>';
+      var known=w.reps>=2, st=known?"Biliniyor":(w.reps>=1?"Öğreniliyor":"Yeni"), col=known?"#58C98B":(w.reps>=1?"#F2B94B":"#8B7FFF");
+      var row=document.createElement("div"); row.className="wcard";
+      row.innerHTML='<button type="button" class="wc-sp" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
+        '<div class="wc-b"><div class="wc-en">'+esc(w.en)+'</div><div class="wc-tr">'+esc(w.tr)+'</div>'+(w.ex?'<div class="wc-ex">'+esc(w.ex)+'</div>':'')+
+        '<div class="wc-m"><span class="wc-st" style="background:'+col+'26;color:'+col+';">'+st+'</span><span class="wc-due">'+(isDue?"Bugün":dueLabel)+'</span></div></div>'+
+        '<button class="del" data-i="'+idx+'" aria-label="Sil">'+DEL_ICON+'</button>';
+      row.querySelector(".wc-sp").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
       row.querySelector(".del").addEventListener("click",function(){
         if(confirm('"'+w.en+'" silinsin mi?')){ S.words.splice(idx,1); save(); renderVocab(); }
       });
@@ -2929,8 +2940,8 @@ document.getElementById("vocabSearch").addEventListener("input",function(e){ voc
 document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(b){
   b.addEventListener("click",function(){
     vocabFilter=b.dataset.f;
-    document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(x){ x.classList.remove("active"); });
-    b.classList.add("active");
+    document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(x){ x.classList.remove("active"); x.classList.remove("on"); });
+    b.classList.add("active"); b.classList.add("on");
     renderVocab();
   });
 });
