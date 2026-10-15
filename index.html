@@ -1358,6 +1358,8 @@
   .pg-sk{ text-align:left; border:none; border-radius:20px; padding:12px; background:var(--card); font:inherit; color:var(--ink); display:flex; flex-direction:column; gap:5px; cursor:pointer; }
   .pg-sk-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; } .pg-sk-n{ font-family:var(--font-display); font-weight:800; font-size:15px; } .pg-sk-d{ font-size:11.5px; color:var(--ink-2); } .pg-sk-p{ font-size:12px; font-weight:800; color:var(--ink-2); }
   .pg-sk .skillrow-track{ display:block; flex:none; width:100%; }
+
+  .sc-intro{ display:flex; flex-direction:column; gap:8px; padding:4px 0; } .sc-intro b{ font-size:15px; } .sc-intro span{ font-size:13px; line-height:1.5; color:var(--ink-2); }
 </style>
 </head>
 <body>
@@ -2684,6 +2686,7 @@ function go(v){
   if(el) el.classList.add("active");
   var navKey=NAVMAP[v]||v;
   document.querySelectorAll("nav button").forEach(function(b){ b.classList.toggle("active", b.dataset.v===navKey); });
+  if(v==="vocab") studyQueue=null;
   if(v==="vocab"||v==="vocabstudy") renderVocab();
   if(v==="learn") renderLearnHub();
   if(v==="progress") renderProgress();
@@ -2842,7 +2845,7 @@ document.getElementById("addWord").addEventListener("click",function(){
   addWord(en.value,tr.value,ex.value); en.value=tr.value=ex.value=""; vaClose();
 });
 function dueWords(){ var t=today0(); return S.words.filter(function(w){return w.due<=t;}); }
-var studyIdx=null, flipped=false;
+var studyIdx=null, flipped=false, studyQueue=null, studyRe={}, studyDone=0, studyTyped=false, typedAnswer="";
 var vocabQ="", vocabFilter="all";
 var DEL_ICON='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg>';
 function renderVocab(){
@@ -2853,29 +2856,41 @@ function renderVocab(){
   var vd=document.getElementById("vhDue");
   if(due.length) vd.innerHTML='<div class="vh-dt"><span class="vh-dl">Bugünün tekrarı</span><b>'+due.length+' kart seni bekliyor</b><small>Kartı çevir, ne kadar hatırladığını işaretle.</small><button type="button" class="gh-start" id="vhStart">Çalışmaya başla<svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button></div><img src="assets/mascot/pose-newword.png" alt="">';
   else vd.innerHTML='<div class="vh-dt"><span class="vh-dl">Bugünün tekrarı</span><b>'+(S.words.length?"Bugünlük bitti":"İlk kelimeni ekle")+'</b><small>'+(S.words.length?"Yeni kelime ekleyebilir ya da yarın tekrar gelebilirsin.":"Eklediğin kelimeler aralıklı tekrarla karşına çıkar.")+'</small><button type="button" class="gh-start" id="vhStart2">Kelime ekle<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg></button></div><img src="assets/mascot/pose-sleepy.png" alt="">';
-  var b1=document.getElementById("vhStart"); if(b1) b1.addEventListener("click",function(){ flipped=false; studyIdx=0; go("vocabstudy"); });
+  var b1=document.getElementById("vhStart"); if(b1) b1.addEventListener("click",function(){ flipped=false; studyIdx=0; studyQueue=dueWords().slice(); studyRe={}; studyDone=0; go("vocabstudy"); });
   var b2=document.getElementById("vhStart2"); if(b2) b2.addEventListener("click",vaOpen);
   // study
   var sa=document.getElementById("studyArea");
-  if(!due.length){
-    sa.innerHTML='<div class="empty-state"><div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div><div class="t">Çalışılacak kart yok</div><div class="d">Bugün için tüm kartları bitirdin. Yeni kelime ekle ya da yarın tekrar gel.</div>'+
+  if(studyQueue===null) studyQueue=dueWords().slice();
+  if(studyIdx===null||studyIdx<0) studyIdx=0;
+  if(studyIdx>=studyQueue.length){
+    sa.innerHTML='<div class="empty-state"><div class="mchip"><img src="assets/mascot/pose-sleepy.png" alt=""></div><div class="t">'+(studyDone?"Harika, bugünlük bitti!":"Çalışılacak kart yok")+'</div><div class="d">'+(studyDone?studyDone+" kartı çalıştın. Yarın yeni tekrarların seni bekliyor.":"Bugün için tüm kartları bitirdin. Yeni kelime ekle ya da yarın tekrar gel.")+'</div>'+
       '<button type="button" class="btn sec sm" onclick="go(\'vocab\')">Listeye dön</button></div>';
-    studyIdx=null;
   }
   else{
-    if(studyIdx===null||studyIdx>=due.length) studyIdx=0;
-    var w=due[studyIdx];
+    var due=studyQueue, w=due[studyIdx];
+    var mode=S.settings.vocabMode==="type"?"type":"flip";
     var pct=Math.round((studyIdx)/due.length*100);
-    var progLabel='<div class="vc-head"><span class="vc-lvl"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>'+(studyIdx+1)+'/'+due.length+'</span><div class="vc-bar"><div style="width:'+Math.max(6,pct)+'%"></div></div></div>';
+    var progLabel='<div class="vc-head"><span class="vc-lvl"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>'+(studyIdx+1)+'/'+due.length+'</span><div class="vc-bar"><div style="width:'+Math.max(6,pct)+'%"></div></div></div>'+
+      '<div class="nt-chips" id="vcMode" style="margin-bottom:10px;"><button type="button" class="nt-chip'+(mode==="flip"?" on":"")+'" data-m="flip">Çevir</button><button type="button" class="nt-chip'+(mode==="type"?" on":"")+'" data-m="type">Yazarak hatırla</button></div>';
     var stack='<span class="vc-card vc-b2"></span><span class="vc-card vc-b1"></span>';
     if(!flipped){
       sa.innerHTML=progLabel+'<div class="vc-stack">'+stack+'<div class="vc-card vc-front"><div class="vc-hint">Türkçesi — İngilizcesini hatırla</div><div class="vc-word">'+esc(w.tr)+'</div></div></div>'+
-        '<button class="btn sec" id="flipBtn" style="display:flex;align-items:center;justify-content:center;gap:7px;">Çevir <svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg></button>';
-      document.getElementById("flipBtn").addEventListener("click",function(){ flipped=true; renderVocab(); });
+        (mode==="type"
+          ? '<input class="f" id="vcType" placeholder="İngilizcesini yaz" autocomplete="off" autocapitalize="off" style="margin-bottom:8px;text-align:center;"><button class="btn" id="vcCheck">Kontrol et</button>'
+          : '<button class="btn sec" id="flipBtn" style="display:flex;align-items:center;justify-content:center;gap:7px;">Çevir <svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg></button>');
+      if(mode==="type"){
+        var ti=document.getElementById("vcType");
+        function chk(){ typedAnswer=ti.value.trim(); studyTyped=true; flipped=true; renderVocab(); }
+        document.getElementById("vcCheck").addEventListener("click",chk);
+        ti.addEventListener("keydown",function(e){ if(e.key==="Enter") chk(); });
+      } else document.getElementById("flipBtn").addEventListener("click",function(){ studyTyped=false; flipped=true; renderVocab(); });
     } else {
+      var norm=function(x){ return (x||"").toLowerCase().replace(/[^a-z0-9ğüşöçıİ' ]/gi,"").trim(); };
+      var fb="";
+      if(studyTyped){ var ok=norm(typedAnswer)===norm(w.en); fb='<div class="qz-fb '+(ok?"ok":"no")+'" style="text-align:center;">'+(ok?"Doğru yazdın!":"Yazdığın: "+esc(typedAnswer||"—"))+'</div>'; }
       sa.innerHTML=progLabel+'<div class="vc-stack">'+stack+'<div class="vc-card vc-front">'+
         '<button type="button" class="vc-speak" id="flashSpeakBtn" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
-        '<div class="vc-word">'+esc(w.en)+'</div><div class="vc-mean">'+esc(w.tr)+'</div></div></div>'+
+        '<div class="vc-word">'+esc(w.en)+'</div><div class="vc-mean">'+esc(w.tr)+'</div></div></div>'+fb+
         (w.ex?'<div class="vc-use"><div class="vc-use-t"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Örnek cümle</div><div class="vc-use-b">'+esc(w.ex)+'</div></div>':'')+
         '<div class="vc-grade">'+
         '<button data-g="0"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-1"></use></svg></span><span class="vc-gl">Zor</span></button>'+
@@ -2887,6 +2902,7 @@ function renderVocab(){
         b.addEventListener("click",function(){ gradeCard(w,parseInt(b.dataset.g)); });
       });
     }
+    sa.querySelectorAll("#vcMode .nt-chip").forEach(function(c){ c.addEventListener("click",function(){ S.settings.vocabMode=c.dataset.m; save(); flipped=false; renderVocab(); }); });
   }
   // filter chip counts
   var learningN=S.words.filter(function(w){return w.reps<2;}).length;
@@ -2948,26 +2964,26 @@ document.querySelectorAll("#vocabFilterChips .fchip").forEach(function(b){
   });
 });
 function gradeCard(w,g){
-  // Gerçek SM-2: g -> quality (0-5 skalasında) eşlemesi
-  //   Tekrar=2 (hatırlayamadı), Bildim=4 (normal doğru), Kolay=5 (kolay doğru)
-  var quality = g===0?2:(g===1?4:5);
-  if(quality<3){
-    w.reps=0;
-    w.interval=1;
-  } else {
-    if(w.reps===0) w.interval=1;
-    else if(w.reps===1) w.interval=6;
-    else w.interval=Math.round(w.interval*w.ef);
-    w.reps=(w.reps||0)+1;
+  // SM-2; "Zor" kartlar aynı oturumda 2 kereye kadar tekrar sorulur (yalnızca ilk cevap programı etkiler)
+  var key=w.en, seen=studyRe[key]||0;
+  if(seen===0){
+    var quality = g===0?2:(g===1?4:5);
+    if(quality<3){ w.reps=0; w.interval=1; }
+    else {
+      if(w.reps===0) w.interval=1;
+      else if(w.reps===1) w.interval=6;
+      else w.interval=Math.round(w.interval*w.ef);
+      w.reps=(w.reps||0)+1;
+    }
+    w.ef=(w.ef||2.5)+(0.1-(5-quality)*(0.08+(5-quality)*0.02));
+    if(w.ef<1.3) w.ef=1.3;
+    var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+w.interval);
+    w.due=d.getTime();
+    studyDone++;
   }
-  w.ef=(w.ef||2.5)+(0.1-(5-quality)*(0.08+(5-quality)*0.02));
-  if(w.ef<1.3) w.ef=1.3;
-  var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+w.interval);
-  w.due=d.getTime();
-  flipped=false;
-  // "Tekrar" seçildiğinde kelime kısa aralıkla (1 gün) tekrar sıraya girer ama
-  // BUGÜN artık bekleyen listesinde değildir (studyIdx'i sıfırlamak seni hep
-  // aynı karta geri götürüyordu — artık sıradaki karta ilerliyoruz).
+  if(g===0&&seen<2){ studyRe[key]=seen+1; studyQueue.push(w); }
+  else studyRe[key]=Math.max(seen,1)+(g===0?0:0);
+  flipped=false; studyTyped=false;
   studyIdx=(studyIdx===null?0:studyIdx)+1;
   save(); renderVocab();
 }
@@ -4430,6 +4446,7 @@ function buildWritingFeedbackPrompt(promptText,userText){
   return "Sen bir İngilizce yazma koçusun. Öğrencin Türkçe konuşan, aşağıdaki konu hakkında İngilizce kısa bir paragraf yazdı. "+
     "Metnini düzelt: dil bilgisi ve kelime hatalarını göster, her biri için doğrusunu ve neden yanlış olduğunu kısaca açıkla. "+
     "Türkçe konuşanlarda en sık görülen hata türlerine (artikel kullanımı, edatlar, zaman/görünüş (tense) seçimi, kelime sırası) özellikle dikkat et. "+
+    "Ayrı bir \"İçerik ve düzen\" başlığı altında fikirlerin sıralaması, bağlayıcılar ve paragraf akışı hakkında 2-3 cümlelik yorum ekle. "+
     "Sonunda, aynı fikri daha doğal/akıcı İngilizce ile nasıl ifade edebileceğine dair alternatif bir versiyon öner.\n\n"+
     "Konu: "+promptText+"\n\nYazdığım metin:\n"+userText;
 }
@@ -4494,9 +4511,12 @@ function renderWriting(){
     var prompt=buildWritingFeedbackPrompt(promptText,text);
     callGeminiText([{role:"user",parts:[{text:prompt}]}]).then(function(feedback){
       freshBtn.disabled=false; freshBtn.innerHTML=original;
-      resultEl.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Moonie\'nin Geri Bildirimi</div>"+esc(feedback)+
-        '<button type="button" class="btn sec sm gr-save-btn" style="margin-top:12px;">Bu Yazıya Kaydet</button>';
+      resultEl.innerHTML='<div class="gr-head">'+MOONIE_LISTEN_CHIP+"Moonie\'nin Geri Bildirimi</div>"+
+        '<div class="sc-intro"><b>Önce kendin dene</b><span>Metninde düzeltilecek yerler var. Yukarıdaki yazını gözden geçirip kendin düzeltmeye çalış, sonra Moonie\'nin düzeltmelerine bak. Kendi hatanı bulmak daha kalıcı öğretir.</span><button type="button" class="btn sm" id="scReveal">Moonie\'nin düzeltmelerini göster</button></div>'+
+        '<div class="sc-body" id="scBody" style="display:none;">'+esc(feedback)+
+        '<button type="button" class="btn sec sm gr-save-btn" style="margin-top:12px;">Bu Yazıya Kaydet</button></div>';
       resultEl.style.display="block";
+      document.getElementById("scReveal").addEventListener("click",function(){ document.getElementById("scBody").style.display="block"; this.parentNode.style.display="none"; });
       resultEl.querySelector(".gr-save-btn").addEventListener("click",function(){
         var btn=this;
         var existing=S.writings.filter(function(w){ return w.prompt===promptText && w.text===text; }).pop();
