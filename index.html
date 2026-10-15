@@ -1370,6 +1370,13 @@
   @keyframes vcIn{ from{ transform:translateY(26px) scale(.94); opacity:0; } to{ transform:none; opacity:1; } }
   @keyframes vcFlip{ from{ transform:rotateY(90deg) scale(.96); opacity:.4; } to{ transform:rotateY(0); opacity:1; } }
   @media (prefers-reduced-motion:reduce){ .vc-front.vc-in,.vc-front.vc-flip{ animation:none; } .vc-front.vc-out-l,.vc-front.vc-out-r{ transition:none; } }
+
+  /* v52: otomatik transkript */
+  .pt-auto{ display:flex; flex-direction:column; gap:8px; padding:14px; border-radius:18px; margin-bottom:12px; background:linear-gradient(160deg,#8B7FFF2e,#4FD1C51a); border:1px solid #8B7FFF55; }
+  .pt-auto b{ font-size:14.5px; font-family:var(--font-display); } .pt-auto>span{ font-size:12.5px; line-height:1.45; color:var(--ink-2); }
+  .pt-tx{ flex:1; min-width:0; }
+  .pt-row{ display:flex; align-items:center; gap:10px; } .pt-file{ font-size:12px; color:var(--ink-2); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #podDetailBody .rp.has-t{ display:flex; gap:8px; align-items:flex-start; } .pt-tm{ flex:none; border:none; border-radius:8px; padding:2px 7px; margin-top:1px; font:inherit; font-size:11px; font-weight:800; background:var(--tint); color:var(--ink-2); cursor:pointer; }
 </style>
 </head>
 <body>
@@ -2052,6 +2059,15 @@
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>Transkript</h2>
+      <div class="pt-auto">
+        <b>Otomatik transkript</b>
+        <span>Bölümün ses dosyasını seç, Moonie zaman damgalı transkripti çıkarsın. Spotify'ın "Read along"u gibi çalarken satır satır akar, satıra dokununca o ana atlar.</span>
+        <div class="pt-row"><button type="button" class="btn sec sm" id="ptPick">Ses dosyası seç</button><span class="pt-file" id="ptFileName">Dosya seçilmedi</span></div>
+        <input type="file" id="ptFile" accept="audio/*,.mp3,.m4a,.wav" style="display:none;">
+        <input class="f" id="ptUrl" placeholder="veya ses linki (mp3)" autocomplete="off">
+        <button type="button" class="btn" id="ptGo">Transkript oluştur</button>
+        <p class="hint" id="ptStatus" style="text-align:left;margin:0;"></p>
+      </div>
       <textarea class="f" id="podDetailTranscriptInput" rows="6" placeholder="Transkripti buraya yapıştır..."></textarea>
       <button type="button" class="btn sec" id="podDetailTranscriptSave" style="margin-top:8px;">Kaydet</button>
       <div id="podDetailTranscriptViewWrap" style="display:none;margin-top:16px;">
@@ -3830,6 +3846,65 @@ function renderPodcastDetail(){
   renderPodDetailPractice();
   renderPodDetailPlayer();
 }
+
+/* ---------- OTOMATİK TRANSKRİPT (Gemini ses -> zaman damgalı metin) ---------- */
+var podCues=[];
+function ptSay(t,err){ var el=document.getElementById("ptStatus"); if(el){ el.textContent=t||""; el.style.color=err?"#FF8A8A":""; } }
+function ptBlobToB64(blob){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(){ res(String(r.result).split(",")[1]); }; r.onerror=function(){ rej(new Error("Dosya okunamadı.")); }; r.readAsDataURL(blob); }); }
+function ptUploadLarge(blob,mime,key){
+  var base="https://generativelanguage.googleapis.com";
+  return fetch(base+"/upload/v1beta/files?key="+encodeURIComponent(key),{method:"POST",headers:{"X-Goog-Upload-Protocol":"resumable","X-Goog-Upload-Command":"start","X-Goog-Upload-Header-Content-Length":String(blob.size),"X-Goog-Upload-Header-Content-Type":mime,"Content-Type":"application/json"},body:JSON.stringify({file:{display_name:"podcast"}})})
+  .then(function(r){ var u=r.headers.get("x-goog-upload-url"); if(!u) throw new Error("Büyük dosya yüklenemedi. Daha kısa bir parça dene."); return fetch(u,{method:"POST",headers:{"X-Goog-Upload-Offset":"0","X-Goog-Upload-Command":"upload, finalize"},body:blob}); })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var f=d&&d.file; if(!f) throw new Error("Dosya yüklenemedi.");
+    var tries=0;
+    function poll(f){
+      if(f.state==="ACTIVE"||!f.state) return Promise.resolve(f);
+      if(f.state==="FAILED"||++tries>60) throw new Error("Ses dosyası işlenemedi.");
+      return new Promise(function(r){ setTimeout(r,3000); }).then(function(){ return fetch(base+"/v1beta/"+f.name+"?key="+encodeURIComponent(key)); }).then(function(r){ return r.json(); }).then(poll);
+    }
+    return poll(f);
+  });
+}
+function ptParseCues(text){
+  var out=[];
+  text.split(/\n+/).forEach(function(line){
+    var m=line.match(/^\s*[\[\(]?(\d{1,2}):(\d{2})(?::(\d{2}))?[\]\)]?\s*[-–:]?\s*(.+)$/);
+    if(!m) return;
+    var t=m[3]!==undefined?(+m[1]*3600+ +m[2]*60+ +m[3]):(+m[1]*60+ +m[2]);
+    var tx=m[4].trim(); if(tx) out.push({t:t,text:tx});
+  });
+  return out;
+}
+function ptTranscribe(){
+  var p=currentPodcast(); if(!p) return;
+  var key=(S.settings.geminiApiKey||"").trim();
+  if(!key){ alert("Önce Ayarlar'dan Gemini API anahtarını gir."); go("settings"); return; }
+  var file=document.getElementById("ptFile").files[0], url=document.getElementById("ptUrl").value.trim();
+  if(!file&&!url){ ptSay("Önce bir ses dosyası seç ya da link yapıştır.",true); return; }
+  var btn=document.getElementById("ptGo"); btn.disabled=true;
+  ptSay("Ses hazırlanıyor…");
+  var getBlob=file?Promise.resolve(file):fetch(url).then(function(r){ if(!r.ok) throw new Error("x"); return r.blob(); }).catch(function(){ throw new Error("Link tarayıcıdan açılamadı (site izin vermiyor olabilir). Sesi indirip \"Ses dosyası seç\" ile ekle."); });
+  getBlob.then(function(blob){
+    var mime=(blob.type&&blob.type.indexOf("audio")===0)?blob.type:"audio/mpeg";
+    var prompt="Bu İngilizce podcast kaydını kelimesi kelimesine yazıya dök. Her satır tek bir cümle ya da kısa bir bölüm olsun ve şu biçimde başlasın: [dd:ss] metin. Zamanlar kaydın başından itibaren olsun. Sadece satırları ver, başka açıklama ekleme. Konuşmacı değişimlerini ayrı satır yap.";
+    ptSay("Moonie dinliyor… (uzun kayıtlarda birkaç dakika sürebilir)");
+    var partP=blob.size>18*1024*1024
+      ? ptUploadLarge(blob,mime,key).then(function(f){ return {file_data:{mime_type:f.mimeType||mime,file_uri:f.uri}}; })
+      : ptBlobToB64(blob).then(function(b64){ return {inline_data:{mime_type:mime,data:b64}}; });
+    return partP.then(function(part){ return callGeminiText([{role:"user",parts:[part,{text:prompt}]}]); });
+  }).then(function(text){
+    var cues=ptParseCues(text);
+    if(!cues.length) throw new Error("Transkript okunamadı, tekrar dene.");
+    p.cues=cues; p.transcript=cues.map(function(c){ return c.text; }).join("\n"); save();
+    ptSay(cues.length+" satır hazır."); btn.disabled=false;
+    renderPodcastDetail();
+  }).catch(function(e){ btn.disabled=false; ptSay(e.message||String(e),true); });
+}
+document.getElementById("ptPick").addEventListener("click",function(){ document.getElementById("ptFile").click(); });
+document.getElementById("ptFile").addEventListener("change",function(){ var f=this.files[0]; document.getElementById("ptFileName").textContent=f?(f.name+" · "+(f.size/1048576).toFixed(1)+" MB"):"Dosya seçilmedi"; });
+document.getElementById("ptGo").addEventListener("click",ptTranscribe);
 function renderPodDetailTranscriptView(){
   var p=currentPodcast(); if(!p) return;
   var text=(p.transcript||"").trim();
@@ -3838,8 +3913,14 @@ function renderPodDetailTranscriptView(){
   lastSyncSentIdx=-1; sentWordRanges=[]; sentTotalWords=0;
   if(!text){ wrap.style.display="none"; view.innerHTML=""; return; }
   wrap.style.display="block";
-  var sentences=splitIntoSentences(text);
-  view.innerHTML=sentences.map(function(s,i){ return '<p class="rp" data-sidx="'+i+'">'+wrapWords(s)+'</p>'; }).join("");
+  var cues=(p.cues&&p.cues.length&&p.cues.map(function(c){return c.text;}).join("\n")===text)?p.cues:null;
+  podCues=cues||[];
+  var sentences=cues?cues.map(function(c){ return c.text; }):splitIntoSentences(text);
+  view.innerHTML=sentences.map(function(s,i){
+    var tm=cues?'<button type="button" class="pt-tm" data-t="'+cues[i].t+'">'+Math.floor(cues[i].t/60)+':'+("0"+(cues[i].t%60)).slice(-2)+'</button>':'';
+    return '<p class="rp'+(cues?' has-t':'')+'" data-sidx="'+i+'">'+tm+'<span class="pt-tx">'+wrapWords(s)+'</span></p>';
+  }).join("");
+  view.querySelectorAll(".pt-tm").forEach(function(b){ b.addEventListener("click",function(){ if(podSpotifyController&&podSpotifyController.seek) podSpotifyController.seek(+b.dataset.t); }); });
   view.querySelectorAll(".rw").forEach(function(span){
     span.addEventListener("click",function(){
       span.classList.add("tapped");
@@ -3905,12 +3986,19 @@ function estimatedPlaybackPosition(){
   return Math.max(0,Math.min(syncPlayback.duration,pos));
 }
 function applySyncHighlight(){
-  if(!syncPlayback.duration||!sentTotalWords||!sentWordRanges.length) return;
-  var frac=estimatedPlaybackPosition()/syncPlayback.duration;
-  var targetWord=frac*sentTotalWords;
-  var idx=sentWordRanges.length-1;
-  for(var i=0;i<sentWordRanges.length;i++){
-    if(targetWord<sentWordRanges[i].end){ idx=i; break; }
+  if(!syncPlayback.duration) return;
+  var idx;
+  if(podCues.length){
+    var sec=estimatedPlaybackPosition()/1000; idx=0;
+    for(var k=0;k<podCues.length;k++){ if(podCues[k].t<=sec+0.3) idx=k; else break; }
+  } else {
+    if(!sentTotalWords||!sentWordRanges.length) return;
+    var frac=estimatedPlaybackPosition()/syncPlayback.duration;
+    var targetWord=frac*sentTotalWords;
+    idx=sentWordRanges.length-1;
+    for(var i=0;i<sentWordRanges.length;i++){
+      if(targetWord<sentWordRanges[i].end){ idx=i; break; }
+    }
   }
   if(idx===lastSyncSentIdx) return;
   lastSyncSentIdx=idx;
@@ -3990,7 +4078,9 @@ document.getElementById("podQuizBtn").addEventListener("click",function(){
 });
 document.getElementById("podDetailTranscriptSave").addEventListener("click",function(){
   var p=currentPodcast(); if(!p) return;
-  p.transcript=document.getElementById("podDetailTranscriptInput").value.trim();
+  var newT=document.getElementById("podDetailTranscriptInput").value.trim();
+  if(p.cues&&p.cues.map(function(c){return c.text;}).join("\n")!==newT) p.cues=null;
+  p.transcript=newT;
   save();
   renderPodDetailTranscriptView();
   renderPodDetailPractice();
