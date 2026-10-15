@@ -739,9 +739,9 @@
   .vc-bar>div{ height:100%; background:linear-gradient(90deg,#4ade80,#22c55e); border-radius:99px; box-shadow:0 0 10px rgba(74,222,128,.6); transition:width .4s; }
   .vc-stack{ position:relative; height:250px; margin:6px 6px 18px; perspective:900px; }
   .vc-card{ position:absolute; inset:0; border-radius:26px; background:linear-gradient(150deg,#A394FF 0%,#7A68F0 50%,#5646C9 100%); }
-  .vc-b2{ transform:rotate(7deg) translateY(-6px) scale(.94); opacity:.45; box-shadow:0 10px 20px rgba(60,40,160,.3); }
-  .vc-b1{ transform:rotate(3.5deg) translateY(-3px) scale(.97); opacity:.7; box-shadow:0 12px 24px rgba(60,40,160,.35); }
-  .vc-front{ transform:rotate(-4deg); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:26px 22px; color:#fff;
+  .vc-b2{ transform:translateY(-16px) scale(.88); opacity:.45; box-shadow:0 10px 20px rgba(60,40,160,.3); }
+  .vc-b1{ transform:translateY(-8px) scale(.94); opacity:.7; box-shadow:0 12px 24px rgba(60,40,160,.35); }
+  .vc-front{ transform:none; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:26px 22px; color:#fff;
     box-shadow:0 24px 40px -10px rgba(80,60,200,.65), 0 8px 14px rgba(0,0,0,.3), inset 0 2px 0 rgba(255,255,255,.35), inset 0 -6px 14px rgba(40,25,120,.35); }
   .vc-hint{ font-size:11.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; opacity:.75; margin-bottom:12px; }
   .vc-word{ font-family:var(--font-display); font-size:32px; font-weight:800; line-height:1.15; text-shadow:0 3px 8px rgba(0,0,0,.3); word-break:break-word; }
@@ -1360,6 +1360,16 @@
   .pg-sk .skillrow-track{ display:block; flex:none; width:100%; }
 
   .sc-intro{ display:flex; flex-direction:column; gap:8px; padding:4px 0; } .sc-intro b{ font-size:15px; } .sc-intro span{ font-size:13px; line-height:1.5; color:var(--ink-2); }
+
+  /* v51: kart hareketi */
+  .vc-front.vc-in{ animation:vcIn .35s cubic-bezier(.2,.8,.2,1); }
+  .vc-front.vc-flip{ animation:vcFlip .45s cubic-bezier(.3,.7,.2,1); }
+  .vc-front.vc-out-l{ transition:transform .23s ease-in,opacity .23s ease-in; transform:translateX(-110%) rotate(-8deg); opacity:0; }
+  .vc-front.vc-out-r{ transition:transform .23s ease-in,opacity .23s ease-in; transform:translateX(110%) rotate(8deg); opacity:0; }
+  .vc-b1,.vc-b2{ transition:transform .3s; }
+  @keyframes vcIn{ from{ transform:translateY(26px) scale(.94); opacity:0; } to{ transform:none; opacity:1; } }
+  @keyframes vcFlip{ from{ transform:rotateY(90deg) scale(.96); opacity:.4; } to{ transform:rotateY(0); opacity:1; } }
+  @media (prefers-reduced-motion:reduce){ .vc-front.vc-in,.vc-front.vc-flip{ animation:none; } .vc-front.vc-out-l,.vc-front.vc-out-r{ transition:none; } }
 </style>
 </head>
 <body>
@@ -2845,7 +2855,7 @@ document.getElementById("addWord").addEventListener("click",function(){
   addWord(en.value,tr.value,ex.value); en.value=tr.value=ex.value=""; vaClose();
 });
 function dueWords(){ var t=today0(); return S.words.filter(function(w){return w.due<=t;}); }
-var studyIdx=null, flipped=false, studyQueue=null, studyRe={}, studyDone=0, studyTyped=false, typedAnswer="";
+var studyIdx=null, flipped=false, studyQueue=null, cardAnim="in", studyRe={}, studyDone=0, studyTyped=false, typedAnswer="";
 var vocabQ="", vocabFilter="all";
 var DEL_ICON='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg>';
 function renderVocab(){
@@ -2856,7 +2866,7 @@ function renderVocab(){
   var vd=document.getElementById("vhDue");
   if(due.length) vd.innerHTML='<div class="vh-dt"><span class="vh-dl">Bugünün tekrarı</span><b>'+due.length+' kart seni bekliyor</b><small>Kartı çevir, ne kadar hatırladığını işaretle.</small><button type="button" class="gh-start" id="vhStart">Çalışmaya başla<svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button></div><img src="assets/mascot/pose-newword.png" alt="">';
   else vd.innerHTML='<div class="vh-dt"><span class="vh-dl">Bugünün tekrarı</span><b>'+(S.words.length?"Bugünlük bitti":"İlk kelimeni ekle")+'</b><small>'+(S.words.length?"Yeni kelime ekleyebilir ya da yarın tekrar gelebilirsin.":"Eklediğin kelimeler aralıklı tekrarla karşına çıkar.")+'</small><button type="button" class="gh-start" id="vhStart2">Kelime ekle<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg></button></div><img src="assets/mascot/pose-sleepy.png" alt="">';
-  var b1=document.getElementById("vhStart"); if(b1) b1.addEventListener("click",function(){ flipped=false; studyIdx=0; studyQueue=dueWords().slice(); studyRe={}; studyDone=0; go("vocabstudy"); });
+  var b1=document.getElementById("vhStart"); if(b1) b1.addEventListener("click",function(){ cardAnim="in"; flipped=false; studyIdx=0; studyQueue=dueWords().slice(); studyRe={}; studyDone=0; go("vocabstudy"); });
   var b2=document.getElementById("vhStart2"); if(b2) b2.addEventListener("click",vaOpen);
   // study
   var sa=document.getElementById("studyArea");
@@ -2880,10 +2890,10 @@ function renderVocab(){
           : '<button class="btn sec" id="flipBtn" style="display:flex;align-items:center;justify-content:center;gap:7px;">Çevir <svg class="icon icon-sm" aria-hidden="true"><use href="#i-refresh"></use></svg></button>');
       if(mode==="type"){
         var ti=document.getElementById("vcType");
-        function chk(){ typedAnswer=ti.value.trim(); studyTyped=true; flipped=true; renderVocab(); }
+        function chk(){ typedAnswer=ti.value.trim(); studyTyped=true; flipped=true; cardAnim="flip"; renderVocab(); }
         document.getElementById("vcCheck").addEventListener("click",chk);
         ti.addEventListener("keydown",function(e){ if(e.key==="Enter") chk(); });
-      } else document.getElementById("flipBtn").addEventListener("click",function(){ studyTyped=false; flipped=true; renderVocab(); });
+      } else document.getElementById("flipBtn").addEventListener("click",function(){ studyTyped=false; flipped=true; cardAnim="flip"; renderVocab(); });
     } else {
       var norm=function(x){ return (x||"").toLowerCase().replace(/[^a-z0-9ğüşöçıİ' ]/gi,"").trim(); };
       var fb="";
@@ -2899,9 +2909,15 @@ function renderVocab(){
         '</div>';
       document.getElementById("flashSpeakBtn").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
       sa.querySelectorAll(".vc-grade button").forEach(function(b){
-        b.addEventListener("click",function(){ gradeCard(w,parseInt(b.dataset.g)); });
+        b.addEventListener("click",function(){
+          var g=parseInt(b.dataset.g,10), fc=sa.querySelector(".vc-front");
+          sa.querySelectorAll(".vc-grade button").forEach(function(x){ x.disabled=true; });
+          if(fc){ fc.classList.add(g===0?"vc-out-l":"vc-out-r"); setTimeout(function(){ cardAnim="in"; gradeCard(w,g); },230); }
+          else { cardAnim="in"; gradeCard(w,g); }
+        });
       });
     }
+    var fcA=sa.querySelector(".vc-front"); if(fcA&&cardAnim) fcA.classList.add("vc-"+cardAnim); cardAnim="";
     sa.querySelectorAll("#vcMode .nt-chip").forEach(function(c){ c.addEventListener("click",function(){ S.settings.vocabMode=c.dataset.m; save(); flipped=false; renderVocab(); }); });
   }
   // filter chip counts
