@@ -1047,6 +1047,55 @@
   .weekchart{ height:130px !important; }
   .wk-fill{ max-width:26px !important; background:linear-gradient(180deg,rgba(169,156,255,.55),rgba(107,91,230,.35)) !important; }
   .wk-bar.is-today .wk-fill{ background:linear-gradient(180deg,#FFE9A6,#F2B94B) !important; box-shadow:0 0 14px rgba(242,185,75,.5); }
+
+  /* v31 profil */
+  .prof-hero{ background:linear-gradient(150deg,#1F1A5E 0%,#4B3FB8 55%,#7B6CF6 100%) !important; color:#fff; border:none !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.26), 0 22px 34px -22px rgba(90,79,207,.9) !important; }
+  .prof-top{ display:flex; align-items:center; gap:14px; }
+  .prof-av{ width:68px !important; height:68px !important; border-radius:50% !important; background:rgba(255,255,255,.18) !important; box-shadow:0 8px 14px -6px rgba(0,0,0,.5); }
+  .prof-name{ font-family:var(--font-display); font-size:21px; font-weight:800; }
+  .prof-hero .mut{ color:rgba(255,255,255,.75) !important; margin:0; }
+  .prof-lv{ display:inline-block; margin-top:6px; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:99px; background:linear-gradient(180deg,#FFE9A6,#F2B94B); color:#2A1F5C; }
+  .prof-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px; }
+  .prof-stats div{ background:rgba(255,255,255,.12); border-radius:16px; padding:10px 6px; text-align:center; display:flex; flex-direction:column; }
+  .prof-stats b{ font-family:var(--font-display); font-size:22px; } .prof-stats span{ font-size:10.5px; opacity:.8; }
+  .prof-goals{ margin-top:12px; font-size:12px; line-height:1.7; color:rgba(255,255,255,.85) !important; }
+  .menu-label{ font-size:11.5px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; color:var(--ink-soft); margin:16px 6px 8px; }
+
+  /* v32: harita, grammar sekmeleri, okuma ekle, seviye tespit */
+  .gr-panel{ display:none; } .gr-panel.active{ display:block; animation:cardin .3s both; }
+  #grTabs{ margin-bottom:12px; }
+  .mp-level{ margin-bottom:6px; } .mp-level.locked{ opacity:.55; }
+  .mp-flag{ display:flex; align-items:center; gap:8px; margin:8px 6px 0; padding:9px 12px; border-radius:16px; background:var(--tint); }
+  .mp-flag b{ font-family:var(--font-display); font-size:14px; color:var(--ink); } .mp-flag em{ margin-left:auto; font-style:normal; font-size:12px; font-weight:800; color:var(--gold); }
+  .mp-path{ position:relative; margin:4px 6px 14px; }
+  .mp-line{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .mp-line path{ fill:none; stroke:rgba(169,156,255,.45); stroke-width:6; stroke-linecap:round; stroke-dasharray:1 12; }
+  .mp-node{ position:absolute; transform:translateX(-50%); width:118px; display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; padding:0; font-family:inherit; cursor:pointer; color:var(--ink); }
+  .mp-c{ width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; font-size:21px; color:#fff; background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); box-shadow:0 6px 0 rgba(40,30,120,.55), 0 14px 18px -6px rgba(90,79,207,.6), inset 0 2px 0 rgba(255,255,255,.35); transition:transform .12s; }
+  .mp-node:active .mp-c{ transform:translateY(4px); box-shadow:0 2px 0 rgba(40,30,120,.55); }
+  .mp-c .icon{ width:26px; height:26px; }
+  .mp-node.done .mp-c{ background:linear-gradient(160deg,#6FE3CF,#25AE9A 60%,#146E61); box-shadow:0 6px 0 rgba(10,80,70,.55), 0 14px 18px -6px rgba(37,174,154,.5), inset 0 2px 0 rgba(255,255,255,.35); }
+  .mp-node.cur .mp-c{ background:linear-gradient(180deg,#FFE9A6,#F2B94B); color:#2A1F5C; box-shadow:0 6px 0 #B07E1C, 0 0 0 6px rgba(242,185,75,.25), 0 14px 18px -6px rgba(242,185,75,.5), inset 0 2px 0 rgba(255,255,255,.6); animation:mppulse 1.8s ease-in-out infinite; }
+  @keyframes mppulse{ 0%,100%{ box-shadow:0 6px 0 #B07E1C, 0 0 0 4px rgba(242,185,75,.25), 0 14px 18px -6px rgba(242,185,75,.5);} 50%{ box-shadow:0 6px 0 #B07E1C, 0 0 0 12px rgba(242,185,75,.08), 0 14px 18px -6px rgba(242,185,75,.5);} }
+  .mp-node.lock .mp-c{ background:var(--tint); color:var(--ink-soft); box-shadow:0 5px 0 rgba(0,0,0,.25); }
+  .mp-l{ font-size:11px; font-weight:700; line-height:1.25; text-align:center; max-width:118px; color:var(--ink-2); }
+  .mp-me{ position:absolute; top:-34px; right:-6px; width:44px; animation:pgbob 3s ease-in-out infinite; filter:drop-shadow(0 6px 6px rgba(0,0,0,.4)); }
+  .radd-tile{ width:100%; display:flex; align-items:center; gap:12px; padding:14px; margin-bottom:14px; border-radius:20px; cursor:pointer; font-family:inherit; text-align:left; color:var(--ink); background:linear-gradient(160deg,var(--card),rgba(139,127,255,.1)); border:1.5px dashed rgba(139,127,255,.5); }
+  .radd-ic{ width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); box-shadow:0 4px 0 rgba(40,30,120,.55); }
+  .radd-tx{ display:flex; flex-direction:column; } .radd-tx b{ font-size:14.5px; } .radd-tx small{ color:var(--ink-soft); font-size:12px; }
+  .radd-chev{ margin-left:auto; width:16px; height:16px; color:var(--ink-soft); }
+  .radd-form{ border:1px solid rgba(139,127,255,.28); }
+  .pl-q{ font-size:16px; font-weight:700; color:var(--ink); line-height:1.5; margin:12px 0; }
+  .pl-pass{ background:var(--tint); border-radius:16px; padding:12px 14px; font-size:13.5px; line-height:1.6; color:var(--ink-2); margin-bottom:10px; }
+  .pl-opt{ display:block; width:100%; text-align:left; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--ink); background:var(--card); border:1.5px solid rgba(139,127,255,.25); border-radius:16px; padding:13px 14px; margin-top:8px; cursor:pointer; }
+  .pl-opt:active{ transform:scale(.98); } .pl-opt.sel{ border-color:var(--purple); background:var(--tint); }
+  .pl-skill{ display:flex; align-items:center; gap:12px; padding:11px 0; border-top:1px solid var(--line,rgba(255,255,255,.08)); }
+  .pl-skill:first-child{ border-top:none; } .pl-skill b{ flex:1; font-size:14px; }
+  .lvrow{ display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--line,rgba(255,255,255,.08)); } .lvrow:first-of-type{ border-top:none; }
+  .lvrow .lvn{ width:84px; font-size:13px; font-weight:700; color:var(--ink); }
+  .lvrow .gr-bar{ flex:1; }
+  .lvrow .cefr-badge{ min-width:36px; height:24px; font-size:12px; }
+  .ob-pl-link{ display:block; margin:10px 2px 18px; font-size:13px; font-weight:700; color:var(--purple-deep); text-align:left; }
 </style>
 </head>
 <body>
@@ -1169,7 +1218,7 @@
         <div class="onb-sub">Hesabınla devam et</div>
       </div>
       <div class="onb-foot" style="flex:1;justify-content:center;">
-        <button type="button" class="onb-social-btn" id="obEmailBtn"><span class="onb-social-left"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>E-posta ile devam et</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+        <button type="button" class="onb-social-btn" id="obEmailBtn"><span class="onb-social-left"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Takma ad ile devam et</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
         <button type="button" class="onb-social-btn" id="obGoogleBtn"><span class="onb-social-left"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Google ile devam et</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
         <button type="button" class="onb-social-btn" id="obAppleBtn"><span class="onb-social-left"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-moon"></use></svg>Apple ile devam et</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
         <p class="hint" id="obSocialNote" style="display:none;">Bu özellik yakında geliyor — şimdilik e-posta ile devam et.</p>
@@ -1184,13 +1233,14 @@
       <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <div class="onb-steplabel">Kayıt Ol</div>
       <div class="onb-h">Hesabını oluştur</div>
-      <div class="onb-p">Verilerin bu cihazda saklanır, sunucuya gönderilmez.</div>
-      <label class="onb-label" for="obRegName">Ad</label>
-      <input class="f" id="obRegName" placeholder="Ad">
-      <label class="onb-label" for="obRegEmail">E-posta</label>
-      <input class="f" id="obRegEmail" type="email" placeholder="E-posta">
+      <div class="onb-p">Bir kez kayıt ol, sonra takma adın ve şifrenle giriş yap. Verilerin bu cihazda saklanır.</div>
+      <label class="onb-label" for="obRegNick">Takma ad</label>
+      <input class="f" id="obRegNick" placeholder="ör. moonie_fan" autocapitalize="none" autocomplete="username" maxlength="20">
+      <p class="hint" style="text-align:left;margin:-4px 2px 8px;">3–20 karakter: harf, rakam, _ veya .</p>
       <label class="onb-label" for="obRegPass">Şifre</label>
-      <input class="f" id="obRegPass" type="password" placeholder="Şifre">
+      <input class="f" id="obRegPass" type="password" placeholder="En az 6 karakter" autocomplete="new-password">
+      <label class="onb-label" for="obRegPass2">Şifre tekrar</label>
+      <input class="f" id="obRegPass2" type="password" placeholder="Şifreyi tekrar yaz" autocomplete="new-password">
       <p class="onb-err" id="obRegErr"></p>
       <button type="button" class="btn" id="obRegSubmit">Kayıt Ol</button>
       <p class="hint">Zaten hesabın var mı? <a href="javascript:void(0)" id="obRegGoLogin" style="color:var(--purple-deep);font-weight:700;">Giriş yap</a></p>
@@ -1203,10 +1253,10 @@
       <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <div class="onb-steplabel">Giriş Yap</div>
       <div class="onb-h">Tekrar hoş geldin</div>
-      <label class="onb-label" for="obLoginEmail">E-posta</label>
-      <input class="f" id="obLoginEmail" type="email" placeholder="E-posta">
+      <label class="onb-label" for="obLoginNick">Takma ad</label>
+      <input class="f" id="obLoginNick" placeholder="Takma adın" autocapitalize="none" autocomplete="username">
       <label class="onb-label" for="obLoginPass">Şifre</label>
-      <input class="f" id="obLoginPass" type="password" placeholder="Şifre">
+      <input class="f" id="obLoginPass" type="password" placeholder="Şifre" autocomplete="current-password">
       <div class="onb-chkrow">
         <label class="onb-remember"><input type="checkbox" id="obLoginRemember" checked>Beni hatırla</label>
         <a href="javascript:void(0)" id="obForgotLink">Şifremi unuttum?</a>
@@ -1227,6 +1277,7 @@
       <div class="onb-p">Daha sonra Profil'den değiştirebilirsin.</div>
       <div class="onb-sec">İngilizce seviyen</div>
       <div id="obLevelOpts"></div>
+      <a href="javascript:void(0)" class="ob-pl-link" onclick="plFromOnboarding()">Seviyeni bilmiyor musun? İsteğe bağlı seviye tespit sınavını çöz</a>
       <div class="onb-sec">Günde ne kadar zaman ayırırsın?</div>
       <div id="obTimeOpts"></div>
       <button type="button" id="obLevelNext" style="display:none;" disabled></button>
@@ -1415,7 +1466,15 @@
       </div>
 
       <div class="card">
+        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Seviyelerim</h2>
+          <a href="javascript:void(0)" class="mission-edit" onclick="go('placement')">Seviye tespit</a>
+        </div>
+        <div id="progLevels"></div>
+      </div>
+      <div class="card">
         <h2><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Bu hafta</h2>
+        <p class="mut" id="progWeekNote" style="margin:-4px 0 6px;"></p>
         <div class="weekchart" id="weekChart"></div>
       </div>
 
@@ -1600,8 +1659,9 @@
       <input type="file" id="pdfFile" accept="application/pdf" style="display:none;">
       <p class="hint" id="pdfStatus" style="display:none;"></p>
     </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Yeni kayıt</h2>
+    <button type="button" class="radd-tile" id="rAddTile"><span class="radd-ic"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span><span class="radd-tx"><b>Kendi okumanı ekle</b><small>Metin, not, fotoğraf veya PDF</small></span><svg class="icon radd-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+    <div class="card radd-form" id="rForm" style="display:none;">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>Yeni okuma kaydı</h2>
       <div class="row">
         <input class="f" type="date" id="rDate" style="flex:1;">
         <input class="f" id="rSource" placeholder="Kaynak (ör. More to Read)" style="flex:1.4;">
@@ -1613,6 +1673,7 @@
       <input type="file" id="rFile" accept="image/*,application/pdf" style="display:none;">
       <div id="rFilePreview" style="display:none;align-items:center;gap:10px;margin-top:10px;"></div>
       <button class="btn" id="addReading" style="margin-top:10px;">Kaydet</button>
+      <button type="button" class="btn sec sm" id="rFormClose" style="margin-top:6px;width:100%;">Vazgeç</button>
       <p class="hint">Fotoğraf/PDF ekleri sadece bu cihazda saklanır, "Dışa aktar" yedeğine dahil olmaz.</p>
     </div>
     <div class="card">
@@ -1622,7 +1683,7 @@
           <div class="mchip"><img src="assets/mascot/pose-reading.png" alt=""></div>
           <div class="t">Henüz okuma kaydın yok</div>
           <div class="d">Kitaplığımdan bir metin aç ya da yukarıdan kendi notunu ekle.</div>
-          <button type="button" class="btn sec sm" onclick="document.getElementById('rText').focus();document.getElementById('rText').scrollIntoView({behavior:'smooth',block:'center'});">İlk kaydını ekle</button>
+          <button type="button" class="btn sec sm" onclick="document.getElementById('rAddTile').click();">İlk kaydını ekle</button>
         </div>
       </div>
     </div>
@@ -1835,6 +1896,14 @@
       <h1>Konuşma</h1>
     </div>
     <div id="spGame"></div>
+    <div class="card" style="padding:16px 12px;">
+      <h2 style="padding:0 6px;"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Konuşma haritası</h2>
+      <div id="speakLevelList" style="margin-top:6px;"></div>
+    </div>
+    <div class="card" id="speakUnitCard">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg>Seçili görev</h2>
+      <div id="speakCurrent"></div>
+    </div>
     <div class="card pron">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Telaffuz antrenmanı</h2>
       <p class="mut" style="margin-bottom:10px;">Cümleyi seç ya da yaz → <b>Dinle</b> ile doğrusunu duy → <b>Konuş</b> ile söyle, app ne kadar doğru olduğunu ölçer.</p>
@@ -1851,19 +1920,9 @@
       <div class="hint" id="pronSupport"></div>
     </div>
 
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg>Konuşma Seviyen</h2>
-      <div id="speakCurrent"></div>
-    </div>
-    <div class="card">
-      <details id="speakAllLevelsBox">
-        <summary><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Tüm seviyeler</summary>
-        <div id="speakLevelList" style="margin-top:14px;"></div>
-      </details>
-    </div>
   </section>
 
-  <!-- ===== GRAMMAR PATH ===== -->
+    <!-- ===== GRAMMAR PATH ===== -->
   <section class="view" id="v-grammar">
     <div class="page-head">
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
@@ -2014,53 +2073,84 @@
     <div class="page-head">
       <h1>Profil</h1>
     </div>
-    <div class="card" style="display:flex;align-items:center;gap:14px;">
-      <div class="mchip" style="width:56px;height:56px;border-radius:50%;"><img src="assets/mascot/hero-happy.png" alt="" onerror="this.style.display='none'"></div>
-      <div style="flex:1;min-width:0;">
-        <input class="f" id="userNameInput" placeholder="Adın" style="margin-bottom:6px;">
-        <div class="mut" id="profileLevelBadge">–</div>
+    <div class="card prof-hero">
+      <div class="prof-top">
+        <div class="mchip prof-av"><img src="assets/mascot/hero-happy.png" alt="" onerror="this.style.display='none'"></div>
+        <div class="prof-id">
+          <div class="prof-name" id="profName">—</div>
+          <div class="mut" id="profNick"></div>
+          <span class="prof-lv" id="profileLevelBadge">–</span>
+        </div>
       </div>
+      <div class="prof-stats">
+        <div><b id="profStreak">0</b><span>gün seri</span></div>
+        <div><b id="profDays">0</b><span>çalışılan gün</span></div>
+        <div><b id="profWords">0</b><span>kelime</span></div>
+      </div>
+      <div id="obGoalsSummaryCard" style="display:none;"><div id="profileGoalsSummary" class="prof-goals"></div></div>
     </div>
-    <button type="button" class="btn sec sm" id="userNameSave" style="margin:0 0 13px;width:100%;">Kaydet</button>
-
-    <div class="card" id="obGoalsSummaryCard" style="display:none;">
-      <h2 style="font-size:13px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-target"></use></svg>Hedeflerim</h2>
-      <div id="profileGoalsSummary" style="font-size:12.5px;line-height:1.9;color:var(--ink-2);"></div>
-    </div>
-
+    <div class="menu-label">Öğrenme</div>
     <div class="card" style="padding:6px 8px;">
       <button type="button" class="continue-row" onclick="go('plan')">
         <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg></span>
-        <span class="cr-body"><span class="cr-t">Planım &amp; Yöntemler</span><span class="cr-s">Günlük plan nasıl kuruldu, kaynaklar</span></span>
+        <span class="cr-body"><span class="cr-t">Planım &amp; Yöntemler</span><span class="cr-s">Günlük planın nasıl kuruldu</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
+      <button type="button" class="continue-row" onclick="go('placement')">
+        <span class="cr-ic" style="background:var(--gold-tint);color:var(--gold);"><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">Seviye tespit sınavı</span><span class="cr-s">İsteğe bağlı · her beceri için</span></span>
         <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
       </button>
       <button type="button" class="continue-row" onclick="go('progress')">
         <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg></span>
-        <span class="cr-body"><span class="cr-t">İlerleme</span><span class="cr-s">İstatistikler, seri, aktivite haritası</span></span>
+        <span class="cr-body"><span class="cr-t">İlerleme</span><span class="cr-s">Seri, seviyeler, aktivite</span></span>
         <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
       </button>
       <button type="button" class="continue-row" onclick="go('journal')">
         <span class="cr-ic" style="background:var(--gold-tint);color:var(--gold);"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span>
-        <span class="cr-body"><span class="cr-t">Günlük</span><span class="cr-s">Ruh halini ve notlarını kaydet</span></span>
+        <span class="cr-body"><span class="cr-t">Günlük</span><span class="cr-s">Ruh halin ve notların</span></span>
         <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
       </button>
       <button type="button" class="continue-row" onclick="go('achievements')">
         <span class="cr-ic" style="background:var(--teal-tint);color:var(--teal);"><svg class="icon" aria-hidden="true"><use href="#i-trophy"></use></svg></span>
-        <span class="cr-body"><span class="cr-t">Rozetler</span><span class="cr-s">Kazandığın rozetler ve hedefler</span></span>
+        <span class="cr-body"><span class="cr-t">Rozetler</span><span class="cr-s">Kazandıkların ve hedefler</span></span>
         <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
       </button>
       <button type="button" class="continue-row" onclick="go('notes')">
         <span class="cr-ic" style="background:var(--blue-tint);color:var(--blue);"><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg></span>
-        <span class="cr-body"><span class="cr-t">Notlarım</span><span class="cr-s">Tüm geri bildirim ve notların</span></span>
-        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
-      </button>
-      <button type="button" class="continue-row" onclick="go('settings')">
-        <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg></span>
-        <span class="cr-body"><span class="cr-t">Ayarlar</span><span class="cr-s">Spotify, Gemini, Claude bağlantıları</span></span>
+        <span class="cr-body"><span class="cr-t">Notlarım</span><span class="cr-s">Tüm geri bildirim ve notlar</span></span>
         <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
       </button>
     </div>
+    <div class="menu-label">Uygulama</div>
+    <div class="card" style="padding:6px 8px;">
+      <button type="button" class="continue-row" onclick="go('settings')">
+        <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-gear"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">Ayarlar</span><span class="cr-s">Hesap, görünüm, veri, bağlantılar</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
+    </div>
+    <button type="button" class="btn sec" id="logoutBtn" style="display:none;width:100%;">Çıkış yap</button>
+  </section>
 
+  <!-- ===== AYARLAR ===== -->
+  <section class="view" id="v-settings">
+    <div class="page-head">
+      <button class="back" onclick="go('profile')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Ayarlar</h1>
+    </div>
+    <div class="card" id="acctCard">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-person"></use></svg>Hesap</h2>
+      <p class="mut" id="acctInfo" style="margin-bottom:10px;"></p>
+      <input class="f" id="userNameInput" placeholder="Görünen ad" style="margin-bottom:6px;">
+      <button type="button" class="btn sec sm" id="userNameSave" style="margin:0 0 10px;width:100%;">Adı kaydet</button>
+      <div id="acctNewWrap">
+        <input class="f" id="acctNick" placeholder="Takma ad" autocapitalize="none">
+        <input class="f" id="acctPass" type="password" placeholder="Şifre (en az 6 karakter)">
+        <button type="button" class="btn sm" id="acctSave" style="width:100%;">Kaydet</button>
+        <p class="onb-err" id="acctErr"></p>
+      </div>
+    </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-sun"></use></svg>Görünüm</h2>
       <p class="mut" id="profileSummary" style="margin-bottom:12px;">–</p>
@@ -2085,42 +2175,7 @@
       </div>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
-    <div class="card">
-      <details>
-        <summary><svg class="icon" aria-hidden="true"><use href="#i-list-check"></use></svg>Çalışma planım — günlük modül</summary>
-        <div class="phase"><span class="chip-num">1</span><div class="ph-body"><div class="h">Isınma — 5 dk <span class="tag">Akıcılık</span></div><div class="d">Dünkü dersi İngilizce anlat.</div></div></div>
-        <div class="phase"><span class="chip-num">2</span><div class="ph-body"><div class="h">Kelime — 10 dk <span class="tag">Aralıklı tekrar</span></div><div class="d">Kartları çalış, yeni 5-7 kelime ekle.</div></div></div>
-        <div class="phase"><span class="chip-num">3</span><div class="ph-body"><div class="h">Grammar — 10 dk <span class="tag">Dil odaklı</span></div><div class="d">Günün tek kuralı + örnek + mini alıştırma.</div></div></div>
-        <div class="phase"><span class="chip-num">4</span><div class="ph-body"><div class="h">Okuma/Dinleme — 15 dk <span class="tag">Anlaşılır girdi</span></div><div class="d">More to Read paragrafı + podcast/dizi.</div></div></div>
-        <div class="phase"><span class="chip-num">5</span><div class="ph-body"><div class="h">Üretim — 12 dk <span class="tag">Çıktı</span></div><div class="d">Claude'a anlat ya da 3-4 cümle yaz.</div></div></div>
-        <div class="phase"><span class="chip-num">6</span><div class="ph-body"><div class="h">Telaffuz — 8 dk <span class="tag">Shadowing</span></div><div class="d">Klibi gölge gibi tekrar et.</div></div></div>
-      </details>
-    </div>
-    <div class="card">
-      <details>
-        <summary><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Haftalık odak planı</summary>
-        <div class="table-wrap">
-        <table class="plan">
-          <tr><th>Gün</th><th>Girdi</th><th>Üretim</th></tr>
-          <tr><td>Pzt</td><td>Okuma</td><td>Yazma</td></tr>
-          <tr><td>Sal</td><td>Dinleme</td><td>Konuşma</td></tr>
-          <tr><td>Çar</td><td>İş makalesi</td><td>E-posta</td></tr>
-          <tr><td>Per</td><td>Dizi (EN altyazı)</td><td>Roleplay</td></tr>
-          <tr><td>Cum</td><td>İlgi alanı blog</td><td>Görüş yazısı</td></tr>
-          <tr><td>Cmt</td><td>Serbest izleme</td><td>Haftayı anlat</td></tr>
-          <tr><td>Paz</td><td>Hafif tekrar</td><td>Hataları gözden geçir</td></tr>
-        </table>
-        </div>
-      </details>
-    </div>
-  </section>
-
-  <!-- ===== AYARLAR ===== -->
-  <section class="view" id="v-settings">
-    <div class="page-head">
-      <button class="back" onclick="go('profile')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <h1>Ayarlar</h1>
-    </div>
+    
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Claude Projesi</h2>
       <p class="mut" style="margin-bottom:10px;">"Claude'u Aç" butonlarının hep <b>aynı sohbete devam etmesini</b> istiyorsan: projenin içinde bir sohbet başlat, o sohbetin linkini (adres çubuğundaki claude.ai/chat/... adresi — proje ana sayfası değil) buraya yapıştır.</p>
@@ -2154,6 +2209,14 @@
       <h1>Planım &amp; Yöntemler</h1>
     </div>
     <div id="planBody"></div>
+  </section>
+
+  <section class="view" id="v-placement">
+    <div class="page-head">
+      <button class="back" id="plBack" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Seviye tespit</h1>
+    </div>
+    <div id="plBody"></div>
   </section>
 
   <section class="view" id="v-howto">
@@ -2352,7 +2415,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",plan:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -2378,6 +2441,7 @@ function go(v){
   if(v==="settings") renderSettings();
   if(v==="howto") renderHowto();
   if(v==="plan") renderPlanView();
+  if(v==="placement") plStart();
   window.scrollTo(0,0);
 }
 document.querySelectorAll("nav button").forEach(function(b){ b.addEventListener("click",function(){ go(b.dataset.v); }); });
@@ -3191,6 +3255,8 @@ document.getElementById("rFile").addEventListener("change",function(e){
     prev.style.display="none"; prev.innerHTML="";
   });
 });
+document.getElementById("rAddTile").addEventListener("click",function(){ var f=document.getElementById("rForm"); f.style.display="block"; document.getElementById("rAddTile").style.display="none"; f.scrollIntoView({behavior:"smooth",block:"start"}); });
+document.getElementById("rFormClose").addEventListener("click",function(){ document.getElementById("rForm").style.display="none"; document.getElementById("rAddTile").style.display="flex"; });
 document.getElementById("addReading").addEventListener("click",async function(){
   var d=document.getElementById("rDate"), src=document.getElementById("rSource"), tx=document.getElementById("rText");
   var text=tx.value.trim();
@@ -3674,19 +3740,20 @@ var SPEAK_LEVELS=[
 ];
 function unitKey(li,ui){ return li+"-"+ui; }
 var CEFR_ORDER=["A1","A2","B1","B2","C1","C2"];
-function startLevelIdx(levels){
-  var u=CEFR_ORDER.indexOf((S.settings&&S.settings.level)||"A2");
+function startLevelIdx(levels,skill){
+  var sl=S.settings&&S.settings.skillLevels;
+  var u=CEFR_ORDER.indexOf((sl&&skill&&sl[skill])||(S.settings&&S.settings.level)||"A2");
   for(var i=0;i<levels.length;i++){ if(CEFR_ORDER.indexOf(levels[i].cefr)>=u) return i; }
   return levels.length-1;
 }
 function levelUnlocked(li){
-  if(li<=startLevelIdx(SPEAK_LEVELS)) return true;
+  if(li<=startLevelIdx(SPEAK_LEVELS,"speaking")) return true;
   var prev=SPEAK_LEVELS[li-1];
   for(var i=0;i<prev.units.length;i++){ if(!S.speaking.completed[unitKey(li-1,i)]) return false; }
   return true;
 }
 function speakFrontier(){
-  for(var li=startLevelIdx(SPEAK_LEVELS);li<SPEAK_LEVELS.length;li++){
+  for(var li=startLevelIdx(SPEAK_LEVELS,"speaking");li<SPEAK_LEVELS.length;li++){
     if(!levelUnlocked(li)) break;
     for(var ui=0;ui<SPEAK_LEVELS[li].units.length;ui++){
       if(!S.speaking.completed[unitKey(li,ui)]) return {li:li,ui:ui};
@@ -3951,13 +4018,13 @@ var GRAMMAR_LEVELS=[
 ];
 function grammarUnitKey(li,ui){ return li+"-"+ui; }
 function grammarLevelUnlocked(li){
-  if(li<=startLevelIdx(GRAMMAR_LEVELS)) return true;
+  if(li<=startLevelIdx(GRAMMAR_LEVELS,"grammar")) return true;
   var prev=GRAMMAR_LEVELS[li-1];
   for(var i=0;i<prev.units.length;i++){ if(!S.grammar.completed[grammarUnitKey(li-1,i)]) return false; }
   return true;
 }
 function grammarFrontier(){
-  for(var li=startLevelIdx(GRAMMAR_LEVELS);li<GRAMMAR_LEVELS.length;li++){
+  for(var li=startLevelIdx(GRAMMAR_LEVELS,"grammar");li<GRAMMAR_LEVELS.length;li++){
     if(!grammarLevelUnlocked(li)) break;
     for(var ui=0;ui<GRAMMAR_LEVELS[li].units.length;ui++){
       if(!S.grammar.completed[grammarUnitKey(li,ui)]) return {li:li,ui:ui};
@@ -4556,31 +4623,34 @@ function renderSpeaking(){
   });
 
   var listEl=document.getElementById("speakLevelList"); listEl.innerHTML="";
+  var fr0=speakFrontier();
   SPEAK_LEVELS.forEach(function(lv,li){
     var unlocked=levelUnlocked(li);
-    var box=document.createElement("div"); box.className="level-block"+(unlocked?"":" locked");
     var doneCount=lv.units.filter(function(_,ui){return !!S.speaking.completed[unitKey(li,ui)];}).length;
-    var pct=Math.round(doneCount/lv.units.length*100);
-    box.innerHTML='<div class="level-head">'+
-      '<span class="cefr-badge'+(unlocked?"":" locked")+'">'+lv.cefr+'</span>'+
-      '<span class="lv-name">'+esc(lv.name)+'</span>'+
-      (unlocked
-        ? '<span class="lv-count">'+doneCount+'/'+lv.units.length+'</span>'
-        : '<span class="lv-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>Kilitli</span>')+
-    '</div>'+
-    (unlocked?'<div class="level-bar"><div style="width:'+pct+'%"></div></div><p class="level-cando">'+esc(lv.cando)+'</p>':'');
-    if(unlocked){
-      lv.units.forEach(function(u,ui){
-        var udone=!!S.speaking.completed[unitKey(li,ui)];
-        var row=document.createElement("button"); row.type="button"; row.className="unit-row"+(udone?" done":"");
-        row.innerHTML='<span class="u-stat"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'+
-          '<span class="u-name">'+esc(u.name)+'</span>'+
-          '<svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>';
-        row.addEventListener("click",function(){ S.speaking.selected={li:li,ui:ui}; save(); renderSpeaking(); window.scrollTo(0,0); });
-        box.appendChild(row);
-      });
-    }
-    listEl.appendChild(box);
+    var box=document.createElement("div"); box.className="mp-level"+(unlocked?"":" locked");
+    var xs=[18,50,78,50,18], rowH=104, N=lv.units.length, H=N*rowH+20;
+    var pts=lv.units.map(function(u,ui){ return [xs[ui%xs.length],ui*rowH+52]; });
+    var d="M"+pts[0][0]+" "+pts[0][1];
+    for(var k=1;k<pts.length;k++){ var y0=pts[k-1][1], y1=pts[k][1]; d+=" C"+pts[k-1][0]+" "+(y0+rowH*.55)+" "+pts[k][0]+" "+(y1-rowH*.55)+" "+pts[k][0]+" "+y1; }
+    var html='<div class="mp-flag"><span class="cefr-badge">'+lv.cefr+'</span><b>'+esc(lv.name)+'</b><em>'+(unlocked?(doneCount+'/'+N):'Kilitli')+'</em></div>'+
+      '<div class="mp-path" style="height:'+H+'px;"><svg viewBox="0 0 100 '+H+'" preserveAspectRatio="none" class="mp-line"><path d="'+d+'" vector-effect="non-scaling-stroke"/></svg>';
+    lv.units.forEach(function(u,ui){
+      var udone=!!S.speaking.completed[unitKey(li,ui)];
+      var cur=unlocked&&li===fr0.li&&ui===fr0.ui;
+      var st=!unlocked?"lock":(udone?"done":(cur?"cur":"open"));
+      var icon=st==="lock"?'<svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>':(st==="done"?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(ui+1));
+      html+='<button type="button" class="mp-node '+st+'" data-li="'+li+'" data-ui="'+ui+'" style="left:'+pts[ui][0]+'%;top:'+(pts[ui][1]-30)+'px;"'+(unlocked?'':' disabled')+'>'+
+        (cur?'<img class="mp-me" src="assets/mascot/pose-happy2.png" alt="">':'')+
+        '<span class="mp-c">'+icon+'</span><span class="mp-l">'+esc(u.name)+'</span></button>';
+    });
+    html+='</div>';
+    box.innerHTML=html; listEl.appendChild(box);
+  });
+  listEl.querySelectorAll(".mp-node").forEach(function(n){
+    n.addEventListener("click",function(){
+      S.speaking.selected={li:parseInt(n.dataset.li,10),ui:parseInt(n.dataset.ui,10)}; save(); renderSpeaking();
+      var uc=document.getElementById("speakUnitCard"); if(uc) uc.scrollIntoView({behavior:"smooth",block:"start"});
+    });
   });
 }
 
@@ -4610,27 +4680,32 @@ function renderGrammar(){
       '<div class="gr-bar"><div style="width:'+Math.round((sel.ui+(done?1:0))/level.units.length*100)+'%"></div></div>'+
       '<span class="mut">Konu '+(sel.ui+1)+'/'+level.units.length+'</span>'+
     '</div>'+
-    '<div class="paper-card" style="margin-bottom:16px;">'+
+    '<div class="segtabs" id="grTabs"><button type="button" class="seg active" data-gt="rule">Konu</button><button type="button" class="seg" data-gt="test">Kendini test et</button><button type="button" class="seg" data-gt="notes">Notlar</button></div>'+
+    '<div class="gr-panel active" data-gp="rule"><div class="paper-card" style="margin-bottom:12px;">'+
       '<div style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink);margin-bottom:4px;">'+esc(unit.name)+'</div>'+
       '<div class="gr-step"><span>1</span>Kuralı oku</div>'+
       '<div class="rule-box">'+esc(unit.rule)+'</div>'+
       '<div class="gr-step"><span>2</span>Örneklere bak</div>'+
       examplesHtml+
       '<div class="mistake-box"><svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg><div><b>Sık yapılan hata:</b> '+esc(unit.mistake)+'</div></div>'+
-    '</div>'+
-    '<div class="gr-step"><span>3</span>Alıştır</div>'+
-    '<div id="grammarExList">'+exHtml+'</div>'+
+    '</div><button type="button" class="btn" id="grToTest">Kendini test et →</button></div>'+
+    '<div class="gr-panel" data-gp="test"><div id="grammarExList">'+exHtml+'</div>'+
     '<div id="grammarScore" style="display:none;"></div>'+
-    '<button type="button" class="btn sec" id="grammarCheckBtn" style="margin-top:6px;">Cevapları Kontrol Et</button>'+
-    '<details class="note-details" id="grammarNoteDetails"'+(S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]?" open":"")+'>'+
-      '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chat"></use></svg>Claude geri bildirim notun</summary>'+
-      '<textarea class="f note-ta" id="grammarNoteTa" rows="3" placeholder="Bu konuyla ilgili Claude\'dan aldığın notları buraya yaz..."></textarea>'+
-      '<button type="button" class="btn sec sm note-save" id="grammarNoteSave">Notu Kaydet</button>'+
-    '</details>'+
+    '<button type="button" class="btn" id="grammarCheckBtn" style="margin-top:6px;">Cevapları kontrol et</button></div>'+
+    '<div class="gr-panel" data-gp="notes"><div class="paper-card">'+
+      '<textarea class="f note-ta" id="grammarNoteTa" rows="6" placeholder="Bu konuyla ilgili notların, Claude/Moonie geri bildirimleri..."></textarea>'+
+      '<button type="button" class="btn sec sm note-save" id="grammarNoteSave">Notu kaydet</button>'+
+    '</div></div>'+
     (done
       ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu konuyu tamamladın</span></div>'
       : '<button class="btn" id="grammarCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu konuyu tamamladım</button>');
 
+  function grTab(t){
+    document.querySelectorAll("#grTabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.gt===t); });
+    document.querySelectorAll("#grammarCurrent .gr-panel").forEach(function(pn){ pn.classList.toggle("active",pn.dataset.gp===t); });
+  }
+  document.querySelectorAll("#grTabs .seg").forEach(function(b){ b.addEventListener("click",function(){ grTab(b.dataset.gt); }); });
+  document.getElementById("grToTest").addEventListener("click",function(){ grTab("test"); window.scrollTo(0,0); });
   document.getElementById("grammarNoteTa").value=S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]||"";
   document.getElementById("grammarNoteSave").addEventListener("click",function(){
     S.grammar.notes[grammarUnitKey(sel.li,sel.ui)]=document.getElementById("grammarNoteTa").value.trim();
@@ -5170,6 +5245,16 @@ function renderProgress(){
     {label:"Konuşma",pct:speakPct},
     {label:"Günlük",pct:journalPct}
   ];
+  (function(){
+    var sl=S.settings.skillLevels||{}, base=S.settings.level||"—";
+    var rowsL=[["grammar","Gramer",grammarPct],["vocab","Kelime",vocabPct],["reading","Okuma",readPct],["listening","Dinleme",null],["writing","Yazma",writingPct],["speaking","Konuşma",speakPct]];
+    document.getElementById("progLevels").innerHTML=rowsL.map(function(r){
+      var lv=sl[r[0]]||base;
+      return '<div class="lvrow"><span class="lvn">'+r[1]+'</span><div class="gr-bar"><div style="width:'+(r[2]==null?0:r[2])+'%"></div></div><span class="cefr-badge">'+esc(lv)+'</span></div>';
+    }).join("")+(S.settings.skillLevels?"":'<p class="hint" style="text-align:left;margin:8px 0 0;">Seviyen tüm becerilerde '+esc(base)+' olarak görünüyor. İstersen "Seviye tespit" ile her beceri için ayrı bul.</p>');
+    var wk=0; for(var i=0;i<7;i++){ var d=new Date(); d.setDate(d.getDate()-i); if(S.history[dstr(d)]) wk++; }
+    document.getElementById("progWeekNote").textContent="Son 7 günün "+wk+"'inde çalıştın.";
+  })();
   renderRadar(skillVals);
   renderSkillList(skillVals);
   renderHeatmap();
@@ -5324,6 +5409,14 @@ function renderProfile(){
   } else {
     lvlBadge.textContent="Seviye henüz seçilmedi";
   }
+  (function(){
+    var pn=document.getElementById("profName"); if(pn) pn.textContent=S.settings.userName||S.settings.nick||"Moonie öğrencisi";
+    var pk=document.getElementById("profNick"); if(pk) pk.textContent=S.settings.nick?("@"+S.settings.nick):"";
+    document.getElementById("profStreak").textContent=S.streak||0;
+    document.getElementById("profDays").textContent=S.totalDays||0;
+    document.getElementById("profWords").textContent=S.words.length;
+    document.getElementById("logoutBtn").style.display=S.settings.nick?"block":"none";
+  })();
   var goalsCard=document.getElementById("obGoalsSummaryCard");
   if(S.settings.level||((S.settings.goals||[]).length)||S.settings.dailyMinutes||((S.settings.focusSkills||[]).length)){
     goalsCard.style.display="block";
@@ -5337,6 +5430,12 @@ function renderProfile(){
   }
 }
 function renderSettings(){
+  (function(){
+    var info=document.getElementById("acctInfo"), nw=document.getElementById("acctNewWrap"), sv=document.getElementById("acctSave");
+    document.getElementById("userNameInput").value=S.settings.userName||"";
+    if(S.settings.nick){ info.textContent="Giriş: @"+S.settings.nick+" · şifreni aşağıdan değiştirebilirsin."; document.getElementById("acctNick").style.display="none"; document.getElementById("acctPass").placeholder="Yeni şifre (en az 6 karakter)"; sv.textContent="Şifreyi değiştir"; }
+    else { info.textContent="Takma ad ve şifre belirle; bir dahaki girişte bununla giriş yaparsın."; document.getElementById("acctNick").style.display="block"; document.getElementById("acctPass").placeholder="Şifre (en az 6 karakter)"; sv.textContent="Hesap oluştur"; }
+  })();
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
   document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
   document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
@@ -5345,6 +5444,23 @@ function renderSettings(){
 document.getElementById("geminiApiKeySave").addEventListener("click",function(){
   S.settings.geminiApiKey=document.getElementById("geminiApiKeyInput").value.trim();
   save(); alert("Gemini API anahtarı kaydedildi.");
+});
+document.getElementById("acctSave").addEventListener("click",async function(){
+  var err=document.getElementById("acctErr"); function bad(m){ err.textContent=m; err.style.display="block"; }
+  var pw=document.getElementById("acctPass").value;
+  var nick=S.settings.nick||document.getElementById("acctNick").value.trim().toLowerCase();
+  if(!/^[a-z0-9_.]{3,20}$/.test(nick)) return bad("Takma ad 3–20 karakter: harf, rakam, _ veya .");
+  if(pw.length<6) return bad("Şifre en az 6 karakter olmalı.");
+  err.style.display="none";
+  S.settings.nick=nick; S.settings.passHash=await pwHash(nick,pw); S.settings.loggedIn=true;
+  try{ sessionStorage.setItem("moonie_sess","1"); }catch(e){}
+  save(); document.getElementById("acctPass").value=""; renderSettings(); alert("Kaydedildi.");
+});
+document.getElementById("logoutBtn").addEventListener("click",function(){
+  if(!confirm("Çıkış yapılsın mı? İlerlemen silinmez; takma adın ve şifrenle tekrar girersin.")) return;
+  S.settings.loggedIn=false; save();
+  try{ sessionStorage.removeItem("moonie_sess"); }catch(e){}
+  location.reload();
 });
 document.getElementById("userNameSave").addEventListener("click",function(){
   var v=document.getElementById("userNameInput").value.trim();
@@ -5648,7 +5764,7 @@ function obRenderReady(){
 }
 
 /* auth wiring */
-document.getElementById("obEmailBtn").addEventListener("click",function(){ obGo("register"); });
+document.getElementById("obEmailBtn").addEventListener("click",function(){ obGo(S.settings.nick?"login":"register"); });
 function obSocialNote(){
   var n=document.getElementById("obSocialNote"); n.style.display="block";
   setTimeout(function(){ n.style.display="none"; },2500);
@@ -5658,26 +5774,53 @@ document.getElementById("obAppleBtn").addEventListener("click",obSocialNote);
 document.getElementById("obGoLoginLink").addEventListener("click",function(){ obGo("login"); });
 document.getElementById("obRegGoLogin").addEventListener("click",function(){ obGo("login"); });
 document.getElementById("obLoginGoReg").addEventListener("click",function(){ obGo("register"); });
-document.getElementById("obForgotLink").addEventListener("click",function(){ alert("Bu özellik yakında geliyor. Şimdilik verilerin bu cihazda saklandığı için şifre sıfırlamaya gerek yok — giriş yapamıyorsan yeni bir hesap oluşturabilirsin."); });
-document.getElementById("obRegSubmit").addEventListener("click",function(){
-  var name=document.getElementById("obRegName").value.trim();
-  var email=document.getElementById("obRegEmail").value.trim();
-  var err=document.getElementById("obRegErr");
-  if(!name||!email){ err.textContent="Ad ve e-posta gerekli."; err.style.display="block"; return; }
-  err.style.display="none";
-  S.settings.userName=name; S.settings.userEmail=email.toLowerCase(); S.settings.authMethod="email";
+async function pwHash(nick,pw){
+  var data=nick+":"+pw+":moonie-v1";
+  try{
+    var buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(data));
+    return Array.from(new Uint8Array(buf)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");
+  }catch(e){ var h=5381; for(var i=0;i<data.length;i++){ h=((h<<5)+h+data.charCodeAt(i))|0; } return "x"+h; }
+}
+function setSession(remember){
+  S.settings.loggedIn=!!remember;
+  try{ sessionStorage.setItem("moonie_sess","1"); }catch(e){}
   save();
+}
+function enterApp(){
+  document.body.classList.remove("onb-active");
+  go("today");
+}
+document.getElementById("obForgotLink").addEventListener("click",function(){
+  if(!S.settings.nick){ alert("Bu cihazda kayıtlı hesap yok. Kayıt ol."); return; }
+  if(confirm("Şifreni sıfırlamak için bu cihazdaki hesap kaydı silinir ve yeniden kayıt olursun. İlerlemen, kelimelerin ve notların SİLİNMEZ. Devam edilsin mi?")){
+    delete S.settings.nick; delete S.settings.passHash; S.settings.loggedIn=false; save();
+    try{ sessionStorage.removeItem("moonie_sess"); }catch(e){}
+    obGo("register");
+  }
+});
+document.getElementById("obRegSubmit").addEventListener("click",async function(){
+  var nick=document.getElementById("obRegNick").value.trim().toLowerCase();
+  var p1=document.getElementById("obRegPass").value, p2=document.getElementById("obRegPass2").value;
+  var err=document.getElementById("obRegErr");
+  function bad(m){ err.textContent=m; err.style.display="block"; }
+  if(!/^[a-z0-9_.]{3,20}$/.test(nick)) return bad("Takma ad 3–20 karakter olmalı; yalnızca harf, rakam, _ ve . kullan.");
+  if(p1.length<6) return bad("Şifre en az 6 karakter olmalı.");
+  if(p1!==p2) return bad("Şifreler aynı değil.");
+  err.style.display="none";
+  S.settings.nick=nick; S.settings.passHash=await pwHash(nick,p1); S.settings.userName=S.settings.userName||nick;
+  setSession(true);
   obGo("obbasics");
 });
-document.getElementById("obLoginSubmit").addEventListener("click",function(){
-  var email=document.getElementById("obLoginEmail").value.trim().toLowerCase();
+document.getElementById("obLoginSubmit").addEventListener("click",async function(){
+  var nick=document.getElementById("obLoginNick").value.trim().toLowerCase();
+  var pw=document.getElementById("obLoginPass").value;
   var err=document.getElementById("obLoginErr");
-  if(!email||!S.settings.userEmail||S.settings.userEmail!==email){
-    err.textContent="Bu e-posta ile hesap bulunamadı. Bu cihazda kayıtlı hesap: "+(S.settings.userEmail||"yok")+" — önce kayıt ol.";
-    err.style.display="block"; return;
-  }
+  function bad(m){ err.textContent=m; err.style.display="block"; }
+  if(!S.settings.nick) return bad("Bu cihazda kayıtlı hesap yok. Önce kayıt ol.");
+  if(nick!==S.settings.nick||(await pwHash(nick,pw))!==S.settings.passHash) return bad("Takma ad veya şifre hatalı.");
   err.style.display="none";
-  obGo("obbasics");
+  setSession(document.getElementById("obLoginRemember").checked);
+  if(S.settings.onboardDone) enterApp(); else obGo("obbasics");
 });
 function obUpdateBasics(){ document.getElementById("obBasicsNext").disabled=!(obState.level&&obState.dailyMinutes); }
 document.getElementById("obLevelOpts").addEventListener("click",function(){ setTimeout(obUpdateBasics,0); });
@@ -5717,6 +5860,134 @@ document.getElementById("obFinishBtn").addEventListener("click",function(){
   go("today");
 });
 
+
+/* ---------- SEVİYE TESPİT (opsiyonel) ----------
+   Sorular özgün olarak yazıldı; Oxford/Cambridge yerleştirme testlerinin kullandığı
+   CEFR (A1–C1) kademeli çoktan seçmeli formatını örnek alır. Resmî bir test DEĞİLDİR. */
+var PL_LV=["A1","A2","B1","B2","C1"];
+var PL_Q={
+ grammar:[["A1","She ___ a student.",["is","are","am"],0],["A1","I ___ coffee every morning.",["drink","drinks","drinking"],0],
+  ["A2","We ___ to the cinema yesterday.",["go","went","gone"],1],["A2","There isn't ___ milk in the fridge.",["some","any","a"],1],
+  ["B1","If it rains tomorrow, we ___ at home.",["stay","will stay","would stay"],1],["B1","I have lived here ___ 2019.",["for","since","from"],1],
+  ["B2","If I ___ more time, I would learn Spanish.",["have","had","will have"],1],["B2","The report ___ by the time we arrived.",["had finished","had been finished","has finished"],1],
+  ["C1","Not only ___ late, but he also forgot the documents.",["he was","was he","did he"],1],["C1","Had I known about the delay, I ___ earlier.",["would leave","would have left","will leave"],1]],
+ vocab:[["A1","Which word means 'big'?",["large","tiny","quiet"],0],["A1","You buy medicine at a ___.",["bakery","pharmacy","library"],1],
+  ["A2","I'm very ___. I haven't eaten all day.",["hungry","angry","bored"],0],["A2","The opposite of 'expensive' is ___.",["cheap","heavy","early"],0],
+  ["B1","She is very ___; she always arrives on time.",["punctual","generous","flexible"],0],["B1","We need to ___ an appointment with the doctor.",["do","make","say"],1],
+  ["B2","The company decided to ___ the launch until next year.",["postpone","prevent","preserve"],0],["B2","His explanation was so ___ that nobody understood it.",["vague","valid","vivid"],0],
+  ["C1","The policy had unintended ___ for small businesses.",["repercussions","rehearsals","reservations"],0],["C1","His ___ remarks offended several guests.",["tactless","tactful","tactical"],0]],
+ reading:[["A2","Tom lives in a small flat near the station. Every morning he takes the 7:15 train to work. He works in a bookshop and finishes at five. In the evening he usually cooks dinner and watches a film.","How does Tom go to work?",["By bus","By train","On foot"],1],
+  ["A2","","What does Tom do after work?",["Plays sport","Cooks and watches a film","Reads books at the shop"],1],
+  ["B1","Last summer, Maria joined a community garden project. At first she knew nothing about growing vegetables, but the volunteers taught her patiently. By September she had harvested enough tomatoes to share with her neighbours. She says the project has changed how she thinks about food.","Why was Maria able to learn?",["She had studied it before","The volunteers taught her","She read many books"],1],
+  ["B1","","What changed because of the project?",["Her job","How she thinks about food","Where she lives"],1],
+  ["B2","Although remote work is often praised for improving flexibility, researchers caution that its benefits are unevenly distributed. Employees with quiet homes and reliable internet thrive, whereas those in crowded households may find concentration elusive. Consequently, companies that treat remote work as a one-size-fits-all policy risk widening existing inequalities.","What do the researchers warn about?",["Remote work always lowers productivity","Benefits are not shared equally","Companies should end remote work"],1],
+  ["C1","","In this text, 'elusive' is closest in meaning to ___.",["difficult to achieve","easy to ignore","enjoyable"],0],
+  ["C1","","What does the passage imply companies should do?",["Apply the same rule to everyone","Adapt policies to different circumstances","Abandon flexibility"],1]],
+ listening:[["A1","Hello, my name is Anna. I'm twenty-five and I live in Madrid. I like swimming and reading.","Where does Anna live?",["Madrid","London","Rome"],0],
+  ["A1","","What does Anna like?",["Swimming and reading","Cooking and dancing","Running and football"],0],
+  ["A2","Excuse me, does this bus go to the city centre? I've been waiting for twenty minutes and I'm afraid I'll be late for my appointment.","What is the speaker worried about?",["Missing the bus","Being late","Losing the ticket"],1],
+  ["B1","","How long has the speaker waited?",["Ten minutes","Twenty minutes","Thirty minutes"],1],
+  ["B2","Honestly, I wasn't convinced by the proposal at first, but after the team presented the data, I had to admit that it was more cost-effective than I'd assumed.","What changed the speaker's opinion?",["The price","The team's data","A manager's advice"],1],
+  ["B2","","How does the speaker feel now?",["Still doubtful","Persuaded","Angry"],1],
+  ["C1","I'd hardly call it a success; the sales figures barely scraped past the target.","What does the speaker think?",["It was a great success","It was only just acceptable","It failed completely"],1],
+  ["C1","","Which word best describes the speaker's tone?",["Enthusiastic","Reserved","Careless"],1]]
+};
+var PL_CAN={
+ writing:["Kendimi tanıtan birkaç basit cümle yazabilirim.","Kısa ve basit bir e-posta ya da mesaj yazabilirim.","Bildiğim bir konuda birkaç paragraflık, bağlantılı bir metin yazabilirim.","Bir konuda görüşümü gerekçeleriyle destekleyen detaylı bir yazı yazabilirim.","Karmaşık konularda akıcı, iyi yapılandırılmış ve üslubu uygun metinler yazabilirim."],
+ speaking:["Kendimi tanıtıp basit sorular sorup cevaplayabilirim.","Günlük konularda kısa bir sohbet yürütebilirim.","Deneyimlerimi, planlarımı ve nedenlerini anlatabilirim.","Hazırlıksız bir tartışmada görüşümü savunabilirim.","Karmaşık konularda akıcı ve doğal konuşabilirim; kelime aramam gerekmez."]
+};
+var PL_NAMES={grammar:"Gramer",vocab:"Kelime",reading:"Okuma",listening:"Dinleme",writing:"Yazma",speaking:"Konuşma"};
+var pl=null, plFromOb=false;
+function plFromOnboarding(){ plFromOb=true; go("placement"); }
+function plStart(){
+  pl={step:"intro",skills:["grammar","vocab","reading","listening","writing","speaking"],queue:[],i:0,ans:{},can:{},plays:{}};
+  plRender();
+}
+document.getElementById("plBack").addEventListener("click",function(){ plExit(); });
+function plExit(){ if(plFromOb){ plFromOb=false; document.body.classList.add("onb-active"); obGo("obbasics"); } else go("profile"); }
+function plBuildQueue(){
+  var q=[];
+  pl.skills.forEach(function(sk){
+    if(PL_Q[sk]){
+      var lastPass="";
+      PL_Q[sk].forEach(function(it,ix){
+        var hasPass=(sk==="reading"||sk==="listening");
+        var pass=hasPass?(it[1]||lastPass):""; if(hasPass&&it[1]) lastPass=it[1];
+        q.push({sk:sk,ix:ix,lv:it[0],pass:pass,q:hasPass?it[2]:it[1],opts:hasPass?it[3]:it[2],a:hasPass?it[4]:it[3]});
+      });
+    } else if(PL_CAN[sk]){ q.push({sk:sk,can:true}); }
+  });
+  pl.queue=q;
+}
+function plEstimate(sk){
+  if(PL_CAN[sk]){ var c=pl.can[sk]||[],lv="A1",got=false; for(var i=0;i<5;i++){ if(c[i]===1){ lv=PL_LV[i]; got=true; } else break; } return got?lv:"A1"; }
+  var by={}; pl.queue.filter(function(x){return x.sk===sk;}).forEach(function(x){ var k=x.lv; by[k]=by[k]||[0,0]; by[k][1]++; if(pl.ans[sk+x.ix]===x.a) by[k][0]++; });
+  var res="A1";
+  for(var i=0;i<PL_LV.length;i++){ var b=by[PL_LV[i]]; if(!b) continue; if(b[0]/b[1]>=0.6) res=PL_LV[i]; else break; }
+  return res;
+}
+function plSpeak(text,key){
+  pl.plays[key]=(pl.plays[key]||0)+1;
+  try{ var u=new SpeechSynthesisUtterance(text); u.lang="en-GB"; u.rate=.92; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
+  plRender();
+}
+function plRender(){
+  var el=document.getElementById("plBody"); if(!el||!pl) return;
+  if(pl.step==="intro"){
+    el.innerHTML='<div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">İsteğe bağlı</div><div class="pg-title">Seviyeni birlikte bulalım</div><div class="pg-sub">Yaklaşık 10 dakika. Her beceri için ayrı bir seviye çıkar.</div></div><img class="pg-moon" src="assets/mascot/pose-learning.png" alt=""></div>'+
+      '<div class="card"><p style="font-size:13px;color:var(--ink-2);line-height:1.7;margin:0 0 10px;">Seviyeni bilmiyorsan bu kısa sınavı çözebilirsin; bilmiyorsan <b>hiç çözmeden de</b> devam edebilirsin. Sorular A1–C1 (CEFR) kademelerine göre kolaydan zora doğru dizilidir. Gramer, kelime, okuma ve dinleme otomatik puanlanır; yazma ve konuşma için "yapabilir miyim?" ifadelerini işaretlersin.</p>'+
+      '<p class="hint" style="text-align:left;margin:0;">Not: Soruları Oxford ve Cambridge yerleştirme testlerindeki kademeli formatı örnek alarak kendimiz yazdık. Bu resmî bir sınav değildir; sonuç yaklaşık bir tahmindir ve istediğin an değiştirebilirsin.</p></div>'+
+      '<div class="card"><h2 style="font-size:13px;">Hangi beceriler?</h2>'+Object.keys(PL_NAMES).map(function(k){ return '<label class="pl-skill"><input type="checkbox" data-sk="'+k+'" '+(pl.skills.indexOf(k)>-1?"checked":"")+'><b>'+PL_NAMES[k]+'</b></label>'; }).join("")+'</div>'+
+      '<button type="button" class="btn" id="plGo">Sınava başla</button><button type="button" class="btn sec" id="plSkip" style="margin-top:8px;">Şimdilik atla</button>';
+    el.querySelectorAll("input[data-sk]").forEach(function(c){ c.addEventListener("change",function(){ pl.skills=Array.from(el.querySelectorAll("input[data-sk]:checked")).map(function(x){return x.dataset.sk;}); }); });
+    document.getElementById("plGo").addEventListener("click",function(){ if(!pl.skills.length) return; plBuildQueue(); pl.step="quiz"; pl.i=0; plRender(); window.scrollTo(0,0); });
+    document.getElementById("plSkip").addEventListener("click",plExit);
+    return;
+  }
+  if(pl.step==="quiz"){
+    var it=pl.queue[pl.i];
+    if(!it){ pl.step="result"; plRender(); return; }
+    var pct=Math.round(pl.i/pl.queue.length*100);
+    var h='<div class="gr-top"><span class="cefr-badge lg">'+PL_NAMES[it.sk]+'</span><div class="gr-bar"><div style="width:'+pct+'%"></div></div><span class="mut">'+(pl.i+1)+'/'+pl.queue.length+'</span></div><div class="card">';
+    if(it.can){
+      var ci=(pl.can[it.sk]||[]).length;
+      h+='<div class="pl-q">'+(it.sk==="writing"?"Yazma":"Konuşma")+' · '+(ci+1)+'/5<br>'+esc(PL_CAN[it.sk][ci])+'</div><button type="button" class="pl-opt" data-c="1">Evet, yapabilirim</button><button type="button" class="pl-opt" data-c="0">Hayır / henüz değil</button>';
+    } else {
+      if(it.sk==="listening"){ var key=it.pass.slice(0,12); var n=pl.plays[key]||0; h+='<button type="button" class="btn deep" id="plPlay" '+(n>=2?"disabled":"")+' style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-volume"></use></svg>'+(n>=2?"Dinleme hakkın bitti":"Dinle ("+(2-n)+" hak)")+'</button>'; }
+      else if(it.pass){ h+='<div class="pl-pass">'+esc(it.pass)+'</div>'; }
+      h+='<div class="pl-q">'+esc(it.q)+'</div>'+it.opts.map(function(o,oi){ return '<button type="button" class="pl-opt" data-o="'+oi+'">'+esc(o)+'</button>'; }).join("");
+    }
+    h+='</div>';
+    el.innerHTML=h;
+    var pp=document.getElementById("plPlay"); if(pp) pp.addEventListener("click",function(){ plSpeak(it.pass,it.pass.slice(0,12)); });
+    el.querySelectorAll("[data-o]").forEach(function(b){ b.addEventListener("click",function(){ pl.ans[it.sk+it.ix]=parseInt(b.dataset.o,10); pl.i++; plRender(); window.scrollTo(0,0); }); });
+    el.querySelectorAll("[data-c]").forEach(function(b){ b.addEventListener("click",function(){
+      var c=pl.can[it.sk]=pl.can[it.sk]||[]; c.push(parseInt(b.dataset.c,10));
+      if(c.length>=5||c[c.length-1]===0){ if(c.length<5){ /* ilk "hayır"da dur */ } pl.i++; }
+      plRender(); window.scrollTo(0,0);
+    }); });
+    return;
+  }
+  if(pl.step==="result"){
+    var res={}; pl.skills.forEach(function(sk){ res[sk]=plEstimate(sk); });
+    var idx=pl.skills.map(function(sk){return PL_LV.indexOf(res[sk]);}), avg=Math.round(idx.reduce(function(a,b){return a+b;},0)/idx.length), overall=PL_LV[avg];
+    pl.res=res; pl.overall=overall;
+    el.innerHTML='<div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Tahmini genel seviye</div><div class="pg-title" style="font-size:34px;">'+overall+'</div><div class="pg-sub">Aşağıda her beceri için ayrı sonuç var.</div></div><img class="pg-moon" src="assets/mascot/pose-goalachieved.png" alt=""></div>'+
+      '<div class="card">'+pl.skills.map(function(sk){ return '<div class="pl-skill"><b>'+PL_NAMES[sk]+'</b><span class="cefr-badge lg">'+res[sk]+'</span></div>'; }).join("")+'</div>'+
+      '<p class="hint" style="text-align:left;margin:0 2px 12px;">Bu tahmin kısa bir sınava dayanır; çok kolay ya da çok zor geldiyse seviyeni sonradan Profil → Planım üzerinden değiştirebilirsin.</p>'+
+      '<button type="button" class="btn" id="plApply">Seviyelerimi uygula</button><button type="button" class="btn sec" id="plDiscard" style="margin-top:8px;">Uygulama</button>';
+    document.getElementById("plApply").addEventListener("click",function(){
+      S.settings.skillLevels=S.settings.skillLevels||{};
+      pl.skills.forEach(function(sk){ S.settings.skillLevels[sk]=res[sk]; });
+      S.settings.level=overall; S.settings.placementDate=isoDate(new Date());
+      S.grammar.selected=null; S.speaking.selected=null; S.checks={}; STEPS=buildPlan(); save();
+      if(plFromOb){ obState.level=overall; plExit(); if(typeof obRenderLevel==="function") obRenderLevel(); if(typeof obUpdateBasics==="function") obUpdateBasics(); }
+      else go("progress");
+    });
+    document.getElementById("plDiscard").addEventListener("click",plExit);
+  }
+}
+
 /* ---------- INIT ---------- */
 syncTarget(); renderToday(); renderVocab();
 spotifyHandleCallback();
@@ -5739,7 +6010,12 @@ window.go=go;
 /* kalıcı depolama iste: tarayıcı kayıtları (giriş dahil) kendiliğinden silmesin */
 try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 /* new onboarding gate */
-if(S.settings.onboardDone||S.settings.userEmail){
+var sessOk=false; try{ sessOk=sessionStorage.getItem("moonie_sess")==="1"; }catch(e){}
+if(S.settings.nick&&!(S.settings.loggedIn||sessOk)){
+  document.body.classList.add("onb-active");
+  obGo("login");
+  document.getElementById("obLoginNick").value=S.settings.nick;
+} else if(S.settings.onboardDone||S.settings.userEmail||S.settings.nick){
   S.settings.onboardDone=true; save();
   document.body.classList.remove("onb-active");
   document.getElementById("v-splash").classList.remove("active");
