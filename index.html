@@ -1128,7 +1128,7 @@
   <section class="view" id="v-obbasics">
     <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
       <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="onb-steplabel">Adım 1/2</div>
+      <div class="onb-steplabel">Adım 1/3</div>
       <div class="onb-h">Seviyen ve günlük süren</div>
       <div class="onb-p">Daha sonra Profil'den değiştirebilirsin.</div>
       <div class="onb-sec">İngilizce seviyen</div>
@@ -1144,11 +1144,12 @@
   <section class="view" id="v-obgoals">
     <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
       <button type="button" class="onb-back-btn" onclick="obGo('obbasics')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="onb-steplabel">Adım 2/2</div>
+      <div class="onb-steplabel">Adım 2/3</div>
       <div class="onb-h">Hedefin ve odağın</div>
       <div class="onb-p">Birden çok seçebilirsin.</div>
       <div class="onb-sec">Neden öğreniyorsun?</div>
       <div id="obGoalOpts"></div>
+      <div id="obExamWrap" style="display:none;"><div class="onb-sec">Hangi sınav?</div><div id="obExamOpts"></div><p class="hint" id="obExamNote" style="text-align:left;margin:6px 2px 0;"></p></div>
       <div class="onb-sec">Hangi becerilere odaklanalım?</div>
       <div id="obFocusOpts"></div>
       <button type="button" id="obGoalsNext" style="display:none;"></button>
@@ -1160,39 +1161,29 @@
   <!-- ===== ONBOARDING: PODCAST LİNKİ ===== -->
   <section class="view" id="v-obpod">
     <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
-      <button type="button" class="onb-back-btn" onclick="obGo('obfocus')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
-      <div class="onb-steplabel">Adım 5/5</div>
+      <button type="button" class="onb-back-btn" onclick="obGo('obgoals')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div class="onb-steplabel">Adım 3/3 · İsteğe bağlı</div>
       <div class="onb-h">Bağlantıları ayarla</div>
-      <div class="onb-p">Bu ikisi opsiyonel — istersen atlayıp sonra Ayarlar'dan da ekleyebilirsin.</div>
-
-      <div class="card" style="margin-bottom:14px;">
-        <h2 style="font-size:13.5px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify (podcast dinlemek için)</h2>
-        <p class="mut" style="margin-bottom:8px;text-align:left;">Nasıl alınır: <b>developer.spotify.com/dashboard</b> → giriş yap → <b>Create app</b> → app'e bir isim ver → oluşan <b>Client ID</b>'yi kopyala. Ardından aynı app ayarlarında <b>Redirect URI</b> olarak aşağıdaki adresi ekle.</p>
-        <input class="f" id="obSpotifyClientId" placeholder="Spotify Client ID">
-        <input class="f" id="obSpotifyRedirectDisplay" readonly style="font-size:11px;color:var(--ink-soft);">
-        <p class="hint" style="text-align:left;margin-top:2px;">Bu adresi Spotify Dashboard'daki Redirect URI alanına yapıştır.</p>
-        <div style="margin-top:8px;"><a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener" class="btn sec sm" style="margin:0;">Spotify Dashboard'ı Aç</a></div>
+      <div class="onb-p">Podcast dinlemek ve Moonie'den geri bildirim almak için. Ekran görüntülerini takip et; istersen atlayıp sonra ekleyebilirsin.</div>
+      <div class="segtabs" id="obHowtoTabs">
+        <button type="button" class="seg active" data-t="spotify">Spotify</button>
+        <button type="button" class="seg" data-t="gemini">Gemini API</button>
       </div>
-
-      <div class="card" style="margin-bottom:14px;">
-        <h2 style="font-size:13.5px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Gemini (telaffuz analizi için)</h2>
-        <p class="mut" style="margin-bottom:8px;text-align:left;">Nasıl alınır: <b>aistudio.google.com/apikey</b> → Google hesabınla giriş yap → <b>Create API key</b> → anahtarı kopyala. Ücretsiz katman günlük pratik için fazlasıyla yeterli.</p>
-        <input class="f" id="obGeminiKey" type="password" placeholder="Gemini API Key">
-        <div style="margin-top:2px;"><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn sec sm" style="margin:0;">Google AI Studio'yu Aç</a></div>
-      </div>
-
-      <div class="card" style="margin-bottom:14px;">
-        <h2 style="font-size:13.5px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-headphones"></use></svg>Bir podcast ekle (opsiyonel)</h2>
-        <p class="mut" style="margin-bottom:8px;text-align:left;">Dinleme pratiğin için Spotify'da bir podcast ara ve seç.</p>
-        <div class="searchbar">
-          <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
-          <input id="obPodSearchInput" placeholder="ör. English learning podcast">
+      <p class="hint" id="obHowtoIntro" style="text-align:left;margin:0 2px 12px;"></p>
+      <div class="howto-list" id="obHowtoList"></div>
+      <div class="card" style="margin:14px 0;">
+        <div id="obFieldSpotify">
+          <div class="sh-lbl" style="margin-bottom:6px;">Spotify Client ID</div>
+          <input class="f" id="obSpotifyClientId" placeholder="Client ID'yi buraya yapıştır">
+          <input class="f" id="obSpotifyRedirectDisplay" readonly style="font-size:11px;color:var(--ink-soft);">
         </div>
-        <div id="obPodSearchList" class="spotify-empty">Aramak için yaz ve Enter'a bas.</div>
-        <div id="obPodPicked" style="display:none;margin-top:10px;"></div>
+        <div id="obFieldGemini" style="display:none;">
+          <div class="sh-lbl" style="margin-bottom:6px;">Gemini API anahtarı</div>
+          <input class="f" id="obGeminiKey" type="password" placeholder="AIza ile başlayan anahtarı yapıştır">
+        </div>
       </div>
-
-      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obPodNext">Devam →</button></div>
+      <div style="display:none;"><input id="obPodSearchInput"><div id="obPodSearchList"></div><div id="obPodPicked"></div></div>
+      <div class="onb-foot" style="padding:0;margin-top:8px;"><button type="button" class="btn" id="obPodNext">Kaydet ve devam →</button><button type="button" class="btn sec" id="obPodSkip" style="margin-top:8px;">Şimdilik atla</button></div>
     </div>
   </section>
 
@@ -1937,6 +1928,11 @@
     </div>
 
     <div class="card" style="padding:6px 8px;">
+      <button type="button" class="continue-row" onclick="go('plan')">
+        <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg></span>
+        <span class="cr-body"><span class="cr-t">Planım &amp; Yöntemler</span><span class="cr-s">Günlük plan nasıl kuruldu, kaynaklar</span></span>
+        <svg class="icon" aria-hidden="true" style="color:var(--ink-soft);width:16px;height:16px;flex-shrink:0;"><use href="#i-chevron-right"></use></svg>
+      </button>
       <button type="button" class="continue-row" onclick="go('progress')">
         <span class="cr-ic" style="background:var(--tint);color:var(--purple);"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg></span>
         <span class="cr-body"><span class="cr-t">İlerleme</span><span class="cr-s">İstatistikler, seri, aktivite haritası</span></span>
@@ -2051,6 +2047,14 @@
   </section>
 
 <!-- ===== NASIL EKLENİR ===== -->
+  <section class="view" id="v-plan">
+    <div class="page-head">
+      <button class="back" onclick="go('profile')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Planım &amp; Yöntemler</h1>
+    </div>
+    <div id="planBody"></div>
+  </section>
+
   <section class="view" id="v-howto">
     <div class="page-head">
       <button class="back" onclick="go('settings')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
@@ -2110,14 +2114,69 @@ var GOAL=60;
 var DAYS_TR=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
 var DAYS_TR_SHORT=["Pz","Pt","Sa","Ça","Pe","Cu","Ct"];
 var MONTHS_TR=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-var STEPS=[
-  ["Isınma","1 cümle: şu an ne yapıyorsun?"],
-  ["Kelime","Kartları çalış + yeni kelime ekle"],
-  ["Grammar","Günün kuralı + örnek"],
-  ["Okuma/Dinleme","1 paragraf + podcast/dizi"],
-  ["Üretim","Claude'a anlat / cümle yaz"],
-  ["Telaffuz","Shadowing / bu app'te pratik"]
-];
+var STEPS=[];
+var EXAMS=["YDS / YÖKDİL","IELTS","TOEFL iBT","Diğer sınav"];
+function planExam(){
+  var st=(typeof S!=="undefined"&&S.settings)||{}, g=st.goals||[];
+  if(!g.some(function(x){return /Sınav/i.test(x);})) return "";
+  return st.examType||"YDS / YÖKDİL";
+}
+/* Ağırlıklar: Nation'ın dört ipliği (girdi / çıktı / dil odaklı / akıcılık) baz alınır; seviyeye göre kaydırılır.
+   Bunlar araştırmadan esinlenen tasarım tahminleridir, kanıtlanmış reçete değil. */
+var PLAN_BLOCKS={
+ vocab:{n:"Kelime",v:"vocab",min:5},
+ grammar:{n:"Grammar",v:"grammar",min:5},
+ reading:{n:"Okuma",v:"reading",min:5},
+ listening:{n:"Dinleme",v:"listening",min:5},
+ speaking:{n:"Konuşma / Shadowing",v:"speaking",min:5},
+ writing:{n:"Yazma",v:"writing",min:5},
+ translate:{n:"Çeviri",v:"writing",min:5}
+};
+function planDesc(k,lv,ex){
+  var yds=ex==="YDS / YÖKDİL", low=(lv==="A1"||lv==="A2"), hi=(lv==="C1");
+  var d={
+   vocab: yds?"Aralıklı tekrar kartları + akademik kelime (önce geri çağırma)":(low?"Sık kullanılan kelimeler: kart tekrarı + 3 yeni kelime":"Kart tekrarı + yeni kelimeler (önce hatırla, sonra bak)"),
+   grammar: yds?"Sınav kalıpları: zaman, bağlaç, cümle tamamlama":(low?"Günün kuralı + 3 örnek cümle":(hi?"İnce ayrımlar: günün kuralı + hatalarını düzelt":"Günün kuralı + kendi cümlelerin")),
+   reading: yds?"Süreli paragraf: ana fikir + boşluk/çıkarım soruları":(low?"Kolay seviye metin, anlayarak oku":(hi?"Akademik/uzun metin + not çıkar":"Seviyene uygun metin + bilinmeyen kelimeler")),
+   listening: ex?"Süreli dinleme: not al, sonra cevapla":(low?"Yavaş, kısa içerik; ikinci dinlemede altyazı":"Podcast/dizi: önce anlamaya çalış, sonra transkript"),
+   speaking: ex?"Sesli yanıt: 1 dk konuş + shadowing":(low?"Hazır cümleleri sesli tekrar et (shadowing)":"Shadowing + 1 dk serbest konuşma"),
+   writing: ex?"Süreli yazma: 1 paragraf/essay planı":(low?"3-5 cümle yaz":"Konuyla ilgili 1 paragraf yaz"),
+   translate:"EN→TR / TR→EN cümle çevirisi (YDS çeviri soruları için)"
+  };
+  return d[k];
+}
+function planWeights(lv,ex,focus){
+  var low=(lv==="A1"||lv==="A2"), hi=(lv==="C1"), w;
+  if(ex==="YDS / YÖKDİL"){
+    w=low?{vocab:.35,grammar:.3,reading:.25,translate:.1}:(hi?{vocab:.25,grammar:.2,reading:.4,translate:.15}:{vocab:.3,grammar:.25,reading:.35,translate:.1});
+  }else if(ex){
+    w=low?{vocab:.25,grammar:.2,reading:.15,listening:.15,speaking:.1,writing:.15}:(hi?{vocab:.1,grammar:.1,reading:.2,listening:.2,speaking:.2,writing:.2}:{vocab:.15,grammar:.1,reading:.2,listening:.2,speaking:.17,writing:.18});
+  }else{
+    w=low?{vocab:.25,grammar:.2,listening:.2,reading:.15,speaking:.1,writing:.1}:(hi?{vocab:.15,grammar:.1,reading:.2,listening:.2,speaking:.2,writing:.15}:{vocab:.2,grammar:.15,reading:.2,listening:.15,speaking:.15,writing:.15});
+  }
+  var map={Reading:"reading",Listening:"listening",Speaking:"speaking",Grammar:"grammar",Vocabulary:"vocab",Writing:"writing"};
+  (focus||[]).forEach(function(f){ var k=map[f]; if(k&&w[k]) w[k]*=1.5; if(f==="Writing"&&w.translate) w.translate*=1.5; });
+  return w;
+}
+function buildPlan(){
+  var st=(typeof S!=="undefined"&&S.settings)||{};
+  var lv=st.level||"B1", mins=st.dailyMinutes||30, ex=planExam();
+  var w=planWeights(lv,ex,st.focusSkills);
+  var keys=Object.keys(w).sort(function(a,b){return w[b]-w[a];});
+  var maxN=Math.max(2,Math.min(keys.length,Math.floor(mins/5)));
+  if(mins<=10) maxN=Math.min(maxN,3);
+  keys=keys.slice(0,maxN);
+  var tot=keys.reduce(function(a,k){return a+w[k];},0);
+  var alloc={}, used=0;
+  keys.forEach(function(k){ alloc[k]=Math.max(5,Math.round(mins*w[k]/tot/5)*5); used+=alloc[k]; });
+  var guard=0;
+  while(used>mins&&guard++<50){ var big=keys.filter(function(k){return alloc[k]>5;}).sort(function(a,b){return alloc[b]-alloc[a];})[0]; if(!big) break; alloc[big]-=5; used-=5; }
+  guard=0;
+  while(used<mins&&guard++<50){ var t=keys.slice().sort(function(a,b){return w[b]-w[a];})[0]; alloc[t]+=5; used+=5; }
+  var order=["vocab","grammar","reading","listening","translate","writing","speaking"];
+  keys.sort(function(a,b){return order.indexOf(a)-order.indexOf(b);});
+  return keys.map(function(k){ var b=PLAN_BLOCKS[k]; return [b.n,planDesc(k,lv,ex),b.v,alloc[k]]; });
+}
 var PHRASES=[
   "I have an important meeting today.",
   "I haven't finished the report yet.",
@@ -2134,6 +2193,7 @@ function save(){ localStorage.setItem(KEY,JSON.stringify(S)); }
 var S=load();
 S.streak=S.streak||0; S.totalDays=S.totalDays||0; S.checks=S.checks||{};
 S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
+STEPS=buildPlan();
 S.words=S.words||[];
 S.history=S.history||{};
 S.readings=S.readings||[];
@@ -2191,7 +2251,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",plan:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -2216,6 +2276,7 @@ function go(v){
   if(v==="profile") renderProfile();
   if(v==="settings") renderSettings();
   if(v==="howto") renderHowto();
+  if(v==="plan") renderPlanView();
   window.scrollTo(0,0);
 }
 document.querySelectorAll("nav button").forEach(function(b){ b.addEventListener("click",function(){ go(b.dataset.v); }); });
@@ -2268,11 +2329,12 @@ function renderToday(){
   document.getElementById("examBadge").textContent=ed>0?("Sınava "+ed+" gün"):"";
   var dt=new Date();
   document.getElementById("todayDate").textContent=DAYS_TR[dt.getDay()]+", "+dt.getDate()+" "+MONTHS_TR[dt.getMonth()];
+  STEPS=buildPlan();
   var cl=document.getElementById("checklist"); cl.innerHTML="";
   STEPS.forEach(function(s,i){
     var done=!!S.checks[i];
     var lab=document.createElement("label"); lab.className="check"+(done?" done":"");
-    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+(done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(i+1))+'</span><span class="t">'+s[0]+'<small>'+s[1]+'</small></span>';
+    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+(done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(i+1))+'</span><span class="t">'+s[0]+'<small>'+s[1]+' · '+s[3]+' dk</small></span>';
     lab.querySelector("input").addEventListener("change",function(e){ S.checks[i]=e.target.checked; save(); renderToday(); });
     cl.appendChild(lab);
   });
@@ -2309,11 +2371,10 @@ function planSheet(open){
 }
 document.getElementById("planBar").addEventListener("click",function(){ planSheet(true); });
 document.getElementById("planBackdrop").addEventListener("click",function(){ planSheet(false); });
-var STEP_VIEW=["speaking","vocab","grammar","reading","writing","speaking"];
 document.getElementById("thStart").addEventListener("click",function(){
   var i=-1; for(var k=0;k<STEPS.length;k++){ if(!S.checks[k]){ i=k; break; } }
   if(i<0){ planSheet(true); return; }
-  go(STEP_VIEW[i]);
+  go(STEPS[i][2]);
 });
 document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
@@ -2511,7 +2572,7 @@ function renderReading(){
 /* ---------- NASIL EKLENİR (ekran kesitli rehber) ---------- */
 var howtoTab="spotify";
 function shot(inner){ return '<div class="shot">'+inner+'</div>'; }
-function HOWTO_STEPS(tab){
+function HOWTO_STEPS(tab,ob){
   var redirect=(typeof SPOTIFY_REDIRECT_URI!=="undefined")?SPOTIFY_REDIRECT_URI:location.origin+location.pathname;
   if(tab==="spotify") return [
     {t:"Developer hesabını aç",d:"developer.spotify.com/dashboard adresine git ve Spotify hesabınla giriş yap.",link:["https://developer.spotify.com/dashboard","Dashboard'ı aç"],
@@ -2522,7 +2583,7 @@ function HOWTO_STEPS(tab){
      shot:shot('<div class="sh-h">Redirect URIs</div><div class="sh-field">'+esc(redirect)+'</div><div class="sh-btn lt">Add</div>')},
     {t:"Client ID'yi kopyala",d:"Aynı sayfada Client ID'yi kopyala. Client Secret'a ihtiyacın yok.",
      shot:shot('<div class="sh-lbl">Client ID</div><div class="sh-field">a1b2c3d4e5f6••••••••</div><div class="sh-lbl">Client Secret</div><div class="sh-field mut">••••••••••  <span class="sh-link">Show</span></div>')},
-    {t:"Uygulamaya yapıştır",d:"Profil → Ayarlar → Spotify Client ID alanına yapıştırıp Kaydet'e bas.",go:["settings","Ayarlar'a git"],
+    {t:"Uygulamaya yapıştır",d:(ob?"Aşağıdaki Spotify Client ID kutusuna yapıştır.":"Profil → Ayarlar → Spotify Client ID alanına yapıştırıp Kaydet'e bas."),go:["settings","Ayarlar'a git"],
      shot:shot('<div class="sh-lbl">Spotify Client ID</div><div class="sh-field">a1b2c3d4e5f6••••••••</div><div class="sh-btn lt">Kaydet</div>')},
     {t:"Bağlan ve dinle",d:"Dinleme sekmesinde \"Spotify'a bağlan\"a bas. Giriş yapınca podcast arayabilir ve çalabilirsin.",go:["listening","Dinleme'ye git"],
      shot:shot('<div class="sh-player"><span class="sh-art"></span><span><b>Café English</b><br><small>Podcast</small></span><span class="sh-play"></span></div>')}
@@ -2536,18 +2597,19 @@ function HOWTO_STEPS(tab){
      shot:shot('<div class="sh-row"><span class="sh-dot"></span>Get API key</div><div class="sh-btn g2">Create API key</div>')},
     {t:"Anahtarı kopyala",d:"Oluşan AIza ile başlayan anahtarı kopyala.",
      shot:shot('<div class="sh-h">API key created</div><div class="sh-field">AIzaSy••••••••••••••</div>')},
-    {t:"Uygulamaya yapıştır",d:"Profil → Ayarlar → Gemini API Anahtarı alanına yapıştırıp Kaydet'e bas.",go:["settings","Ayarlar'a git"],
+    {t:"Uygulamaya yapıştır",d:(ob?"Aşağıdaki Gemini API anahtarı kutusuna yapıştır.":"Profil → Ayarlar → Gemini API Anahtarı alanına yapıştırıp Kaydet'e bas."),go:["settings","Ayarlar'a git"],
      shot:shot('<div class="sh-lbl">Gemini API Key</div><div class="sh-field">••••••••••••••••••</div><div class="sh-ok">Kullanıma hazır ✓</div>')}
   ];
 }
 function openHowto(t){ howtoTab=t||"spotify"; go("howto"); }
-function renderHowto(){
-  document.querySelectorAll("#howtoTabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.t===howtoTab); });
-  document.getElementById("howtoIntro").textContent=howtoTab==="spotify"
+function renderHowto(ob){
+  var P=ob?"obHowto":"howto";
+  document.querySelectorAll("#"+P+"Tabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.t===howtoTab); });
+  document.getElementById(P+"Intro").textContent=howtoTab==="spotify"
     ? "Spotify'da podcast arayıp çalabilmek için bir Client ID gerekir. 6 kısa adım."
     : "Moonie'nin telaffuz ve yazı geri bildirimi için ücretsiz bir Gemini API anahtarı gerekir. 5 kısa adım.";
-  var wrap=document.getElementById("howtoList"); wrap.innerHTML="";
-  HOWTO_STEPS(howtoTab).forEach(function(st,i){
+  var wrap=document.getElementById(P+"List"); wrap.innerHTML="";
+  HOWTO_STEPS(howtoTab,ob).forEach(function(st,i){
     var c=document.createElement("div"); c.className="hstep";
     c.innerHTML='<div class="hs-head"><span class="hs-n">'+(i+1)+'</span><span class="hs-t">'+esc(st.t)+'</span></div>'+st.shot+'<p class="hs-d">'+esc(st.d)+'</p>';
     if(st.copy){
@@ -2556,11 +2618,12 @@ function renderHowto(){
       c.appendChild(cb);
     }
     if(st.link){ var a=document.createElement("a"); a.className="btn sec sm hs-btn"; a.href=st.link[0]; a.target="_blank"; a.rel="noopener"; a.textContent=st.link[1]; c.appendChild(a); }
-    if(st.go){ var g=document.createElement("button"); g.type="button"; g.className="btn sec sm hs-btn"; g.textContent=st.go[1]; g.addEventListener("click",function(){ go(st.go[0]); }); c.appendChild(g); }
+    if(st.go&&!ob){ var g=document.createElement("button"); g.type="button"; g.className="btn sec sm hs-btn"; g.textContent=st.go[1]; g.addEventListener("click",function(){ go(st.go[0]); }); c.appendChild(g); }
     wrap.appendChild(c);
   });
-  window.scrollTo(0,0);
+  if(ob){ document.getElementById("obFieldSpotify").style.display=howtoTab==="spotify"?"block":"none"; document.getElementById("obFieldGemini").style.display=howtoTab==="gemini"?"block":"none"; } else window.scrollTo(0,0);
 }
+document.querySelectorAll("#obHowtoTabs .seg").forEach(function(b){ b.addEventListener("click",function(){ howtoTab=b.dataset.t; renderHowto(true); }); });
 document.querySelectorAll("#howtoTabs .seg").forEach(function(b){ b.addEventListener("click",function(){ howtoTab=b.dataset.t; renderHowto(); }); });
 
 /* ---------- OKUMA: Kitaplığım (More to Read I) ---------- */
@@ -5068,6 +5131,31 @@ document.getElementById("journalSave").addEventListener("click",function(){
 });
 
 /* ---------- PROFILE ---------- */
+
+function renderPlanView(){
+  STEPS=buildPlan();
+  var st=S.settings||{}, ex=planExam(), lv=st.level||"B1", mins=st.dailyMinutes||30;
+  var h='<div class="card"><h2 style="font-size:13px;">Senin planın</h2><p style="font-size:12.5px;color:var(--ink-2);line-height:1.8;margin:0;"><b>Seviye:</b> '+esc(lv)+'<br><b>Hedef:</b> '+esc(ex||((st.goals||[]).join(", ")||"Genel İngilizce"))+'<br><b>Günlük süre:</b> '+mins+' dk</p></div>';
+  h+='<div class="card"><h2 style="font-size:13px;">Bugünün dağılımı</h2>';
+  STEPS.forEach(function(x){ h+='<div style="display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line,rgba(255,255,255,.08));"><b style="min-width:44px;font-size:13px;">'+x[3]+' dk</b><span style="font-size:12.5px;color:var(--ink-2);"><b>'+esc(x[0])+'</b> — '+esc(x[1])+'</span></div>'; });
+  h+='</div>';
+  var why=ex==="YDS / YÖKDİL"?"YDS/YÖKDİL sadece okuma, kelime, gramer ve çeviri ölçer (80 soru, 180 dk; yazma ve konuşma yok). Bu yüzden plan bu dört alana kaydırıldı.":(ex?ex+" dört beceriyi ölçer. Plan okuma, dinleme, konuşma ve yazmayı dengeli dağıtır; süreli çalışma sınav koşuluna alışmak içindir.":"Genel hedefte Nation'ın \"dört iplik\" dengesi esas alınır: anlayarak girdi, üretim, dil bilgisi/kelime odaklı çalışma ve akıcılık.");
+  var lvw=(lv==="A1"||lv==="A2")?"Başlangıç/temel seviyede kelime-gramer ve kolay girdi payı artırılır.":(lv==="C1"?"İleri seviyede üretim (konuşma/yazma) ve uzun metin payı artırılır.":"Orta seviyede beceriler dengeli tutulur.");
+  h+='<div class="card"><h2 style="font-size:13px;">Neden böyle?</h2><p style="font-size:12.5px;color:var(--ink-2);line-height:1.7;margin:0 0 8px;">'+why+'<br>'+lvw+' Seçtiğin odak becerilere ek pay verilir.</p></div>';
+  h+='<div class="card"><h2 style="font-size:13px;">Kullanılan yöntemler</h2><div style="font-size:12.5px;color:var(--ink-2);line-height:1.7;">'+
+   '<p style="margin:0 0 8px;"><b>Aralıklı tekrar:</b> Çalışmayı zamana yaymak kalıcılığı artırır (Cepeda ve ark., 2006, meta-analiz). Kelime kartları bu yüzden aralıklı gelir.</p>'+
+   '<p style="margin:0 0 8px;"><b>Geri çağırma pratiği:</b> Önce hatırlamaya çalışmak, tekrar okumaktan daha kalıcıdır (Karpicke &amp; Roediger, 2008; Kang, Gollan &amp; Pashler, 2013).</p>'+
+   '<p style="margin:0 0 8px;"><b>Dört iplik:</b> İyi bir dil programı eşit ağırlıkta anlamlı girdi, anlamlı üretim, dil odaklı çalışma ve akıcılık içerir (Nation, 2007).</p>'+
+   '<p style="margin:0 0 8px;"><b>Bol okuma:</b> Seviyene uygun metinler okuma, kelime ve genel dil gelişimini destekler (Jeon &amp; Day, 2016, meta-analiz).</p>'+
+   '<p style="margin:0 0 8px;"><b>Shadowing:</b> Sesi eş zamanlı tekrarlamak telaffuz ve akıcılığı destekleyebilir (Oxford Academic’te yayımlanan 44 çalışmalık derleme).</p>'+
+   '<p style="margin:0;"><b>Sınav koşulu:</b> Format ve süre alışkanlığı için resmî sınav yapısı esas alınır (ÖSYM, IELTS, ETS).</p></div></div>';
+  h+='<div class="card"><p class="hint" style="text-align:left;margin:0;">Not: Dakika dağılımları bu araştırmalardan esinlenen tasarım tahminleridir; kesin bir reçete veya sonuç garantisi değildir. YDS bölüm dağılımı resmî kaynaktan tek tek doğrulanmadı. Planını değiştirmek için hedef/seviyeyi yeniden seçebilirsin.</p><div style="margin-top:10px;"><button type="button" class="btn sec sm" id="planRedo" style="margin:0;">Hedef ve seviyeyi yeniden seç</button></div></div>';
+  document.getElementById("planBody").innerHTML=h;
+  document.getElementById("planRedo").addEventListener("click",function(){
+    obState.level=st.level||null; obState.goals=(st.goals||[]).map(function(g){return /Sınav/i.test(g)?"Sınav":g;}); obState.exam=st.examType||""; obState.dailyMinutes=st.dailyMinutes||null; obState.focus=(st.focusSkills||[]).slice();
+    document.body.classList.add("onb-active"); obGo("obbasics");
+  });
+}
 function renderProfile(){
   var ed=daysBetween(examDate(),new Date());
   document.getElementById("profileSummary").textContent=
@@ -5193,9 +5281,9 @@ document.getElementById("onboardBackdrop").addEventListener("click",closeOnboard
 
 
 /* ==== ONBOARDING FLOW LOGIC (added) ==== */
-var obState={level:null,goals:[],dailyMinutes:null,focus:[],podcastPick:null,interest:""};
+var obState={exam:"",level:null,goals:[],dailyMinutes:null,focus:[],podcastPick:null,interest:""};
 var OB_LEVELS=[["A1","Başlangıç"],["A2","Temel"],["B1","Orta"],["B2","İleri"],["C1","İleri +"]];
-var OB_GOALS=["Günlük konuşma","YDS / Sınav","İş İngilizcesi","Akademik","Seyahat","Diğer"];
+var OB_GOALS=["Günlük konuşma","Sınav","İş İngilizcesi","Akademik","Seyahat","Diğer"];
 var OB_TIMES=[[10,"10 dakika"],[20,"20 dakika"],[30,"30 dakika"],[45,"45 dakika"],[60,"1 saat+"]];
 var OB_FOCUS=["Reading","Listening","Speaking","Grammar","Vocabulary","Writing"];
 
@@ -5208,7 +5296,7 @@ function obGo(id){
   if(id==="obgoals"){ obRenderGoals(); obRenderFocus(); }
   if(id==="obmeet") obRenderMeet();
   if(id==="obready") obRenderReady();
-  if(id==="obpod") obRenderPod();
+  if(id==="obpod"){ obRenderPod(); renderHowto(true); }
 }
 function obCheckIcon(){ return '<span class="ob-check"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'; }
 
@@ -5236,10 +5324,26 @@ function obRenderGoals(){
     btn.addEventListener("click",function(){
       var i=obState.goals.indexOf(g);
       if(i===-1) obState.goals.push(g); else obState.goals.splice(i,1);
-      obRenderGoals();
+      if(g==="Sınav"&&obState.goals.indexOf(g)===-1) obState.exam="";
+      obRenderGoals(); obRenderFocus();
     });
     wrap.appendChild(btn);
   });
+  obRenderExam();
+}
+function obRenderExam(){
+  var on=obState.goals.indexOf("Sınav")!==-1;
+  document.getElementById("obExamWrap").style.display=on?"block":"none";
+  var wrap=document.getElementById("obExamOpts"); wrap.innerHTML="";
+  if(!on) return;
+  EXAMS.forEach(function(e){
+    var btn=document.createElement("button"); btn.type="button";
+    btn.className="onb-opt"+(obState.exam===e?" sel":"");
+    btn.innerHTML='<span>'+e+'</span>'+obCheckIcon();
+    btn.addEventListener("click",function(){ obState.exam=e; obRenderExam(); obRenderFocus(); });
+    wrap.appendChild(btn);
+  });
+  document.getElementById("obExamNote").textContent=obState.exam==="YDS / YÖKDİL"?"YDS/YÖKDİL okuma, kelime, gramer ve çeviri ağırlıklıdır; dinleme, konuşma ve yazma sınavda ölçülmez. Plan buna göre kurulur.":(obState.exam?"Dört beceri de ölçülür; plan hepsini dengeli çalıştırır (süreli yazma ve dinleme dahil).":"");
 }
 function obRenderTime(){
   var wrap=document.getElementById("obTimeOpts"); wrap.innerHTML="";
@@ -5258,7 +5362,10 @@ function obRenderTime(){
 var OB_FOCUS_ICONS={Reading:"i-book-open",Listening:"i-headphones",Speaking:"i-mic",Grammar:"i-layers",Vocabulary:"i-cards",Writing:"i-edit"};
 function obRenderFocus(){
   var wrap=document.getElementById("obFocusOpts"); wrap.innerHTML="";
-  OB_FOCUS.forEach(function(f){
+  var ydsOnly=obState.goals.indexOf("Sınav")!==-1&&obState.exam==="YDS / YÖKDİL";
+  var list=ydsOnly?["Reading","Grammar","Vocabulary","Writing"]:OB_FOCUS;
+  if(ydsOnly) obState.focus=obState.focus.filter(function(f){return list.indexOf(f)!==-1;});
+  list.forEach(function(f){
     var sel=obState.focus.indexOf(f)!==-1;
     var btn=document.createElement("button"); btn.type="button";
     btn.className="onb-opt multi"+(sel?" sel":"");
@@ -5424,7 +5531,7 @@ function obUpdateBasics(){ document.getElementById("obBasicsNext").disabled=!(ob
 document.getElementById("obLevelOpts").addEventListener("click",function(){ setTimeout(obUpdateBasics,0); });
 document.getElementById("obTimeOpts").addEventListener("click",function(){ setTimeout(obUpdateBasics,0); });
 document.getElementById("obBasicsNext").addEventListener("click",function(){ obGo("obgoals"); });
-document.getElementById("obGoalsDone").addEventListener("click",function(){ obGo("obmeet"); });
+document.getElementById("obGoalsDone").addEventListener("click",function(){ if(obState.goals.indexOf("Sınav")!==-1&&!obState.exam) obState.exam="YDS / YÖKDİL"; obGo("obpod"); });
 document.getElementById("obLevelNext").addEventListener("click",function(){ obGo("obgoals"); });
 document.getElementById("obGoalsNext").addEventListener("click",function(){ obGo("obmeet"); });
 document.getElementById("obTimeNext").addEventListener("click",function(){ obGo("obgoals"); });
@@ -5437,11 +5544,14 @@ document.getElementById("obPodNext").addEventListener("click",function(){
   save();
   obGo("obmeet");
 });
+document.getElementById("obPodSkip").addEventListener("click",function(){ obGo("obmeet"); });
 document.getElementById("obFinishBtn").addEventListener("click",function(){
   S.settings.level=obState.level;
   S.settings.goals=obState.goals;
   S.settings.dailyMinutes=obState.dailyMinutes;
   S.settings.focusSkills=obState.focus;
+  S.settings.examType=obState.goals.indexOf("Sınav")!==-1?(obState.exam||"YDS / YÖKDİL"):"";
+  S.checks={}; STEPS=buildPlan();
   S.settings.userInterest=obState.interest;
   if(obState.podcastPick){
     S.listening=S.listening||{podcasts:[]}; S.listening.podcasts=S.listening.podcasts||[];
