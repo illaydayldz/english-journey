@@ -1232,6 +1232,30 @@
   .jr-sheet.open{ transform:translateY(0); }
   #jrBackdrop{ z-index:65; }
   @media (min-width:900px){ .jr-sheet{ left:216px; } }
+
+  /* v42: görev ekranı */
+  .su-hero{ border-radius:26px; padding:18px; margin-bottom:14px; color:#fff; background:radial-gradient(120% 70% at 50% 0%,rgba(255,255,255,.18),transparent 60%),linear-gradient(160deg,var(--b1),var(--b2)); box-shadow:inset 0 1px 0 rgba(255,255,255,.26), 0 22px 34px -22px rgba(90,79,207,.9); }
+  .su-top{ display:flex; gap:8px; }
+  .su-chip{ font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:99px; background:rgba(255,255,255,.18); } .su-chip.gold{ background:linear-gradient(180deg,#FFE9A6,#F2B94B); color:#2A1F5C; margin-left:auto; }
+  .su-title{ display:flex; align-items:center; gap:10px; margin:14px 0 12px; font-family:var(--font-display); font-weight:800; font-size:23px; line-height:1.2; }
+  .su-ic{ width:42px; height:42px; border-radius:14px; background:rgba(255,255,255,.92); color:#5B49D6; display:flex; align-items:center; justify-content:center; flex-shrink:0; } .su-ic svg{ width:24px; height:24px; }
+  .su-scn{ display:flex; gap:12px; align-items:center; background:rgba(25,16,80,.3); border-radius:18px; padding:12px; }
+  .su-scn img{ width:54px; height:54px; object-fit:contain; flex-shrink:0; } .su-scn p{ margin:0; font-size:13px; line-height:1.5; opacity:.95; }
+  .su-prog{ margin-top:10px; font-size:12px; font-weight:700; opacity:.8; }
+  .su-card{ background:var(--card); border-radius:22px; padding:16px; margin-bottom:12px; box-shadow:0 14px 26px -18px rgba(0,0,0,.7); }
+  .su-sh{ display:flex; align-items:center; gap:12px; margin-bottom:12px; } .su-sh b{ display:block; font-size:15px; color:var(--ink); } .su-sh small{ color:var(--ink-soft); font-size:12px; line-height:1.4; }
+  .su-n{ width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#fff; background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); box-shadow:0 3px 0 rgba(40,30,120,.5); }
+  .su-phrase{ display:flex; align-items:center; gap:8px; padding:11px 12px; border-radius:16px; background:var(--tint); margin-top:8px; }
+  .su-ptx{ flex:1; min-width:0; } .su-en{ font-weight:800; font-size:15px; color:var(--ink); line-height:1.35; } .su-tr{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .su-pb{ width:40px; height:40px; border-radius:50%; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; background:linear-gradient(160deg,#A99CFF,#6B5BE6 60%,#4C3FC4); box-shadow:0 4px 0 rgba(40,30,120,.5); } .su-pb:active{ transform:translateY(3px); box-shadow:0 1px 0 rgba(40,30,120,.5); }
+  .su-pb.alt{ color:#2A1F5C; background:linear-gradient(180deg,#FFE9A6,#F2B94B); box-shadow:0 4px 0 #B07E1C; } .su-pb .icon{ width:19px; height:19px; }
+  .su-how{ font-size:12.5px; color:var(--ink-2); line-height:1.55; margin:0 0 12px; }
+  .su-times{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .su-time{ border:none; cursor:pointer; font-family:inherit; border-radius:18px; padding:12px 4px; background:var(--tint); color:var(--ink); display:flex; flex-direction:column; align-items:center; gap:2px; box-shadow:0 4px 0 rgba(0,0,0,.2); }
+  .su-time b{ font-family:var(--font-display); font-size:26px; } .su-time span{ font-size:11px; color:var(--ink-soft); } .su-time:active{ transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.2); }
+  .su-bar{ position:sticky; bottom:calc(96px + env(safe-area-inset-bottom)); z-index:5; margin-top:12px; }
+  .su-bar .btn{ box-shadow:0 14px 24px -8px rgba(0,0,0,.6); }
+  #speakUnitCard .convo-partner{ padding:6px 0 10px; }
 </style>
 </head>
 <body>
@@ -2059,7 +2083,7 @@
       <button class="back" onclick="go('speaking')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Görev</h1>
     </div>
-    <div class="card" id="speakUnitCard">
+    <div id="speakUnitCard">
       <div id="speakCurrent"></div>
     </div>
   </section>
@@ -4789,45 +4813,58 @@ function renderSpeaking(){
   var sel=S.speaking.selected||speakFrontier();
   var level=SPEAK_LEVELS[sel.li], unit=level.units[sel.ui];
   var done=!!S.speaking.completed[unitKey(sel.li,sel.ui)];
-  var phrasesHtml=unit.phrases.map(function(p){ return '<span class="phrase-chip">'+esc(p[0])+'</span>'; }).join("");
+  var stg=SPEAK_STAGE[level.cefr]||SPEAK_STAGE.B1;
+  var icoK=(MP_UNIT_ICON[level.cefr]||MP_UNIT_ICON.B1)[sel.ui%5];
+  var phrasesHtml=unit.phrases.map(function(p,i){
+    return '<div class="su-phrase"><div class="su-ptx"><div class="su-en">'+esc(p[0])+'</div><div class="su-tr">'+esc(p[1])+'</div></div>'+
+      '<button type="button" class="su-pb" data-say="'+i+'" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
+      '<button type="button" class="su-pb alt" data-try="'+i+'" aria-label="Söyle"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button></div>';
+  }).join("");
   document.getElementById("speakCurrent").innerHTML=
-    '<div class="row" style="align-items:center;margin-bottom:10px;">'+
-      '<span class="cefr-badge lg">'+level.cefr+'</span>'+
-      '<span class="mut" style="margin-left:8px;">'+esc(level.name)+' · Ünite '+(sel.ui+1)+'/'+level.units.length+'</span>'+
+    '<div class="su-hero" style="--b1:'+stg.c[0]+';--b2:'+stg.c[1]+';">'+
+      '<div class="su-top"><span class="su-chip">'+level.cefr+' · Durak '+(sel.li+1)+'</span><span class="su-chip gold">+50 XP</span></div>'+
+      '<div class="su-title"><span class="su-ic">'+mpIcon(icoK)+'</span>'+esc(unit.name)+'</div>'+
+      '<div class="su-scn"><img src="assets/mascot/'+stg.pose+'" alt=""><p>'+esc(unit.scenario)+'</p></div>'+
+      '<div class="su-prog">Görev '+(sel.ui+1)+'/'+level.units.length+(done?' · Tamamlandı':'')+'</div>'+
     '</div>'+
-    '<div style="font-family:var(--font-display);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:6px;">'+esc(unit.name)+'</div>'+
-    '<p class="mut" style="margin-bottom:10px;">'+esc(unit.scenario)+'</p>'+
-    '<div style="margin-bottom:10px;">'+phrasesHtml+'</div>'+
-    '<div class="hint" style="text-align:left;margin-bottom:10px;"><b>4/3/2 konuşma konun:</b> '+esc(unit.topic)+' — bu konuyu önce 4, sonra 3, sonra 2 dakikada anlatmayı dene, her turda daha akıcı olacaksın.</div>'+
-    '<div style="margin-bottom:14px;">'+
-      '<div class="row" style="gap:8px;margin-bottom:8px;">'+
-        '<button type="button" class="btn sec" data-min="4" style="flex:1;margin-top:0;">4 dk</button>'+
-        '<button type="button" class="btn sec" data-min="3" style="flex:1;margin-top:0;">3 dk</button>'+
-        '<button type="button" class="btn sec" data-min="2" style="flex:1;margin-top:0;">2 dk</button>'+
+    '<div class="su-card"><div class="su-sh"><span class="su-n">1</span><div><b>Kalıpları öğren</b><small>Dinle, sonra sesli söyle</small></div></div>'+phrasesHtml+'</div>'+
+    '<div class="su-card"><div class="su-sh"><span class="su-n">2</span><div><b>Moonie ile konuş</b><small>Senaryoyu birlikte canlandırın · +30 XP</small></div></div>'+
+      '<div class="convo-partner" id="speakConvoIntro">'+
+        '<div class="cp-avatar"><span class="cp-pulse" aria-hidden="true"></span><div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div></div>'+
+        '<span class="cp-sub">Başlamak için aşağıdaki butona dokun</span>'+
       '</div>'+
-      '<div id="timer432Display" style="display:none;text-align:center;font-family:var(--font-display);font-size:34px;font-weight:800;color:var(--purple-deep);padding:6px 0;"></div>'+
+      '<div class="convo-log" id="speakConvoLog" style="display:none;"></div>'+
+      '<button type="button" class="btn gold" id="speakConvoStart" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Sohbeti başlat</button>'+
+      '<div id="speakConvoControls" style="display:none;text-align:center;">'+
+        '<button type="button" class="mic-btn" id="speakConvoTalk" aria-label="Konuş"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button>'+
+        '<p class="hint" id="speakConvoTimer" style="margin-top:8px;">Konuşmak için dokun</p>'+
+        '<button type="button" class="btn sec sm" id="speakConvoEnd" style="margin-top:6px;">Sohbeti bitir</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="su-card"><div class="su-sh"><span class="su-n">3</span><div><b>Akıcılık turu (4/3/2)</b><small>Konu: '+esc(unit.topic)+'</small></div></div>'+
+      '<p class="su-how">Aynı konuyu önce 4, sonra 3, sonra 2 dakikada anlat. Süre kısaldıkça akıcılığın artar. · +20 XP</p>'+
+      '<div class="su-times">'+
+        '<button type="button" class="su-time" data-min="4"><b>4</b><span>dakika</span></button>'+
+        '<button type="button" class="su-time" data-min="3"><b>3</b><span>dakika</span></button>'+
+        '<button type="button" class="su-time" data-min="2"><b>2</b><span>dakika</span></button>'+
+      '</div>'+
+      '<div id="timer432Display" style="display:none;text-align:center;font-family:var(--font-display);font-size:38px;font-weight:800;color:var(--ink);padding:10px 0 2px;"></div>'+
       '<button type="button" class="btn sec" id="timer432Stop" style="display:none;">Durdur</button>'+
     '</div>'+
-    '<div class="convo-partner" id="speakConvoIntro">'+
-      '<div class="cp-avatar"><span class="cp-pulse" aria-hidden="true"></span><div class="mchip"><img src="assets/mascot/pose-happy2.png" alt=""></div></div>'+
-      '<span>Moonie ile sesli sohbet — bu senaryoyu birlikte canlandırın</span>'+
-      '<span class="cp-sub">Başlamak için aşağıdaki butona dokun</span>'+
-    '</div>'+
-    '<div class="convo-log" id="speakConvoLog" style="display:none;"></div>'+
-    '<button type="button" class="btn gold" id="speakConvoStart" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Sohbeti Başlat</button>'+
-    '<div id="speakConvoControls" style="display:none;text-align:center;">'+
-      '<button type="button" class="mic-btn" id="speakConvoTalk" aria-label="Konuş"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button>'+
-      '<p class="hint" id="speakConvoTimer" style="margin-top:8px;">Konuşmak için dokun</p>'+
-      '<button type="button" class="btn sec sm" id="speakConvoEnd" style="margin-top:6px;">Sohbeti Bitir</button>'+
-    '</div>'+
     '<details class="note-details" id="speakNoteDetails"'+(S.speaking.notes[unitKey(sel.li,sel.ui)]?" open":"")+'>'+
-      '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Bu üniteyle ilgili notların</summary>'+
-      '<textarea class="f note-ta" id="speakNoteTa" rows="3" placeholder="Aklında kalanları, zorlandığın noktaları buraya yaz..."></textarea>'+
-      '<button type="button" class="btn sec sm note-save" id="speakNoteSave">Notu Kaydet</button>'+
+      '<summary><svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"></use></svg>Notlarım</summary>'+
+      '<textarea class="f note-ta" id="speakNoteTa" rows="3" placeholder="Aklında kalanları, zorlandığın noktaları yaz..."></textarea>'+
+      '<button type="button" class="btn sec sm note-save" id="speakNoteSave">Notu kaydet</button>'+
     '</details>'+
-    (done
-      ? '<div class="donewrap" style="margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu üniteyi tamamladın</span></div>'
-      : '<button class="btn sec" id="speakCompleteBtn" style="margin-top:10px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu üniteyi tamamladım</button>');
+    '<div class="su-bar">'+(done
+      ? '<div class="donewrap"><div class="mchip sm"><img src="assets/mascot/pose-goodjob.png" alt=""></div><span>Bu görevi tamamladın</span></div>'
+      : '<button class="btn" id="speakCompleteBtn"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Görevi tamamla · +50 XP</button>')+'</div>';
+  document.querySelectorAll("#speakCurrent [data-say]").forEach(function(bt){ bt.addEventListener("click",function(){ speakEnglish(unit.phrases[parseInt(bt.dataset.say,10)][0],.9); }); });
+  document.querySelectorAll("#speakCurrent [data-try]").forEach(function(bt){ bt.addEventListener("click",function(){
+    var ph=unit.phrases[parseInt(bt.dataset.try,10)][0].replace(/…/g,"").replace(/\s*\/\s*.*$/,"").trim();
+    pronText.value=ph; syncTarget(); go("speaking");
+    var pc=document.querySelector("#v-speaking .pron"); if(pc) pc.scrollIntoView({behavior:"smooth",block:"start"});
+  }); });
   wireSpeakConvo(level,unit,sel);
   document.getElementById("speakConvoEnd").addEventListener("click",function(){ var lg=document.getElementById("speakConvoLog"); if(lg&&lg.children.length>0) awardXp(30,"convo"); });
   document.getElementById("speakNoteTa").value=S.speaking.notes[unitKey(sel.li,sel.ui)]||"";
