@@ -1533,7 +1533,7 @@
         <div class="phase"><span class="chip-num">2</span><div class="ph-body"><div class="h">Kelime — 10 dk <span class="tag">Aralıklı tekrar</span></div><div class="d">Kartları çalış (Kelime), yeni 5-7 kelime ekle.</div></div></div>
         <div class="phase"><span class="chip-num">3</span><div class="ph-body"><div class="h">Grammar — 10 dk <span class="tag">Dil odaklı</span></div><div class="d">Günün tek kuralı + örnek + mini alıştırma.</div></div></div>
         <div class="phase"><span class="chip-num">4</span><div class="ph-body"><div class="h">Okuma/Dinleme — 15 dk <span class="tag">Anlaşılır girdi</span></div><div class="d">Okuma'ya bir paragraf ekle + podcast/dizi.</div></div></div>
-        <div class="phase"><span class="chip-num">5</span><div class="ph-body"><div class="h">Üretim — 12 dk <span class="tag">Çıktı</span></div><div class="d">Claude'a anlat ya da 3-4 cümle yaz.</div></div></div>
+        <div class="phase"><span class="chip-num">5</span><div class="ph-body"><div class="h">Üretim — 12 dk <span class="tag">Çıktı</span></div><div class="d">Moonie'ye anlat ya da 3-4 cümle yaz.</div></div></div>
         <div class="phase"><span class="chip-num">6</span><div class="ph-body"><div class="h">Telaffuz — 8 dk <span class="tag">Shadowing</span></div><div class="d">Klibi gölge gibi tekrar et (Konuşma'da pratik yap).</div></div></div>
       </details>
     </div>
@@ -2095,7 +2095,7 @@
       <button class="back" onclick="go('profile')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Notlarım</h1>
     </div>
-    <p class="hint" style="margin:0 2px 14px;text-align:left;">Konuşma, Grammar Path, Okuma, Yazma ve Dinleme'de kaydettiğin Claude geri bildirimlerinin ve notlarının tümü burada.</p>
+    <p class="hint" style="margin:0 2px 14px;text-align:left;">Konuşma, Grammar Path, Okuma, Yazma ve Dinleme'de kaydettiğin Moonie (Gemini) geri bildirimlerinin ve notlarının tümü burada.</p>
     <div id="notesList"></div>
   </section>
 
@@ -2282,16 +2282,9 @@
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
     
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Claude Projesi</h2>
-      <p class="mut" style="margin-bottom:10px;">"Claude'u Aç" butonlarının hep <b>aynı sohbete devam etmesini</b> istiyorsan: projenin içinde bir sohbet başlat, o sohbetin linkini (adres çubuğundaki claude.ai/chat/... adresi — proje ana sayfası değil) buraya yapıştır.</p>
-      <input class="f" id="claudeProjectUrlInput" placeholder="https://claude.ai/chat/... (proje içindeki sohbetin linki)">
-      <button class="btn sec" id="claudeProjectUrlSave">Kaydet</button>
-      <p class="hint">Boş bırakırsan buton her seferinde boş bir yeni sohbet açar. Proje ana sayfa linkini yapıştırırsan her seferinde o proje altında yeni bir sohbet açılır. Belirli bir sohbetin linkini yapıştırırsan hep o sohbete, geçmişiyle birlikte, devam edersin.</p>
-    </div>
-    <div class="card">
+        <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>Gemini API Anahtarı</h2>
-      <p class="mut" style="margin-bottom:10px;">Konuşma'daki "Detaylı Telaffuz Analizi" için — sesini gerçekten dinleyip fonem/vurgu seviyesinde geri bildirim verir (şu anki hızlı puanlama sadece kelime eşleşmesine bakıyor). <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--purple-deep);font-weight:700;">Google AI Studio'dan</a> ücretsiz al.</p>
+      <p class="mut" style="margin-bottom:10px;">Moonie'nin tüm geri bildirimleri Gemini ile çalışır: telaffuz analizi, yazı düzeltme, sesli sohbet ve anlama testleri. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio'dan</a> ücretsiz alabilirsin.</p>
       <button type="button" class="btn sec" onclick="openHowto('gemini')" style="margin-bottom:8px;">Nasıl alınır? (adım adım)</button>
       <input class="f" id="geminiApiKeyInput" type="password" placeholder="Gemini API Key">
       <button class="btn sec" id="geminiApiKeySave">Kaydet</button>
@@ -4235,7 +4228,7 @@ function grammarFrontier(){
   return {li:last,ui:GRAMMAR_LEVELS[last].units.length-1};
 }
 
-/* ---------- YAZMA (writing prompts + Claude düzeltme geri bildirimi —
+/* ---------- YAZMA (writing prompts + Gemini düzeltme geri bildirimi —
    "focused" değil "unfocused" ama önceliklendirilmiş geri bildirim: araştırmalar
    makale/edat/zaman hatalarında unfocused corrective feedback'in gerçekten işe
    yaradığını gösteriyor, tam da Türkçe konuşanların en çok zorlandığı noktalar) ---------- */
@@ -4917,7 +4910,7 @@ function renderGrammar(){
     '<div id="grammarScore" style="display:none;"></div>'+
     '<button type="button" class="btn" id="grammarCheckBtn" style="margin-top:6px;">Cevapları kontrol et</button></div>'+
     '<div class="gr-panel" data-gp="notes"><div class="paper-card">'+
-      '<textarea class="f note-ta" id="grammarNoteTa" rows="6" placeholder="Bu konuyla ilgili notların, Claude/Moonie geri bildirimleri..."></textarea>'+
+      '<textarea class="f note-ta" id="grammarNoteTa" rows="6" placeholder="Bu konuyla ilgili notların ve Moonie geri bildirimleri..."></textarea>'+
       '<button type="button" class="btn sec sm note-save" id="grammarNoteSave">Notu kaydet</button>'+
     '</div></div>'+
     (done
@@ -5187,7 +5180,7 @@ var TASK_POOL=[
   {cat:"Kelime",ic:"i-cards",text:"Kelime'ye en az 5 yeni kelime ekle"},
   {cat:"Kelime",ic:"i-cards",text:"Bugün çalışılacak tüm kartları bitir"},
   {cat:"Konuşma",ic:"i-mic",text:"Bugünkü konuşma ünitesini tamamla"},
-  {cat:"Konuşma",ic:"i-mic",text:"Claude'un sesli moduyla en az 5 dakika konuş"},
+  {cat:"Konuşma",ic:"i-mic",text:"Moonie ile sesli sohbette en az 5 dakika konuş"},
   {cat:"Konuşma",ic:"i-mic",text:"Telaffuz pratiğinde 3 cümle dene"},
   {cat:"Yazma",ic:"i-edit",text:"Günlüğe bugünün özetini İngilizce yazmayı dene"},
   {cat:"Yazma",ic:"i-edit",text:"Yazma'da bugünün konusu hakkında birkaç cümle yaz"},
@@ -5662,7 +5655,6 @@ function renderSettings(){
   })();
   document.getElementById("spotifyClientIdInput").value=S.settings.spotifyClientId||"";
   document.getElementById("spotifyRedirectUriDisplay").value=SPOTIFY_REDIRECT_URI;
-  document.getElementById("claudeProjectUrlInput").value=S.settings.claudeProjectUrl||"";
   document.getElementById("geminiApiKeyInput").value=S.settings.geminiApiKey||"";
 }
 document.getElementById("geminiApiKeySave").addEventListener("click",function(){
@@ -5714,10 +5706,7 @@ document.getElementById("spotifyClientIdSave").addEventListener("click",function
   S.settings.spotifyClientId=document.getElementById("spotifyClientIdInput").value.trim();
   save(); alert("Spotify Client ID kaydedildi.");
 });
-document.getElementById("claudeProjectUrlSave").addEventListener("click",function(){
-  S.settings.claudeProjectUrl=document.getElementById("claudeProjectUrlInput").value.trim();
-  save(); alert("Claude Project linki kaydedildi.");
-});
+
 
 /* ---------- EXPORT / IMPORT ---------- */
 document.getElementById("exportBtn").addEventListener("click",function(){
