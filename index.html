@@ -865,6 +865,36 @@
   .onb-skill .onb-icon-chip{ width:64px; height:64px; border-radius:20px; background-image:linear-gradient(160deg,rgba(255,255,255,.18),rgba(255,255,255,.02)); box-shadow:0 5px 0 rgba(0,0,0,.3), 0 14px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.2); }
   .onb-skill .onb-icon-chip .icon{ width:28px; height:28px; }
   .onb-skill-t{ font-size:12px; font-weight:700; color:var(--ink-2); }
+
+  /* ----- dinleme (v24) ----- */
+  .lis-hero{ position:relative; overflow:hidden; border-radius:28px; padding:22px; margin-bottom:16px; min-height:210px; color:#fff; background:linear-gradient(150deg,#1F1A5E 0%,#4B3FB8 55%,#7B6CF6 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 26px 40px -22px rgba(90,79,207,.9); }
+  .lis-wave{ position:absolute; left:0; right:0; bottom:0; height:90px; display:flex; align-items:flex-end; justify-content:space-between; gap:5px; padding:0 18px; opacity:.35; }
+  .lis-wave i{ flex:1; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#FFE9A6,rgba(255,233,166,.1)); height:calc(var(--h)*100%); transform-origin:bottom; animation:liswave 1.6s ease-in-out infinite; animation-delay:calc(var(--d)*1s); }
+  @keyframes liswave{ 0%,100%{ transform:scaleY(.45); } 50%{ transform:scaleY(1); } }
+  .lis-hero-body{ position:relative; max-width:64%; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+  .lis-eyebrow{ font-size:11.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; opacity:.8; }
+  .lis-title{ font-family:var(--font-display); font-size:23px; font-weight:800; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,.3); }
+  .lis-conn{ display:flex; align-items:center; gap:7px; font-size:12.5px; opacity:.92; }
+  .lis-dot{ width:8px; height:8px; border-radius:50%; background:#FFE9A6; box-shadow:0 0 8px #FFE9A6; flex-shrink:0; }
+  .lis-btn{ border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:13.5px; color:#2A1F5C; padding:10px 18px; border-radius:14px; background:linear-gradient(180deg,#FFE9A6,#F2B94B); box-shadow:0 4px 0 #B07E1C, 0 10px 16px -6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6); }
+  .lis-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #B07E1C; }
+  .lis-moon{ position:absolute; right:-4px; top:14px; width:36%; max-width:140px; height:auto; filter:drop-shadow(0 12px 14px rgba(0,0,0,.4)); }
+  .lis-sec{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:14px; color:var(--ink); margin-bottom:10px; }
+  .lis-sec .icon{ color:var(--purple); }
+  .lis-sec-h{ margin:6px 4px 10px; } .lis-sec-h h2{ font-family:var(--font-display); font-size:17px; font-weight:800; color:var(--ink); }
+  .lis-search{ margin-bottom:20px; }
+  .lis-search .searchbar{ border-radius:16px; box-shadow:inset 0 2px 4px rgba(0,0,0,.25), 0 1px 0 rgba(255,255,255,.05); }
+  .podrow{ background:var(--card); border:none; border-radius:18px; padding:10px 12px; margin-top:10px; box-shadow:0 12px 22px -14px rgba(0,0,0,.6); }
+  .podrow .pod-art{ width:56px; height:56px; border-radius:14px; box-shadow:0 8px 12px -6px rgba(0,0,0,.6); }
+  .podrow .pod-type{ color:var(--purple-deep); background:var(--tint-strong); }
+  .podrow .pod-play{ background:linear-gradient(160deg,#A99CFF,var(--purple) 55%,#4C3FC4); box-shadow:0 4px 0 rgba(40,30,120,.5), 0 8px 12px -4px rgba(90,79,207,.6), inset 0 1px 0 rgba(255,255,255,.35); }
+  .podrow .pod-add{ box-shadow:0 3px 0 rgba(0,0,0,.25); }
+  .pod-cover{ overflow:hidden; }
+  .pod-eq{ display:flex; align-items:flex-end; gap:3px; height:26px; }
+  .pod-eq i{ width:4px; border-radius:3px; background:rgba(255,255,255,.85); animation:liswave 1.3s ease-in-out infinite; height:100%; transform-origin:bottom; }
+  .pod-eq i:nth-child(2){ animation-delay:.2s; height:70%; } .pod-eq i:nth-child(3){ animation-delay:.4s; height:90%; } .pod-eq i:nth-child(4){ animation-delay:.1s; height:55%; }
+  .lis-player.card{ background-image:linear-gradient(180deg,rgba(139,127,255,.14),rgba(139,127,255,.04)); }
+  .lis-player .player-frame{ margin-top:0; }
 </style>
 </head>
 <body>
@@ -1503,40 +1533,46 @@
       <button class="back" onclick="go('learn')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Dinleme</h1>
     </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Spotify bağlantısı</h2>
-      <p class="mut" id="spotifyStatus" style="margin-bottom:12px;">Henüz bağlı değil.</p>
-      <button class="btn" id="spotifyConnectBtn">Spotify'a bağlan</button>
-      <p class="hint">Gerçek çalma için Spotify Premium hesabı ve Profil'de kayıtlı bir Client ID gerekir.</p>
+
+    <div class="lis-hero">
+      <div class="lis-wave" aria-hidden="true"><i style="--d:0;--h:0.5"></i><i style="--d:0.15;--h:0.9"></i><i style="--d:0.3;--h:0.6"></i><i style="--d:0.1;--h:1"></i><i style="--d:0.25;--h:0.7"></i><i style="--d:0.05;--h:0.55"></i><i style="--d:0.35;--h:0.95"></i><i style="--d:0.2;--h:0.65"></i><i style="--d:0.4;--h:0.8"></i><i style="--d:0.12;--h:0.5"></i><i style="--d:0.28;--h:0.85"></i><i style="--d:0.18;--h:0.6"></i></div>
+      <div class="lis-hero-body">
+        <div class="lis-eyebrow">Podcast &amp; Dizi</div>
+        <div class="lis-title">Kulağını İngilizceye alıştır</div>
+        <div class="lis-conn"><span class="lis-dot"></span><span id="spotifyStatus">Henüz bağlı değil.</span></div>
+        <button class="lis-btn" id="spotifyConnectBtn">Spotify'a bağlan</button>
+      </div>
+      <img class="lis-moon" src="assets/mascot/pose-listening.png" alt="Moonie">
     </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Çalar</h2>
+
+    <div class="lis-player card">
+      <div class="lis-sec"><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Şimdi çalıyor</div>
       <div id="spotifyNowPlaying" class="spotify-empty">
-        <div class="mchip"><img src="assets/mascot/pose-listening.png" alt=""></div>
         <p>Aşağıdan bir sonuca dokun, çalar burada açılsın.</p>
       </div>
       <div id="spotifyPlayerContainer" class="player-frame" style="display:none;"></div>
-      <p class="hint">Tam parça/bölüm dinlemek için widget içinden Spotify hesabınla (Premium) giriş yapman gerekebilir.</p>
+      <p class="hint">Tam bölüm için Spotify Premium ve Profil'de kayıtlı Client ID gerekir.</p>
     </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg>Podcastlerim <span class="mut" id="podcastCount"></span></h2>
-      <p class="mut" style="margin-bottom:10px;">Dinlediğin bölümleri transkriptiyle ekle — her birinin kendi notu olur, çalarken transkriptte kaldığın yeri takip eder.</p>
-      <div id="podcastList"></div>
-      <button type="button" class="btn sec" id="podcastAddToggle" style="margin-top:10px;">+ Yeni Podcast Ekle</button>
-      <div id="podcastAddForm" style="display:none;margin-top:12px;">
-        <input class="f" id="podcastTitleInput" placeholder="Podcast/bölüm adı">
-        <input class="f" id="podcastUriInput" placeholder="Spotify linki (opsiyonel, ör. open.spotify.com/episode/...)">
-        <textarea class="f" id="podcastTranscriptInput" rows="6" placeholder="Transkripti buraya yapıştır (istersen sonra da eklenebilir)..."></textarea>
-        <button type="button" class="btn" id="podcastSaveBtn">Kaydet</button>
-      </div>
-    </div>
-    <div class="card">
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Podcast ara</h2>
+
+    <div class="lis-sec-h"><h2>Podcast ara</h2></div>
+    <div class="lis-search">
       <div class="searchbar">
         <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
         <input id="spotifySearchInput" placeholder="ör. English learning podcast">
       </div>
       <div id="spotifyPodcastList" class="spotify-empty">Aramak için yaz ve Enter'a bas.</div>
+    </div>
+
+    <div class="shelf-section">
+      <div class="shelf-head"><h2>Podcastlerim</h2><span class="mut" id="podcastCount"></span></div>
+      <div class="shelf" id="podcastList"></div>
+      <div id="podcastAddForm" class="card" style="display:none;margin-top:6px;">
+        <input class="f" id="podcastTitleInput" placeholder="Podcast/bölüm adı">
+        <input class="f" id="podcastUriInput" placeholder="Spotify linki (opsiyonel, ör. open.spotify.com/episode/...)">
+        <textarea class="f" id="podcastTranscriptInput" rows="6" placeholder="Transkripti buraya yapıştır (istersen sonra da eklenebilir)..."></textarea>
+        <button type="button" class="btn" id="podcastSaveBtn">Kaydet</button>
+      </div>
+      <button type="button" id="podcastAddToggle" style="display:none;"></button>
     </div>
   </section>
 
@@ -2004,7 +2040,7 @@ var PHRASES=[
   "Thank you for your patience, I really appreciate it."
 ];
 
-function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};} }
+function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){ try{ localStorage.setItem(KEY+"-bad",localStorage.getItem(KEY)); }catch(_){} return {}; } }
 function save(){ localStorage.setItem(KEY,JSON.stringify(S)); }
 var S=load();
 S.streak=S.streak||0; S.totalDays=S.totalDays||0; S.checks=S.checks||{};
@@ -3019,20 +3055,19 @@ function renderPodcastList(){
   var wrap=document.getElementById("podcastList");
   var pods=S.listening.podcasts||[];
   document.getElementById("podcastCount").textContent=pods.length?("· "+pods.length):"";
-  if(!pods.length){
-    wrap.innerHTML='<div class="empty-state"><svg class="ic" aria-hidden="true"><use href="#i-headphones"></use></svg><div class="t">Henüz podcast eklemedin</div><div class="d">Dinlediğin bir bölümü transkriptiyle ekle, kendi notunu tut.</div></div>';
-    return;
-  }
   wrap.innerHTML="";
-  pods.slice().reverse().forEach(function(p){
+  pods.slice().reverse().forEach(function(p,i){
     var hasTranscript=(p.transcript||"").trim().length>0;
-    var row=document.createElement("button"); row.type="button"; row.className="unit-row";
-    row.innerHTML='<span class="u-stat" style="color:var(--blue);border-color:var(--blue-tint);"><svg class="icon" aria-hidden="true"><use href="#i-headphones"></use></svg></span>'+
-      '<span class="u-name">'+esc(p.title)+(hasTranscript?"":' <span class="mut" style="font-weight:600;">· transkript yok</span>')+'</span>'+
-      '<svg class="icon u-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg>';
-    row.addEventListener("click",function(){ S.listening.selectedId=p.id; save(); go("podcastdetail"); });
-    wrap.appendChild(row);
+    var c=BOOK_COLORS[(i+2)%BOOK_COLORS.length];
+    var b=document.createElement("button"); b.type="button"; b.className="book-btn";
+    b.innerHTML='<span class="book pod-cover" style="--b1:'+c[0]+';--b2:'+c[1]+';"><span class="pod-eq"><i></i><i></i><i></i><i></i></span><span class="book-title" style="font-family:var(--font-display);font-size:13.5px;">'+esc(p.title)+'</span><span class="book-sub">'+(hasTranscript?"Transkript var":"Transkript yok")+'</span></span>';
+    b.addEventListener("click",function(){ S.listening.selectedId=p.id; save(); go("podcastdetail"); });
+    wrap.appendChild(b);
   });
+  var add=document.createElement("button"); add.type="button"; add.className="book-btn book-add";
+  add.innerHTML='<span class="book"><span class="book-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span><span class="book-sub" style="margin-top:6px;">Podcast Ekle</span></span>';
+  add.addEventListener("click",function(){ var f=document.getElementById("podcastAddForm"); f.style.display=f.style.display==="none"?"block":"none"; });
+  wrap.appendChild(add);
 }
 document.getElementById("podcastAddToggle").addEventListener("click",function(){
   var form=document.getElementById("podcastAddForm");
@@ -5281,8 +5316,11 @@ if("serviceWorker" in navigator){
 }
 window.go=go;
 
+/* kalıcı depolama iste: tarayıcı kayıtları (giriş dahil) kendiliğinden silmesin */
+try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 /* new onboarding gate */
-if(S.settings.onboardDone){
+if(S.settings.onboardDone||S.settings.userEmail){
+  S.settings.onboardDone=true; save();
   document.body.classList.remove("onb-active");
   document.getElementById("v-splash").classList.remove("active");
   document.getElementById("v-today").classList.add("active");
