@@ -971,13 +971,13 @@
   .pg-chip{ font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:99px; background:rgba(255,255,255,.16); backdrop-filter:blur(4px); }
   .pg-moon{ position:absolute; right:-2px; bottom:-6px; width:34%; max-width:130px; height:auto; filter:drop-shadow(0 12px 14px rgba(0,0,0,.4)); animation:pgbob 4.2s ease-in-out infinite; }
   @keyframes pgbob{ 0%,100%{ transform:translateY(0) rotate(-1deg); } 50%{ transform:translateY(-7px) rotate(1.5deg); } }
-  .view.active > .card, .view.active > .hubgrid > .hubcard{ animation:cardin .45s cubic-bezier(.2,.8,.2,1) both; }
-  .view.active > .card:nth-of-type(2){ animation-delay:.05s; } .view.active > .card:nth-of-type(3){ animation-delay:.1s; } .view.active > .card:nth-of-type(4){ animation-delay:.15s; }
+  .view.active > .card:not(.plan-sheet), .view.active > .hubgrid > .hubcard{ animation:cardin .45s cubic-bezier(.2,.8,.2,1) both; }
+  
   @keyframes cardin{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
   #v-learn .hubcard:nth-child(2){ animation-delay:.06s; } #v-learn .hubcard:nth-child(3){ animation-delay:.12s; } #v-learn .hubcard:nth-child(4){ animation-delay:.18s; } #v-learn .hubcard:nth-child(5){ animation-delay:.24s; } #v-learn .hubcard:nth-child(6){ animation-delay:.3s; }
   #v-learn .hub-ic{ animation:pgbob 5s ease-in-out infinite; }
   #v-learn .hubcard:active{ transform:scale(.97); }
-  @media (prefers-reduced-motion:reduce){ .pg-deco i,.pg-moon,#v-learn .hub-ic,.view.active > .card{ animation:none !important; } }
+  @media (prefers-reduced-motion:reduce){ .pg-deco i,.pg-moon,#v-learn .hub-ic,.view.active > .card:not(.plan-sheet){ animation:none !important; } }
 
   /* yazma konu kartı: küçük ve sade */
   .wprompt-card{ min-height:0 !important; background:linear-gradient(150deg,#2A2170,#5B49D6) !important; }
@@ -1355,7 +1355,7 @@
     <div class="word-backdrop" id="planBackdrop"></div>
     <div class="card plan-sheet" id="todayPlan">
       <div class="ws-handle" aria-hidden="true"></div>
-      <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün Adımları</h2>
+      <h2 style="display:flex;align-items:center;"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün Adımları<button type="button" aria-label="Kapat" onclick="planSheet(false)" style="margin-left:auto;background:var(--tint);border:none;border-radius:50%;width:30px;height:30px;color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"></use></svg></button></h2>
       <div id="checklist"></div>
       <button class="btn" id="completeBtn">Bugünü tamamla</button>
       <div class="donewrap" id="doneWrap" style="display:none;">
