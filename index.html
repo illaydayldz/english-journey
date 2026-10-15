@@ -5594,6 +5594,11 @@ if(S.settings.onboardDone||S.settings.userEmail){
 } else {
   document.body.classList.add("onb-active");
 }
+if(/[?&#]onboarding/.test(location.href)){
+  var st0=S.settings||{};
+  obState.level=st0.level||null; obState.goals=(st0.goals||[]).map(function(g){return /Sınav/i.test(g)?"Sınav":g;}); obState.exam=st0.examType||""; obState.dailyMinutes=st0.dailyMinutes||null; obState.focus=(st0.focusSkills||[]).slice();
+  document.body.classList.add("onb-active"); obGo("obbasics");
+}
 </script>
 </body>
 </html>
