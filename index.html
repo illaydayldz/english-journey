@@ -1347,6 +1347,17 @@
   .wc-b{ flex:1; min-width:0; } .wc-en{ font-family:var(--font-display); font-weight:800; font-size:16px; color:var(--ink); } .wc-tr{ font-size:13.5px; color:var(--ink-2); margin-top:1px; } .wc-ex{ font-size:12px; color:var(--ink-2); opacity:.8; font-style:italic; margin-top:4px; line-height:1.4; }
   .wc-m{ display:flex; align-items:center; gap:8px; margin-top:7px; } .wc-st{ font-size:10.5px; font-weight:800; border-radius:999px; padding:3px 9px; } .wc-due{ font-size:11px; color:var(--ink-2); }
   .wcard .del{ flex:none; opacity:.6; }
+
+  /* v50: ilerleme */
+  .pg-nb{ margin-bottom:12px; } .pg-nbc{ width:100%; display:flex; align-items:center; gap:12px; text-align:left; border:none; border-radius:20px; padding:12px 14px; background:var(--card); font:inherit; color:var(--ink); cursor:pointer; }
+  .pg-nbc .badge-ic{ width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; } .pg-nbc .badge-ic .icon{ width:22px; height:22px; }
+  .pg-nbt{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; } .pg-nbt small{ font-size:10.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-2); } .pg-nbt b{ font-family:var(--font-display); font-size:15px; } .pg-nbp{ font-weight:800; font-size:13px; color:var(--ink-2); }
+  .pg-wk{ font-size:12px; font-weight:800; color:var(--green); }
+  .pg-skills-link{ width:100%; display:flex; align-items:center; justify-content:space-between; border:none; border-radius:18px; padding:14px 16px; margin:0 0 12px; background:linear-gradient(160deg,#A99CFF33,#6B5BE622); border:1px solid #8B7FFF55; font:inherit; font-weight:800; font-size:14px; color:var(--ink); cursor:pointer; }
+  .pg-sk-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .pg-sk{ text-align:left; border:none; border-radius:20px; padding:12px; background:var(--card); font:inherit; color:var(--ink); display:flex; flex-direction:column; gap:5px; cursor:pointer; }
+  .pg-sk-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; } .pg-sk-n{ font-family:var(--font-display); font-weight:800; font-size:15px; } .pg-sk-d{ font-size:11.5px; color:var(--ink-2); } .pg-sk-p{ font-size:12px; font-weight:800; color:var(--ink-2); }
+  .pg-sk .skillrow-track{ display:block; flex:none; width:100%; }
 </style>
 </head>
 <body>
@@ -1716,28 +1727,17 @@
         <div class="ptile"><span class="pt-ic" style="--c:var(--teal);"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div class="pt-n" id="progToday">0/6</div><div class="pt-l">Bugünkü adım</div></div>
       </div>
 
-      <div class="card">
-        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Seviyelerim</h2>
-          <a href="javascript:void(0)" class="mission-edit" onclick="go('placement')">Seviye tespit</a>
-        </div>
-        <div id="progLevels"></div>
-      </div>
-      <div class="card">
-        <h2><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Bu hafta</h2>
-        <p class="mut" id="progWeekNote" style="margin:-4px 0 6px;"></p>
-        <div class="weekchart" id="weekChart"></div>
-      </div>
-
+      <div class="pg-nb" id="progBadge"></div>
       <div class="card">
         <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:2px;">
-          <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Beceri Özeti</h2>
-          <a href="javascript:void(0)" class="mission-edit" id="skillSeeAllLink">Tümünü gör</a>
+          <h2 style="margin-bottom:0;"><svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>Bu hafta</h2>
+          <span class="pg-wk" id="progWeekBig"></span>
         </div>
-        <div id="progSkillList"></div>
+        <p class="mut" id="progWeekNote" style="margin:2px 0 6px;"></p>
+        <div class="weekchart" id="weekChart"></div>
       </div>
-
-
+      <button type="button" class="pg-skills-link" id="skillSeeAllLink"><span>Becerilerime bak</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+      <div id="progLevels" hidden></div><div id="progSkillList" hidden></div>
       <div class="card">
         <h2><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Aktivite haritası</h2>
         <div class="heatmap-grid" id="progHeatmap" aria-hidden="true"></div>
@@ -1746,6 +1746,8 @@
     </div>
 
     <div class="segpanel" id="progPanelSkills">
+      <div class="pg-sk-grid" id="progSkillGrid"></div>
+      <p class="hint" id="progLvHint" style="text-align:left;margin:0 2px 14px;"></p>
       <div class="card" style="text-align:center;">
         <h2 style="justify-content:center;"><svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>Beceri haritası</h2>
         <div id="progRadar"></div>
@@ -5696,8 +5698,26 @@ function renderProgress(){
     var wk=0; for(var i=0;i<7;i++){ var d=new Date(); d.setDate(d.getDate()-i); if(S.history[dstr(d)]) wk++; }
     document.getElementById("progWeekNote").textContent="Son 7 günün "+wk+"'inde çalıştın.";
   })();
+  (function(){
+    var sl=S.settings.skillLevels||{}, base=S.settings.level||"—";
+    var tot=function(L){ return L.reduce(function(n,lv){return n+lv.units.length;},0); };
+    var rows=[["Dilbilgisi","grammar","grammar",grammarPct,doneGrammarUnits+"/"+totalGrammarUnits+" konu"],["Konuşma","speaking","speaking",speakPct,doneSpeakUnits+"/"+totalSpeakUnits+" ünite"],["Kelime","vocab","vocab",vocabPct,known+"/"+S.words.length+" biliniyor"],["Okuma","reading","reading",readPct,S.readings.length+" kayıt"],["Yazma","writing","writing",writingPct,(S.writings?S.writings.length:0)+" yazı"],["Günlük","journal",null,journalPct,journalDays+" gün"]];
+    var g=document.getElementById("progSkillGrid");
+    g.innerHTML=rows.map(function(r){
+      var meta=SKILL_ICON[r[0]]||["i-star","var(--tint)","var(--purple)"], lv=r[2]?(sl[r[2]]||base):"";
+      return '<button type="button" class="pg-sk" data-go="'+r[1]+'"><span class="pg-sk-top"><span class="skillrow-ic" style="background:'+meta[1]+';color:'+meta[2]+';"><svg class="icon" aria-hidden="true"><use href="#'+meta[0]+'"></use></svg></span>'+(lv?'<span class="cefr-badge">'+esc(lv)+'</span>':'')+'</span>'+
+        '<span class="pg-sk-n">'+r[0]+'</span><span class="pg-sk-d">'+esc(r[4])+'</span><span class="skillrow-track"><span class="skillrow-fill" style="width:'+r[3]+'%;background:'+meta[2]+';"></span></span><span class="pg-sk-p">%'+r[3]+'</span></button>';
+    }).join("");
+    g.querySelectorAll(".pg-sk").forEach(function(b){ b.addEventListener("click",function(){ go(b.dataset.go); }); });
+    document.getElementById("progLvHint").innerHTML=S.settings.skillLevels?'Seviyeni değiştirmek için <a href="javascript:void(0)" onclick="go(\'placement\')">seviye tespit</a>i tekrar çözebilirsin.':'Seviyen tüm becerilerde '+esc(base)+'. Her beceri için ayrı bulmak için <a href="javascript:void(0)" onclick="go(\'placement\')">seviye tespit</a>i çöz.';
+    var wkTotal=0; for(var i=0;i<7;i++){ var d=new Date(); d.setDate(d.getDate()-i); wkTotal+=(S.history[dstr(d)]||0); }
+    var wb=document.getElementById("progWeekBig"); if(wb) wb.textContent=wkTotal+" adım";
+    var bl=computeBadges().filter(function(b){ return !b.unlocked; }).sort(function(a,b){ return b.ratio-a.ratio; })[0];
+    var bx=document.getElementById("progBadge");
+    if(bl){ var col=BADGE_CAT_COLOR[bl.def.cat]||{bg:"var(--tint)",fg:"var(--purple)"}; bx.innerHTML='<button type="button" class="pg-nbc" onclick="go(\'achievements\')"><span class="badge-ic" style="background:'+col.bg+';color:'+col.fg+';"><svg class="icon" aria-hidden="true"><use href="#'+bl.def.ic+'"></use></svg></span><span class="pg-nbt"><small>Sıradaki rozet</small><b>'+esc(bl.def.name)+'</b><span class="skillrow-track"><span class="skillrow-fill" style="width:'+Math.round(bl.ratio*100)+'%;background:'+col.fg+';"></span></span></span><span class="pg-nbp">'+bl.cur+'/'+bl.tgt+'</span></button>'; }
+    else bx.innerHTML="";
+  })();
   renderRadar(skillVals);
-  renderSkillList(skillVals);
   renderHeatmap();
 }
 
