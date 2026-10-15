@@ -1382,6 +1382,10 @@
   #spSheet.open{ transform:translateY(0); } #spBackdrop.open{ opacity:1; pointer-events:auto; }
   .sp-uri{ margin-top:8px; padding:10px 12px; border-radius:12px; background:var(--tint); font-size:12px; word-break:break-all; color:var(--ink-2); cursor:pointer; } .sp-uri.copied{ outline:2px solid #58C98B; }
   #spCid.bad{ border-color:#FF6B6B; }
+  .sp-err{ margin:10px 0 0; padding:10px 12px; border-radius:12px; background:#FF6B6B22; color:#FF9A9A; font-size:13px; line-height:1.4; }
+
+  .lis-dot.on{ background:#58C98B; box-shadow:0 0 8px #58C98B; }
+  .lis-btn.connected{ background:linear-gradient(180deg,#8EF0B8,#58C98B); box-shadow:0 4px 0 #2E8F5B, 0 10px 16px -6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6); color:#0F2A1C; cursor:default; }
 </style>
 </head>
 <body>
@@ -2015,7 +2019,8 @@
         <div class="lis-title">Kulağını İngilizceye alıştır</div>
         <div class="lis-conn"><span class="lis-dot"></span><span id="spotifyStatus">Henüz bağlı değil.</span></div>
         <button class="lis-btn" id="spotifyConnectBtn">Spotify'a bağlan</button>
-        <a href="javascript:void(0)" class="lis-how" onclick="openHowto('spotify')">Nasıl bağlanırım?</a>
+        <a href="javascript:void(0)" class="lis-how" id="spotifyHowLink" onclick="openHowto('spotify')">Nasıl bağlanırım?</a>
+        <a href="javascript:void(0)" class="lis-how" id="spotifyDisconnectLink" style="display:none;opacity:.8;">Bağlantıyı kes</a>
       </div>
       <img class="lis-moon" src="assets/mascot/pose-listening.png" alt="Moonie">
     </div>
@@ -2516,6 +2521,7 @@
   <p class="mut" style="font-size:13px;line-height:1.5;margin:0 0 10px;">Bağlanmak için Spotify Developer'da oluşturduğun uygulamanın <b>Client ID</b>'si gerekir. Redirect URI olarak aşağıdaki adresi uygulamana eklemeyi unutma.</p>
   <input class="f" id="spCid" placeholder="Spotify Client ID" autocomplete="off" autocapitalize="off">
   <div class="sp-uri" id="spUri"></div>
+  <p class="sp-err" id="spErr" style="display:none;"></p>
   <button type="button" class="btn" id="spGo" style="margin-top:10px;">Kaydet ve bağlan</button>
   <a href="javascript:void(0)" class="lis-how" style="display:block;text-align:center;margin-top:10px;color:var(--ink-2);" onclick="spClose();openHowto('spotify')">Adım adım nasıl yapılır?</a>
 </div>
@@ -3642,25 +3648,32 @@ function spotifyClientId(){ return (S.settings.spotifyClientId||"").trim(); }
 function spotifyTokens(){ return S.settings.spotify||null; }
 
 function spOpen(){
-  document.getElementById("spCid").value=S.settings.spotifyClientId||"";
+  document.getElementById("spCid").value=S.settings.spotifyClientId||""; spErr("");
   document.getElementById("spUri").textContent=SPOTIFY_REDIRECT_URI;
   document.getElementById("spSheet").classList.add("open"); document.getElementById("spBackdrop").classList.add("open");
 }
+function spErr(m){ var e=document.getElementById("spErr"); if(!e) return; e.textContent=m||""; e.style.display=m?"block":"none"; }
 function spClose(){ document.getElementById("spSheet").classList.remove("open"); document.getElementById("spBackdrop").classList.remove("open"); }
 document.getElementById("spClose").addEventListener("click",spClose);
 document.getElementById("spBackdrop").addEventListener("click",spClose);
 document.getElementById("spUri").addEventListener("click",function(){ try{ navigator.clipboard.writeText(this.textContent); this.classList.add("copied"); }catch(e){} });
 document.getElementById("spGo").addEventListener("click",function(){
-  var v=document.getElementById("spCid").value.trim();
-  if(!/^[a-f0-9]{32}$/i.test(v)){ document.getElementById("spCid").classList.add("bad"); return; }
-  S.settings.spotifyClientId=v; save(); spClose(); spotifyConnect();
+  var v=document.getElementById("spCid").value.replace(/\s+/g,"");
+  document.getElementById("spCid").value=v;
+  if(!/^[a-f0-9]{32}$/i.test(v)){ document.getElementById("spCid").classList.add("bad"); spErr("Client ID 32 karakterlik harf-rakamdan oluşur ("+v.length+" karakter girdin). Spotify Developer'da uygulamanın Settings sayfasındaki Client ID'yi kopyala."); return; }
+  document.getElementById("spCid").classList.remove("bad");
+  S.settings.spotifyClientId=v; save(); spErr("");
+  if(!(window.crypto&&window.crypto.subtle)){ spErr("Bu ortamda güvenli bağlantı kullanılamıyor. Siteyi tarayıcıdan https://illaydayldz.github.io/english-journey/ adresiyle aç."); return; }
+  spotifyConnect();
 });
 async function spotifyConnect(){
   var cid=spotifyClientId();
   if(!cid){ spOpen(); return; }
+  spErr("Spotify'a yönlendiriliyor…");
   try{
     var verifier=randomVerifier(64);
-    sessionStorage.setItem("spotify_verifier",verifier);
+    try{ localStorage.setItem("spotify_verifier",verifier); }catch(_){}
+    try{ sessionStorage.setItem("spotify_verifier",verifier); }catch(_){}
     var challenge=b64url(await sha256(verifier));
     var url="https://accounts.spotify.com/authorize"
       +"?client_id="+encodeURIComponent(cid)
@@ -3668,8 +3681,12 @@ async function spotifyConnect(){
       +"&redirect_uri="+encodeURIComponent(SPOTIFY_REDIRECT_URI)
       +"&code_challenge_method=S256&code_challenge="+encodeURIComponent(challenge)
       +"&scope="+encodeURIComponent(SPOTIFY_SCOPES);
-    location.href=url;
-  }catch(e){ var st=document.getElementById("spotifyStatus"); if(st) st.textContent="Bağlantı başlatılamadı: "+e.message; }
+    if(window.top!==window.self){
+      var np=window.open(url,"_blank");
+      spErr(np?"Spotify yeni sekmede açıldı. Girişi bitirince Moonie'ye dön.":"Önizleme içinden Spotify açılamıyor. Siteyi tarayıcıda https://illaydayldz.github.io/english-journey/ adresiyle aç.");
+      if(!np) spOpen();
+    } else location.href=url;
+  }catch(e){ spErr("Bağlantı başlatılamadı: "+e.message); }
 }
 
 async function spotifyHandleCallback(){
@@ -3677,9 +3694,9 @@ async function spotifyHandleCallback(){
   if(!params.has("code")&&!params.has("error")) return;
   var err=params.get("error");
   history.replaceState({},"",location.pathname);
-  if(err){ alert("Spotify bağlantısı iptal edildi."); return; }
-  var code=params.get("code"), verifier=sessionStorage.getItem("spotify_verifier");
-  if(!verifier) return;
+  if(err){ spLastError="Spotify bağlantısı iptal edildi."; go("listening"); return; }
+  var code=params.get("code"), verifier=(function(){ try{ return localStorage.getItem("spotify_verifier")||sessionStorage.getItem("spotify_verifier"); }catch(_){ return null; } })();
+  if(!verifier){ spLastError="Bağlantı yarım kaldı (tarayıcı oturumu kapanmış). Tekrar bağlan."; go("listening"); return; }
   try{
     var res=await fetch("https://accounts.spotify.com/api/token",{
       method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
@@ -3688,8 +3705,9 @@ async function spotifyHandleCallback(){
     var data=await res.json();
     if(!res.ok) throw new Error(data.error_description||data.error||"token exchange failed");
     S.settings.spotify={access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Date.now()+data.expires_in*1000};
+    try{ localStorage.removeItem("spotify_verifier"); }catch(_){}
     save(); go("listening");
-  }catch(e){ alert("Spotify bağlantısı başarısız: "+e.message); }
+  }catch(e){ spLastError="Spotify bağlantısı başarısız: "+e.message; go("listening"); }
 }
 
 async function spotifyRefresh(){
@@ -3781,11 +3799,18 @@ function parseSpotifyUri(raw){
   if(m) return "spotify:"+m[1]+":"+m[2];
   return "";
 }
+var spLastError="";
 function renderListening(){
-  var st=document.getElementById("spotifyStatus"), btn=document.getElementById("spotifyConnectBtn");
-  if(spotifyTokens()){ st.innerHTML='<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#i-check"></use></svg> Spotify\'a bağlı'; btn.textContent="Bağlantıyı kes"; }
+  var st=document.getElementById("spotifyStatus"), btn=document.getElementById("spotifyConnectBtn"), dot=document.querySelector(".lis-dot");
+  var how=document.getElementById("spotifyHowLink"), dis=document.getElementById("spotifyDisconnectLink");
+  var on=!!spotifyTokens();
+  btn.classList.toggle("connected",on); if(dot) dot.classList.toggle("on",on);
+  if(how) how.style.display=on?"none":""; if(dis) dis.style.display=on?"":"none";
+  if(on){ st.innerHTML='<svg class="icon icon-sm" aria-hidden="true" style="vertical-align:-2px;"><use href="#i-check"></use></svg> Spotify\'a bağlandı'; btn.textContent="Bağlandı"; spLastError=""; }
+  else if(spLastError){ st.textContent=spLastError; st.style.color="#FFB3B3"; btn.textContent="Tekrar bağlan"; }
   else if(spotifyClientId()){ st.textContent="Client ID kaydedildi, bağlanmaya hazır."; btn.textContent="Spotify'a bağlan"; }
   else{ st.textContent="Henüz bağlı değil."; btn.textContent="Spotify'a bağlan"; }
+  if(!spLastError) st.style.color="";
   renderPodcastList();
 }
 function renderPodcastList(){
@@ -3828,8 +3853,9 @@ document.getElementById("podcastSaveBtn").addEventListener("click",function(){
   document.getElementById("podcastAddForm").style.display="none";
   renderPodcastList();
 });
+document.getElementById("spotifyDisconnectLink").addEventListener("click",function(){ if(confirm("Spotify bağlantısı kesilsin mi?")) spotifyDisconnect(); });
 document.getElementById("spotifyConnectBtn").addEventListener("click",function(){
-  if(spotifyTokens()) spotifyDisconnect(); else spotifyConnect();
+  if(spotifyTokens()){ go("listening"); return; } spLastError=""; spOpen();
 });
 document.getElementById("spotifySearchInput").addEventListener("keydown",function(e){
   if(e.key==="Enter") spotifySearch(e.target.value.trim());
