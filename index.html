@@ -1096,6 +1096,37 @@
   .lvrow .gr-bar{ flex:1; }
   .lvrow .cefr-badge{ min-width:36px; height:24px; font-size:12px; }
   .ob-pl-link{ display:block; margin:10px 2px 18px; font-size:13px; font-weight:700; color:var(--purple-deep); text-align:left; }
+
+  /* v33: hikaye haritası */
+  .mp-world{ margin-bottom:12px; border-radius:22px; overflow:hidden; background:var(--tint); }
+  .mp-world.locked{ opacity:.6; }
+  .mp-story{ width:100%; display:flex; align-items:center; gap:12px; padding:12px; background:none; border:none; font-family:inherit; text-align:left; cursor:pointer; color:var(--ink); }
+  .mp-st{ flex:1; display:flex; flex-direction:column; gap:2px; } .mp-st b{ font-family:var(--font-display); font-size:14.5px; } .mp-st small{ font-size:11.5px; color:var(--ink-soft); line-height:1.35; }
+  .mp-cnt{ font-size:12px; font-weight:800; color:var(--gold); display:flex; } .mp-cnt .icon{ width:18px; height:18px; color:var(--ink-soft); }
+  .mp-pin{ position:relative; width:calc(52px*var(--ms,1)); height:calc(52px*var(--ms,1)); border-radius:50% 50% 50% 8%; transform:rotate(-45deg); background:#fff; box-shadow:0 8px 14px -4px rgba(0,0,0,.5), inset 0 -3px 0 rgba(0,0,0,.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
+  .mp-pin img{ width:84%; height:84%; object-fit:contain; transform:rotate(45deg); }
+  .mp-pin.sm{ width:calc(40px*var(--ms,1)); height:calc(40px*var(--ms,1)); }
+  .mp-board{ position:relative; margin:0; background:radial-gradient(circle at 20% 10%,rgba(255,255,255,.18),transparent 45%),linear-gradient(180deg,var(--b1),var(--b2)); border-radius:0 0 22px 22px; }
+  .mp-line{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .mp-line .road{ fill:none; stroke:rgba(255,255,255,.2); stroke-width:52; stroke-linecap:round; }
+  .mp-line .dash{ fill:none; stroke:rgba(255,255,255,.6); stroke-width:3; stroke-linecap:round; stroke-dasharray:9 13; animation:mpdash 1.4s linear infinite; }
+  @keyframes mpdash{ to{ stroke-dashoffset:-22; } }
+  .mp-decor{ position:absolute; width:62px; opacity:.95; filter:drop-shadow(0 8px 6px rgba(0,0,0,.25)); animation:pgbob 5s ease-in-out infinite; pointer-events:none; }
+  .mp-decor:nth-of-type(2){ animation-delay:-1.5s; } .mp-decor:nth-of-type(3){ animation-delay:-3s; }
+  .mp-node{ position:absolute; transform:translateX(-50%); width:120px; display:flex; flex-direction:column; align-items:center; gap:8px; background:none; border:none; padding:0; font-family:inherit; cursor:pointer; color:#fff; }
+  .mp-c{ position:relative; width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#F6F3FF,#D5CEF7); box-shadow:0 8px 0 #A398DF, 0 16px 18px -6px rgba(0,0,0,.45); transition:transform .12s; }
+  .mp-c::after{ content:""; position:absolute; inset:9px; border-radius:50%; background:linear-gradient(180deg,#B7A8FF,#7B6CF6); box-shadow:inset 0 3px 0 rgba(255,255,255,.45), 0 3px 0 rgba(40,30,120,.35); }
+  .mp-c i{ position:relative; z-index:1; font-style:normal; font-family:var(--font-display); font-weight:800; font-size:24px; color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.25); display:flex; }
+  .mp-c i .icon{ width:28px; height:28px; }
+  .mp-node:active .mp-c{ transform:translateY(5px); box-shadow:0 3px 0 #A398DF; }
+  .mp-node.done .mp-c::after{ background:linear-gradient(180deg,#7FEBD5,#25AE9A); }
+  .mp-node.cur .mp-c{ box-shadow:0 8px 0 #D6A53A, 0 0 0 8px rgba(255,233,166,.28), 0 0 30px rgba(255,233,166,.7); animation:mppulse 1.8s ease-in-out infinite; }
+  .mp-node.cur .mp-c::after{ background:linear-gradient(180deg,#FFE9A6,#F2B94B); } .mp-node.cur .mp-c i{ color:#7A4B00; text-shadow:none; }
+  @keyframes mppulse{ 0%,100%{ box-shadow:0 8px 0 #D6A53A, 0 0 0 5px rgba(255,233,166,.3), 0 0 22px rgba(255,233,166,.55);} 50%{ box-shadow:0 8px 0 #D6A53A, 0 0 0 13px rgba(255,233,166,.08), 0 0 34px rgba(255,233,166,.8);} }
+  .mp-l{ font-size:11.5px; font-weight:800; line-height:1.25; text-align:center; max-width:116px; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,.45); }
+  .mp-node .mp-pin{ position:absolute; top:calc(-62px*var(--ms,1)); left:50%; margin-left:calc(-26px*var(--ms,1)); animation:pgbob 3s ease-in-out infinite; }
+  .sp-stage{ position:relative; display:inline-block; margin-top:12px; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:99px; background:rgba(255,255,255,.16); }
+  .sp-moon{ width:calc(78px*var(--ms,1)) !important; }
 </style>
 </head>
 <body>
@@ -2366,6 +2397,14 @@ S.settings=S.settings||{};
 S.pronCount=S.pronCount||0;
 S.speaking=S.speaking||{completed:{},selected:null};
 S.speaking.notes=S.speaking.notes||{};
+function speakMigrate(){
+  var sp=S.speaking; if(!sp||sp.mig1) return;
+  function shift(o){ var n={}; Object.keys(o||{}).forEach(function(k){ var m=k.split("-"); if(m.length===2) n[(parseInt(m[0],10)+1)+"-"+m[1]]=o[k]; }); return n; }
+  sp.completed=shift(sp.completed); sp.notes=shift(sp.notes);
+  if(sp.selected) sp.selected={li:sp.selected.li+1,ui:sp.selected.ui};
+  sp.mig1=true;
+}
+speakMigrate();
 S.grammar=S.grammar||{completed:{},selected:null};
 S.grammar.notes=S.grammar.notes||{};
 S.writings=S.writings||[];
@@ -3709,6 +3748,13 @@ document.getElementById("podDetailDeleteBtn").addEventListener("click",function(
 /* ---------- SPEAKING LEVELS (CEFR-based, functional units — content grounded in
    Paul Nation's fluency strand + Market Leader-style functional syllabus) ---------- */
 var SPEAK_LEVELS=[
+ {cefr:"A1",name:"Başlangıç",cando:"Çok basit kalıplarla kendimi tanıtabilir, harfleri ve sayıları söyleyebilirim.",units:[
+  {name:"Alfabe & Hecelemek",phrases:[["A, B, C, D…","A, B, C, D…"],["How do you spell your name?","Adını nasıl hecelersin?"],["It's M-O-O-N-I-E.","M-O-O-N-I-E."]],scenario:"Moonie harfleri yeni öğreniyor. Ona kendi adını harf harf hecele ve bir kelimeyi hecelemesine yardım et.",topic:"Adını ve bir arkadaşının adını hecele."},
+  {name:"Selamlaşma & Tanışma",phrases:[["Hello! / Hi!","Merhaba!"],["My name is…","Benim adım …"],["Nice to meet you.","Tanıştığımıza memnun oldum."]],scenario:"Moonie ilk kez biriyle tanışıyor. Selamlaşmasına ve adını söylemesine yardım et.",topic:"Kendini üç kısa cümleyle tanıt."},
+  {name:"Sayılar & Yaş",phrases:[["How old are you?","Kaç yaşındasın?"],["I am … years old.","… yaşındayım."],["One, two, three…","Bir, iki, üç…"]],scenario:"Moonie saymayı öğreniyor. Ona yaşını sor ve 1'den 10'a kadar birlikte sayın.",topic:"Yaşını ve ailendeki birinin yaşını söyle."},
+  {name:"Renkler & Eşyalar",phrases:[["It's a red ball.","Bu kırmızı bir top."],["What color is it?","Ne renk?"],["I like blue.","Maviyi severim."]],scenario:"Moonie etrafındaki eşyaları adlandırıyor. Ona renkleri ve eşyaları söylet.",topic:"Odandaki üç eşyayı ve renklerini anlat."},
+  {name:"İstek & Teşekkür",phrases:[["Can I have water, please?","Su alabilir miyim lütfen?"],["Thank you!","Teşekkürler!"],["I don't understand.","Anlamadım."]],scenario:"Moonie bir kafede ilk siparişini veriyor. Ona nazikçe bir şey istemeyi göster.",topic:"Kafede bir içecek siparişi ver."}
+ ]},
  {cefr:"A2",name:"Temel",cando:"Tanıdık konularda basit bilgi alışverişi yapabiliyorum.",units:[
   {name:"Kendini Tanıtma & Küçük Sohbet",phrases:[["Nice to meet you.","Tanıştığımıza memnun oldum."],["What do you do?","Ne iş yapıyorsun?"],["How's your day going?","Günün nasıl geçiyor?"],["I'm originally from…","Aslen …'lıyım."]],scenario:"Bir networking etkinliğinde yeni biriyle tanışıyorsun. Kendini, mesleğini ve nereli olduğunu anlat.",topic:"Kendini, işini ve boş zamanlarında ne yaptığını anlat."},
   {name:"Günlük Rutin Anlatma",phrases:[["I usually…","Genellikle …"],["On a typical day, I…","Normal bir günümde …"],["After work, I…","İşten sonra …"]],scenario:"Bir arkadaşın sana normal bir iş gününü soruyor.",topic:"Bir gününü sabahtan akşama anlat."},
@@ -3738,6 +3784,29 @@ var SPEAK_LEVELS=[
   {name:"Profesyonel Sunum Ustalığı",phrases:[["Let me paint a picture for you.","Size şunu tasvir edeyim."],["The key takeaway here is…","Buradaki temel çıkarım şu: …"],["I'll leave you with this thought.","Sizi şu düşünceyle baş başa bırakıyorum."]],scenario:"Büyük bir konferansta 5 dakikalık bir konuşma yapıyorsun.",topic:"Herhangi bir konuda etkileyici bir açılış ve kapanışla 2 dakikalık konuşma yap."}
  ]}
 ];
+
+var SPEAK_STAGE={
+ A1:{n:"Bebek Moonie",story:"Moonie yeni doğdu! İlk harfleri, sayıları ve selamlaşmayı öğrenmesine yardım et.",pose:"pose-newword.png",sc:.78,c:["#C3A6FF","#9E86F5"]},
+ A2:{n:"Çocuk Moonie",story:"Moonie konuşmaya başladı. Günlük hayatta kendini ifade etmeyi öğreniyor.",pose:"pose-learning.png",sc:.9,c:["#AE97F9","#8670EA"]},
+ B1:{n:"Genç Moonie",story:"Moonie okula gidiyor: fikirlerini söylüyor, sorun çözüyor, toplantılara katılıyor.",pose:"pose-happy2.png",sc:1,c:["#9683F2","#6D58DA"]},
+ B2:{n:"Yetişkin Moonie",story:"Moonie işe girdi. Müzakere ediyor, sunum yapıyor, tartışmayı yönetiyor.",pose:"pose-proud.png",sc:1.1,c:["#7561DC","#4E3DB4"]},
+ C1:{n:"Usta Moonie",story:"Moonie artık usta: nüansları, deyimleri ve ikna etmeyi biliyor.",pose:"pose-goalachieved.png",sc:1.2,c:["#4A3EA6","#2A2170"]}
+};
+function mpDecor(cefr,kind,x,y){
+  var svg={
+   blockA:'<svg viewBox="0 0 60 60"><rect x="6" y="10" width="48" height="46" rx="10" fill="#FFD36B"/><rect x="6" y="46" width="48" height="10" rx="5" fill="#E0A93B"/><text x="30" y="43" text-anchor="middle" font-size="28" font-weight="800" fill="#7A4B00" font-family="Arial">A</text></svg>',
+   blockB:'<svg viewBox="0 0 60 60"><rect x="6" y="10" width="48" height="46" rx="10" fill="#FF9EC7"/><rect x="6" y="46" width="48" height="10" rx="5" fill="#D8709F"/><text x="30" y="43" text-anchor="middle" font-size="28" font-weight="800" fill="#7A1F4B" font-family="Arial">B</text></svg>',
+   balloon:'<svg viewBox="0 0 60 80"><ellipse cx="30" cy="28" rx="20" ry="24" fill="#FF9EC7"/><ellipse cx="22" cy="20" rx="5" ry="8" fill="#fff" opacity=".45"/><path d="M30 52 L26 58 L34 58Z" fill="#D8709F"/><path d="M30 58 C26 66 34 70 30 78" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/></svg>',
+   book:'<svg viewBox="0 0 70 60"><rect x="6" y="34" width="58" height="16" rx="5" fill="#25AE9A"/><rect x="12" y="20" width="50" height="15" rx="5" fill="#FFD36B"/><rect x="8" y="8" width="46" height="13" rx="5" fill="#FF9EC7"/></svg>',
+   pencil:'<svg viewBox="0 0 70 40"><rect x="4" y="12" width="46" height="16" rx="4" fill="#FFD36B"/><path d="M50 12 L68 20 L50 28Z" fill="#F4D7B0"/><path d="M62 17.5 L68 20 L62 22.5Z" fill="#444"/><rect x="4" y="12" width="9" height="16" rx="3" fill="#FF8FB5"/></svg>',
+   bubble:'<svg viewBox="0 0 70 60"><path d="M10 8h50a8 8 0 0 1 8 8v22a8 8 0 0 1-8 8H34l-14 10v-10h-10a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8Z" fill="#fff" opacity=".9"/><circle cx="24" cy="27" r="4" fill="#8B7FFF"/><circle cx="36" cy="27" r="4" fill="#8B7FFF"/><circle cx="48" cy="27" r="4" fill="#8B7FFF"/></svg>',
+   case:'<svg viewBox="0 0 70 60"><rect x="6" y="18" width="58" height="36" rx="8" fill="#F2B94B"/><rect x="24" y="8" width="22" height="14" rx="5" fill="none" stroke="#B07E1C" stroke-width="5"/><rect x="6" y="32" width="58" height="5" fill="#B07E1C" opacity=".5"/></svg>',
+   trophy:'<svg viewBox="0 0 60 70"><path d="M14 8h32v18a16 16 0 0 1-32 0Z" fill="#FFD36B"/><path d="M14 12H4v6a12 12 0 0 0 12 12M46 12h10v6a12 12 0 0 1-12 12" fill="none" stroke="#E0A93B" stroke-width="4"/><rect x="26" y="40" width="8" height="12" fill="#E0A93B"/><rect x="16" y="52" width="28" height="10" rx="4" fill="#B07E1C"/></svg>',
+   star:'<svg viewBox="0 0 60 60"><path d="M30 4l7.6 17.2 18.7 1.8-14.1 12.4 4.2 18.3L30 43.6 13.6 53.7l4.2-18.3L3.7 23l18.7-1.8Z" fill="#FFE9A6"/></svg>'
+  }[kind];
+  return '<span class="mp-decor" style="left:'+x+'%;top:'+y+'px;">'+svg+'</span>';
+}
+var MP_DECOR={A1:["blockA","balloon","blockB"],A2:["book","pencil","book"],B1:["bubble","star","bubble"],B2:["case","bubble","case"],C1:["trophy","star","trophy"]};
 function unitKey(li,ui){ return li+"-"+ui; }
 var CEFR_ORDER=["A1","A2","B1","B2","C1","C2"];
 function startLevelIdx(levels,skill){
@@ -4549,7 +4618,8 @@ function renderSpeakGame(){
   el.innerHTML='<div class="sp-hero"><div class="sp-rings" aria-hidden="true"><i></i><i></i><i></i></div>'+
     '<div class="sp-top"><div class="sp-lv"><small>SEVİYE</small><b>'+lvl+'</b></div><div><div class="sp-rank">'+rank+'</div><div class="sp-xp">'+sp.xp+' XP · sonraki seviyeye '+(per-into)+' XP</div></div></div>'+
     '<div class="sp-bar" style="margin-right:84px;"><div style="width:'+Math.round(into/per*100)+'%"></div></div>'+
-    '<img class="sp-moon" src="assets/mascot/pose-cheering.png" alt=""></div>'+
+    '<div class="sp-stage">'+(function(){ var f=SPEAK_LEVELS[speakFrontier().li]; return "Evre: "+(SPEAK_STAGE[f.cefr]||{n:f.name}).n; })()+'</div>'+
+    '<img class="sp-moon" style="--ms:'+(function(){ var f=SPEAK_LEVELS[speakFrontier().li]; return (SPEAK_STAGE[f.cefr]||{sc:1}).sc; })()+';" src="assets/mascot/'+(function(){ var f=SPEAK_LEVELS[speakFrontier().li]; return (SPEAK_STAGE[f.cefr]||{pose:"pose-cheering.png"}).pose; })()+'" alt=""></div>'+
     '<div class="card sp-quests"><div class="sp-qh">Günlük görevler<span>'+doneQ+'/'+SP_QUESTS.length+(doneQ===SP_QUESTS.length?" · +25 bonus alındı":"")+'</span></div>'+
     SP_QUESTS.map(function(q){ var d=!!sp.q[q[0]]; return '<div class="sp-q'+(d?" done":"")+'"><span class="qi"><svg class="icon" aria-hidden="true"><use href="#'+(d?"i-check":q[2])+'"></use></svg></span><span class="qt">'+q[1]+'</span><span class="qx">+'+q[3]+' XP</span></div>'; }).join("")+'</div>';
 }
@@ -4616,6 +4686,10 @@ function renderSpeaking(){
   if(cb) cb.addEventListener("click",function(){
     S.speaking.completed[unitKey(sel.li,sel.ui)]=true;
     awardXp(50);
+    if(level.units.every(function(_,ui){return !!S.speaking.completed[unitKey(sel.li,ui)];})){
+      var nx=SPEAK_LEVELS[sel.li+1]; S.speaking.openLv=nx?sel.li+1:sel.li;
+      setTimeout(function(){ showXpToast(nx?("Moonie büyüdü! "+SPEAK_STAGE[nx.cefr].n):"Moonie usta oldu!"); },1500);
+    }
     var addedN=addUnitPhrasesToVocab(unit);
     S.speaking.selected=null; // ilerlemeyi otomatik bir sonraki üniteye taşı
     save(); renderSpeaking(); renderLearnHub(); renderVocab();
@@ -4624,28 +4698,39 @@ function renderSpeaking(){
 
   var listEl=document.getElementById("speakLevelList"); listEl.innerHTML="";
   var fr0=speakFrontier();
+  if(S.speaking.openLv==null) S.speaking.openLv=fr0.li;
   SPEAK_LEVELS.forEach(function(lv,li){
-    var unlocked=levelUnlocked(li);
+    var unlocked=levelUnlocked(li), st=SPEAK_STAGE[lv.cefr]||SPEAK_STAGE.B1;
+    var N=lv.units.length;
     var doneCount=lv.units.filter(function(_,ui){return !!S.speaking.completed[unitKey(li,ui)];}).length;
-    var box=document.createElement("div"); box.className="mp-level"+(unlocked?"":" locked");
-    var xs=[18,50,78,50,18], rowH=104, N=lv.units.length, H=N*rowH+20;
-    var pts=lv.units.map(function(u,ui){ return [xs[ui%xs.length],ui*rowH+52]; });
-    var d="M"+pts[0][0]+" "+pts[0][1];
-    for(var k=1;k<pts.length;k++){ var y0=pts[k-1][1], y1=pts[k][1]; d+=" C"+pts[k-1][0]+" "+(y0+rowH*.55)+" "+pts[k][0]+" "+(y1-rowH*.55)+" "+pts[k][0]+" "+y1; }
-    var html='<div class="mp-flag"><span class="cefr-badge">'+lv.cefr+'</span><b>'+esc(lv.name)+'</b><em>'+(unlocked?(doneCount+'/'+N):'Kilitli')+'</em></div>'+
-      '<div class="mp-path" style="height:'+H+'px;"><svg viewBox="0 0 100 '+H+'" preserveAspectRatio="none" class="mp-line"><path d="'+d+'" vector-effect="non-scaling-stroke"/></svg>';
-    lv.units.forEach(function(u,ui){
-      var udone=!!S.speaking.completed[unitKey(li,ui)];
-      var cur=unlocked&&li===fr0.li&&ui===fr0.ui;
-      var st=!unlocked?"lock":(udone?"done":(cur?"cur":"open"));
-      var icon=st==="lock"?'<svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>':(st==="done"?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(ui+1));
-      html+='<button type="button" class="mp-node '+st+'" data-li="'+li+'" data-ui="'+ui+'" style="left:'+pts[ui][0]+'%;top:'+(pts[ui][1]-30)+'px;"'+(unlocked?'':' disabled')+'>'+
-        (cur?'<img class="mp-me" src="assets/mascot/pose-happy2.png" alt="">':'')+
-        '<span class="mp-c">'+icon+'</span><span class="mp-l">'+esc(u.name)+'</span></button>';
-    });
-    html+='</div>';
-    box.innerHTML=html; listEl.appendChild(box);
+    var open=(S.speaking.openLv===li)&&unlocked;
+    var box=document.createElement("div"); box.className="mp-world"+(unlocked?"":" locked")+(open?" open":"");
+    var head='<button type="button" class="mp-story" data-li="'+li+'"'+(unlocked?'':' disabled')+'><span class="mp-pin sm" style="--ms:'+st.sc+';"><img src="assets/mascot/'+st.pose+'" alt=""></span>'+
+      '<span class="mp-st"><b>Bölüm '+(li+1)+' · '+st.n+'</b><small>'+(unlocked?esc(st.story):'Önceki bölümü bitirince Moonie büyür ve bu bölüm açılır.')+'</small></span>'+
+      '<span class="mp-cnt">'+(unlocked?(doneCount+'/'+N):'<svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>')+'</span></button>';
+    var body="";
+    if(open){
+      var xs=[26,74], rowH=132, H=N*rowH+40;
+      var pts=lv.units.map(function(u,ui){ return [xs[ui%2],ui*rowH+78]; });
+      var d="M"+pts[0][0]+" "+pts[0][1];
+      for(var k=1;k<pts.length;k++){ var y0=pts[k-1][1], y1=pts[k][1]; d+=" C"+pts[k-1][0]+" "+(y0+rowH*.7)+" "+pts[k][0]+" "+(y1-rowH*.7)+" "+pts[k][0]+" "+y1; }
+      body='<div class="mp-board" style="height:'+H+'px;--b1:'+st.c[0]+';--b2:'+st.c[1]+';"><svg viewBox="0 0 100 '+H+'" preserveAspectRatio="none" class="mp-line"><path class="road" d="'+d+'" vector-effect="non-scaling-stroke"/><path class="dash" d="'+d+'" vector-effect="non-scaling-stroke"/></svg>';
+      var dec=MP_DECOR[lv.cefr]||MP_DECOR.B1;
+      for(var q=0;q<Math.min(3,N);q++){ body+=mpDecor(lv.cefr,dec[q],q%2?72:6,q*rowH*1.4+rowH*.62+30); }
+      lv.units.forEach(function(u,ui){
+        var udone=!!S.speaking.completed[unitKey(li,ui)];
+        var cur=li===fr0.li&&ui===fr0.ui;
+        var stt=udone?"done":(cur?"cur":"open");
+        var icon=udone?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(ui+1);
+        body+='<button type="button" class="mp-node '+stt+'" data-li="'+li+'" data-ui="'+ui+'" style="left:'+pts[ui][0]+'%;top:'+(pts[ui][1]-38)+'px;">'+
+          (cur?'<span class="mp-pin" style="--ms:'+st.sc+';"><img src="assets/mascot/'+st.pose+'" alt=""></span>':'')+
+          '<span class="mp-c"><i>'+icon+'</i></span><span class="mp-l">'+esc(u.name)+'</span></button>';
+      });
+      body+='</div>';
+    }
+    box.innerHTML=head+body; listEl.appendChild(box);
   });
+  listEl.querySelectorAll(".mp-story").forEach(function(h){ h.addEventListener("click",function(){ var li=parseInt(h.dataset.li,10); S.speaking.openLv=(S.speaking.openLv===li)?-1:li; save(); renderSpeaking(); }); });
   listEl.querySelectorAll(".mp-node").forEach(function(n){
     n.addEventListener("click",function(){
       S.speaking.selected={li:parseInt(n.dataset.li,10),ui:parseInt(n.dataset.ui,10)}; save(); renderSpeaking();
@@ -5509,7 +5594,7 @@ document.getElementById("importFile").addEventListener("change",function(e){
     try{
       S=JSON.parse(r.result);
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
-      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.readingLib.pdfDone=S.readingLib.pdfDone||{}; S.books=S.books||[]; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
+      S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; speakMigrate(); S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.readingLib.pdfDone=S.readingLib.pdfDone||{}; S.books=S.books||[]; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
       save(); renderToday(); renderVocab(); alert("İçe aktarıldı.");
     }catch(err){ alert("Dosya okunamadı."); }
