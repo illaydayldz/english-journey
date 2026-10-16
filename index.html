@@ -1545,6 +1545,7 @@
   .wb-page{ touch-action:pan-x pan-y; position:relative; overflow:auto; border-radius:14px; background:#fff; box-shadow:var(--shadow-2); max-height:78vh; -webkit-overflow-scrolling:touch; }
   .wb-wrap{ position:relative; margin:0 auto; line-height:0; }
   .wb-wrap canvas{ display:block; max-width:none; }
+  .wbrow{ display:flex; flex-wrap:wrap; gap:2px 18px; padding:4px 0; border-bottom:1px dashed rgba(128,128,128,.25); line-height:1.5; } .wbrow.wbh{ font-weight:800; border-bottom:2px solid rgba(128,128,128,.35); margin-top:8px; } .wbcell{ min-width:0; }
   .wb-over{ position:absolute; inset:0; pointer-events:none; }
   .wb-pinmk{ position:absolute; transform:translate(-50%,-50%); pointer-events:auto; width:26px; height:26px; border-radius:50%; border:none; background:linear-gradient(160deg,#FFE9A6,#F2B94B); color:color-mix(in srgb,var(--accent) 30%,#000); font:800 12px var(--font-ui); box-shadow:0 3px 8px rgba(0,0,0,.35); cursor:pointer; }
   .wb-pinmk{ line-height:26px; padding:0; } 
@@ -4584,22 +4585,63 @@ function wbNotesRender(){
   box.innerHTML=h;
   var wd=document.getElementById("wbDel"); if(wd) wd.addEventListener("click",function(){ if(!confirm("Bu kitap ve notları silinsin mi?")) return; var b=WB.bk; idbDelete("bookpdf-"+b.id); idbDelete("bookink-"+b.id); S.qnotes=(S.qnotes||[]).filter(function(n){ return String(n.ref||"").indexOf("wb:"+b.id+":")!==0; }); S.books=S.books.filter(function(x){ return x.id!==b.id; }); save(); WB.bk=null; WB.pdf=null; go("library"); });
   document.getElementById("wbAdd").addEventListener("click",function(){ wbPendingPos=null; qnOpen(null,wbRef(WB.page)); });
-  function wbRenderTxt(out,paras,pg){
+  /* blok listesi: {k:"p",t:"metin"} | {k:"row",c:["hücre",...],h:bool} */
+  function wbRenderTxt(out,blocks,pg,mode){
     var key=(S.settings.geminiApiKey||"").trim();
     out.dataset.open="1";
-    out.innerHTML='<div class="paper-card" style="margin-top:10px;">'+paras.map(function(p){ return '<p class="rp">'+wrapWords(p)+'</p>'; }).join("")+'</div>'+
+    var html=blocks.map(function(b){
+      if(b.k==="row") return '<div class="wbrow'+(b.h?" wbh":"")+'">'+b.c.map(function(c){ return '<span class="wbcell">'+wrapWords(c)+'</span>'; }).join("")+'</div>';
+      return '<p class="rp">'+wrapWords(b.t)+'</p>';
+    }).join("");
+    out.innerHTML='<div class="paper-card" style="margin-top:10px;">'+html+'</div>'+
       '<p class="hint" style="text-align:left;margin:6px 2px;">Bilmediğin kelimeye dokun: anlamı çıkar, kelime defterine eklersin.</p>'+
-      (key?'<button type="button" class="btn sec sm" id="wbTxtAI" style="margin:4px 0 0;">Karışıksa: Moonie temiz okusun</button>':'');
-    out.querySelectorAll(".rw").forEach(function(span){ span.addEventListener("click",function(){ span.classList.add("tapped"); openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:""); }); });
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
+      (mode!=="ai"?'<button type="button" class="btn sec sm" id="wbTxtMode" style="margin:4px 0 0;">'+(mode==="layout"?"Düz metin göster":"Sayfa düzenini koru")+'</button>':'')+
+      (key?'<button type="button" class="btn sec sm" id="wbTxtAI" style="margin:4px 0 0;">Karışıksa: Moonie temiz okusun</button>':'')+'</div>';
+    out.querySelectorAll(".rw").forEach(function(span){ span.addEventListener("click",function(){ span.classList.add("tapped"); var c=span.closest(".rp,.wbrow"); openWordSheet(span.dataset.w, c?c.textContent:""); }); });
+    var md=document.getElementById("wbTxtMode");
+    if(md) md.addEventListener("click",function(){ wbRenderTxt(out,mode==="layout"?wbParaBlocks():wbLayoutBlocks(),pg,mode==="layout"?"para":"layout"); });
     var ai=document.getElementById("wbTxtAI");
     if(ai) ai.addEventListener("click",async function(){
       ai.disabled=true; ai.textContent="Moonie sayfayı okuyor…";
       try{
         var ck=WB.bk.id+":"+pg; WB.aiTxt=WB.aiTxt||{};
         if(!WB.aiTxt[ck]) WB.aiTxt[ck]=await wbGeminiPage();
-        if(WB.page===pg) wbRenderTxt(out,WB.aiTxt[ck],pg);
+        if(WB.page===pg) wbRenderTxt(out,WB.aiTxt[ck],pg,"ai");
       }catch(err){ ai.disabled=false; ai.textContent="Karışıksa: Moonie temiz okusun"; out.insertAdjacentHTML("beforeend",'<p class="store-warn" style="margin:8px 0;">'+esc(err.message||String(err))+'</p>'); }
     });
+  }
+  function wbParaBlocks(){ var cl=wbCleanParas(); if(cl.join(" ").length<80&&(WB.pageText||"").trim().length>=60) cl=splitPdfParas(WB.pageText.trim()); return cl.map(function(t){ return {k:"p",t:t}; }); }
+  /* sayfa düzenini koru: her görsel satır ayrı, aynı satırdaki sütunlar ayrı hücre (tablo / eşleştirme alıştırmaları) */
+  function wbLayoutRows(){
+    var items=(WB.items||[]).filter(function(it){ return it.str&&it.str.trim(); });
+    if(!items.length) return [];
+    var hist={}; items.forEach(function(it){ var k=Math.round(it.h); hist[k]=(hist[k]||0)+it.str.length; });
+    var body=0,bn=-1; Object.keys(hist).forEach(function(k){ if(hist[k]>bn){ bn=hist[k]; body=+k; } });
+    var keep=items.filter(function(it){ var t=it.str.trim(); if(it.h<body*0.6||it.h>body*2.6) return false; return (t.match(/[A-Za-zÇĞİÖŞÜçğıöşü0-9]/g)||[]).length>=Math.min(2,t.length)*1; });
+    keep.sort(function(a,b){ return a.y-b.y||a.x-b.x; });
+    var lines=[], tol=Math.max(3,body*0.55);
+    keep.forEach(function(it){ var l=lines[lines.length-1]; if(l&&Math.abs(it.y-l.y)<=tol){ l.its.push(it); l.y=(l.y*(l.its.length-1)+it.y)/l.its.length; if(it.h>l.h) l.h=it.h; } else lines.push({y:it.y,its:[it],h:it.h}); });
+    var rows=[];
+    lines.forEach(function(l){
+      l.its.sort(function(a,b){ return a.x-b.x; });
+      var cells=[], cur=null, gapMax=Math.max(body*1.8,14);
+      l.its.forEach(function(it){
+        var t=it.str.trim();
+        if(cur&&it.x-(cur.x2)<=gapMax){ cur.t+=" "+t; cur.x2=it.x+it.w; }
+        else { cur={t:t,x2:it.x+it.w}; cells.push(cur); }
+      });
+      var cs=cells.map(function(c){ return c.t.replace(/\s{2,}/g," ").trim(); }).filter(function(c){ return c.length>0&&/[A-Za-zÇĞİÖŞÜçğıöşü]/.test(c); });
+      if(cs.length) rows.push({k:"row",c:cs,h:l.h>body*1.15});
+    });
+    return rows;
+  }
+  function wbLayoutBlocks(){ return wbLayoutRows(); }
+  function wbLooksLikeLayout(rows){
+    if(rows.length<8) return false;
+    var multi=rows.filter(function(r){ return r.c.length>=2; }).length;
+    var shortN=rows.filter(function(r){ return r.c.join(" ").length<55; }).length;
+    return multi/rows.length>=0.4||(rows.length>=15&&shortN/rows.length>=0.8);
   }
   /* sayfadaki metin parçalarından el yazısı/not/Türkçe çeviri gürültüsünü ayıklayıp temiz paragraflar üret */
   function wbCleanParas(){
@@ -4644,27 +4686,44 @@ function wbNotesRender(){
     var cv=document.getElementById("wbCanvas"), sc=Math.min(1,1800/Math.max(cv.width,cv.height)), c2=document.createElement("canvas");
     c2.width=Math.round(cv.width*sc); c2.height=Math.round(cv.height*sc); c2.getContext("2d").drawImage(cv,0,0,c2.width,c2.height);
     var b64=c2.toDataURL("image/jpeg",0.85).split(",")[1];
-    var prompt="Transcribe ONLY the main PRINTED English text on this book page. Ignore handwritten notes, Turkish translations written in the margins, pen marks, underlines, highlights, page numbers and scanner artifacts. Keep natural reading order. Separate paragraphs with a blank line. Output ONLY the text, no commentary. If there is no readable printed text, output exactly: EMPTY";
+    var prompt="Transcribe the PRINTED text on this book/workbook page exactly as printed (English and Turkish). Ignore handwritten notes, pen marks, underlines, highlights, page numbers and scanner artifacts. Keep natural reading order. For tables, vocabulary cards, lists and matching exercises keep each row on its own line and separate the columns of a row with ' | '. For normal paragraphs write the paragraph as one block. Separate blocks with a blank line. Output ONLY the text, no commentary. If there is no readable printed text, output exactly: EMPTY";
     var data=await geminiFetchJSON({contents:[{role:"user",parts:[{text:prompt},{inline_data:{mime_type:"image/jpeg",data:b64}}]}]},key);
     var cand=data&&data.candidates&&data.candidates[0], t=cand&&cand.content&&cand.content.parts&&cand.content.parts.map(function(p){return p.text||"";}).join("");
     if(!t) throw new Error((data&&data.error&&data.error.message)||"Moonie sayfayı okuyamadı, tekrar dene.");
     t=t.replace(/^```[a-z]*\s*/i,"").replace(/```\s*$/,"").trim();
-    if(t==="EMPTY") return ["(Bu sayfada okunabilir basılı metin bulunamadı.)"];
-    return t.split(/\n\s*\n/).map(function(p){ return p.replace(/\s*\n\s*/g," ").trim(); }).filter(Boolean);
+    if(t==="EMPTY") return [{k:"p",t:"(Bu sayfada okunabilir basılı metin bulunamadı.)"}];
+    var out=[];
+    t.split(/\n\s*\n/).forEach(function(blk){
+      var ls=blk.split("\n").map(function(x){ return x.trim(); }).filter(Boolean); if(!ls.length) return;
+      var tab=ls.some(function(x){ return x.indexOf(" | ")>=0; }), avg=ls.join("").length/ls.length;
+      if(tab||avg<60||ls.length===1&&ls[0].length<60){ ls.forEach(function(x){ var c=x.split(/\s*\|\s*/).filter(Boolean); out.push({k:"row",c:c,h:false}); }); }
+      else out.push({k:"p",t:ls.join(" ")});
+    });
+    return out;
   }
   document.getElementById("wbTxt").addEventListener("click",async function(){
     var out=document.getElementById("wbTxtOut"), pg=WB.page;
     if(out.dataset.open==="1"){ out.innerHTML=""; out.dataset.open=""; return; }
     out.innerHTML='<p class="hint" style="text-align:left;margin:8px 2px;">Sayfa metni hazırlanıyor…</p>';
-    var paras=null;
+    var blocks=null, mode="para";
     try{
-      var cl=wbCleanParas();
-      if(cl.join(" ").length>=80) paras=cl;
-      else if((WB.pageText||"").trim().length>=60) paras=splitPdfParas(WB.pageText.trim());
-      else paras=await ocrPage(WB.bk,pg);
+      var rows=wbLayoutRows();
+      if(rows.length&&wbLooksLikeLayout(rows)){ blocks=rows; mode="layout"; }
+      else {
+        var pb=wbParaBlocks();
+        if(pb.length&&pb.map(function(b){ return b.t; }).join(" ").length>=80) blocks=pb;
+        else if(rows.length>=3){ blocks=rows; mode="layout"; }
+        else {
+          var hasKey=!!(S.settings.geminiApiKey||"").trim(); WB.aiTxt=WB.aiTxt||{}; var ck=WB.bk.id+":"+pg;
+          if(hasKey&&!(WB.items&&WB.items.length)){
+            try{ if(!WB.aiTxt[ck]) WB.aiTxt[ck]=await wbGeminiPage(); blocks=WB.aiTxt[ck]; mode="ai"; }catch(e){ blocks=null; }
+          }
+          if(!blocks) blocks=(await ocrPage(WB.bk,pg)).map(function(t){ return {k:"p",t:t}; });
+        }
+      }
     }catch(err){ out.innerHTML='<p class="store-warn" style="margin:8px 0;">'+esc(err.message||String(err))+'</p>'; return; }
     if(WB.page!==pg) return;
-    wbRenderTxt(out,paras,pg);
+    wbRenderTxt(out,blocks,pg,mode);
   });
   box.querySelectorAll(".gn-card").forEach(function(b){ b.addEventListener("click",function(){ qnOpen(b.dataset.id); }); });
   box.querySelectorAll(".wb-mk").forEach(function(b){ b.addEventListener("click",function(){ wbShow(b.dataset.p); window.scrollTo(0,0); }); });
