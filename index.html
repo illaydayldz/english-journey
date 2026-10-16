@@ -2692,6 +2692,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
 <div class="av-sheet" id="avSheet" role="dialog" aria-label="Avatar seç"><div class="av-prev" id="avPrev"></div><div class="av-cols" id="avCols"></div><div class="av-grid" id="avGrid"></div><button type="button" class="btn" id="avSave" style="margin-top:14px;">Kaydet</button></div>
   <div class="away-ov" id="awayOv" role="dialog" aria-modal="true"><div class="away-box"><img id="awayImg" src="assets/mascot/ms-1.webp" data-nomoon="1" alt="Moonie"><h2 id="awayT"></h2><p id="awayP"></p><button type="button" class="ab-go" id="awayGo">Hadi başlayalım</button><button type="button" class="ab-later" id="awayLater">Daha sonra</button></div></div>
 <div class="away-ov" id="instOv" role="dialog" aria-modal="true"><div class="away-box" style="text-align:left;"><h2 style="text-align:center;margin-top:0;">Ana ekrana ekle</h2><ol id="instSteps" style="padding-left:20px;margin:0 0 14px;font-size:14.5px;line-height:1.6;color:var(--ink);"></ol><button type="button" class="ab-go" id="instShare" style="display:none;">Paylaş menüsünü aç</button><button type="button" class="ab-later" id="instClose" style="width:100%;">Kapat</button></div></div>
+<div class="away-ov" id="tourOv" role="dialog" aria-modal="true" aria-label="Moonie tanıtımı"><div class="away-box"><img id="tourImg" alt=""><h2 id="tourTitle"></h2><p id="tourText"></p><div id="tourDots" style="display:flex;justify-content:center;gap:6px;margin:0 0 14px;"></div><button type="button" class="ab-go" id="tourNext">Devam</button><button type="button" class="ab-later" id="tourSkip">Atla</button></div></div>
 <div id="xferBar" style="display:none;position:fixed;left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:9400;padding:12px 14px;border-radius:16px;background:#FFE9A6;color:#3a2a00;font-size:13px;line-height:1.4;box-shadow:0 10px 30px rgba(0,0,0,.4);">Safari'de başladıysan ilerlemeni buraya taşıyabilirsin. <div style="display:flex;gap:8px;margin-top:8px;"><button type="button" id="xferBarGo" style="flex:1;border:0;border-radius:12px;padding:10px;font-weight:800;background:#7c5cff;color:#fff;">Safari'den yapıştır</button><button type="button" id="xferBarX" style="border:0;border-radius:12px;padding:10px 14px;font-weight:700;background:rgba(0,0,0,.12);color:#3a2a00;">Gerek yok</button></div></div>
 <!-- ===== PROFİL ===== -->
   <section class="view" id="v-profile">
@@ -2839,6 +2840,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
         <p class="mut" id="lnNote" style="margin:6px 0 0;font-size:12px;">Her gün seçtiğin saatte bildirim gelir. Birkaç gün çalışmazsan Moonie küser, mesajlar gün gün değişir.</p>
       </div>
       <div id="webRem">
+      <button type="button" class="btn sec" id="tourAgain" style="margin:0 0 8px;">Tanıtım turunu tekrar göster</button>
       <button type="button" class="btn" id="remInstall" style="margin:0 0 4px;">Moonie'yi ana ekrana ekle</button><p class="mut" id="remInstNote" style="margin:0 0 14px;font-size:12px;">Ana ekrana ekleyince bildirim ve kısayollar çalışır.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Takvim hatırlatıcısı (iPhone ve Android)</div>
       <div style="display:flex;gap:8px;align-items:center;"><input type="time" id="remTime" value="20:00" style="flex:0 0 120px;padding:10px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:15px;"><button type="button" class="btn" id="remIcs" style="flex:1;margin:0;">Takvime ekle</button></div>
@@ -8321,6 +8323,32 @@ function setSession(remember){
   try{ sessionStorage.setItem("moonie_sess","1"); }catch(e){}
   save();
 }
+/* ---------- İLK AÇILIŞ TANITIM TURU ---------- */
+var TOUR=[
+ {img:"pose-hi",t:"Merhaba, ben Moonie!",x:"İngilizceni her gün küçük adımlarla birlikte geliştireceğiz. Kısa bir tur: 1 dakika."},
+ {img:"pose-todo",t:"Bugün: günlük planın",x:"Hedefine ve seviyene göre hazırlanan görevler ana ekranda. Her gün tamamla, serin büyüsün. Ara verirsen Moonie küser."},
+ {img:"pose-learning",t:"Altı beceri",x:"Dilbilgisi, Okuma, Dinleme, Konuşma, Yazma ve Kelime alttaki menüden. Hepsi seçtiğin seviyeden başlar."},
+ {img:"pose-reading",t:"Kendi içeriğini ekle",x:"Okuma'ya PDF kitap ekle; kitap başlıklarına göre ayrı metinlere bölünür. Dinleme'ye podcast ekle. Bilmediğin kelimeye dokununca anlamı çıkar ve kelime defterine eklenir. Eklediklerini × ile silebilirsin."},
+ {img:"pose-thinking",t:"Yapay zekâ özellikleri",x:"Moonie ile konuşma, yazma geri bildirimi ve anlama testleri için Ayarlar'dan bir Gemini API anahtarı gir (Google AI Studio'dan alınır). Spotify podcastleri için Spotify Client ID gerekir. İkisi de isteğe bağlı."},
+ {img:"pose-proud",t:"Ana ekrana ekle",x:"iPhone'da Safari'de Paylaş > Ana Ekrana Ekle. Android'de Chrome menüsünden Ana ekrana ekle. Böylece uygulama gibi açılır. Hazırsın!"}
+];
+var tourI=0;
+function showTour(){
+  tourI=0; renderTour(); document.getElementById("tourOv").classList.add("on");
+}
+function renderTour(){
+  var d=TOUR[tourI];
+  document.getElementById("tourImg").src="assets/mascot/"+d.img+".webp";
+  document.getElementById("tourTitle").textContent=d.t;
+  document.getElementById("tourText").textContent=d.x;
+  document.getElementById("tourNext").textContent=tourI===TOUR.length-1?"Başlayalım":"Devam";
+  document.getElementById("tourSkip").style.display=tourI===TOUR.length-1?"none":"";
+  document.getElementById("tourDots").innerHTML=TOUR.map(function(_,k){ return '<span style="width:'+(k===tourI?18:7)+'px;height:7px;border-radius:99px;background:'+(k===tourI?'var(--accent)':'var(--gray-300)')+';transition:width .2s;"></span>'; }).join("");
+}
+function closeTour(){ document.getElementById("tourOv").classList.remove("on"); S.settings.tourDone=true; save(); }
+document.getElementById("tourNext").addEventListener("click",function(){ if(tourI>=TOUR.length-1){ closeTour(); return; } tourI++; renderTour(); });
+document.getElementById("tourSkip").addEventListener("click",closeTour);
+document.getElementById("tourAgain").addEventListener("click",showTour);
 function enterApp(){
   document.body.classList.remove("onb-active");
   go("today");
@@ -8417,6 +8445,7 @@ document.getElementById("obFinishBtn").addEventListener("click",function(){
   save();
   document.body.classList.remove("onb-active");
   go("today");
+  if(!S.settings.tourDone) setTimeout(showTour,500);
 });
 
 
