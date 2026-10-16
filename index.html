@@ -4117,7 +4117,7 @@ function renderBook(){
       rb.textContent="Metinleri başlıklarına göre ayır";
       rb.onclick=function(){ rb.disabled=true; rb.textContent="Başlıklar aranıyor..."; resplitBook(bk,rb).then(function(ok){ if(ok) renderBook(); else { rb.disabled=false; rb.textContent="Başlık bulunamadı, sayfa düzeni kullanılıyor"; } }).catch(function(){ rb.disabled=false; rb.textContent="Analiz edilemedi"; }); };
       listEl.parentNode.insertBefore(rb,listEl);
-      if(!bk.splitTried){ rb.click(); }
+      if(bk.splitV!==3){ rb.click(); }
     }
     var next=0; for(var i=0;i<ch.length;i++){ if(!S.readingLib.pdfDone["pdf"+bk.id+"-"+i]){ next=i; break; } }
     cont.style.display=ch.length?"":"none";
@@ -4209,6 +4209,49 @@ async function extractPdfChapters(file,onProgress){
       if(r1) return {chapters:r1,pages:N,mode:"outline"};
     }
   }catch(e){}
+  /* 1b) basılı "İçindekiler" sayfası: "12. Başlık ......... 34" satırlarından bölüm listesi, gövdede başlığa bakarak sayfa bulunur */
+  try{
+    function sq(t){ return String(t).toLowerCase().replace(/[^a-z0-9]/g,""); }
+    function approx(pat,text,k){
+      var m=pat.length, prev=[], cur=[], i, j;
+      for(i=0;i<=m;i++) prev[i]=i;
+      for(j=0;j<text.length;j++){
+        cur[0]=0; var c=text.charCodeAt(j);
+        for(i=1;i<=m;i++){ var v=prev[i-1]+(pat.charCodeAt(i-1)===c?0:1); if(prev[i]+1<v) v=prev[i]+1; if(cur[i-1]+1<v) v=cur[i-1]+1; cur[i]=v; }
+        if(cur[m]<=k) return true; var tmp=prev; prev=cur; cur=tmp;
+      }
+      return false;
+    }
+    var toc=[], tocEnd=0, tocPages={};
+    lines.forEach(function(l){
+      if(l.p>Math.min(N,30)) return;
+      var rest=l.t.replace(/^[^A-Za-z]*/,"");
+      var lm=rest.match(/^(.*?[A-Za-z]{2}.*?)\s*(?:[.·…,'":;_\-]\s*){3,}/); if(!lm) return;
+      var title=lm[1].replace(/\+?\s*\(?vocabulary\)?/ig,"").replace(/[\s.·…,'":;_\-]+$/,"").trim();
+      var q=sq(title); if(q.length<3||/^(contents|foreword|preface|acknowledg|introduction|index)/.test(q)) return;
+      toc.push({title:title,p:l.p});
+    });
+    var cnt={}; toc.forEach(function(e){ cnt[e.p]=(cnt[e.p]||0)+1; });
+    var pgs=Object.keys(cnt).map(Number).filter(function(p){ return cnt[p]>=4; }).sort(function(a,b){ return a-b; }), run=[];
+    pgs.forEach(function(p){ if(!run.length||p-run[run.length-1]<=2) run.push(p); });
+    toc=toc.filter(function(e){ return run.indexOf(e.p)>=0; });
+    run.forEach(function(p){ tocPages[p]=1; if(p>tocEnd) tocEnd=p; });
+    if(toc.length>=5){
+      var pos=tocEnd, found=[];
+      toc.forEach(function(e){
+        var pat=sq(e.title).slice(0,28), k=Math.max(1,Math.floor(pat.length*0.2));
+        for(var pg=pos+1;pg<=Math.min(N,pos+30);pg++){
+          if(tocPages[pg]) continue;
+          if(approx(pat,sq(pageTxt[pg-1].slice(0,170)),k)){ found.push({title:e.title,page:pg}); pos=pg; return; }
+        }
+      });
+      if(found.length>=Math.max(5,toc.length*0.6)){
+        var secs1b=found.map(function(x,k){ var end=k+1<found.length?found[k+1].page:N+1; return {title:x.title,text:pageTxt.slice(x.page-1,end-1).join(" ")}; });
+        var r1b=pack(secs1b);
+        if(r1b) return {chapters:r1b,pages:N,mode:"toc"};
+      }
+    }
+  }catch(e){}
   /* satır istatistikleri */
   var hist={}; lines.forEach(function(l){ var k=Math.round(l.h); hist[k]=(hist[k]||0)+l.t.length; });
   var body=0,bestN=-1; Object.keys(hist).forEach(function(k){ if(hist[k]>bestN){ bestN=hist[k]; body=+k; } });
@@ -4266,7 +4309,7 @@ async function extractPdfChapters(file,onProgress){
 async function resplitBook(bk,st){
   var blob=await idbGet("bookpdf-"+bk.id); if(!blob) return false;
   var r=await extractPdfChapters(blob,function(p,n){ if(st) st.textContent="Başlıklar aranıyor... "+p+"/"+n; });
-  bk.splitTried=true;
+  bk.splitV=3;
   if(r.mode==="pages"||!r.chapters.length){ save(); return false; }
   await idbPut("book-"+bk.id,new Blob([JSON.stringify(r.chapters)],{type:"application/json"}));
   PDF_CHAPTER_CACHE[bk.id]=r.chapters; bk.chapters=r.chapters.length; bk.lowText=false;
