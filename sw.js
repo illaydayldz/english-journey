@@ -1,25 +1,28 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v52-spotify5";
+const CACHE = "english-app-v94-ocr3";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/reading-library.json",
-  "./assets/mascot/hero-happy.png",
-  "./assets/mascot/pose-motivated.png",
-  "./assets/mascot/pose-goodjob.png",
-  "./assets/mascot/pose-greatprogress.png",
-  "./assets/mascot/pose-goalachieved.png",
-  "./assets/mascot/pose-learning.png",
-  "./assets/mascot/pose-reading.png",
-  "./assets/mascot/pose-sleepy.png",
-  "./assets/mascot/pose-writing.png",
-  "./assets/mascot/pose-listening.png",
-  "./assets/mascot/pose-newword.png",
-  "./assets/mascot/pose-happy2.png",
-  "./assets/mascot/pose-proud.png",
-  "./assets/mascot/pose-cheering.png",
-  "./assets/mascot/pose-confused.png",
-  "./assets/mascot/extra-pencil.png",
-  "./assets/mascot/extra-flying.png"
+  "./assets/pdfjs/pdf.min.js",
+  "./assets/pdfjs/pdf.worker.min.js",
+  "./assets/mascot/hero-happy.webp",
+  "./assets/mascot/pose-motivated.webp",
+  "./assets/mascot/pose-goodjob.webp",
+  "./assets/mascot/pose-greatprogress.webp",
+  "./assets/mascot/pose-goalachieved.webp",
+  "./assets/mascot/pose-learning.webp",
+  "./assets/mascot/pose-todo.webp",
+  "./assets/mascot/pose-reading.webp",
+  "./assets/mascot/pose-sleepy.webp",
+  "./assets/mascot/pose-writing.webp",
+  "./assets/mascot/pose-listening.webp",
+  "./assets/mascot/pose-newword.webp",
+  "./assets/mascot/pose-happy2.webp",
+  "./assets/mascot/pose-proud.webp",
+  "./assets/mascot/pose-cheering.webp",
+  "./assets/mascot/pose-confused.webp",
+  "./assets/mascot/extra-pencil.webp",
+  "./assets/mascot/extra-flying.webp"
 ];
 
 self.addEventListener("install", (e) => {
@@ -32,7 +35,7 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
-  const isNav = e.request.mode === "navigate" || e.request.url.endsWith("/index.html") || e.request.url.endsWith(".webmanifest");
+  const isNav = e.request.mode === "navigate" || e.request.url.endsWith("/index.html") || e.request.url.endsWith(".webmanifest") || e.request.url.includes("/mascot/hd/index.json");
   if (isNav) {
     e.respondWith(
       fetch(e.request).then((res) => {
@@ -45,8 +48,7 @@ self.addEventListener("fetch", (e) => {
   }
   e.respondWith(
     caches.match(e.request).then((hit) => hit || fetch(e.request).then((res) => {
-      const copy = res.clone();
-      caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {}); }
       return res;
     }).catch(() => caches.match("./index.html")))
   );
