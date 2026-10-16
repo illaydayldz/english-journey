@@ -672,7 +672,7 @@
   .onb-topbar .onb-skip{ padding:6px 4px; }
 
   /* ---- Renk temaları (aksan) ---- */
-  :root{ --btn:color-mix(in srgb,var(--accent) 82%,#000); --accent-rgb:139,127,255; --accent-2:color-mix(in srgb,var(--accent) 78%,#fff); --hero-a:color-mix(in srgb,var(--accent) 90%,#fff); --hero-b:color-mix(in srgb,var(--accent) 91%,#000); --hero-c:color-mix(in srgb,var(--accent) 80%,#000); }
+  :root{ --btn:color-mix(in srgb,var(--accent) 86%,#5240E0); --accent-rgb:139,127,255; --accent-2:color-mix(in srgb,var(--accent) 78%,#fff); --hero-a:color-mix(in srgb,var(--accent) 90%,#fff); --hero-b:color-mix(in srgb,var(--accent) 91%,#000); --hero-c:color-mix(in srgb,var(--accent) 80%,#000); }
   :root[data-accent="ocean"]{ --btn:#2B72CC; --accent:#4D9DF0; --accent-ink:#B8DBFF; --accent-soft:#14283F; --accent-soft-2:#1C3858; --accent-rgb:77,157,240; --accent-2:#80BBF6; --hero-a:#5DAAF2; --hero-b:#3B82D8; --hero-c:#2C62B4;  }
   :root[data-accent="amber"]{ --btn:#B35418; --accent:#F59A4A; --accent-ink:#FFD9B0; --accent-soft:#2B1D10; --accent-soft-2:#3D2A17; --accent-rgb:245,154,74; --accent-2:#F9B87D; --hero-a:#E58A3C; --hero-b:#C26A26; --hero-c:#8E4414; }
     .acc-row{ display:flex; gap:12px; margin-top:12px; } .acc-dot{ width:38px; height:38px; border-radius:50%; border:3px solid transparent; cursor:pointer; padding:0; box-shadow:0 0 0 1px rgba(255,255,255,.25) inset; } .acc-dot.on{ border-color:var(--ink); }
@@ -740,6 +740,11 @@
   .btn{ border-radius:14px; background-image:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,0) 55%); box-shadow:0 4px 0 color-mix(in srgb,var(--btn) 62%,#2a1f6b), 0 12px 18px -8px rgba(var(--accent-rgb),.42), inset 0 1px 0 rgba(255,255,255,.32); margin-bottom:5px; }
   .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 color-mix(in srgb,var(--btn) 62%,#2a1f6b), 0 4px 8px -4px rgba(var(--accent-rgb),.42), inset 0 1px 0 rgba(255,255,255,.25); }
   .btn.sec{ box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 38%,transparent), 0 10px 16px -8px rgba(var(--accent-rgb),.3), inset 0 1px 0 rgba(255,255,255,.12); }
+  /* yumuşak, uygulamaya uyan butonlar (koyu "3D plaka" kaldırıldı) */
+  .btn{ background-image:none; background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 90%,#fff) 0%,var(--btn) 100%); border-radius:16px; margin-bottom:0; font-weight:600; letter-spacing:.1px; box-shadow:0 8px 20px -10px rgba(var(--accent-rgb),.6), inset 0 1px 0 rgba(255,255,255,.28); }
+  .btn:active{ transform:scale(.98); box-shadow:0 4px 10px -6px rgba(var(--accent-rgb),.5), inset 0 1px 0 rgba(255,255,255,.2); }
+  .btn.sec{ background:var(--tint); background-image:none; box-shadow:none; border:1.5px solid var(--accent-soft-2); }
+  .btn.gold,.btn.green,.btn.blue,.btn.teal,.btn.pink,.btn.deep{ background-image:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0)); box-shadow:0 8px 18px -10px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25); }
   .page-head .back{ background-image:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0)); box-shadow:0 4px 0 rgba(0,0,0,.25), 0 10px 14px -6px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.14); }
   nav{ background:rgba(25,23,31,.80); -webkit-backdrop-filter:blur(20px) saturate(1.5); backdrop-filter:blur(20px) saturate(1.5); border-top:1px solid rgba(255,255,255,.09); box-shadow:0 -14px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); }
   :root[data-theme="light"] nav{ background:rgba(255,255,255,.82); border-top-color:rgba(23,21,31,.06); box-shadow:0 -10px 30px rgba(10,8,30,.14); }
