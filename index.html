@@ -2335,9 +2335,9 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <button type="button" class="btn gold" id="libReadQuizBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Testi Başlat</button>
     </div>
     <div class="card">
-      <button class="btn" id="libReadCompleteBtn"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu metni tamamladım</button>
+      <button class="btn sec" id="libReadCompleteBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--accent-soft-2);box-shadow:none;font-weight:600;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu metni tamamladım</button>
       <div class="donewrap" id="libReadDoneMsg" style="display:none;margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-happy.webp" data-hd="reading-passage-done" alt=""></div><span>Bu metni tamamladın</span></div>
-      <button class="btn" id="libReadNextBtn" style="display:none;margin-top:10px;">Sonraki metin <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
+      <button class="btn" id="libReadNextBtn" style="display:none;margin-top:10px;align-items:center;justify-content:center;gap:6px;">Sonraki metin <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
     </div>
   </section>
 
@@ -4147,19 +4147,64 @@ function splitPdfParas(t){
 async function extractPdfChapters(file,onProgress){
   var lib=await loadPdfJs();
   var pdf=await lib.getDocument({data:await file.arrayBuffer()}).promise;
-  var chapters=[], cur="", start=1;
+  var lines=[], pageTxt=[];
   for(var p=1;p<=pdf.numPages;p++){
-    var page=await pdf.getPage(p), tc=await page.getTextContent(), txt="";
-    tc.items.forEach(function(it){ txt+=it.str+(it.hasEOL?"\n":" "); });
-    txt=txt.replace(/-\n(?=[a-z])/g,"").replace(/\s*\n\s*/g," ").replace(/\s{2,}/g," ").trim();
-    cur+=(cur?" ":"")+txt;
-    if(cur.length>=1800||p===pdf.numPages){
-      if(cur.trim().length>40) chapters.push({title:"Sayfa "+start+(p>start?"–"+p:""),paras:splitPdfParas(cur)});
-      cur=""; start=p+1;
-    }
+    var page=await pdf.getPage(p), tc=await page.getTextContent(), cur=null, ptxt="";
+    tc.items.forEach(function(it){
+      if(typeof it.str!=="string") return;
+      var y=it.transform?it.transform[5]:0, h=Math.abs(it.height||(it.transform&&it.transform[3])||0);
+      ptxt+=it.str+(it.hasEOL?"\n":" ");
+      if(!it.str.trim()){ if(it.hasEOL&&cur){ lines.push(cur); cur=null; } return; }
+      if(cur&&Math.abs(y-cur.y)>Math.max(2,cur.h*0.5)){ lines.push(cur); cur=null; }
+      if(!cur) cur={t:"",y:y,h:h,p:p,fs:""};
+      cur.t+=(cur.t&&!/\s$/.test(cur.t)&&!/^[\s.,;:!?)]/.test(it.str)?" ":"")+it.str; if(h>cur.h) cur.h=h;
+      if(it.hasEOL){ lines.push(cur); cur=null; }
+    });
+    if(cur) lines.push(cur);
+    pageTxt.push(ptxt.replace(/-\n(?=[a-z])/g,"").replace(/\s*\n\s*/g," ").replace(/\s{2,}/g," ").trim());
     if(onProgress) onProgress(p,pdf.numPages);
   }
-  return {chapters:chapters,pages:pdf.numPages};
+  /* başlık tespiti: gövde yazı boyutundan büyük, kısa satırlar; sayfa üstbilgileri/numaraları elenir */
+  var hist={}; lines.forEach(function(l){ var k=Math.round(l.h); hist[k]=(hist[k]||0)+l.t.length; });
+  var body=0,bestN=-1; Object.keys(hist).forEach(function(k){ if(hist[k]>bestN){ bestN=hist[k]; body=+k; } });
+  var seen={}; lines.forEach(function(l){ var k=l.t.trim().toLowerCase(); seen[k]=(seen[k]||0)+1; });
+  var minPages=Math.max(3,Math.round(pdf.numPages*0.15));
+  function isHead(l){
+    var t=l.t.trim(); if(t.length<3||t.length>90) return false;
+    if(/^\d+$/.test(t)||/^(page|sayfa)\s*\d+/i.test(t)) return false;
+    if(seen[t.toLowerCase()]>=minPages) return false;
+    if(/[.,;]$/.test(t)&&t.length>40) return false;
+    var big=body>0&&l.h>=body*1.18;
+    var kw=/^(chapter|unit|lesson|part|story|text|passage|reading|section|bölüm|ünite|ders|metin)\s+([0-9]+|[ivxlc]+|one|two|three|four|five|six|seven|eight|nine|ten)\b/i.test(t);
+    return big||kw;
+  }
+  var secs=[], curS=null, prevHead=false;
+  lines.forEach(function(l){
+    if(isHead(l)){
+      if(curS&&prevHead&&curS.body.length===0&&curS.title.length<80) curS.title+=" "+l.t.trim();
+      else { curS={title:l.t.trim(),body:[],p:l.p}; secs.push(curS); }
+      prevHead=true;
+    } else { if(!curS){ curS={title:"",body:[],p:l.p}; secs.push(curS); } curS.body.push(l.t.trim()); prevHead=false; }
+  });
+  secs.forEach(function(sc){ sc.text=sc.body.join(" ").replace(/-\s+(?=[a-z])/g,"").replace(/\s{2,}/g," ").trim(); });
+  /* çok kısa bölümleri (içindekiler vb.) bir sonrakiyle birleştirme yerine ele */
+  var good=secs.filter(function(sc){ return sc.title&&sc.text.length>=250; });
+  if(good.length>=3&&good.length<=Math.max(400,pdf.numPages)){
+    var chapters=good.map(function(sc){ return {title:sc.title.slice(0,80),paras:splitPdfParas(sc.text)}; });
+    var tot=0; chapters.forEach(function(c){ tot+=c.paras.join(" ").length; });
+    var all=0; pageTxt.forEach(function(t){ all+=t.length; });
+    if(tot>=all*0.5) return {chapters:chapters,pages:pdf.numPages};
+  }
+  /* yedek: sayfa bazlı bölme */
+  var out=[], c2="", st=1;
+  pageTxt.forEach(function(txt,i){
+    var pn=i+1; c2+=(c2?" ":"")+txt;
+    if(c2.length>=1800||pn===pdf.numPages){
+      if(c2.trim().length>40) out.push({title:"Sayfa "+st+(pn>st?"–"+pn:""),paras:splitPdfParas(c2)});
+      c2=""; st=pn+1;
+    }
+  });
+  return {chapters:out,pages:pdf.numPages};
 }
 function textJunkRatio(chapters){
   var toks=[]; (chapters||[]).slice(0,6).forEach(function(c){ (c.paras||[]).forEach(function(p){ toks=toks.concat(String(p).split(/\s+/)); }); });
@@ -4602,7 +4647,7 @@ function renderLibRead(){
   });
   if(!OPEN_PDF&&r.src) body.insertAdjacentHTML("beforeend",'<p class="hint" style="text-align:left;margin-top:14px;">Kaynak: '+esc(r.src)+'</p>');
   var done=isPassageDone(r);
-  document.getElementById("libReadCompleteBtn").style.display=done?"none":"block";
+  document.getElementById("libReadCompleteBtn").style.display=done?"none":"flex";
   document.getElementById("libReadDoneMsg").style.display=done?"flex":"none";
   var nextBtn=document.getElementById("libReadNextBtn"), nextFn=null;
   if(OPEN_PDF){
@@ -4611,7 +4656,7 @@ function renderLibRead(){
     var ci=READING_LIBRARY.indexOf(r);
     if(ci>=0&&ci+1<READING_LIBRARY.length) nextFn=function(){ openLibRead(READING_LIBRARY[ci+1].id); window.scrollTo(0,0); };
   }
-  nextBtn.style.display=(done&&nextFn)?"block":"none";
+  nextBtn.style.display=(done&&nextFn)?"flex":"none";
   nextBtn.onclick=nextFn;
   if(libReadRecording&&libReadRecorder&&libReadRecorder.state!=="inactive"){ libReadRecorder.stop(); }
   if("speechSynthesis" in window) speechSynthesis.cancel();
