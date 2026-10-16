@@ -4679,6 +4679,33 @@ function wbNotesRender(){
     var m=WB.bk.marks||(WB.bk.marks=[]), i=m.indexOf(WB.page); if(i===-1) m.push(WB.page); else m.splice(i,1);
     save(); wbUpdateMark(); wbNotesRender();
   });
+  /* iki parmakla tek dokunuş = son çizgiyi geri al (pointer olaylarıyla, kalem/parmak fark etmez) */
+  function wbUndoOne(){
+    if(Date.now()-(WB.undoAt||0)<500) return; WB.undoAt=Date.now();
+    var L=WB.ink[WB.page]; if(!L||!L.length) return;
+    L.pop(); wbDrawInk(); wbSaveInk();
+    var h=el("wbToolHint"); if(h){ var old=h.textContent, od=h.style.display; h.textContent="Geri alındı"; h.style.display="block"; setTimeout(function(){ h.textContent=old; h.style.display=od; },900); }
+  }
+  window.wbUndoOne=wbUndoOne;
+  (function(){
+    var box=el("wbPageBox"), ptrs={}, twoAt=0;
+    box.addEventListener("pointerdown",function(e){
+      if(e.pointerType!=="touch") return;
+      ptrs[e.pointerId]={x:e.clientX,y:e.clientY,moved:false};
+      if(Object.keys(ptrs).length===2){ twoAt=Date.now(); WB.pinching=true; }
+    },true);
+    box.addEventListener("pointermove",function(e){
+      var p=ptrs[e.pointerId]; if(p&&Math.hypot(e.clientX-p.x,e.clientY-p.y)>16) p.moved=true;
+    },true);
+    function up(e){
+      var p=ptrs[e.pointerId]; if(!p) return;
+      var n=Object.keys(ptrs).length, any=Object.keys(ptrs).some(function(k){ return ptrs[k].moved; });
+      if(n===2&&twoAt&&Date.now()-twoAt<450&&!any&&e.type==="pointerup"){ twoAt=0; wbUndoOne(); }
+      delete ptrs[e.pointerId];
+      if(!Object.keys(ptrs).length){ twoAt=0; setTimeout(function(){ WB.pinching=false; },250); }
+    }
+    box.addEventListener("pointerup",up,true); box.addEventListener("pointercancel",up,true);
+  })();
   /* iki parmakla büyütme / küçültme */
   (function(){
     var box=el("wbPageBox"), wrap=el("wbWrap"), p0=null;
@@ -4700,7 +4727,7 @@ function wbNotesRender(){
     function done(e){
       if(!p0||(e.touches&&e.touches.length>=2)) return;
       var q=p0; p0=null; wrap.style.transform=""; wrap.style.transformOrigin="";
-      if(Date.now()-WB.tt<320&&Math.abs(q.k-1)<0.06){ var Lu=WB.ink[WB.page]; if(Lu&&Lu.length){ Lu.pop(); wbDrawInk(); wbSaveInk(); } setTimeout(function(){ WB.pinching=false; },250); return; }
+      if(Date.now()-WB.tt<450&&Math.abs(q.k-1)<0.12){ wbUndoOne(); setTimeout(function(){ WB.pinching=false; },250); return; }
       setTimeout(function(){ WB.pinching=false; },250);
       var nz=Math.max(1,Math.min(4,WB.zoom*q.k));
       if(Math.abs(nz-WB.zoom)<0.04) return;
