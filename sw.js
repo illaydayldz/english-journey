@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v110-push";
+const CACHE = "english-app-v111-two";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/reading-library.json",
@@ -118,6 +118,13 @@ self.addEventListener("push", (e) => {
         }
       }
     } catch (err) {}
-    await self.registration.showNotification(title, { body, icon: "./icon-192-v4.png", badge: "./icon-192-v4.png", tag: "moonie-daily", data: { url: "./index.html?go=today" } });
+    try {
+      const c2 = await caches.open("moonie-state"); const r2 = await c2.match("./__state.json"); const st2 = r2 ? await r2.json() : {};
+      const td = new Date().toDateString(); const n = st2.shownD === td ? (st2.shownN || 0) : 0;
+      if (n >= 1) { body = (focus ? "Bugünkü görev hâlâ açık. 5 dakikanı ayır." : "Bugün henüz görüşmedik. Küçük bir adım yeter, olur mu?"); }
+      st2.shownD = td; st2.shownN = n + 1;
+      await c2.put("./__state.json", new Response(JSON.stringify(st2), { headers: { "Content-Type": "application/json" } }));
+    } catch (err) {}
+    await self.registration.showNotification(title, { body, icon: "./icon-192-v4.png", badge: "./icon-192-v4.png", tag: "moonie-daily-" + Date.now(), data: { url: "./index.html?go=today" } });
   })());
 });

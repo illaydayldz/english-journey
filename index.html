@@ -2834,6 +2834,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <p class="mut" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte, haftanın 7 gününe ayrı Moonie mesajı gelir. Açılan takvim penceresinde "Ekle"ye dokun.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Arka plan bildirimi (iPhone ve Android)</div>
       <button type="button" class="btn sec" id="remBg" style="margin:0;">Bildirimi aç</button>
+      <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:13.5px;"><input type="checkbox" id="remTwo"> Günde 2 bildirim <input type="time" id="remTime2" value="12:30" style="margin-left:auto;padding:8px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:14px;"></label>
       <p class="mut" id="remBgNote" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte hatırlatır, 2+ gün çalışmazsan Moonie küser. iPhone'da ana ekrana eklemen gerekir.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Ana ekran kısayolları</div>
       <div id="remLinks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
@@ -8510,8 +8511,14 @@ var PUSH_URL="https://moonie-push.ilaydaesmanur86.workers.dev", PUSH_KEY="BOEBSg
     if(Notification.permission==="denied"){ bg.disabled=true; bg.textContent="İzin kapalı (ayarlardan aç)"; return; }
     bg.disabled=false; bg.textContent=S.settings.bgRem?"Bildirim açık · kapat":"Bildirimi aç"; }
   bgState();
-  window.pushSync=function(){ if(!S.settings.pushOn||!PUSH_URL) return; navigator.serviceWorker.ready.then(function(r){ return r.pushManager.getSubscription(); }).then(function(sub){ if(!sub) return; var tv=(document.getElementById("remTime").value||"20:00").split(":"), d=new Date(); d.setHours(+tv[0],+tv[1],0,0);
-    return fetch(PUSH_URL+"/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({endpoint:sub.endpoint,lastActive:S.lastActive||S.lastDone||dstr(new Date()),hourUtc:d.getUTCHours()})}); }).catch(function(){}); };
+  var two=document.getElementById("remTwo"), t2=document.getElementById("remTime2");
+  two.checked=!!S.settings.remTwo; t2.value=S.settings.remTime2||"12:30"; t2.disabled=!two.checked;
+  function utcH(v){ var p=(v||"20:00").split(":"), d=new Date(); d.setHours(+p[0],+p[1],0,0); return d.getUTCHours(); }
+  window.pushSync=function(){ if(!S.settings.pushOn||!PUSH_URL) return; navigator.serviceWorker.ready.then(function(r){ return r.pushManager.getSubscription(); }).then(function(sub){ if(!sub) return;
+    var hs=[utcH(document.getElementById("remTime").value)]; if(S.settings.remTwo){ var h2=utcH(S.settings.remTime2||"12:30"); if(hs.indexOf(h2)<0) hs.push(h2); }
+    return fetch(PUSH_URL+"/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({endpoint:sub.endpoint,lastActive:S.lastActive||S.lastDone||dstr(new Date()),hours:hs,tzMin:new Date().getTimezoneOffset()})}); }).catch(function(){}); };
+  two.addEventListener("change",function(){ S.settings.remTwo=two.checked; t2.disabled=!two.checked; save(); window.pushSync(); });
+  t2.addEventListener("change",function(){ S.settings.remTime2=t2.value||"12:30"; save(); window.pushSync(); });
   function b64uToU8(b){ var p="=".repeat((4-b.length%4)%4), s2=(b+p).replace(/-/g,"+").replace(/_/g,"/"), r=atob(s2), o=new Uint8Array(r.length); for(var i=0;i<r.length;i++) o[i]=r.charCodeAt(i); return o; }
   bg.addEventListener("click",function(){
     if(S.settings.bgRem){ S.settings.bgRem=false; var wasPush=S.settings.pushOn; S.settings.pushOn=false; save();
@@ -8531,7 +8538,7 @@ var PUSH_URL="https://moonie-push.ilaydaesmanur86.workers.dev", PUSH_KEY="BOEBSg
   setTimeout(function(){ window.pushSync(); },2500);
 })();
 /* SW'ye son aktivite bilgisini yaz (Cache) */
-function pushAwayState(){ try{ if(typeof lnSchedule==="function") setTimeout(lnSchedule,300); if(window.pushSync) setTimeout(window.pushSync,600); }catch(e){} try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||"",focus:S.settings.style==="focus"}; caches.open("moonie-state").then(function(c){ return c.put("./__state.json",new Response(JSON.stringify(st),{headers:{"Content-Type":"application/json"}})); }).catch(function(){}); }catch(e){} }
+function pushAwayState(){ try{ if(typeof lnSchedule==="function") setTimeout(lnSchedule,300); if(window.pushSync) setTimeout(window.pushSync,600); }catch(e){} try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||"",focus:S.settings.style==="focus"}; caches.open("moonie-state").then(function(c){ return c.match("./__state.json").then(function(r){ return r?r.json():{}; }).catch(function(){ return {}; }).then(function(o){ o=o||{}; Object.keys(st).forEach(function(k){ o[k]=st[k]; }); return c.put("./__state.json",new Response(JSON.stringify(o),{headers:{"Content-Type":"application/json"}})); }); }).catch(function(){}); }catch(e){} }
 pushAwayState(); document.addEventListener("visibilitychange",function(){ if(document.hidden) pushAwayState(); });
 (function(){ var ios=/iphone|ipad|ipod/i.test(navigator.userAgent), st=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
   var w=document.getElementById("iosWarn"); if(w&&ios&&!st){ w.style.display="block"; document.getElementById("iosWarnBtn").addEventListener("click",function(){ var b=document.getElementById("remInstall"); if(b) b.click(); }); } })();
