@@ -4906,6 +4906,12 @@ function openWordSheet(word,paragraphText){
   document.getElementById("wsDetail").innerHTML="";
   document.getElementById("wsCamb").href="https://dictionary.cambridge.org/dictionary/english-turkish/"+encodeURIComponent(word.toLowerCase());
   wsInfo=null;
+  /* hızlı ön gösterim: makine çevirisi hemen, bağlamlı anlam gelince güncellenir */
+  trLookup(word).then(function(tr){
+    if(wsCurrentWord!==word||wsInfo||!tr) return;
+    document.getElementById("wsTr").textContent=tr;
+    if((S.settings.geminiApiKey||"").trim()) document.getElementById("wsDetail").innerHTML='<div class="wd-src">Cümledeki anlam hazırlanıyor…</div>';
+  });
   wordLookupPro(word,wsCurrentEx).then(function(info){
     if(wsCurrentWord!==word) return;
     wsInfo=info;
@@ -4957,7 +4963,7 @@ function wordLookupPro(word,sentence){
     "\"other\":[\"en çok 2 diğer yaygın Türkçe anlam, yoksa boş dizi\"],"+
     "\"phrase\":\"kelime bir phrasal verb / deyim / collocation'ın parçasıysa tamamı, değilse boş\"}\n"+
     "Cümleyi çevirme. Emin olmadığın anlamı uydurma; emin değilsen tr alanını boş bırak.";
-  return callGeminiJSON(prompt).then(function(o){
+  return Promise.race([callGeminiJSON(prompt),new Promise(function(_,rej){ setTimeout(function(){ rej(new Error("zaman aşımı")); },7000); })]).then(function(o){
     if(Array.isArray(o)) o=o[0];
     if(!o||typeof o!=="object"||!o.tr) throw new Error("bad");
     var info={lemma:String(o.lemma||""),pos:String(o.pos||""),cefr:String(o.cefr||""),tr:String(o.tr||""),def:String(o.def||""),
