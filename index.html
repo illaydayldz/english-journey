@@ -4127,7 +4127,7 @@ function renderBook(){
 }
 function openPdfChapter(bk,ch,i){
   var c=ch[i];
-  OPEN_PDF={book:bk,idx:i,chapters:ch.map(function(x,j){ return {id:"pdf"+bk.id+"-"+j,title:x.title,paras:x.paras}; })};
+  OPEN_PDF={book:bk,idx:i,chapters:ch.map(function(x,j){ return {id:"pdf"+bk.id+"-"+j,title:x.title,paras:x.paras,ex:x.ex}; })};
   go("libread");
 }
 /* PDF -> metin */
@@ -4192,7 +4192,12 @@ async function extractPdfChapters(file,onProgress){
     if(out.length<3||out.length>Math.max(400,N)) return null;
     var tot=0; out.forEach(function(sc){ tot+=sc.text.length; });
     if(tot<allLen*0.5) return null;
-    return out.map(function(sc){ return {title:sc.title.slice(0,80),paras:splitPdfParas(sc.text)}; });
+    return out.map(function(sc){
+      var tx=sc.text, ex="", mk=tx.search(/\b[A-D][.,]\s+(?:What do the following|Fill in|Mark the following|Answer the following|Complete the|Match the|Choose the|Decide|Find the|Circle|Are the following|Say whether|Put the)|VOCABULARY PRACTICE/i);
+      if(mk>=300){ ex=tx.slice(mk); tx=tx.slice(0,mk); }
+      var ch={title:sc.title.slice(0,80),paras:splitPdfParas(tx.trim())};
+      if(ex.trim().length>20) ch.ex=splitPdfParas(ex.trim());
+      return ch; });
   }
   /* 1) PDF'in kendi içindekiler/yer imleri */
   try{
@@ -4755,6 +4760,9 @@ function renderLibRead(){
       openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
     });
   });
+  if(OPEN_PDF&&r.ex&&r.ex.length){
+    body.insertAdjacentHTML("beforeend",'<details style="margin-top:16px;border-top:1px solid var(--line,rgba(128,128,128,.25));padding-top:10px;"><summary style="cursor:pointer;font-weight:600;color:var(--purple-deep);">Kitaptaki alıştırmalar ('+r.ex.length+')</summary>'+r.ex.map(function(p){ return '<p class="rp" style="font-size:14px;opacity:.85;">'+esc(p)+'</p>'; }).join("")+'</details>');
+  }
   if(!OPEN_PDF&&r.src) body.insertAdjacentHTML("beforeend",'<p class="hint" style="text-align:left;margin-top:14px;">Kaynak: '+esc(r.src)+'</p>');
   var done=isPassageDone(r);
   document.getElementById("libReadCompleteBtn").style.display=done?"none":"flex";
