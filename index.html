@@ -2681,6 +2681,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
 <div class="av-sheet" id="avSheet" role="dialog" aria-label="Avatar seç"><div class="av-prev" id="avPrev"></div><div class="av-cols" id="avCols"></div><div class="av-grid" id="avGrid"></div><button type="button" class="btn" id="avSave" style="margin-top:14px;">Kaydet</button></div>
   <div class="away-ov" id="awayOv" role="dialog" aria-modal="true"><div class="away-box"><img id="awayImg" src="assets/mascot/ms-1.webp" data-nomoon="1" alt="Moonie"><h2 id="awayT"></h2><p id="awayP"></p><button type="button" class="ab-go" id="awayGo">Hadi başlayalım</button><button type="button" class="ab-later" id="awayLater">Daha sonra</button></div></div>
 <div class="away-ov" id="instOv" role="dialog" aria-modal="true"><div class="away-box" style="text-align:left;"><h2 style="text-align:center;margin-top:0;">Ana ekrana ekle</h2><ol id="instSteps" style="padding-left:20px;margin:0 0 14px;font-size:14.5px;line-height:1.6;color:var(--ink);"></ol><button type="button" class="ab-go" id="instShare" style="display:none;">Paylaş menüsünü aç</button><button type="button" class="ab-later" id="instClose" style="width:100%;">Kapat</button></div></div>
+<div id="xferBar" style="display:none;position:fixed;left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:9400;padding:12px 14px;border-radius:16px;background:#FFE9A6;color:#3a2a00;font-size:13px;line-height:1.4;box-shadow:0 10px 30px rgba(0,0,0,.4);">Safari'de başladıysan ilerlemeni buraya taşıyabilirsin. <div style="display:flex;gap:8px;margin-top:8px;"><button type="button" id="xferBarGo" style="flex:1;border:0;border-radius:12px;padding:10px;font-weight:800;background:#7c5cff;color:#fff;">Safari'den yapıştır</button><button type="button" id="xferBarX" style="border:0;border-radius:12px;padding:10px 14px;font-weight:700;background:rgba(0,0,0,.12);color:#3a2a00;">Gerek yok</button></div></div>
 <!-- ===== PROFİL ===== -->
   <section class="view" id="v-profile">
     <div class="page-head">
@@ -2821,15 +2822,22 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     <div class="card" id="remCard">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>Hatırlatıcı ve kısayollar</h2>
       <p class="mut" style="margin-bottom:10px;">Moonie seni unutmasın diye günlük hatırlatma ekle.</p>
+      <div id="lnBox" style="display:none;margin:0 0 14px;">
+        <div class="sh-lbl" style="margin:0 0 6px;">Uygulama bildirimleri</div>
+        <div style="display:flex;gap:8px;align-items:center;"><input type="time" id="lnTime" value="20:00" style="flex:0 0 120px;padding:10px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:15px;"><button type="button" class="btn" id="lnBtn" style="flex:1;margin:0;">Bildirimleri aç</button></div>
+        <p class="mut" id="lnNote" style="margin:6px 0 0;font-size:12px;">Her gün seçtiğin saatte bildirim gelir. Birkaç gün çalışmazsan Moonie küser, mesajlar gün gün değişir.</p>
+      </div>
+      <div id="webRem">
       <button type="button" class="btn" id="remInstall" style="margin:0 0 4px;">Moonie'yi ana ekrana ekle</button><p class="mut" id="remInstNote" style="margin:0 0 14px;font-size:12px;">Ana ekrana ekleyince bildirim ve kısayollar çalışır.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Takvim hatırlatıcısı (iPhone ve Android)</div>
       <div style="display:flex;gap:8px;align-items:center;"><input type="time" id="remTime" value="20:00" style="flex:0 0 120px;padding:10px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:15px;"><button type="button" class="btn" id="remIcs" style="flex:1;margin:0;">Takvime ekle</button></div>
       <p class="mut" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte, haftanın 7 gününe ayrı Moonie mesajı gelir. Açılan takvim penceresinde "Ekle"ye dokun.</p>
-      <div class="sh-lbl" style="margin:0 0 6px;">Arka plan bildirimi (yalnızca Android)</div>
+      <div class="sh-lbl" style="margin:0 0 6px;">Arka plan bildirimi (iPhone ve Android)</div>
       <button type="button" class="btn sec" id="remBg" style="margin:0;">Bildirimi aç</button>
-      <p class="mut" id="remBgNote" style="margin:6px 0 14px;font-size:12px;">2+ gün çalışmazsan Moonie küsüp bildirim gönderir. Tarayıcı zamanı belirler, garanti değildir.</p>
+      <p class="mut" id="remBgNote" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte hatırlatır, 2+ gün çalışmazsan Moonie küser. iPhone'da ana ekrana eklemen gerekir.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Ana ekran kısayolları</div>
       <div id="remLinks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+      </div>
       <p class="mut" style="margin:6px 0 0;font-size:12px;">Android: ana ekrandaki Moonie simgesine uzun bas. iPhone: bir bölümün linkini kopyala, Safari'de aç, Paylaş &rarr; Ana Ekrana Ekle ile ayrı simge oluştur.</p>
     </div>
     <div class="card">
@@ -7642,15 +7650,15 @@ document.getElementById("exportBtn").addEventListener("click",function(){
   a.download="english-progress-"+dstr(new Date())+".json"; a.click();
 });
 document.getElementById("importBtn").addEventListener("click",function(){ document.getElementById("importFile").click(); });
-function importInc(inc){
+function importInc(inc,quiet){
   if(!inc||typeof inc!=="object"||Array.isArray(inc)) throw new Error("bad");
       var keep={}; ["nick","passHash","loggedIn","geminiApiKey","spotifyClientId","spotify","onboardDone"].forEach(function(k){ if(S.settings&&S.settings[k]!==undefined) keep[k]=S.settings[k]; });
-      if(!confirm("Bu dosya şu anki ilerlemenin, kelimelerin ve notların YERİNE geçecek. Devam edilsin mi?")) return;
+      if(!quiet&&!confirm("Bu dosya şu anki ilerlemenin, kelimelerin ve notların YERİNE geçecek. Devam edilsin mi?")) return;
       S=inc; S.settings=S.settings||{}; Object.keys(keep).forEach(function(k){ S.settings[k]=keep[k]; });
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
       S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; speakMigrate(); S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.readingLib.pdfDone=S.readingLib.pdfDone||{}; S.books=S.books||[]; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
-  save(); renderToday(); renderVocab(); try{ renderStyleCards(); moonApply(document.body); }catch(e){} alert("İçe aktarıldı.");
+  save(); renderToday(); renderVocab(); try{ renderStyleCards(); moonApply(document.body); }catch(e){} if(!quiet) alert("İçe aktarıldı.");
 }
 document.getElementById("importFile").addEventListener("change",function(e){
   var f=e.target.files[0]; if(!f) return;
@@ -7658,9 +7666,10 @@ document.getElementById("importFile").addEventListener("change",function(e){
   r.onload=function(){ try{ importInc(JSON.parse(r.result)); e.target.value=""; }catch(err){ alert("Dosya okunamadı."); } };
   r.readAsText(f);
 });
+function xferCode(){ return "MOONIE1:"+btoa(unescape(encodeURIComponent(JSON.stringify(exportObj())))); }
 function exportObj(){ var ex=JSON.parse(JSON.stringify(S)); if(ex.settings){ delete ex.settings.geminiApiKey; delete ex.settings.spotifyClientId; delete ex.settings.spotify; delete ex.settings.passHash; delete ex.settings.nick; delete ex.settings.loggedIn; } return ex; }
 document.getElementById("xferCopy").addEventListener("click",function(){
-  var code="MOONIE1:"+btoa(unescape(encodeURIComponent(JSON.stringify(exportObj()))));
+  var code=xferCode();
   var b=this, done=function(){ var t=b.textContent; b.textContent="Kopyalandı"; setTimeout(function(){ b.textContent=t; },1600); };
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done,function(){ prompt("Kodu kopyala:",code); }); else prompt("Kodu kopyala:",code);
 });
@@ -8367,6 +8376,27 @@ window.go=go;
 try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 (function(){ var bad=false; try{ var k="__st"+Date.now(); localStorage.setItem(k,"1"); bad=localStorage.getItem(k)!=="1"; localStorage.removeItem(k); }catch(e){ bad=true; }
   if(window.__M||bad) document.querySelectorAll("[data-storewarn]").forEach(function(n){ n.style.display="block"; }); })();
+
+/* ===== Safari -> ana ekran uygulaması: kaldığın yerden devam ===== */
+(function(){
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent), st=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+  function fresh(){ return !S.settings.onboardDone&&!S.settings.nick&&!(S.words&&S.words.length); }
+  function setHash(){ try{ if(!ios||st) return; var c=xferCode(); if(c.length<30000) history.replaceState(null,"",location.pathname+location.search+"#r="+encodeURIComponent(c)); }catch(e){} }
+  if(ios&&!st){ setHash(); document.addEventListener("visibilitychange",function(){ if(document.hidden) setHash(); }); setInterval(setHash,20000); }
+  if(ios&&st&&fresh()){
+    var m=/[#&]r=([^&]+)/.exec(location.hash||"");
+    if(m){ try{ importInc(JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1]).slice(8))))),true); S.settings.onboardDone=true; save(); history.replaceState(null,"",location.pathname+location.search); }catch(e){} }
+    if(fresh()&&!S.settings.xferAsked){
+      var bar=document.getElementById("xferBar"); if(bar){ bar.style.display="block";
+        document.getElementById("xferBarX").addEventListener("click",function(){ bar.style.display="none"; S.settings.xferAsked=true; save(); });
+        document.getElementById("xferBarGo").addEventListener("click",function(){
+          if(!navigator.clipboard||!navigator.clipboard.readText){ alert("Bu tarayıcı panodan okumayı desteklemiyor. Ayarlar > Kodu yapıştır'ı dene."); return; }
+          navigator.clipboard.readText().then(function(c){ c=(c||"").trim(); if(c.indexOf("MOONIE1:")!==0){ alert("Panoda Moonie verisi bulunamadı. Safari'de 'Moonie'yi ana ekrana ekle' butonuna basıp tekrar dene."); return; }
+            importInc(JSON.parse(decodeURIComponent(escape(atob(c.slice(8))))),true); S.settings.onboardDone=true; S.settings.xferAsked=true; save(); bar.style.display="none"; location.reload(); }).catch(function(){ alert("Yapıştırma izni verilmedi."); }); });
+      }
+    }
+  }
+})();
 /* new onboarding gate */
 var newAcct=false; try{ newAcct=sessionStorage.getItem("moonie_newacct")==="1"; sessionStorage.removeItem("moonie_newacct"); }catch(e){}
 var sessOk=false; try{ sessOk=sessionStorage.getItem("moonie_sess")==="1"; }catch(e){}
@@ -8431,6 +8461,7 @@ document.addEventListener("visibilitychange",function(){ if(!document.hidden){ s
 (function(){ var m=/[?&]go=([a-z]+)/.exec(location.search); if(m&&document.getElementById("v-"+m[1])&&S.settings.onboardDone&&!document.body.classList.contains("onb-active")){ setTimeout(function(){ go(m[1]); },60); } else setTimeout(awayShow,900); try{ if(document.getElementById("v-today").classList.contains("active")) renderToday(); }catch(e){} })();
 
 /* ===== Hatırlatıcı & kısayollar ===== */
+var PUSH_URL="", PUSH_KEY="BOEBSgrA6rhjQLUE1OvUnmvxH0TGe6eqg_D-Bpfsg80S_ZgNtMD2x8eHmNAxoIK0gDWgAIWp4M4Lw_vaDCW5SYI";
 (function(){
   var base=location.origin+location.pathname.replace(/[^\/]*$/,"")+"index.html";
   var L=[["today","Bugün"],["speaking","Konuşma"],["vocab","Kelime"],["reading","Okuma"],["writing","Yazma"],["listening","Dinleme"]];
@@ -8460,7 +8491,8 @@ document.addEventListener("visibilitychange",function(){ if(!document.hidden){ s
     var n=document.getElementById("remInstNote");
     if(st){ n.textContent="Moonie zaten ana ekranında."; return; }
     if(dip){ dip.prompt(); dip=null; return; }
-    var steps=ios?["Safari'nin altındaki <b>Paylaş</b> simgesine (kare ve yukarı ok) dokun.","Listeyi aşağı kaydır, <b>Ana Ekrana Ekle</b>'yi seç.","Sağ üstteki <b>Ekle</b>'ye dokun."]:["Chrome'da sağ üstteki <b>⋮</b> menüsünü aç.","<b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>'yi seç.","<b>Ekle</b>'ye dokun."];
+    if(ios){ try{ var cc=xferCode(); if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(cc).catch(function(){}); }catch(e){} }
+    var steps=ios?["Safari'nin altındaki <b>Paylaş</b> simgesine (kare ve yukarı ok) dokun.","Listeyi aşağı kaydır, <b>Ana Ekrana Ekle</b>'yi seç.","Sağ üstteki <b>Ekle</b>'ye dokun.","Ana ekrandaki Moonie'yi ilk açtığında <b>Safari'den yapıştır</b>'a dokun, kaldığın yerden devam edersin. (İlerlemen şimdi panoya kopyalandı.)"]:["Chrome'da sağ üstteki <b>⋮</b> menüsünü aç.","<b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>'yi seç.","<b>Ekle</b>'ye dokun."];
     document.getElementById("instSteps").innerHTML=steps.map(function(x){ return "<li>"+x+"</li>"; }).join("");
     document.getElementById("instShare").style.display=(navigator.share&&ios)?"block":"none";
     document.getElementById("instOv").classList.add("on");
@@ -8470,26 +8502,89 @@ document.addEventListener("visibilitychange",function(){ if(!document.hidden){ s
   document.getElementById("instShare").addEventListener("click",function(){ try{ navigator.share({title:"Moonie",url:base+"?go=today"}).catch(function(){}); }catch(e){} });
 
   var bg=document.getElementById("remBg"), note=document.getElementById("remBgNote");
-  function bgState(){ var ok=("Notification" in window)&&("serviceWorker" in navigator); if(!ok){ bg.disabled=true; bg.textContent="Bu cihazda desteklenmiyor"; return; }
-    if(Notification.permission==="denied"){ bg.disabled=true; bg.textContent="İzin kapalı (tarayıcı ayarından aç)"; return; }
-    if(S.settings.bgRem){ bg.textContent="Bildirim açık · kapat"; } else bg.textContent="Bildirimi aç"; }
+  var iosD=/iphone|ipad|ipod/i.test(navigator.userAgent), standD=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+  function usePush(){ return !!PUSH_URL&&("PushManager" in window)&&("serviceWorker" in navigator); }
+  function bgState(){
+    if(iosD&&!standD){ bg.disabled=true; bg.textContent="Önce ana ekrana ekle"; note.textContent="iPhone'da bildirim yalnızca ana ekrandaki Moonie uygulamasında çalışır."; return; }
+    var ok=("Notification" in window)&&("serviceWorker" in navigator); if(!ok){ bg.disabled=true; bg.textContent="Bu cihazda desteklenmiyor"; return; }
+    if(Notification.permission==="denied"){ bg.disabled=true; bg.textContent="İzin kapalı (ayarlardan aç)"; return; }
+    bg.disabled=false; bg.textContent=S.settings.bgRem?"Bildirim açık · kapat":"Bildirimi aç"; }
   bgState();
+  window.pushSync=function(){ if(!S.settings.pushOn||!PUSH_URL) return; navigator.serviceWorker.ready.then(function(r){ return r.pushManager.getSubscription(); }).then(function(sub){ if(!sub) return; var tv=(document.getElementById("remTime").value||"20:00").split(":"), d=new Date(); d.setHours(+tv[0],+tv[1],0,0);
+    return fetch(PUSH_URL+"/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({endpoint:sub.endpoint,lastActive:S.lastActive||S.lastDone||dstr(new Date()),hourUtc:d.getUTCHours()})}); }).catch(function(){}); };
+  function b64uToU8(b){ var p="=".repeat((4-b.length%4)%4), s2=(b+p).replace(/-/g,"+").replace(/_/g,"/"), r=atob(s2), o=new Uint8Array(r.length); for(var i=0;i<r.length;i++) o[i]=r.charCodeAt(i); return o; }
   bg.addEventListener("click",function(){
-    if(S.settings.bgRem){ S.settings.bgRem=false; save(); navigator.serviceWorker.ready.then(function(r){ if(r.periodicSync&&r.periodicSync.unregister) r.periodicSync.unregister("moonie-away").catch(function(){}); }); bgState(); return; }
+    if(S.settings.bgRem){ S.settings.bgRem=false; var wasPush=S.settings.pushOn; S.settings.pushOn=false; save();
+      navigator.serviceWorker.ready.then(function(r){ if(r.periodicSync&&r.periodicSync.unregister) r.periodicSync.unregister("moonie-away").catch(function(){}); if(wasPush) return r.pushManager.getSubscription().then(function(sub){ if(sub){ fetch(PUSH_URL+"/unsubscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({endpoint:sub.endpoint})}).catch(function(){}); return sub.unsubscribe(); } }); }).catch(function(){}); pushAwayState(); bgState(); return; }
     Notification.requestPermission().then(function(p){
       if(p!=="granted"){ bgState(); return; }
       navigator.serviceWorker.ready.then(function(r){
-        if(r.periodicSync&&r.periodicSync.register){ r.periodicSync.register("moonie-away",{minInterval:12*3600*1000}).then(function(){ S.settings.bgRem=true; save(); pushAwayState(); note.textContent="Açıldı. Moonie 2+ gün yoksan bildirim gönderecek."; bgState(); }).catch(function(){ note.textContent="Bu tarayıcı arka plan kontrolünü desteklemiyor (iPhone'da takvim hatırlatıcısını kullan)."; }); }
-        else note.textContent="Bu tarayıcı arka plan kontrolünü desteklemiyor (iPhone'da takvim hatırlatıcısını kullan).";
-      });
+        if(usePush()){
+          return r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uToU8(PUSH_KEY)}).then(function(){ S.settings.bgRem=true; S.settings.pushOn=true; save(); pushAwayState(); window.pushSync(); note.textContent="Açıldı. Moonie her gün seçtiğin saatte hatırlatacak."; bgState(); });
+        }
+        if(r.periodicSync&&r.periodicSync.register){ return r.periodicSync.register("moonie-away",{minInterval:12*3600*1000}).then(function(){ S.settings.bgRem=true; save(); pushAwayState(); note.textContent="Açıldı. Moonie 2+ gün yoksan bildirim gönderecek."; bgState(); }); }
+        note.textContent="Bu tarayıcıda arka plan bildirimi yok. Takvim hatırlatıcısını kullan.";
+      }).catch(function(){ note.textContent="Bildirim açılamadı. Takvim hatırlatıcısını dene."; });
     });
   });
+  document.getElementById("remTime").addEventListener("change",function(){ window.pushSync(); });
+  setTimeout(function(){ window.pushSync(); },2500);
 })();
 /* SW'ye son aktivite bilgisini yaz (Cache) */
-function pushAwayState(){ try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||"",focus:S.settings.style==="focus"}; caches.open("moonie-state").then(function(c){ return c.put("./__state.json",new Response(JSON.stringify(st),{headers:{"Content-Type":"application/json"}})); }).catch(function(){}); }catch(e){} }
+function pushAwayState(){ try{ if(typeof lnSchedule==="function") setTimeout(lnSchedule,300); if(window.pushSync) setTimeout(window.pushSync,600); }catch(e){} try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||"",focus:S.settings.style==="focus"}; caches.open("moonie-state").then(function(c){ return c.put("./__state.json",new Response(JSON.stringify(st),{headers:{"Content-Type":"application/json"}})); }).catch(function(){}); }catch(e){} }
 pushAwayState(); document.addEventListener("visibilitychange",function(){ if(document.hidden) pushAwayState(); });
 (function(){ var ios=/iphone|ipad|ipod/i.test(navigator.userAgent), st=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
   var w=document.getElementById("iosWarn"); if(w&&ios&&!st){ w.style.display="block"; document.getElementById("iosWarnBtn").addEventListener("click",function(){ var b=document.getElementById("remInstall"); if(b) b.click(); }); } })();
+
+/* ===== Yerel bildirimler (Capacitor / mağaza sürümü) ===== */
+function lnPlugin(){ try{ return window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications; }catch(e){ return null; } }
+var LN_DAILY=["Bugünkü hedef seni bekliyor. 5 dakika yeter.","Küçük bir adım: bir kelime, bir okuma.","Moonie hazır. Hadi bugünkü derse başlayalım.","Seriyi koru: bugün de bir adım at."];
+var LN_DAILY_FOCUS=["Bugünkü hedef: 1 görev, 5 dakika.","Odaklan, bitir, devam et.","Planın seni bekliyor. Başla.","Seriyi koru. Bugünkü görevi yap."];
+function lnTierFor(days,k){
+  var t=null; for(var i=0;i<AWAY_TIERS.length;i++){ if(days>=AWAY_TIERS[i][0]){ t=AWAY_TIERS[i]; break; } }
+  var f=curStyle()==="focus";
+  if(!t){ var P=f?LN_DAILY_FOCUS:LN_DAILY; return {title:"Moonie",body:P[k%P.length]}; }
+  var F=f&&AWAY_FOCUS[t[1]];
+  if(F) return {title:F[0],body:F[2]};
+  var pool=[t[3]].concat(AWAY_ALT[t[1]]||[]); return {title:t[2],body:pool[k%pool.length]};
+}
+var lnBusy=false;
+function lnSchedule(){
+  var ln=lnPlugin(); if(!ln||!S.settings.lnOn||lnBusy) return; lnBusy=true;
+  var tv=(S.settings.lnTime||"20:00").split(":"), H=+tv[0], M=+tv[1];
+  var now=new Date(), today=dstr(now), doneToday=S.lastDone===today||S.lastActive===today;
+  var base=awayDays(), list=[];
+  for(var k=0;k<14;k++){
+    var d=new Date(); d.setHours(H,M,0,0); d.setDate(d.getDate()+k);
+    if(d<=now) continue;
+    if(k===0&&doneToday) continue;
+    var days=doneToday?(k):(base+k);
+    var m=lnTierFor(days,k);
+    list.push({id:2000+k,title:m.title,body:m.body,schedule:{at:d,allowWhileIdle:true},smallIcon:"ic_stat_icon_config_sample"});
+  }
+  ln.getPending().then(function(p){ return (p&&p.notifications&&p.notifications.length)?ln.cancel({notifications:p.notifications.map(function(n){ return {id:n.id}; })}):null; })
+   .then(function(){ return list.length?ln.schedule({notifications:list}):null; })
+   .catch(function(){}).then(function(){ lnBusy=false; });
+}
+(function(){
+  var ln=lnPlugin(); if(!ln) return;
+  var box=document.getElementById("lnBox"), web=document.getElementById("webRem"), btn=document.getElementById("lnBtn"), note=document.getElementById("lnNote"), tm=document.getElementById("lnTime");
+  if(box) box.style.display="block"; if(web) web.style.display="none";
+  tm.value=S.settings.lnTime||"20:00";
+  function ui(){ btn.textContent=S.settings.lnOn?"Bildirimleri kapat":"Bildirimleri aç"; }
+  ui();
+  btn.addEventListener("click",function(){
+    if(S.settings.lnOn){ S.settings.lnOn=false; save(); ln.getPending().then(function(p){ if(p&&p.notifications&&p.notifications.length) return ln.cancel({notifications:p.notifications.map(function(n){ return {id:n.id}; })}); }).catch(function(){}); ui(); return; }
+    ln.requestPermissions().then(function(r){
+      if(r&&r.display==="granted"){ S.settings.lnOn=true; S.settings.lnTime=tm.value||"20:00"; save(); ui(); lnSchedule(); note.textContent="Açıldı. Her gün "+S.settings.lnTime+" saatinde bildirim gelecek."; }
+      else note.textContent="İzin verilmedi. Telefonun Ayarlar > Moonie > Bildirimler bölümünden açabilirsin.";
+    }).catch(function(){ note.textContent="Bildirim izni alınamadı."; });
+  });
+  tm.addEventListener("change",function(){ S.settings.lnTime=tm.value||"20:00"; save(); if(S.settings.lnOn) lnSchedule(); });
+  setTimeout(lnSchedule,1200);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) setTimeout(lnSchedule,500); });
+  try{ if(Capacitor.Plugins.App&&Capacitor.Plugins.App.addListener) Capacitor.Plugins.App.addListener("appStateChange",function(st){ if(st&&st.isActive) setTimeout(lnSchedule,500); }); }catch(e){}
+})();
 if(/[?&#]onboarding/.test(location.href)){
   var st0=S.settings||{};
   obState.level=st0.level||null; obState.goals=(st0.goals||[]).map(function(g){return /Sınav/i.test(g)?"Sınav":g;}); obState.exam=st0.examType||""; obState.dailyMinutes=st0.dailyMinutes||null; obState.focus=(st0.focusSkills||[]).slice();

@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v107-xfer";
+const CACHE = "english-app-v109-resume";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/reading-library.json",
@@ -92,4 +92,32 @@ self.addEventListener("notificationclick", (e) => {
   e.notification.close();
   const url = (e.notification.data && e.notification.data.url) || "./index.html?go=today";
   e.waitUntil(self.clients.matchAll({ type: "window" }).then((cl) => { for (const c of cl) { if ("focus" in c) { c.navigate(url).catch(() => {}); return c.focus(); } } return self.clients.openWindow(url); }));
+});
+
+// ---- Web Push (Cloudflare Worker tetikler, içerik cihazda hesaplanır) ----
+const DAILY = ["Bugünkü hedef seni bekliyor. 5 dakika yeter.", "Küçük bir adım: bir kelime, bir okuma.", "Moonie hazır. Hadi başlayalım.", "Seriyi koru: bugün de bir adım at."];
+const DAILY_F = ["Bugünkü hedef: 1 görev, 5 dakika.", "Odaklan, bitir, devam et.", "Planın seni bekliyor. Başla.", "Seriyi koru. Bugünkü görevi yap."];
+self.addEventListener("push", (e) => {
+  e.waitUntil((async () => {
+    let title = "Moonie", body = DAILY[new Date().getDay() % DAILY.length], focus = false;
+    try {
+      const c = await caches.open("moonie-state");
+      const r = await c.match("./__state.json");
+      if (r) {
+        const st = await r.json(); focus = !!st.focus;
+        let ref = parseDay(st.lastActive) || parseDay(st.lastDone); const l = parseDay(st.lastDone); if (l && (!ref || l > ref)) ref = l;
+        const t = new Date(); t.setHours(0, 0, 0, 0);
+        const days = ref ? Math.round((t - ref) / 86400000) : 0;
+        const tier = AWAY_TXT.find((x) => days >= x[0]);
+        if (tier) {
+          const f = FOCUS_TXT[tier[0]];
+          if (focus && f) { title = f[0]; body = f[1]; }
+          else { const pool = [tier[2]].concat(ALT_BODY[tier[0]] || []); title = tier[1]; body = pool[new Date().getDate() % pool.length]; }
+        } else {
+          const P = focus ? DAILY_F : DAILY; body = P[new Date().getDay() % P.length];
+        }
+      }
+    } catch (err) {}
+    await self.registration.showNotification(title, { body, icon: "./icon-192-v4.png", badge: "./icon-192-v4.png", tag: "moonie-daily", data: { url: "./index.html?go=today" } });
+  })());
 });
