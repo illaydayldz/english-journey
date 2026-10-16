@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v129-cleantxt";
+const CACHE = "english-app-v130-undo";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/free-library.json",

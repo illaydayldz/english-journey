@@ -4473,9 +4473,13 @@ function wbWordAt(px,py){
       else { var h=wbEl("wbToolHint"); h.textContent=(WB.items&&WB.items.length)?"Burada kelime bulamadım; doğrudan yazının üstüne dokun. Ya da aşağıdan \"Sayfa metnini aç\"ı kullan.":"Bu sayfada seçilebilir metin yok (taranmış PDF). Aşağıdaki \"Sayfa metnini aç\" düğmesiyle sayfayı okutup kelimelere dokunabilirsin."; h.style.display="block"; }
       return;
     }
+    var nowT=Date.now();
+    if(WB.lastTap&&nowT-WB.lastTap.t<380&&Math.hypot(q[2]-WB.lastTap.x,q[3]-WB.lastTap.y)<40){
+      var L=WB.ink[WB.page]||[]; L.pop(); L.pop(); WB.lastTap=null; cur=null; wbDrawInk(); wbSaveInk(); e.preventDefault(); return;
+    }
     try{ pc.setPointerCapture(e.pointerId); }catch(_){}
     if(t==="erase"){ cur={erase:true}; wbErase(q); return; }
-    cur={t:t,c:WBT[t],w:t==="hl"?0.03:0.0045,p:[[+q[0].toFixed(4),+q[1].toFixed(4)]]};
+    cur={t:t,c:WBT[t],w:t==="hl"?0.03:0.0045,p:[[+q[0].toFixed(4),+q[1].toFixed(4)]],tx:q[2],ty:q[3]};
     e.preventDefault();
   });
   pc.addEventListener("pointermove",function(e){
@@ -4489,9 +4493,11 @@ function wbWordAt(px,py){
   });
   function end(){
     if(!cur) return;
+    if(WB.pinching){ cur=null; return; }
     if(cur.erase){ cur=null; wbSaveInk(); return; }
     if(cur.t==="hl"&&cur.p.length>1){ var ys=cur.p.map(function(a){return a[1];}), mn=Math.min.apply(null,ys), mx=Math.max.apply(null,ys); if((mx-mn)*WB.cssH<10){ var ay=+((mn+mx)/2).toFixed(4); cur.p=[[cur.p[0][0],ay],[cur.p[cur.p.length-1][0],ay]]; } }
     if(cur.p.length>400) cur.p=cur.p.filter(function(_,i){ return i%2===0; });
+    if(cur.p.length<=2&&cur.t!=="erase"){ WB.lastTap={t:Date.now(),x:cur.tx||0,y:cur.ty||0}; } else WB.lastTap=null;
     (WB.ink[WB.page]||(WB.ink[WB.page]=[])).push({t:cur.t,c:cur.c,w:cur.w,p:cur.p});
     cur=null; wbDrawInk(); wbSaveInk();
   }
@@ -4679,7 +4685,7 @@ function wbNotesRender(){
     function dist(t){ var dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY; return Math.hypot(dx,dy); }
     box.addEventListener("touchstart",function(e){
       if(e.touches.length===2){
-        WB.pinching=true; var r=wrap.getBoundingClientRect(), b=box.getBoundingClientRect();
+        WB.pinching=true; WB.tt=Date.now(); var r=wrap.getBoundingClientRect(), b=box.getBoundingClientRect();
         var cx=(e.touches[0].clientX+e.touches[1].clientX)/2, cy=(e.touches[0].clientY+e.touches[1].clientY)/2;
         p0={d:dist(e.touches),k:1,fx:(cx-r.left)/r.width,fy:(cy-r.top)/r.height,bx:cx-b.left,by:cy-b.top};
         wrap.style.transformOrigin=(p0.fx*100)+"% "+(p0.fy*100)+"%";
@@ -4694,6 +4700,7 @@ function wbNotesRender(){
     function done(e){
       if(!p0||(e.touches&&e.touches.length>=2)) return;
       var q=p0; p0=null; wrap.style.transform=""; wrap.style.transformOrigin="";
+      if(Date.now()-WB.tt<320&&Math.abs(q.k-1)<0.06){ var Lu=WB.ink[WB.page]; if(Lu&&Lu.length){ Lu.pop(); wbDrawInk(); wbSaveInk(); } setTimeout(function(){ WB.pinching=false; },250); return; }
       setTimeout(function(){ WB.pinching=false; },250);
       var nz=Math.max(1,Math.min(4,WB.zoom*q.k));
       if(Math.abs(nz-WB.zoom)<0.04) return;
