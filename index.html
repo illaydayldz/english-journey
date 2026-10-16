@@ -1599,6 +1599,8 @@
   .fr-row{display:flex;flex-direction:column;gap:2px;padding:10px 2px;border-top:1px solid var(--line,rgba(127,127,160,.2));text-decoration:none;color:inherit;}
   .fr-row b{font-size:14px;}
   .fr-row small{font-size:12px;opacity:.75;}
+  .shelf-item{position:relative;flex-shrink:0;}
+  .shelf-x{position:absolute;top:-4px;right:-4px;width:26px;height:26px;border-radius:50%;border:none;background:#e5484d;color:#fff;font-size:17px;line-height:1;cursor:pointer;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;padding:0;}
 </style>
 <script>
 /* Yüksek çözünürlüklü Moonie görselleri: assets/mascot/hd/ içine konan dosyalar index.json'da listelenirse otomatik kullanılır; liste yoksa mevcut görseller kalır. */
@@ -2203,7 +2205,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     </div>
     <div class="card" id="freeRes">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Ücretsiz okuma kaynakları</h2>
-      <p class="mut" style="margin:6px 0 10px;line-height:1.6;">Ücretsiz ya da telifi bitmiş kaynaklar. Metni kopyalayıp "Kendi okumanı ekle" ile kaydet; kitap dosyan varsa "Okuma için PDF ekle" ile ekle.</p>
+      <p class="mut" style="margin:6px 0 10px;line-height:1.6;">Ücretsiz Kitaplık'taki masalların yanında daha fazlası için ücretsiz ya da telifi bitmiş kaynaklar. Metni kopyalayıp "Kendi okumanı ekle" ile kaydet; kitap dosyan varsa "Okuma için PDF ekle" ile ekle.</p>
       <a class="fr-row" href="https://learningenglish.voanews.com" target="_blank" rel="noopener noreferrer"><b>VOA Learning English</b><small>Seviyeli haberler ve hikâyeler, sesli</small></a>
       <a class="fr-row" href="https://simple.wikipedia.org" target="_blank" rel="noopener noreferrer"><b>Simple English Wikipedia</b><small>Basit İngilizceyle yazılmış maddeler</small></a>
       <a class="fr-row" href="https://www.gutenberg.org" target="_blank" rel="noopener noreferrer"><b>Project Gutenberg</b><small>Telifi bitmiş binlerce klasik kitap</small></a>
@@ -2312,7 +2314,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     </div>
     <div class="row" style="align-items:center;gap:10px;margin-bottom:12px;">
       <div class="read-progress-bar" style="flex:1;margin-bottom:0;"><div class="fill" id="libReadProgressFill"></div></div>
-      <span class="mut" id="libReadSub" style="font-weight:700;font-size:12px;white-space:nowrap;">Okuma kitabı</span>
+      <span class="mut" id="libReadSub" style="font-weight:700;font-size:12px;white-space:nowrap;">Ücretsiz Kitaplık</span>
     </div>
     <p class="hint" style="margin:0 2px 12px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
     <div class="read-body paper-card" id="libReadBody" style="margin-bottom:16px;"></div>
@@ -3984,7 +3986,14 @@ document.querySelectorAll("#howtoTabs .seg").forEach(function(b){ b.addEventList
 
 /* ---------- OKUMA: Kitaplığım ---------- */
 var READING_LIBRARY=null;
-function loadReadingLibrary(){ return Promise.resolve(null); }
+function loadReadingLibrary(){
+  if(READING_LIBRARY) return Promise.resolve(READING_LIBRARY);
+  return fetch("assets/free-library.json").then(function(r){ return r.json(); }).then(function(d){
+    READING_LIBRARY=d;
+    if(document.getElementById("v-reading").classList.contains("active")) renderReadingLib();
+    return d;
+  }).catch(function(){ return null; });
+}
 loadReadingLibrary();
 function libFrontierId(){
   if(!READING_LIBRARY) return 1;
@@ -4004,19 +4013,38 @@ function renderReadingLib(){
   shelf.innerHTML="";
   var total=READING_LIBRARY?READING_LIBRARY.length:0;
   var doneN=Object.keys(S.readingLib.completed).length;
-  document.getElementById("libCount").textContent="";
+  document.getElementById("libCount").textContent=(total&&doneN)?("· "+doneN+"/"+total):"";
+  if(total){
+    var b=document.createElement("button"); b.type="button"; b.className="book-btn";
+    b.innerHTML=bookCoverHtml("Ücretsiz Kitaplık",total+" metin",0,doneN>=total);
+    b.addEventListener("click",function(){ if(!READING_LIBRARY) return; OPEN_BOOK={kind:"lib"}; go("book"); });
+    shelf.appendChild(b);
+  }
   var pshelf=shelf;
   S.books.filter(function(x){ return x.kind!=="study"; }).forEach(function(bk){
     var n=Object.keys(S.readingLib.pdfDone).filter(function(k){ return k.indexOf("pdf"+bk.id+"-")===0; }).length;
     var el=document.createElement("button"); el.type="button"; el.className="book-btn";
     el.innerHTML=bookCoverHtml(bk.title,bk.chapters+" bölüm",bk.colorIdx,n>=bk.chapters);
     el.addEventListener("click",function(){ OPEN_BOOK={kind:"pdf",id:bk.id}; go("book"); });
-    pshelf.appendChild(el);
+    var wrapEl=document.createElement("div"); wrapEl.className="shelf-item"; wrapEl.appendChild(el);
+    wrapEl.appendChild(shelfX("Kitabı sil",function(){ deleteStoredBook(bk); }));
+    pshelf.appendChild(wrapEl);
   });
   var add=document.createElement("button"); add.type="button"; add.className="book-btn book-add";
   add.innerHTML='<span class="book"><span class="book-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span><span class="book-sub" style="margin-top:6px;">Okuma için PDF ekle</span></span>';
   add.addEventListener("click",function(){ document.getElementById("pdfFile").click(); });
   pshelf.appendChild(add);
+}
+function shelfX(label,fn){
+  var x=document.createElement("button"); x.type="button"; x.className="shelf-x"; x.setAttribute("aria-label",label); x.title=label; x.textContent="×";
+  x.addEventListener("click",function(e){ e.stopPropagation(); fn(); });
+  return x;
+}
+function deleteStoredBook(bk){
+  if(!confirm('"'+bk.title+'" silinsin mi? Notların da silinecek.')) return;
+  idbDelete("book-"+bk.id); idbDelete("bookpdf-"+bk.id); idbDelete("bookink-"+bk.id); delete PDF_CHAPTER_CACHE[bk.id];
+  S.qnotes=(S.qnotes||[]).filter(function(n){ return String(n.ref||"").indexOf("wb:"+bk.id+":")!==0; });
+  S.books=S.books.filter(function(x){return x.id!==bk.id;}); save(); OPEN_BOOK=null; renderReadingLib();
 }
 function findBook(id){ return S.books.filter(function(x){return x.id===id;})[0]; }
 function loadBookChapters(bk){
@@ -4033,8 +4061,8 @@ function renderBook(){
   if(OPEN_BOOK.kind==="lib"){
     if(!READING_LIBRARY){ go("reading"); return; }
     var total=READING_LIBRARY.length, doneN=Object.keys(S.readingLib.completed).length;
-    document.getElementById("bookTitle").textContent="Okuma kitabı";
-    document.getElementById("bookHeroCover").innerHTML=bookCoverHtml("Okuma kitabı",total+" metin",0,false);
+    document.getElementById("bookTitle").textContent="Ücretsiz Kitaplık";
+    document.getElementById("bookHeroCover").innerHTML=bookCoverHtml("Ücretsiz Kitaplık",total+" metin",0,false);
     document.getElementById("bookSub").textContent=doneN+"/"+total+" metin tamamlandı";
     document.getElementById("bookBar").style.width=Math.round(doneN/total*100)+"%";
     delBtn.style.display="none";
@@ -4562,7 +4590,7 @@ function renderLibRead(){
     if(!READING_LIBRARY||!READING_LIBRARY.length){ go("reading"); return; }
     var id=S.readingLib.openId||libFrontierId();
     r=READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
-    subText="Okuma kitabı · "+r.id+"/"+READING_LIBRARY.length;
+    subText="Ücretsiz Kitaplık · "+r.id+"/"+READING_LIBRARY.length;
     pct=Math.round(r.id/READING_LIBRARY.length*100);
   }
   document.querySelector("#v-libread .page-head .back").onclick=function(){ go(OPEN_BOOK?"book":"reading"); };
@@ -4580,6 +4608,7 @@ function renderLibRead(){
       openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:"");
     });
   });
+  if(!OPEN_PDF&&r.src) body.insertAdjacentHTML("beforeend",'<p class="hint" style="text-align:left;margin-top:14px;">Kaynak: '+esc(r.src)+'</p>');
   var done=isPassageDone(r);
   document.getElementById("libReadCompleteBtn").style.display=done?"none":"block";
   document.getElementById("libReadDoneMsg").style.display=done?"flex":"none";
@@ -4606,7 +4635,7 @@ function renderLibRead(){
   var completeBtn=document.getElementById("libReadCompleteBtn");
   completeBtn.onclick=function(){
     if(OPEN_PDF){ S.readingLib.pdfDone[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:OPEN_PDF.book.title}); }
-    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"Okuma kitabı",libraryId:r.id}); }
+    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"Ücretsiz Kitaplık",libraryId:r.id}); }
     save();
     renderLibRead(); renderReadingLib(); renderLearnHub();
   };
@@ -5122,7 +5151,14 @@ function renderPodcastList(){
     var b=document.createElement("button"); b.type="button"; b.className="book-btn";
     b.innerHTML='<span class="book pod-cover" style="--b1:'+c[0]+';--b2:'+c[1]+';"><span class="pod-eq"><i></i><i></i><i></i><i></i></span><span class="book-title" style="font-family:var(--font-display);font-size:13.5px;">'+esc(p.title)+'</span><span class="book-sub">'+(hasTranscript?"Transkript var":"Transkript yok")+'</span></span>';
     b.addEventListener("click",function(){ S.listening.selectedId=p.id; save(); go("podcastdetail"); });
-    wrap.appendChild(b);
+    var pw=document.createElement("div"); pw.className="shelf-item"; pw.appendChild(b);
+    pw.appendChild(shelfX("Podcasti sil",function(){
+      if(!confirm('"'+p.title+'" silinsin mi? Transkript ve notlar da silinecek.')) return;
+      S.listening.podcasts=S.listening.podcasts.filter(function(x){ return x.id!==p.id; });
+      if(S.listening.selectedId===p.id) S.listening.selectedId=null;
+      save(); renderPodcastList();
+    }));
+    wrap.appendChild(pw);
   });
   var add=document.createElement("button"); add.type="button"; add.className="book-btn book-add";
   add.innerHTML='<span class="book"><span class="book-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span><span class="book-sub" style="margin-top:6px;">Podcast Ekle</span></span>';
