@@ -4638,6 +4638,13 @@ function wbNotesRender(){
     }
     box.addEventListener("touchend",done); box.addEventListener("touchcancel",done);
   })();
+  /* Gez modunda yazıya dokununca kelime anlamı direkt açılır (Okuma'daki gibi) */
+  el("wbWrap").addEventListener("click",function(ev){
+    if(WBT.tool!=="hand"||WB.pinMode||WB.pinching) return;
+    if(ev.target.closest&&ev.target.closest(".wb-pinmk")) return;
+    var r=this.getBoundingClientRect(), w=wbWordAt(ev.clientX-r.left,ev.clientY-r.top);
+    if(w&&w.length>1) openWordSheet(w,WB.pageText||"");
+  });
   el("wbZoom").addEventListener("click",function(){ WB.zoom=WB.zoom>=2.2?1:(WB.zoom<1.5?1.6:2.2); wbShow(WB.page); });
   el("wbPin").addEventListener("click",function(){ if(!WB.pinMode) wbSetTool("hand"); WB.pinMode=!WB.pinMode; this.classList.toggle("on",WB.pinMode); el("wbHint").style.display=WB.pinMode?"block":"none"; });
   el("wbWrap").addEventListener("click",function(ev){
