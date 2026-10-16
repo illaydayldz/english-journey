@@ -1542,7 +1542,7 @@
   .wb-pg{ display:flex; align-items:center; gap:6px; padding:0 12px; height:44px; border-radius:14px; background:var(--card); border:1px solid rgba(127,127,160,.18); font-weight:700; }
   .wb-pg input{ width:54px; border:none; background:transparent; color:var(--ink); font:inherit; font-weight:800; text-align:center; outline:none; }
   .wb-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
-  .wb-page{ position:relative; overflow:auto; border-radius:14px; background:#fff; box-shadow:var(--shadow-2); max-height:78vh; -webkit-overflow-scrolling:touch; }
+  .wb-page{ touch-action:pan-x pan-y; position:relative; overflow:auto; border-radius:14px; background:#fff; box-shadow:var(--shadow-2); max-height:78vh; -webkit-overflow-scrolling:touch; }
   .wb-wrap{ position:relative; margin:0 auto; line-height:0; }
   .wb-wrap canvas{ display:block; max-width:none; }
   .wb-over{ position:absolute; inset:0; pointer-events:none; }
@@ -4465,12 +4465,12 @@ function wbWordAt(px,py){
   var pc=wbEl("wbPen"), cur=null;
   function pos(e){ var r=pc.getBoundingClientRect(); return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height,e.clientX-r.left,e.clientY-r.top]; }
   pc.addEventListener("pointerdown",function(e){
-    var t=WBT.tool; if(t==="hand") return;
+    var t=WBT.tool; if(t==="hand"||WB.pinching) return;
     var q=pos(e);
     if(t==="word"){
       var w=wbWordAt(q[2],q[3]);
       if(w) openWordSheet(w,WB.pageText||"");
-      else { var h=wbEl("wbToolHint"); h.textContent=(WB.items&&WB.items.length)?"Burada kelime bulamadım; doğrudan yazının üstüne dokun.":"Bu sayfada seçilebilir metin yok (taranmış PDF olabilir)."; h.style.display="block"; }
+      else { var h=wbEl("wbToolHint"); h.textContent=(WB.items&&WB.items.length)?"Burada kelime bulamadım; doğrudan yazının üstüne dokun. Ya da aşağıdan \"Sayfa metnini aç\"ı kullan.":"Bu sayfada seçilebilir metin yok (taranmış PDF). Aşağıdaki \"Sayfa metnini aç\" düğmesiyle sayfayı okutup kelimelere dokunabilirsin."; h.style.display="block"; }
       return;
     }
     try{ pc.setPointerCapture(e.pointerId); }catch(_){}
@@ -4569,7 +4569,8 @@ function wbNotesRender(){
   var box=document.getElementById("wbNotes"); if(!box||!WB.bk) return;
   var list=wbNoteList(), marks=(WB.bk.marks||[]).slice().sort(function(a,b){return a-b;});
   var h='<h2 style="font-size:15px;margin-bottom:8px;">Sayfa '+WB.page+' notları</h2>'+
-    '<button type="button" class="gn-add" id="wbAdd"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Bu sayfaya not ekle</button>';
+    '<button type="button" class="gn-add" id="wbAdd"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Bu sayfaya not ekle</button>'+
+    '<button type="button" class="gn-add" id="wbTxt" style="margin-top:8px;"><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Sayfa metnini aç (kelimeye dokun)</button><div id="wbTxtOut"></div>';
   if(!list.length) h+='<p class="hint" style="text-align:left;margin:8px 2px;">Bu sayfada henüz not yok. İstersen sayfanın üstüne iğne ile de not bırakabilirsin (kalem düğmesi).</p>';
   list.forEach(function(n,i){ var c=n.color||"#8B7FFF"; h+='<button type="button" class="gn-card" data-id="'+n.id+'" style="background:linear-gradient(180deg,'+c+'33,'+c+'0d);border-color:'+c+'66;"><span class="gn-t">'+(n.pos?'<b class="wb-num">'+(i+1)+'</b> ':'')+esc(n.text)+'</span><span class="gn-d">'+esc(fmtDate((n.ts||"").slice(0,10)))+'</span></button>'; });
   if(marks.length) h+='<h3 style="font-size:13px;margin:14px 0 6px;color:var(--ink-soft);">Yer imleri</h3><div class="nt-chips">'+marks.map(function(m){ return '<button type="button" class="nt-chip wb-mk" data-p="'+m+'">s.'+m+'</button>'; }).join("")+'</div>';
@@ -4577,6 +4578,21 @@ function wbNotesRender(){
   box.innerHTML=h;
   var wd=document.getElementById("wbDel"); if(wd) wd.addEventListener("click",function(){ if(!confirm("Bu kitap ve notları silinsin mi?")) return; var b=WB.bk; idbDelete("bookpdf-"+b.id); idbDelete("bookink-"+b.id); S.qnotes=(S.qnotes||[]).filter(function(n){ return String(n.ref||"").indexOf("wb:"+b.id+":")!==0; }); S.books=S.books.filter(function(x){ return x.id!==b.id; }); save(); WB.bk=null; WB.pdf=null; go("library"); });
   document.getElementById("wbAdd").addEventListener("click",function(){ wbPendingPos=null; qnOpen(null,wbRef(WB.page)); });
+  document.getElementById("wbTxt").addEventListener("click",async function(){
+    var out=document.getElementById("wbTxtOut"), pg=WB.page;
+    if(out.dataset.open==="1"){ out.innerHTML=""; out.dataset.open=""; return; }
+    out.innerHTML='<p class="hint" style="text-align:left;margin:8px 2px;">Sayfa metni hazırlanıyor…</p>';
+    var paras=null;
+    try{
+      var t=(WB.pageText||"").trim();
+      if(t.length>=60) paras=splitPdfParas(t);
+      else paras=await ocrPage(WB.bk,pg);
+    }catch(err){ out.innerHTML='<p class="store-warn" style="margin:8px 0;">'+esc(err.message||String(err))+'</p>'; return; }
+    if(WB.page!==pg) return;
+    out.dataset.open="1";
+    out.innerHTML='<div class="paper-card" style="margin-top:10px;">'+paras.map(function(p){ return '<p class="rp">'+wrapWords(p)+'</p>'; }).join("")+'</div><p class="hint" style="text-align:left;margin:6px 2px;">Bilmediğin kelimeye dokun: anlamı çıkar, kelime defterine eklersin.</p>';
+    out.querySelectorAll(".rw").forEach(function(span){ span.addEventListener("click",function(){ span.classList.add("tapped"); openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:""); }); });
+  });
   box.querySelectorAll(".gn-card").forEach(function(b){ b.addEventListener("click",function(){ qnOpen(b.dataset.id); }); });
   box.querySelectorAll(".wb-mk").forEach(function(b){ b.addEventListener("click",function(){ wbShow(b.dataset.p); window.scrollTo(0,0); }); });
   wbPins();
@@ -4590,6 +4606,38 @@ function wbNotesRender(){
     var m=WB.bk.marks||(WB.bk.marks=[]), i=m.indexOf(WB.page); if(i===-1) m.push(WB.page); else m.splice(i,1);
     save(); wbUpdateMark(); wbNotesRender();
   });
+  /* iki parmakla büyütme / küçültme */
+  (function(){
+    var box=el("wbPageBox"), wrap=el("wbWrap"), p0=null;
+    function dist(t){ var dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY; return Math.hypot(dx,dy); }
+    box.addEventListener("touchstart",function(e){
+      if(e.touches.length===2){
+        WB.pinching=true; var r=wrap.getBoundingClientRect(), b=box.getBoundingClientRect();
+        var cx=(e.touches[0].clientX+e.touches[1].clientX)/2, cy=(e.touches[0].clientY+e.touches[1].clientY)/2;
+        p0={d:dist(e.touches),k:1,fx:(cx-r.left)/r.width,fy:(cy-r.top)/r.height,bx:cx-b.left,by:cy-b.top};
+        wrap.style.transformOrigin=(p0.fx*100)+"% "+(p0.fy*100)+"%";
+        e.preventDefault();
+      }
+    },{passive:false});
+    box.addEventListener("touchmove",function(e){
+      if(!p0||e.touches.length<2) return;
+      var k=dist(e.touches)/p0.d, tot=Math.max(1,Math.min(4,WB.zoom*k))/WB.zoom; p0.k=tot;
+      wrap.style.transform="scale("+tot+")"; e.preventDefault();
+    },{passive:false});
+    function done(e){
+      if(!p0||(e.touches&&e.touches.length>=2)) return;
+      var q=p0; p0=null; wrap.style.transform=""; wrap.style.transformOrigin="";
+      setTimeout(function(){ WB.pinching=false; },250);
+      var nz=Math.max(1,Math.min(4,WB.zoom*q.k));
+      if(Math.abs(nz-WB.zoom)<0.04) return;
+      WB.zoom=nz;
+      wbShow(WB.page).then(function(){
+        var w=wrap.getBoundingClientRect().width, h=wrap.getBoundingClientRect().height;
+        box.scrollLeft=Math.max(0,q.fx*w-q.bx); box.scrollTop=Math.max(0,q.fy*h-q.by);
+      });
+    }
+    box.addEventListener("touchend",done); box.addEventListener("touchcancel",done);
+  })();
   el("wbZoom").addEventListener("click",function(){ WB.zoom=WB.zoom>=2.2?1:(WB.zoom<1.5?1.6:2.2); wbShow(WB.page); });
   el("wbPin").addEventListener("click",function(){ if(!WB.pinMode) wbSetTool("hand"); WB.pinMode=!WB.pinMode; this.classList.toggle("on",WB.pinMode); el("wbHint").style.display=WB.pinMode?"block":"none"; });
   el("wbWrap").addEventListener("click",function(ev){
