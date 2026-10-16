@@ -8461,7 +8461,7 @@ document.addEventListener("visibilitychange",function(){ if(!document.hidden){ s
 (function(){ var m=/[?&]go=([a-z]+)/.exec(location.search); if(m&&document.getElementById("v-"+m[1])&&S.settings.onboardDone&&!document.body.classList.contains("onb-active")){ setTimeout(function(){ go(m[1]); },60); } else setTimeout(awayShow,900); try{ if(document.getElementById("v-today").classList.contains("active")) renderToday(); }catch(e){} })();
 
 /* ===== Hatırlatıcı & kısayollar ===== */
-var PUSH_URL="", PUSH_KEY="BOEBSgrA6rhjQLUE1OvUnmvxH0TGe6eqg_D-Bpfsg80S_ZgNtMD2x8eHmNAxoIK0gDWgAIWp4M4Lw_vaDCW5SYI";
+var PUSH_URL="https://moonie-push.ilaydaesmanur86.workers.dev", PUSH_KEY="BOEBSgrA6rhjQLUE1OvUnmvxH0TGe6eqg_D-Bpfsg80S_ZgNtMD2x8eHmNAxoIK0gDWgAIWp4M4Lw_vaDCW5SYI";
 (function(){
   var base=location.origin+location.pathname.replace(/[^\/]*$/,"")+"index.html";
   var L=[["today","Bugün"],["speaking","Konuşma"],["vocab","Kelime"],["reading","Okuma"],["writing","Yazma"],["listening","Dinleme"]];
