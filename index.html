@@ -4110,6 +4110,15 @@ function renderBook(){
     if(bk.lowText){ var bn=document.createElement("div"); bn.id="bookLowBanner"; bn.className="store-warn"; bn.style.margin="0 0 12px";
       bn.textContent="Bu kitap taranmış (fotoğraf) bir PDF. Bir sayfaya dokununca Moonie sayfayı cihazın içinde görselden okuyup metne çevirir (internet ya da anahtar gerekmez; ilk sayfa dil dosyaları yüklendiği için biraz uzun sürer, okunan sayfalar saklanır). Sayfanın aslını görmek için \"Sayfa görünümü ve notlar\"ı kullan.";
       listEl.parentNode.insertBefore(bn,listEl); }
+    var oldR=document.getElementById("bookResplit"); if(oldR) oldR.remove();
+    var allPages=ch.length&&ch.every(function(c){ return /^Sayfa \d/.test(c.title); });
+    if(!bk.lowText&&bk.hasPdf&&allPages){
+      var rb=document.createElement("button"); rb.type="button"; rb.id="bookResplit"; rb.className="btn sec"; rb.style.marginBottom="12px";
+      rb.textContent="Metinleri başlıklarına göre ayır";
+      rb.onclick=function(){ rb.disabled=true; rb.textContent="Başlıklar aranıyor..."; resplitBook(bk,rb).then(function(ok){ if(ok) renderBook(); else { rb.disabled=false; rb.textContent="Başlık bulunamadı, sayfa düzeni kullanılıyor"; } }).catch(function(){ rb.disabled=false; rb.textContent="Analiz edilemedi"; }); };
+      listEl.parentNode.insertBefore(rb,listEl);
+      if(!bk.splitTried){ rb.click(); }
+    }
     var next=0; for(var i=0;i<ch.length;i++){ if(!S.readingLib.pdfDone["pdf"+bk.id+"-"+i]){ next=i; break; } }
     cont.style.display=ch.length?"":"none";
     cont.textContent=doneN>=ch.length?"Baştan oku":"Okumaya Devam Et ("+(next+1)+")";
@@ -4152,8 +4161,8 @@ function splitPdfParas(t){
 async function extractPdfChapters(file,onProgress){
   var lib=await loadPdfJs();
   var pdf=await lib.getDocument({data:await file.arrayBuffer()}).promise;
-  var lines=[], pageTxt=[];
-  for(var p=1;p<=pdf.numPages;p++){
+  var lines=[], pageTxt=[], N=pdf.numPages;
+  for(var p=1;p<=N;p++){
     var page=await pdf.getPage(p), tc=await page.getTextContent(), cur=null, ptxt="";
     tc.items.forEach(function(it){
       if(typeof it.str!=="string") return;
@@ -4161,55 +4170,108 @@ async function extractPdfChapters(file,onProgress){
       ptxt+=it.str+(it.hasEOL?"\n":" ");
       if(!it.str.trim()){ if(it.hasEOL&&cur){ lines.push(cur); cur=null; } return; }
       if(cur&&Math.abs(y-cur.y)>Math.max(2,cur.h*0.5)){ lines.push(cur); cur=null; }
-      if(!cur) cur={t:"",y:y,h:h,p:p,fs:""};
+      if(!cur) cur={t:"",y:y,h:h,p:p};
       cur.t+=(cur.t&&!/\s$/.test(cur.t)&&!/^[\s.,;:!?)]/.test(it.str)?" ":"")+it.str; if(h>cur.h) cur.h=h;
       if(it.hasEOL){ lines.push(cur); cur=null; }
     });
     if(cur) lines.push(cur);
     pageTxt.push(ptxt.replace(/-\n(?=[a-z])/g,"").replace(/\s*\n\s*/g," ").replace(/\s{2,}/g," ").trim());
-    if(onProgress) onProgress(p,pdf.numPages);
+    if(onProgress) onProgress(p,N);
   }
-  /* başlık tespiti: gövde yazı boyutundan büyük, kısa satırlar; sayfa üstbilgileri/numaraları elenir */
+  var allLen=0; pageTxt.forEach(function(t){ allLen+=t.length; });
+  function pack(secs){
+    /* kısa bölümleri öncekine kat, geri kalanı bölüm yap */
+    var out=[];
+    secs.forEach(function(sc){
+      var tx=(sc.text||"").replace(/-\s+(?=[a-z])/g,"").replace(/\s{2,}/g," ").trim();
+      if(tx.length<250){ if(out.length) out[out.length-1].text+=" "+(sc.title?sc.title+". ":"")+tx; return; }
+      if(!sc.title) return;
+      out.push({title:sc.title,text:tx});
+    });
+    out=out.filter(function(sc){ return sc.title&&sc.text.length>=250; });
+    if(out.length<3||out.length>Math.max(400,N)) return null;
+    var tot=0; out.forEach(function(sc){ tot+=sc.text.length; });
+    if(tot<allLen*0.5) return null;
+    return out.map(function(sc){ return {title:sc.title.slice(0,80),paras:splitPdfParas(sc.text)}; });
+  }
+  /* 1) PDF'in kendi içindekiler/yer imleri */
+  try{
+    var ol=await pdf.getOutline();
+    if(ol&&ol.length>=3){
+      var starts=[];
+      for(var i=0;i<ol.length;i++){
+        var d=ol[i].dest; if(typeof d==="string") d=await pdf.getDestination(d);
+        if(d&&d[0]){ var pi=(typeof d[0]==="object")?await pdf.getPageIndex(d[0]):d[0]; if(typeof pi==="number") starts.push({title:String(ol[i].title||"").trim(),page:pi}); }
+      }
+      starts=starts.filter(function(x){ return x.title; }).sort(function(a,b){ return a.page-b.page; });
+      var secs1=starts.map(function(x,k){ var end=k+1<starts.length?starts[k+1].page:N; if(end<=x.page) end=x.page+1; return {title:x.title,text:pageTxt.slice(x.page,end).join(" ")}; });
+      var r1=secs1.length>=3?pack(secs1):null;
+      if(r1) return {chapters:r1,pages:N,mode:"outline"};
+    }
+  }catch(e){}
+  /* satır istatistikleri */
   var hist={}; lines.forEach(function(l){ var k=Math.round(l.h); hist[k]=(hist[k]||0)+l.t.length; });
   var body=0,bestN=-1; Object.keys(hist).forEach(function(k){ if(hist[k]>bestN){ bestN=hist[k]; body=+k; } });
   var seen={}; lines.forEach(function(l){ var k=l.t.trim().toLowerCase(); seen[k]=(seen[k]||0)+1; });
-  var minPages=Math.max(3,Math.round(pdf.numPages*0.15));
-  function isHead(l){
+  var minPages=Math.max(3,Math.round(N*0.15));
+  var ds=[]; lines.forEach(function(l,i){ var q=lines[i-1]; if(q&&q.p===l.p&&q.y>l.y) ds.push(q.y-l.y); });
+  ds.sort(function(a,b){ return a-b; }); var med=ds.length?ds[Math.floor(ds.length/2)]:0;
+  lines.forEach(function(l,i){ var q=lines[i-1], n=lines[i+1];
+    l.up=(q&&q.p===l.p&&q.y>l.y)?q.y-l.y:Infinity; l.dn=(n&&n.p===l.p&&l.y>n.y)?l.y-n.y:Infinity; });
+  function base(l){
     var t=l.t.trim(); if(t.length<3||t.length>90) return false;
     if(/^\d+$/.test(t)||/^(page|sayfa)\s*\d+/i.test(t)) return false;
     if(seen[t.toLowerCase()]>=minPages) return false;
     if(/[.,;]$/.test(t)&&t.length>40) return false;
-    var big=body>0&&l.h>=body*1.18;
-    var kw=/^(chapter|unit|lesson|part|story|text|passage|reading|section|bölüm|ünite|ders|metin)\s+([0-9]+|[ivxlc]+|one|two|three|four|five|six|seven|eight|nine|ten)\b/i.test(t);
-    return big||kw;
+    return true;
   }
-  var secs=[], curS=null, prevHead=false;
-  lines.forEach(function(l){
-    if(isHead(l)){
-      if(curS&&prevHead&&curS.body.length===0&&curS.title.length<80) curS.title+=" "+l.t.trim();
-      else { curS={title:l.t.trim(),body:[],p:l.p}; secs.push(curS); }
-      prevHead=true;
-    } else { if(!curS){ curS={title:"",body:[],p:l.p}; secs.push(curS); } curS.body.push(l.t.trim()); prevHead=false; }
-  });
-  secs.forEach(function(sc){ sc.text=sc.body.join(" ").replace(/-\s+(?=[a-z])/g,"").replace(/\s{2,}/g," ").trim(); });
-  /* çok kısa bölümleri (içindekiler vb.) bir sonrakiyle birleştirme yerine ele */
-  var good=secs.filter(function(sc){ return sc.title&&sc.text.length>=250; });
-  if(good.length>=3&&good.length<=Math.max(400,pdf.numPages)){
-    var chapters=good.map(function(sc){ return {title:sc.title.slice(0,80),paras:splitPdfParas(sc.text)}; });
-    var tot=0; chapters.forEach(function(c){ tot+=c.paras.join(" ").length; });
-    var all=0; pageTxt.forEach(function(t){ all+=t.length; });
-    if(tot>=all*0.5) return {chapters:chapters,pages:pdf.numPages};
+  function kw(t){ return /^(chapter|unit|lesson|part|story|text|passage|reading|section|bölüm|ünite|ders|metin)\s+([0-9]+|[ivxlc]+|one|two|three|four|five|six|seven|eight|nine|ten)\b/i.test(t); }
+  function sections(isHead){
+    var secs=[], cs=null, prev=false;
+    lines.forEach(function(l){
+      if(isHead(l)){
+        if(cs&&prev&&!cs.body.length&&cs.title.length<80) cs.title+=" "+l.t.trim();
+        else { cs={title:l.t.trim(),body:[]}; secs.push(cs); }
+        prev=true;
+      } else { if(!cs){ cs={title:"",body:[]}; secs.push(cs); } cs.body.push(l.t.trim()); prev=false; }
+    });
+    secs.forEach(function(sc){ sc.text=sc.body.join(" "); });
+    return secs;
   }
-  /* yedek: sayfa bazlı bölme */
+  /* 2) büyük yazı boyutu / "Chapter 1" benzeri */
+  var r2=pack(sections(function(l){ return base(l)&&((body>0&&l.h>=body*1.15)||kw(l.t.trim())); }));
+  if(r2) return {chapters:r2,pages:N,mode:"titles"};
+  /* 3) yerleşim: boşlukla ayrılmış kısa, noktasız satırlar (aynı boyutlu başlıklar) */
+  function words(t){ return t.split(/\s+/).filter(Boolean); }
+  function titleish(t){ var w=words(t); if(w.length<1||w.length>10) return false; if(/[.!?,;:]$/.test(t)) return false;
+    if(!/^[A-ZÇĞİÖŞÜ0-9"'“‘]/.test(t)) return false;
+    var big=w.filter(function(x){ return x.length>3; }); if(!big.length) return true;
+    var caps=big.filter(function(x){ return /^[A-ZÇĞİÖŞÜ"'“‘(]/.test(x); }).length; return caps/big.length>=0.6||t===t.toUpperCase(); }
+  var r3=null;
+  if(med>0) r3=pack(sections(function(l){ var t=l.t.trim(); if(!base(l)||!titleish(t)) return false;
+    var firstOnPage=l.up===Infinity;
+    return (l.up>=med*1.6&&l.dn>=med*1.25&&l.dn!==Infinity)||(firstOnPage&&l.dn>=med*1.6&&l.dn!==Infinity)||(l.h>=body*1.08&&l.dn>=med*1.2&&(firstOnPage||l.up>=med*1.4)); }));
+  if(r3) return {chapters:r3,pages:N,mode:"layout"};
+  /* 4) yedek: sayfa bazlı */
   var out=[], c2="", st=1;
   pageTxt.forEach(function(txt,i){
     var pn=i+1; c2+=(c2?" ":"")+txt;
-    if(c2.length>=1800||pn===pdf.numPages){
+    if(c2.length>=1800||pn===N){
       if(c2.trim().length>40) out.push({title:"Sayfa "+st+(pn>st?"–"+pn:""),paras:splitPdfParas(c2)});
       c2=""; st=pn+1;
     }
   });
-  return {chapters:out,pages:pdf.numPages};
+  return {chapters:out,pages:N,mode:"pages"};
+}
+async function resplitBook(bk,st){
+  var blob=await idbGet("bookpdf-"+bk.id); if(!blob) return false;
+  var r=await extractPdfChapters(blob,function(p,n){ if(st) st.textContent="Başlıklar aranıyor... "+p+"/"+n; });
+  bk.splitTried=true;
+  if(r.mode==="pages"||!r.chapters.length){ save(); return false; }
+  await idbPut("book-"+bk.id,new Blob([JSON.stringify(r.chapters)],{type:"application/json"}));
+  PDF_CHAPTER_CACHE[bk.id]=r.chapters; bk.chapters=r.chapters.length; bk.lowText=false;
+  Object.keys(S.readingLib.pdfDone).forEach(function(k){ if(k.indexOf("pdf"+bk.id+"-")===0) delete S.readingLib.pdfDone[k]; });
+  save(); return true;
 }
 function textJunkRatio(chapters){
   var toks=[]; (chapters||[]).slice(0,6).forEach(function(c){ (c.paras||[]).forEach(function(p){ toks=toks.concat(String(p).split(/\s+/)); }); });
