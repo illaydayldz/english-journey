@@ -333,7 +333,7 @@
   #studyArea > .btn{ margin-top:12px; }
   .grade{ display:flex; gap:8px; margin-top:16px; }
   .grade button{ flex:1; padding:12px 4px; border:none; border-radius:var(--radius-md); font-weight:700; font-size:12.5px; color:#fff; cursor:pointer; min-height:44px; display:flex; align-items:center; justify-content:center; gap:5px; }
-  .paper-card{ background:#F7F5F2; border-radius:var(--radius-lg); padding:18px 16px; --ink:#2A2730; --ink-soft:#716C7A; --ink-2:#443F4D; --purple-deep:color-mix(in srgb,var(--accent) 68%,#000); --line:#EAE6DF; --tint:color-mix(in srgb,var(--accent) 18%,#fff); --tint-strong:color-mix(in srgb,var(--accent) 32%,#fff); --rust:#C4433F; --rust-tint:#FBEAE9; --green:#1C9C6E; --green-tint:#E4F5EE; --gold:#B9750F; --gold-tint:#FBF0DD; --blue:#3B6FE0; --blue-tint:#E7EDFC; --teal:#1B8C8C; --teal-tint:#E2F5F5; --pink:#B5459A; --pink-tint:#FAEAF5; }
+  .paper-card{ color:var(--ink); --card:#fff; --surface:#fff; --gray-100:#EFEBE6; background:#F7F5F2; border-radius:var(--radius-lg); padding:18px 16px; --ink:#2A2730; --ink-soft:#716C7A; --ink-2:#443F4D; --purple-deep:color-mix(in srgb,var(--accent) 68%,#000); --line:#EAE6DF; --tint:color-mix(in srgb,var(--accent) 18%,#fff); --tint-strong:color-mix(in srgb,var(--accent) 32%,#fff); --rust:#C4433F; --rust-tint:#FBEAE9; --green:#1C9C6E; --green-tint:#E4F5EE; --gold:#B9750F; --gold-tint:#FBF0DD; --blue:#3B6FE0; --blue-tint:#E7EDFC; --teal:#1B8C8C; --teal-tint:#E2F5F5; --pink:#B5459A; --pink-tint:#FAEAF5; }
   .grade-v2{ display:flex; justify-content:center; gap:24px; margin-top:18px; }
   .grade-v2 button{ display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; cursor:pointer; font-family:inherit; padding:0; }
   .grade-v2 .gv-circle{ width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:var(--shadow-sm); }
@@ -1460,6 +1460,9 @@
   .wp-hero{ display:flex; align-items:center; gap:12px; background:var(--card); border-radius:20px; padding:14px; margin-bottom:12px; }
   .wp-saved{ margin-top:12px; background:var(--card); border-radius:18px; padding:12px 14px; } .wp-saved b{ font-size:13px; }
   .wp-s{ display:flex; align-items:flex-start; gap:8px; margin-top:8px; font-size:13.5px; line-height:1.4; } .wp-s span{ flex:1; } .wp-s button{ border:none; background:transparent; color:var(--ink-2); font-size:18px; line-height:1; cursor:pointer; }
+  #wpBody.paper-card .paper-card{ background:none; padding:0; }
+  #wpBody:empty,#vgBody:empty{ display:none; }
+  .wp-fb, .wp-fb *{ color:var(--ink); } .wp-fb .btn.sec{ color:var(--purple-deep); }
   .wp-fb{ margin-top:12px; padding:12px; border-radius:16px; background:var(--tint); font-size:13.5px; line-height:1.5; }
   #wpBody .qz-card .f{ text-align:center; }
 
@@ -2164,14 +2167,14 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     </div>
     <div id="wpHero"></div>
     <div class="segtabs" id="wpTabs"><button type="button" class="seg active" data-wt="sent">Cümle kur</button><button type="button" class="seg" data-wt="cloze">Boşluk doldur</button><button type="button" class="seg" data-wt="dict">Dinle ve yaz</button></div>
-    <div id="wpBody"></div>
+    <div id="wpBody" class="paper-card"></div>
   </section>
   <section class="view" id="v-vocabgames">
     <div class="page-head">
       <button class="back" onclick="go('vocab')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <h1>Word exercises</h1>
     </div>
-    <div id="vgBody"></div>
+    <div id="vgBody" class="paper-card"></div>
   </section>
   <section class="view" id="v-vocabstudy">
     <div class="page-head">
