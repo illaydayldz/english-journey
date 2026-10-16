@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v101-away";
+const CACHE = "english-app-v102-rem";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/reading-library.json",
@@ -54,4 +54,39 @@ self.addEventListener("fetch", (e) => {
       return res;
     }).catch(() => caches.match("./index.html")))
   );
+});
+
+// ---- Arka plan hatırlatma (Android, periodicSync) ----
+const AWAY_TXT = [
+  [14, "Moonie hayalet oldu…", "Gel, küçük bir adımla onu geri getir."],
+  [10, "Moonie eriyip gitti", "5 dakika onu kurtarır."],
+  [6, "Moonie öfkeden yanıyor!", "Barışmak için bugün bir şey çalış."],
+  [4, "Moonie küstü!", "Küçük bir görev yap, affedeyim."],
+  [3, "Moonie ağlıyor…", "Üç gündür seni bekliyor."],
+  [2, "Seni özledim…", "5 dakika yeter, hadi başlayalım."]
+];
+function parseDay(x) { const p = (x || "").split("-"); return p.length === 3 ? new Date(+p[0], +p[1] - 1, +p[2]) : null; }
+self.addEventListener("periodicsync", (e) => {
+  if (e.tag !== "moonie-away") return;
+  e.waitUntil((async () => {
+    try {
+      const c = await caches.open("moonie-state");
+      const r = await c.match("./__state.json"); if (!r) return;
+      const st = await r.json(); if (!st.on) return;
+      let ref = parseDay(st.lastActive) || parseDay(st.lastDone); if (!ref) return;
+      const l = parseDay(st.lastDone); if (l && l > ref) ref = l;
+      const t = new Date(); t.setHours(0, 0, 0, 0);
+      const days = Math.round((t - ref) / 86400000);
+      const tier = AWAY_TXT.find((x) => days >= x[0]); if (!tier) return;
+      const key = t.toDateString();
+      if (st.notified === key) return;
+      st.notified = key; await c.put("./__state.json", new Response(JSON.stringify(st), { headers: { "Content-Type": "application/json" } }));
+      await self.registration.showNotification(tier[1], { body: tier[2], icon: "./icon-192-v4.png", badge: "./icon-192-v4.png", tag: "moonie-away", data: { url: "./index.html?go=today" } });
+    } catch (err) {}
+  })());
+});
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || "./index.html?go=today";
+  e.waitUntil(self.clients.matchAll({ type: "window" }).then((cl) => { for (const c of cl) { if ("focus" in c) { c.navigate(url).catch(() => {}); return c.focus(); } } return self.clients.openWindow(url); }));
 });

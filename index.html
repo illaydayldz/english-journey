@@ -2813,6 +2813,19 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <div class="sh-lbl" style="margin:14px 0 0;">Moonie tarzı</div>
       <div class="st-cards sm" id="styleRow"></div>
     </div>
+    <div class="card" id="remCard">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>Hatırlatıcı ve kısayollar</h2>
+      <p class="mut" style="margin-bottom:10px;">Moonie seni unutmasın diye günlük hatırlatma ekle.</p>
+      <div class="sh-lbl" style="margin:0 0 6px;">Takvim hatırlatıcısı (iPhone ve Android)</div>
+      <div style="display:flex;gap:8px;align-items:center;"><input type="time" id="remTime" value="20:00" style="flex:0 0 120px;padding:10px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:15px;"><button type="button" class="btn" id="remIcs" style="flex:1;margin:0;">Takvime ekle</button></div>
+      <p class="mut" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte "Moonie seni bekliyor" bildirimi gelir. Açılan takvim penceresinde "Ekle"ye dokun.</p>
+      <div class="sh-lbl" style="margin:0 0 6px;">Arka plan bildirimi (yalnızca Android)</div>
+      <button type="button" class="btn sec" id="remBg" style="margin:0;">Bildirimi aç</button>
+      <p class="mut" id="remBgNote" style="margin:6px 0 14px;font-size:12px;">2+ gün çalışmazsan Moonie küsüp bildirim gönderir. Tarayıcı zamanı belirler, garanti değildir.</p>
+      <div class="sh-lbl" style="margin:0 0 6px;">Ana ekran kısayolları</div>
+      <div id="remLinks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+      <p class="mut" style="margin:6px 0 0;font-size:12px;">Android: ana ekrandaki Moonie simgesine uzun bas. iPhone: bir bölümün linkini kopyala, Safari'de aç, Paylaş &rarr; Ana Ekrana Ekle ile ayrı simge oluştur.</p>
+    </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Sınav Tarihi</h2>
       <p class="mut" style="margin-bottom:10px;">Bugün ve Profil'deki "sınava X gün" sayacı bu tarihe göre hesaplanır.</p>
@@ -3359,7 +3372,7 @@ function renderToday(){
     var done=!!S.checks[i];
     var lab=document.createElement("label"); lab.className="check"+(done?" done":"");
     lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+(done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(i+1))+'</span><span class="t">'+s[0]+'<small>'+s[1]+' · '+s[3]+' dk</small></span>';
-    lab.querySelector("input").addEventListener("change",function(e){ S.checks[i]=e.target.checked; if(e.target.checked) S.lastActive=dstr(new Date()); save(); renderToday(); });
+    lab.querySelector("input").addEventListener("change",function(e){ S.checks[i]=e.target.checked; if(e.target.checked) S.lastActive=dstr(new Date()); save(); pushAwayState(); renderToday(); });
     cl.appendChild(lab);
   });
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
@@ -8396,6 +8409,42 @@ document.getElementById("awayGo").addEventListener("click",function(){ document.
 document.getElementById("awayLater").addEventListener("click",function(){ document.getElementById("awayOv").classList.remove("on"); });
 document.addEventListener("visibilitychange",function(){ if(!document.hidden){ setTimeout(awayShow,400); } });
 (function(){ var m=/[?&]go=([a-z]+)/.exec(location.search); if(m&&document.getElementById("v-"+m[1])&&S.settings.onboardDone&&!document.body.classList.contains("onb-active")){ setTimeout(function(){ go(m[1]); },60); } else setTimeout(awayShow,900); try{ if(document.getElementById("v-today").classList.contains("active")) renderToday(); }catch(e){} })();
+
+/* ===== Hatırlatıcı & kısayollar ===== */
+(function(){
+  var base=location.origin+location.pathname.replace(/[^\/]*$/,"")+"index.html";
+  var L=[["today","Bugün"],["speaking","Konuşma"],["vocab","Kelime"],["reading","Okuma"],["writing","Yazma"],["listening","Dinleme"]];
+  var w=document.getElementById("remLinks"); if(!w) return;
+  w.innerHTML=L.map(function(x){ return '<button type="button" class="btn sec sm" data-l="'+x[0]+'" style="margin:0;">'+x[1]+' linkini kopyala</button>'; }).join("");
+  w.addEventListener("click",function(e){ var b=e.target.closest("[data-l]"); if(!b) return; var u=base+"?go="+b.dataset.l; var done=function(){ var t=b.textContent; b.textContent="Kopyalandı"; setTimeout(function(){ b.textContent=t; },1400); };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(done,function(){ prompt("Linki kopyala:",u); }); else prompt("Linki kopyala:",u); });
+  document.getElementById("remIcs").addEventListener("click",function(){
+    var tv=(document.getElementById("remTime").value||"20:00").split(":"), d=new Date(); d.setDate(d.getDate()+1);
+    var p=function(n){ return (n<10?"0":"")+n; };
+    var dt=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"T"+p(+tv[0])+p(+tv[1])+"00";
+    var ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Moonie//TR","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:moonie-daily-"+Date.now()+"@moonie","DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,""),"DTSTART:"+dt,"DURATION:PT10M","RRULE:FREQ=DAILY","SUMMARY:Moonie seni bekliyor","DESCRIPTION:5 dakika yeter! "+base+"?go=today","URL:"+base+"?go=today","BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Moonie seni bekliyor","TRIGGER:PT0M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+    var blob=new Blob([ics],{type:"text/calendar;charset=utf-8"}), a=document.createElement("a");
+    a.href=URL.createObjectURL(blob); a.download="moonie-hatirlatici.ics"; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1500);
+  });
+  var bg=document.getElementById("remBg"), note=document.getElementById("remBgNote");
+  function bgState(){ var ok=("Notification" in window)&&("serviceWorker" in navigator); if(!ok){ bg.disabled=true; bg.textContent="Bu cihazda desteklenmiyor"; return; }
+    if(Notification.permission==="denied"){ bg.disabled=true; bg.textContent="İzin kapalı (tarayıcı ayarından aç)"; return; }
+    if(S.settings.bgRem){ bg.textContent="Bildirim açık · kapat"; } else bg.textContent="Bildirimi aç"; }
+  bgState();
+  bg.addEventListener("click",function(){
+    if(S.settings.bgRem){ S.settings.bgRem=false; save(); navigator.serviceWorker.ready.then(function(r){ if(r.periodicSync&&r.periodicSync.unregister) r.periodicSync.unregister("moonie-away").catch(function(){}); }); bgState(); return; }
+    Notification.requestPermission().then(function(p){
+      if(p!=="granted"){ bgState(); return; }
+      navigator.serviceWorker.ready.then(function(r){
+        if(r.periodicSync&&r.periodicSync.register){ r.periodicSync.register("moonie-away",{minInterval:12*3600*1000}).then(function(){ S.settings.bgRem=true; save(); pushAwayState(); note.textContent="Açıldı. Moonie 2+ gün yoksan bildirim gönderecek."; bgState(); }).catch(function(){ note.textContent="Bu tarayıcı arka plan kontrolünü desteklemiyor (iPhone'da takvim hatırlatıcısını kullan)."; }); }
+        else note.textContent="Bu tarayıcı arka plan kontrolünü desteklemiyor (iPhone'da takvim hatırlatıcısını kullan).";
+      });
+    });
+  });
+})();
+/* SW'ye son aktivite bilgisini yaz (Cache) */
+function pushAwayState(){ try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||""}; caches.open("moonie-state").then(function(c){ return c.put("./__state.json",new Response(JSON.stringify(st),{headers:{"Content-Type":"application/json"}})); }).catch(function(){}); }catch(e){} }
+pushAwayState(); document.addEventListener("visibilitychange",function(){ if(document.hidden) pushAwayState(); });
 if(/[?&#]onboarding/.test(location.href)){
   var st0=S.settings||{};
   obState.level=st0.level||null; obState.goals=(st0.goals||[]).map(function(g){return /Sınav/i.test(g)?"Sınav":g;}); obState.exam=st0.examType||""; obState.dailyMinutes=st0.dailyMinutes||null; obState.focus=(st0.focusSkills||[]).slice();
