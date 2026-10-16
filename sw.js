@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v102-rem";
+const CACHE = "english-app-v104-focus";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/reading-library.json",
@@ -65,6 +65,8 @@ const AWAY_TXT = [
   [3, "Moonie ağlıyor…", "Üç gündür seni bekliyor."],
   [2, "Seni özledim…", "5 dakika yeter, hadi başlayalım."]
 ];
+const ALT_BODY = {14:["Hayalet Moonie hâlâ seni bekliyor."],10:["Neredeyse sadece kemikleri kaldı, kurtar onu!"],6:["Alev alev yanıyor, söndürmek için bir görev yap."],4:["Hmph! Gel de barışalım."],3:["Gözleri yaşardı. Bir kelime yeter."],2:["Dün gelmedin, biraz üzüldü."]};
+const FOCUS_TXT = {14:["Yeniden başlama zamanı","2 hafta oldu. Bugün ilk adımı at."],10:["Neredeyse sıfırdayız","Tek bir 5 dakikalık oturumla başla."],6:["Bu gidişle olmaz","Bugün sıfırla ve yeniden başla."],4:["Hedeften sapıyorsun","Bir görev yap, hemen."],3:["Ritim bozuluyor","Tek görevle geri dön."],2:["Seri tehlikede","5 dakika ile toparla."]};
 function parseDay(x) { const p = (x || "").split("-"); return p.length === 3 ? new Date(+p[0], +p[1] - 1, +p[2]) : null; }
 self.addEventListener("periodicsync", (e) => {
   if (e.tag !== "moonie-away") return;
@@ -77,7 +79,8 @@ self.addEventListener("periodicsync", (e) => {
       const l = parseDay(st.lastDone); if (l && l > ref) ref = l;
       const t = new Date(); t.setHours(0, 0, 0, 0);
       const days = Math.round((t - ref) / 86400000);
-      const tier = AWAY_TXT.find((x) => days >= x[0]); if (!tier) return;
+      const tier0 = AWAY_TXT.find((x) => days >= x[0]); if (!tier0) return;
+      const alts = st.focus ? [] : (ALT_BODY[tier0[0]] || []); const pool = [tier0[2]].concat(alts); const f = FOCUS_TXT[tier0[0]]; const tier = st.focus && f ? [tier0[0], f[0], f[1]] : [tier0[0], tier0[1], pool[Math.floor(Math.random() * pool.length)]];
       const key = t.toDateString();
       if (st.notified === key) return;
       st.notified = key; await c.put("./__state.json", new Response(JSON.stringify(st), { headers: { "Content-Type": "application/json" } }));
