@@ -2679,6 +2679,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
 <div class="av-back" id="avBack"></div>
 <div class="av-sheet" id="avSheet" role="dialog" aria-label="Avatar seç"><div class="av-prev" id="avPrev"></div><div class="av-cols" id="avCols"></div><div class="av-grid" id="avGrid"></div><button type="button" class="btn" id="avSave" style="margin-top:14px;">Kaydet</button></div>
   <div class="away-ov" id="awayOv" role="dialog" aria-modal="true"><div class="away-box"><img id="awayImg" src="assets/mascot/ms-1.webp" data-nomoon="1" alt="Moonie"><h2 id="awayT"></h2><p id="awayP"></p><button type="button" class="ab-go" id="awayGo">Hadi başlayalım</button><button type="button" class="ab-later" id="awayLater">Daha sonra</button></div></div>
+<div class="away-ov" id="instOv" role="dialog" aria-modal="true"><div class="away-box" style="text-align:left;"><h2 style="text-align:center;margin-top:0;">Ana ekrana ekle</h2><ol id="instSteps" style="padding-left:20px;margin:0 0 14px;font-size:14.5px;line-height:1.6;color:var(--ink);"></ol><button type="button" class="ab-go" id="instShare" style="display:none;">Paylaş menüsünü aç</button><button type="button" class="ab-later" id="instClose" style="width:100%;">Kapat</button></div></div>
 <!-- ===== PROFİL ===== -->
   <section class="view" id="v-profile">
     <div class="page-head">
@@ -8447,8 +8448,15 @@ document.addEventListener("visibilitychange",function(){ if(!document.hidden){ s
     var n=document.getElementById("remInstNote");
     if(st){ n.textContent="Moonie zaten ana ekranında."; return; }
     if(dip){ dip.prompt(); dip=null; return; }
-    n.textContent=ios?"Safari'de alttaki Paylaş (kare+ok) simgesine dokun, aşağı kaydır, 'Ana Ekrana Ekle'yi seç.":"Chrome'da sağ üstteki ⋮ menüsünden 'Ana ekrana ekle' / 'Uygulamayı yükle'yi seç.";
+    var steps=ios?["Safari'nin altındaki <b>Paylaş</b> simgesine (kare ve yukarı ok) dokun.","Listeyi aşağı kaydır, <b>Ana Ekrana Ekle</b>'yi seç.","Sağ üstteki <b>Ekle</b>'ye dokun."]:["Chrome'da sağ üstteki <b>⋮</b> menüsünü aç.","<b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>'yi seç.","<b>Ekle</b>'ye dokun."];
+    document.getElementById("instSteps").innerHTML=steps.map(function(x){ return "<li>"+x+"</li>"; }).join("");
+    document.getElementById("instShare").style.display=(navigator.share&&ios)?"block":"none";
+    document.getElementById("instOv").classList.add("on");
+    n.textContent=ios?"Safari kullanıyorsan adımlar açılan pencerede.":"Adımlar açılan pencerede.";
   });
+  document.getElementById("instClose").addEventListener("click",function(){ document.getElementById("instOv").classList.remove("on"); });
+  document.getElementById("instShare").addEventListener("click",function(){ try{ navigator.share({title:"Moonie",url:base+"?go=today"}).catch(function(){}); }catch(e){} });
+
   var bg=document.getElementById("remBg"), note=document.getElementById("remBgNote");
   function bgState(){ var ok=("Notification" in window)&&("serviceWorker" in navigator); if(!ok){ bg.disabled=true; bg.textContent="Bu cihazda desteklenmiyor"; return; }
     if(Notification.permission==="denied"){ bg.disabled=true; bg.textContent="İzin kapalı (tarayıcı ayarından aç)"; return; }
