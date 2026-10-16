@@ -4114,7 +4114,7 @@ function renderBook(){
       listEl.parentNode.insertBefore(bn,listEl); }
     var oldR=document.getElementById("bookResplit"); if(oldR) oldR.remove();
     var allPages=ch.length&&ch.every(function(c){ return /^Sayfa \d/.test(c.title); });
-    if(!bk.lowText&&bk.hasPdf&&allPages){
+    if(bk.hasPdf&&allPages){
       var rb=document.createElement("button"); rb.type="button"; rb.id="bookResplit"; rb.className="btn sec"; rb.style.marginBottom="12px";
       rb.textContent="Metinleri başlıklarına göre ayır";
       rb.onclick=function(){ rb.disabled=true; rb.textContent="Başlıklar aranıyor..."; resplitBook(bk,rb).then(function(ok){ if(ok) renderBook(); else { rb.disabled=false; rb.textContent="Başlık bulunamadı, sayfa düzeni kullanılıyor"; } }).catch(function(){ rb.disabled=false; rb.textContent="Analiz edilemedi"; }); };
@@ -4319,7 +4319,7 @@ async function resplitBook(bk,st){
   bk.splitV=3;
   if(r.mode==="pages"||!r.chapters.length){ save(); return false; }
   await idbPut("book-"+bk.id,new Blob([JSON.stringify(r.chapters)],{type:"application/json"}));
-  PDF_CHAPTER_CACHE[bk.id]=r.chapters; bk.chapters=r.chapters.length; bk.lowText=false;
+  PDF_CHAPTER_CACHE[bk.id]=r.chapters; bk.chapters=r.chapters.length; bk.lowText=isLowText(r.chapters);
   Object.keys(S.readingLib.pdfDone).forEach(function(k){ if(k.indexOf("pdf"+bk.id+"-")===0) delete S.readingLib.pdfDone[k]; });
   save(); return true;
 }
