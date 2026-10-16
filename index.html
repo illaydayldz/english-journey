@@ -890,6 +890,16 @@
   .th-msg{ font-size:13px; opacity:.88; line-height:1.4; }
   .th-btn{ margin-top:8px; border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:14px; color:color-mix(in srgb,var(--accent) 30%,#000); padding:11px 20px; border-radius:14px; background:linear-gradient(180deg,#FFE9A6,#F2B94B); box-shadow:0 4px 0 #B07E1C, 0 10px 16px -6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6); }
   .th-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #B07E1C; }
+
+  .away-card{ margin:12px 0; padding:14px; border-radius:20px; background:var(--surface); box-shadow:var(--shadow-1); border:1px solid color-mix(in srgb,var(--accent) 30%,transparent); }
+  .away-card .ac-t{ font-family:var(--font-display); font-weight:800; font-size:15px; color:var(--ink); } .away-card .ac-s{ font-size:12.5px; color:var(--ink-soft); margin:3px 0 10px; line-height:1.4; }
+  .away-card .ac-row{ display:flex; gap:8px; } .away-card .ac-row button{ flex:1; border:0; border-radius:14px; padding:11px 6px; font-weight:800; font-size:12.5px; background:var(--accent); color:#fff; box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 60%,#000); cursor:pointer; }
+  .away-ov{ position:fixed; inset:0; z-index:9500; display:none; align-items:center; justify-content:center; padding:22px; background:rgba(10,8,30,.72); backdrop-filter:blur(6px); }
+  .away-ov.on{ display:flex; } .away-box{ width:min(92vw,360px); text-align:center; background:var(--surface); color:var(--ink); border-radius:28px; padding:22px 20px 18px; box-shadow:0 24px 60px rgba(0,0,0,.5); }
+  .away-box img{ width:min(62vw,230px); height:auto; max-height:230px; object-fit:contain; filter:drop-shadow(0 12px 18px rgba(0,0,0,.3)); }
+  .away-box h2{ font-family:var(--font-display); font-size:22px; margin:8px 0 6px; } .away-box p{ font-size:14px; color:var(--ink-soft); line-height:1.45; margin:0 0 16px; }
+  .away-box .ab-go{ width:100%; border:0; border-radius:16px; padding:14px; font-weight:800; font-size:15px; background:var(--accent); color:#fff; box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000); cursor:pointer; }
+  .away-box .ab-later{ margin-top:10px; background:none; border:0; color:var(--ink-soft); font-size:13px; font-weight:700; cursor:pointer; }
   .th-moon{ position:absolute; right:-6px; bottom:-4px; width:42%; max-width:170px; height:auto; filter:drop-shadow(0 12px 14px rgba(0,0,0,.4)); }
   .quickgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:0 0 18px; padding:0; }
   .quickgrid .quick-item{ padding:14px 6px 12px; border-radius:20px; }
@@ -1576,6 +1586,13 @@
   .av-prev{ width:104px; height:104px; margin:6px auto 10px; border-radius:50%; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; overflow:hidden; } .av-prev img{ width:92%; height:92%; object-fit:contain; }
   .av-cols{ display:flex; justify-content:center; gap:12px; margin-bottom:12px; } .av-col{ width:34px; height:34px; border-radius:50%; border:3px solid transparent; cursor:pointer; padding:0; } .av-col.on{ border-color:var(--ink); }
   .av-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; } .av-m{ border:2px solid transparent; background:var(--accent-soft); border-radius:16px; padding:4px 2px 5px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; font:inherit; color:var(--ink-soft); font-size:10px; font-weight:700; } .av-m.on{ border-color:var(--accent); color:var(--ink); } .av-m img{ width:100%; aspect-ratio:1; object-fit:contain; }
+  /* v99: Moonie tarzı */
+  .st-cards{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .st-card{ border:2px solid var(--line); background:var(--surface); border-radius:20px; padding:14px 10px 12px; cursor:pointer; font:inherit; color:var(--ink); display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
+  .st-card.on{ border-color:var(--accent); background:var(--accent-soft); box-shadow:0 8px 20px -10px rgba(var(--accent-rgb),.7); }
+  .st-card img{ width:100%; max-width:130px; height:92px; object-fit:contain; }
+  .st-card b{ font-size:15px; } .st-card small{ font-size:11.5px; color:var(--ink-soft); line-height:1.4; }
+  .st-cards.sm .st-card{ padding:10px 8px; } .st-cards.sm .st-card img{ height:64px; } .st-cards.sm .st-card small{ display:none; }
 </style>
 <script>
 /* Yüksek çözünürlüklü Moonie görselleri: assets/mascot/hd/ içine konan dosyalar index.json'da listelenirse otomatik kullanılır; liste yoksa mevcut görseller kalır. */
@@ -1785,6 +1802,16 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
 
 
   <!-- ===== ONBOARDING: SEVİYE ===== -->
+  <section class="view" id="v-obstyle">
+    <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
+      <div class="onb-steplabel">Başlamadan önce</div>
+      <div class="onb-h">Moonie'nin tarzı</div>
+      <div class="onb-p">Moonie hep seninle olacak. Hangi hâli sana daha yakın? Profil'den istediğin zaman değiştirebilirsin.</div>
+      <div class="st-cards" id="obStyleCards"></div>
+      <div class="onb-foot" style="padding:0;margin-top:14px;"><button type="button" class="btn" id="obStyleNext">Devam →</button></div>
+    </div>
+  </section>
+
   <section class="view" id="v-obbasics">
     <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
       <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
@@ -1904,6 +1931,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <img class="th-moon" src="assets/mascot/pose-goal.webp" data-hd="today-hero" alt="Moonie">
     </div>
 
+    <div class="away-card" id="awayCard" style="display:none"></div>
     <div class="card coach" id="coachCard"></div>
 
     <div class="quickgrid">
@@ -2647,7 +2675,8 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
 
 <div class="av-back" id="avBack"></div>
 <div class="av-sheet" id="avSheet" role="dialog" aria-label="Avatar seç"><div class="av-prev" id="avPrev"></div><div class="av-cols" id="avCols"></div><div class="av-grid" id="avGrid"></div><button type="button" class="btn" id="avSave" style="margin-top:14px;">Kaydet</button></div>
-  <!-- ===== PROFİL ===== -->
+  <div class="away-ov" id="awayOv" role="dialog" aria-modal="true"><div class="away-box"><img id="awayImg" src="assets/mascot/ms-1.webp" data-nomoon="1" alt="Moonie"><h2 id="awayT"></h2><p id="awayP"></p><button type="button" class="ab-go" id="awayGo">Hadi başlayalım</button><button type="button" class="ab-later" id="awayLater">Daha sonra</button></div></div>
+<!-- ===== PROFİL ===== -->
   <section class="view" id="v-profile">
     <div class="page-head">
       <h1>Profil</h1>
@@ -2781,6 +2810,8 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       </div>
       <div class="sh-lbl" style="margin:14px 0 0;">Renk teması</div>
       <div class="acc-row" id="accRow"></div>
+      <div class="sh-lbl" style="margin:14px 0 0;">Moonie tarzı</div>
+      <div class="st-cards sm" id="styleRow"></div>
     </div>
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Sınav Tarihi</h2>
@@ -3286,6 +3317,7 @@ var HERO_MSGS=[
   "Bugün de seriye bir gün daha ekleyelim.",
   "Az kaldı, devam et — harika gidiyorsun!"
 ];
+var HERO_MSGS_FOCUS=["Bugünkü hedef seni bekliyor.","Seriyi koru: bugün bir adım daha.","Odaklan, bitir, bir sonrakine geç.","Küçük ve düzenli: farkı yaratan bu.","Hedefe az kaldı, devam."];
 function renderContinueList(){
   var wrap=document.getElementById("continueList"); wrap.innerHTML="";
   var due=dueWords().length;
@@ -3316,7 +3348,7 @@ function renderContinueList(){
 }
 function renderToday(){
   document.getElementById("greetText").textContent=S.settings.userName?("Merhaba, "+S.settings.userName):"Merhaba";
-  document.getElementById("heroMsg").textContent=HERO_MSGS[dayOfYear(new Date())%HERO_MSGS.length];
+  var HM=(S.settings.style==="focus")?HERO_MSGS_FOCUS:HERO_MSGS; var aw0=awayInfo(), hm0=document.getElementById("heroMsg"); hm0.textContent=(aw0&&!S.checks[0]&&S.lastDone!==dstr(new Date()))?aw0.line:HM[dayOfYear(new Date())%HM.length];
   var ed=daysBetween(examDate(),new Date());
   document.getElementById("examBadge").textContent=ed>0?("Sınava "+ed+" gün"):"";
   var dt=new Date();
@@ -3327,13 +3359,14 @@ function renderToday(){
     var done=!!S.checks[i];
     var lab=document.createElement("label"); lab.className="check"+(done?" done":"");
     lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+(done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(i+1))+'</span><span class="t">'+s[0]+'<small>'+s[1]+' · '+s[3]+' dk</small></span>';
-    lab.querySelector("input").addEventListener("change",function(e){ S.checks[i]=e.target.checked; save(); renderToday(); });
+    lab.querySelector("input").addEventListener("change",function(e){ S.checks[i]=e.target.checked; if(e.target.checked) S.lastActive=dstr(new Date()); save(); renderToday(); });
     cl.appendChild(lab);
   });
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
   var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
   document.getElementById("missionDone").textContent=doneN+"/"+STEPS.length;
-  (function(){ var hr=dt.getHours(), pose=all?"pose-cheering":"pose-goal", mi=document.querySelector(".th-moon"), want="assets/mascot/"+pose+".webp";
+  renderAwayCard(doneN,doneToday);
+  (function(){ var hr=dt.getHours(), pose=all?"pose-cheering":"pose-goal", aw=awayInfo(); if(aw&&!doneToday&&!doneN){ pose=aw.pose; } var mi=document.querySelector(".th-moon"), want="assets/mascot/"+pose+".webp";
     if(mi&&mi.getAttribute("data-pose")!==pose){ mi.setAttribute("data-pose",pose); mi.removeAttribute("data-rc0"); mi.removeAttribute("data-rc1"); mi.removeAttribute("data-rc2"); mi.setAttribute("src",want); } })();
   var dotsWrap=document.getElementById("goalDots"); dotsWrap.innerHTML="";
   STEPS.forEach(function(_,di){
@@ -3375,7 +3408,7 @@ document.getElementById("completeBtn").addEventListener("click",function(){
   var y=new Date(); y.setDate(y.getDate()-1);
   S.streak=(S.lastDone===dstr(y))?S.streak+1:1;
   S.longestStreak=Math.max(S.longestStreak||0,S.streak);
-  S.totalDays+=1; S.lastDone=dstr(new Date());
+  S.totalDays+=1; S.lastDone=dstr(new Date()); S.lastActive=S.lastDone;
   save(); renderToday();
 });
 
@@ -4502,7 +4535,7 @@ function renderLibRead(){
     subText=OPEN_PDF.book.title+" · "+(OPEN_PDF.idx+1)+"/"+OPEN_PDF.chapters.length;
     pct=Math.round((OPEN_PDF.idx+1)/OPEN_PDF.chapters.length*100);
   } else {
-    if(!READING_LIBRARY) return;
+    if(!READING_LIBRARY||!READING_LIBRARY.length){ go("reading"); return; }
     var id=S.readingLib.openId||libFrontierId();
     r=READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
     subText="More to Read I · "+r.id+"/"+READING_LIBRARY.length;
@@ -7649,6 +7682,7 @@ function obGo(id){
   var el=document.getElementById("v-"+id);
   if(el) el.classList.add("active");
   window.scrollTo(0,0);
+  if(id==="obstyle") renderStyleCards();
   if(id==="obbasics"){ obRenderLevel(); obRenderTime(); obUpdateBasics(); }
   if(id==="obgoals"){ obRenderGoals(); obRenderFocus(); }
   if(id==="obmeet") obRenderMeet();
@@ -7895,30 +7929,37 @@ function moonRecolorData(im,acc,cap){
 }
 function moonTargets(root){
   var all=root&&root.tagName==="IMG"?[root]:(root&&root.querySelectorAll?root.querySelectorAll("img"):[]);
-  return Array.prototype.filter.call(all,function(im){ var v=im.getAttribute("data-rc0")||im.getAttribute("src")||""; return im.hasAttribute("data-hd")||im.hasAttribute("data-mq")||/mascot\//.test(v)||im.hasAttribute("data-rc0"); });
+  return Array.prototype.filter.call(all,function(im){ if(im.hasAttribute("data-nomoon")) return false; var v=im.getAttribute("data-rc0")||im.getAttribute("src")||""; return im.hasAttribute("data-hd")||im.hasAttribute("data-mq")||/mascot\//.test(v)||im.hasAttribute("data-rc0"); });
 }
 var moonBusy=false;
+function moonNameOf(p){ var m=/mascot\/([a-z0-9-]+)\.webp/.exec(p||""); return m?m[1]:null; }
 function moonApply(root){
   var acc=document.documentElement.getAttribute("data-accent")||"purple";
+  var focus=(S.settings&&S.settings.style)==="focus";
   var dpr=Math.min(2,window.devicePixelRatio||1), n=0;
   moonTargets(root).forEach(function(im){
     var cur=im.getAttribute("src")||"";
     var orig=im.getAttribute("data-rc0");
     if(orig && cur!==im.getAttribute("data-rc1")){ orig=null; im.removeAttribute("data-rc0"); im.removeAttribute("data-rc1"); im.removeAttribute("data-rc2"); } /* src app tarafından değiştirildi */
     if(!orig){ orig=cur; }
-    if(acc==="purple"||!MOON_CFG[acc]){
+    var base=im.getAttribute("data-mp")||moonNameOf(orig);
+    var effName=(focus&&base&&STYLE_MAP[base])?STYLE_MAP[base]:null;
+    var needRecolor=(acc!=="purple"&&!!MOON_CFG[acc]);
+    if(!needRecolor&&!effName){
       if(im.getAttribute("data-rc0")){ im.setAttribute("src",im.getAttribute("data-rc0")); im.removeAttribute("data-rc0"); im.removeAttribute("data-rc1"); im.removeAttribute("data-rc2"); }
       return;
     }
     var vis=im.offsetWidth>0&&im.offsetHeight>0;
     var cap=vis?Math.max(360,Math.min(1000,Math.ceil(im.offsetWidth*dpr*1.15))):640; cap=cap<=520?520:(cap<=760?760:1000);
-    var key=acc+"|"+cap+"|"+orig;
+    var key=acc+"|"+cap+"|"+orig+"|"+(effName||"");
     if(im.getAttribute("data-rc2")===key) return;
+    var srcUrl=effName?mascotUrl(effName):orig;
     function put(u){ if(!u) return; im.setAttribute("data-rc0",orig); im.setAttribute("data-rc1",u); im.setAttribute("data-rc2",key); im.setAttribute("src",u); }
+    if(!needRecolor){ put(srcUrl); return; }
     if(moonCache[key]){ put(moonCache[key]); return; }
     function run(){
       if((document.documentElement.getAttribute("data-accent")||"purple")!==acc) return;
-      var src=new Image(); src.onload=function(){ var u=null; try{ u=moonRecolorData(src,acc,cap); }catch(e){} if(u){ moonCache[key]=u; put(u); } }; src.src=orig;
+      var src=new Image(); src.onload=function(){ var u=null; try{ u=moonRecolorData(src,acc,cap); }catch(e){} if(u){ moonCache[key]=u; put(u); } }; src.src=srcUrl;
     }
     if(vis) run(); else setTimeout(run,250+(n++)*70);
   });
@@ -7928,7 +7969,20 @@ function moonApply(root){
   function sched(n){ clearTimeout(t); t=setTimeout(function(){ moonApply(document.body); },30); }
   new MutationObserver(function(ms){ if(moonBusy) return; var need=false; ms.forEach(function(m){ if(m.type==="attributes"){ if(m.target.tagName==="IMG"&&m.attributeName==="src"&&!/^data-rc/.test("")){ need=true; } } else need=true; }); if(need&&(document.documentElement.getAttribute("data-accent")||document.querySelector("img[data-rc0]"))) sched(); }).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:["src"]});
 })();
+
+/* ---------- MOONIE TARZI (Yumuşak / Odak) ---------- */
+var STYLE_MAP={"pose-hi":"od-hi","pose-happy":"od-hi","pose-happy2":"od-hi","hero-happy":"od-hi","pose-listening":"od-listen","pose-speak":"od-speak","pose-reading":"od-read","pose-writing":"od-write","extra-pencil":"od-write","pose-goal":"od-goal","pose-todo":"od-goal","pose-motivated":"od-streak","pose-determined":"od-streak","pose-cheering":"od-win","pose-goalachieved":"od-win","pose-goodjob":"od-win","pose-excited":"od-win","pose-greatprogress":"od-win","pose-proud":"od-win","extra-flying":"od-win","pose-error":"od-oops","pose-worried":"od-oops","pose-confused":"od-oops","pose-rest":"od-calm","pose-sleepy":"od-sleep","pose-thinking":"od-think","pose-learning":"od-laptop","pose-newword":"od-idea","pose-surprised":"od-idea","pose-heart":"od-cool"};
+var STYLES=[["soft","Yumuşak","Sevimli ve sıcak. Klasik Moonie.","pose-hi"],["focus","Odak","Kararlı ve enerjik. Hedefe odaklı.","od-streak"]];
+function curStyle(){ return (S.settings&&S.settings.style)==="focus"?"focus":"soft"; }
+function renderStyleCards(){
+  ["obStyleCards","styleRow"].forEach(function(id){ var box=document.getElementById(id); if(!box) return;
+    box.innerHTML=STYLES.map(function(x){ return '<button type="button" class="st-card'+(curStyle()===x[0]?" on":"")+'" data-s="'+x[0]+'"><img alt="" data-nomoon="1" src="'+mascotUrl(x[3])+'"><b>'+x[1]+'</b><small>'+x[2]+'</small></button>'; }).join("");
+    box.querySelectorAll(".st-card").forEach(function(b){ b.addEventListener("click",function(){ S.settings.style=b.dataset.s; save(); renderStyleCards(); moonApply(document.body); try{ renderToday(); }catch(e){} }); });
+  });
+}
+document.getElementById("obStyleNext").addEventListener("click",function(){ obGo("obbasics"); });
 applyAccent(S.settings.accent||"purple");
+renderStyleCards();
 
 
 /* ---------- AVATAR: Moonie ruh hali + renk ---------- */
@@ -7948,10 +8002,12 @@ function applyAvatar(){
   if(!a){ return; }
   avRender(a.m,a.c,320,function(u){ img.removeAttribute("data-hd"); img.removeAttribute("data-rc0"); img.removeAttribute("data-rc1"); img.removeAttribute("data-rc2"); img.setAttribute("data-av","1"); img.src=u; });
 }
+var AV_MOODS_FOCUS=[["od-hi","Selam"],["od-listen","Dinleme"],["od-speak","Konuşma"],["od-read","Okuma"],["od-write","Yazma"],["od-goal","Hedef"],["od-streak","Seri"],["od-win","Kutlama"],["od-oops","Ups"],["od-rest","Mola"],["od-think","Düşünce"],["od-idea","Fikir"],["od-cool","Havalı"],["od-mug","Kahve"],["od-sleep","Uyku"],["od-gym","Antrenman"],["od-laptop","Çalışma"]];
+function avMoods(){ return curStyle()==="focus"?AV_MOODS_FOCUS:AV_MOODS; }
 function avOpen(){
-  var a=S.settings.avatar||{m:"pose-hi",c:document.documentElement.getAttribute("data-accent")||"purple"}; avSel={m:a.m,c:a.c};
+  var a=S.settings.avatar||{m:avMoods()[0][0],c:document.documentElement.getAttribute("data-accent")||"purple"}; avSel={m:a.m,c:a.c};
   document.getElementById("avCols").innerHTML=AV_COLS.map(function(c){ return '<button type="button" class="av-col" data-c="'+c[0]+'" aria-label="'+c[1]+'" style="background:'+c[2]+'"></button>'; }).join("");
-  document.getElementById("avGrid").innerHTML=AV_MOODS.map(function(m){ return '<button type="button" class="av-m" data-m="'+m[0]+'"><img alt="" data-mini="'+m[0]+'"><span>'+m[1]+'</span></button>'; }).join("");
+  document.getElementById("avGrid").innerHTML=avMoods().map(function(m){ return '<button type="button" class="av-m" data-m="'+m[0]+'"><img alt="" data-mini="'+m[0]+'"><span>'+m[1]+'</span></button>'; }).join("");
   document.getElementById("avBack").classList.add("on"); document.getElementById("avSheet").classList.add("on"); avPaint();
 }
 function avPaint(){
@@ -8067,7 +8123,7 @@ document.getElementById("obRegSubmit").addEventListener("click",async function()
   accSet(nick,hash);
   S.settings.nick=nick; S.settings.passHash=hash; S.settings.userName=S.settings.userName||nick;
   setSession(true);
-  obGo("obbasics");
+  obGo("obstyle");
 });
 document.getElementById("obLoginSubmit").addEventListener("click",async function(){
   var nick=document.getElementById("obLoginNick").value.trim().toLowerCase();
@@ -8285,7 +8341,7 @@ try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(
 var newAcct=false; try{ newAcct=sessionStorage.getItem("moonie_newacct")==="1"; sessionStorage.removeItem("moonie_newacct"); }catch(e){}
 var sessOk=false; try{ sessOk=sessionStorage.getItem("moonie_sess")==="1"; }catch(e){}
 if(newAcct&&!S.settings.onboardDone){
-  document.body.classList.add("onb-active"); obGo("obbasics");
+  document.body.classList.add("onb-active"); obGo("obstyle");
 } else if(S.settings.nick&&!(S.settings.loggedIn||sessOk)){
   document.body.classList.add("onb-active");
   obGo("login");
@@ -8298,6 +8354,48 @@ if(newAcct&&!S.settings.onboardDone){
 } else {
   document.body.classList.add("onb-active");
 }
+
+/* ===== Geri dönüş: Moonie küsüyor ===== */
+function parseD(x){ var p=(x||"").split("-"); return p.length===3?new Date(+p[0],+p[1]-1,+p[2]):null; }
+var AWAY_TIERS=[
+ [14,"ms-6","Moonie hayalet oldu…","Seni o kadar bekledi ki sadece hayaleti kaldı. Bugün küçük bir adımla onu geri getir.","Hayalet Moonie seni bekliyor."],
+ [10,"ms-5","Moonie bekledi, bekledi…","Neredeyse erimiş durumda. Sadece 5 dakika onu kurtarır.","Moonie eriyip gitti, kurtar onu."],
+ [8,"ms-4","Moonie yere yığıldı","Çok uzun süredir görüşmüyoruz. Bir kelime bile yeter, hadi.","Moonie yorgun düştü, bir adım at."],
+ [6,"mad-fire","Moonie alev aldı!","Serin gitti, Moonie çıldırdı. Barışmak için bugün bir şey çalış.","Moonie öfkeden yanıyor!"],
+ [5,"mad-steam","Moonie burnundan soluyor","Hâlâ yoksun… Sadece 5 dakika ile barışırız.","Moonie sinirli, barışalım."],
+ [4,"mad-1","Moonie küstü!","Dört gündür yoksun. Küçük bir görev yap, affedeyim.","Moonie küstü, barışalım."],
+ [3,"ms-2","Moonie ağlıyor…","Üç gündür seni bekliyor. Bugün küçük bir adım at, olur mu?","Moonie seni çok özledi."],
+ [2,"ms-1","Seni özledim…","Dün gelmedin. 5 dakika yeter, hadi başlayalım.","Moonie seni özledi."]];
+function awayDays(){
+  var ref=parseD(S.lastActive)||parseD(S.lastDone);
+  if(!ref){ S.lastActive=dstr(new Date()); save(); return 0; }
+  var l=parseD(S.lastDone); if(l&&l>ref) ref=l;
+  var t=new Date(); t.setHours(0,0,0,0); return Math.max(0,Math.round((t-ref)/86400000));
+}
+function awayInfo(){
+  if(typeof AWAY_TIERS==="undefined"||!AWAY_TIERS||!S.settings||!S.settings.onboardDone) return null;
+  var d=awayDays(); for(var i=0;i<AWAY_TIERS.length;i++){ if(d>=AWAY_TIERS[i][0]) return {days:d,pose:AWAY_TIERS[i][1],title:AWAY_TIERS[i][2],text:AWAY_TIERS[i][3],line:AWAY_TIERS[i][4]}; }
+  return null;
+}
+function renderAwayCard(doneN,doneToday){
+  var c=document.getElementById("awayCard"); if(!c) return; var a=awayInfo();
+  if(!a||doneToday||doneN>0){ c.style.display="none"; return; }
+  c.style.display="block";
+  c.innerHTML='<div class="ac-t">Geri dönüş görevi · 5 dk</div><div class="ac-s">'+a.days+' gündür ara var. Üçünden birini seç, seriyi yeniden başlat.</div><div class="ac-row"><button type="button" onclick="go(\'vocab\')">5 kelime</button><button type="button" onclick="go(\'reading\')">1 okuma</button><button type="button" onclick="go(\'speaking\')">1 konuşma</button></div>';
+}
+function awayShow(){
+  var a=awayInfo(); if(!a) return;
+  if(document.body.classList.contains("onb-active")) return;
+  var today=dstr(new Date()); if(S.awayShown===today) return;
+  S.awayShown=today; save();
+  document.getElementById("awayImg").src="assets/mascot/"+a.pose+".webp";
+  document.getElementById("awayT").textContent=a.title; document.getElementById("awayP").textContent=a.text;
+  document.getElementById("awayOv").classList.add("on");
+}
+document.getElementById("awayGo").addEventListener("click",function(){ document.getElementById("awayOv").classList.remove("on"); go("today"); });
+document.getElementById("awayLater").addEventListener("click",function(){ document.getElementById("awayOv").classList.remove("on"); });
+document.addEventListener("visibilitychange",function(){ if(!document.hidden){ setTimeout(awayShow,400); } });
+(function(){ var m=/[?&]go=([a-z]+)/.exec(location.search); if(m&&document.getElementById("v-"+m[1])&&S.settings.onboardDone&&!document.body.classList.contains("onb-active")){ setTimeout(function(){ go(m[1]); },60); } else setTimeout(awayShow,900); try{ if(document.getElementById("v-today").classList.contains("active")) renderToday(); }catch(e){} })();
 if(/[?&#]onboarding/.test(location.href)){
   var st0=S.settings||{};
   obState.level=st0.level||null; obState.goals=(st0.goals||[]).map(function(g){return /Sınav/i.test(g)?"Sınav":g;}); obState.exam=st0.examType||""; obState.dailyMinutes=st0.dailyMinutes||null; obState.focus=(st0.focusSkills||[]).slice();

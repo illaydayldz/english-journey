@@ -8,6 +8,12 @@
   "orientation": "portrait",
   "background_color": "#f5f3ff",
   "theme_color": "#7c5cff",
+  "shortcuts": [
+    { "name": "Bugün", "short_name": "Bugün", "url": "./index.html?go=today", "icons": [{ "src": "icon-192-v4.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Konuşma", "short_name": "Konuşma", "url": "./index.html?go=speaking", "icons": [{ "src": "icon-192-v4.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Kelime", "short_name": "Kelime", "url": "./index.html?go=vocab", "icons": [{ "src": "icon-192-v4.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Okuma", "short_name": "Okuma", "url": "./index.html?go=reading", "icons": [{ "src": "icon-192-v4.png", "sizes": "192x192", "type": "image/png" }] }
+  ],
   "icons": [
     { "src": "icon-192-v4.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icon-512-v4.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
