@@ -2337,6 +2337,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     <div class="card">
       <button class="btn" id="libReadCompleteBtn"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Bu metni tamamladım</button>
       <div class="donewrap" id="libReadDoneMsg" style="display:none;margin-top:10px;"><div class="mchip sm"><img src="assets/mascot/pose-happy.webp" data-hd="reading-passage-done" alt=""></div><span>Bu metni tamamladın</span></div>
+      <button class="btn" id="libReadNextBtn" style="display:none;margin-top:10px;">Sonraki metin <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
     </div>
   </section>
 
@@ -4570,7 +4571,7 @@ function renderLibRead(){
       document.getElementById("libReadSub").textContent=op.book.title+" · "+(oi+1)+"/"+op.chapters.length;
       document.querySelector("#v-libread .page-head .back").onclick=function(){ go(OPEN_BOOK?"book":"reading"); };
       bodyL.innerHTML='<p class="mut" style="text-align:center;padding:24px 8px;">Moonie sayfayı okuyor…</p>';
-      document.getElementById("libReadCompleteBtn").style.display="none";
+      document.getElementById("libReadCompleteBtn").style.display="none"; document.getElementById("libReadNextBtn").style.display="none";
       ocrPage(op.book,oi+1).then(function(paras){ r.paras=paras; if(OPEN_PDF===op&&op.idx===oi) renderLibRead(); })
       .catch(function(err){ if(OPEN_PDF!==op) return; bodyL.innerHTML='<p class="store-warn" style="margin:0 0 12px;">'+esc(err.message||String(err))+'</p><button type="button" id="ocrRetry" style="display:block;width:100%;border:none;border-radius:14px;padding:13px;font:inherit;font-weight:800;cursor:pointer;background:var(--btn)!important;color:#fff!important;">Tekrar dene</button>'; document.getElementById("ocrRetry").onclick=renderLibRead; });
       return;
@@ -4603,6 +4604,15 @@ function renderLibRead(){
   var done=isPassageDone(r);
   document.getElementById("libReadCompleteBtn").style.display=done?"none":"block";
   document.getElementById("libReadDoneMsg").style.display=done?"flex":"none";
+  var nextBtn=document.getElementById("libReadNextBtn"), nextFn=null;
+  if(OPEN_PDF){
+    if(OPEN_PDF.idx+1<OPEN_PDF.chapters.length) nextFn=function(){ OPEN_PDF.idx++; renderLibRead(); window.scrollTo(0,0); };
+  } else if(READING_LIBRARY){
+    var ci=READING_LIBRARY.indexOf(r);
+    if(ci>=0&&ci+1<READING_LIBRARY.length) nextFn=function(){ openLibRead(READING_LIBRARY[ci+1].id); window.scrollTo(0,0); };
+  }
+  nextBtn.style.display=(done&&nextFn)?"block":"none";
+  nextBtn.onclick=nextFn;
   if(libReadRecording&&libReadRecorder&&libReadRecorder.state!=="inactive"){ libReadRecorder.stop(); }
   if("speechSynthesis" in window) speechSynthesis.cancel();
   resetLibReadListenBtn();
