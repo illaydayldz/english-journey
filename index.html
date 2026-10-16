@@ -1741,6 +1741,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     <div class="auth-hero">
       <div class="auth-acc" id="authAcc"></div>
       <button type="button" class="auth-back" onclick="obGo('onb3')" aria-label="Geri"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <div id="iosWarn" style="display:none;margin:0 14px 8px;padding:10px 12px;border-radius:14px;background:rgba(255,233,166,.95);color:#3a2a00;font-size:12.5px;line-height:1.45;">iPhone: <b>önce Ana Ekrana ekle</b>, sonra uygulamayı oradan açıp kayıt ol. Safari ile ana ekran verileri ayrı tutulur, sonradan eklersen baştan başlamış olursun. <button type="button" id="iosWarnBtn" style="border:0;background:none;color:#7a4b00;font-weight:800;text-decoration:underline;cursor:pointer;">Nasıl eklenir?</button></div>
       <div class="auth-top">
         <img class="auth-moon" src="assets/mascot/pose-hi.webp" data-hd="auth-hero" alt="">
         <div class="auth-title">English Journey</div>
@@ -2844,6 +2845,9 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
         <button class="btn sec" id="exportBtn" style="flex:1;">Dışa aktar</button>
         <button class="btn sec" id="importBtn" style="flex:1;">İçe aktar</button>
       </div>
+      <div class="sh-lbl" style="margin:12px 0 6px;">Cihazlar arası aktar (Safari ↔ ana ekran uygulaması)</div>
+      <div style="display:flex;gap:8px;"><button class="btn sec" id="xferCopy" style="flex:1;">Kodu kopyala</button><button class="btn sec" id="xferPaste" style="flex:1;">Kodu yapıştır</button></div>
+      <p class="mut" style="margin:6px 0 0;font-size:12px;">iPhone'da Safari ile ana ekrandaki uygulamanın verileri ayrı tutulur. Safari'de "Kodu kopyala", ana ekran uygulamasında "Kodu yapıştır" ile ilerlemeni taşıyabilirsin.</p>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
     
@@ -7638,23 +7642,31 @@ document.getElementById("exportBtn").addEventListener("click",function(){
   a.download="english-progress-"+dstr(new Date())+".json"; a.click();
 });
 document.getElementById("importBtn").addEventListener("click",function(){ document.getElementById("importFile").click(); });
-document.getElementById("importFile").addEventListener("change",function(e){
-  var f=e.target.files[0]; if(!f) return;
-  var r=new FileReader();
-  r.onload=function(){
-    try{
-      var inc=JSON.parse(r.result);
-      if(!inc||typeof inc!=="object"||Array.isArray(inc)) throw new Error("bad");
+function importInc(inc){
+  if(!inc||typeof inc!=="object"||Array.isArray(inc)) throw new Error("bad");
       var keep={}; ["nick","passHash","loggedIn","geminiApiKey","spotifyClientId","spotify","onboardDone"].forEach(function(k){ if(S.settings&&S.settings[k]!==undefined) keep[k]=S.settings[k]; });
       if(!confirm("Bu dosya şu anki ilerlemenin, kelimelerin ve notların YERİNE geçecek. Devam edilsin mi?")) return;
       S=inc; S.settings=S.settings||{}; Object.keys(keep).forEach(function(k){ S.settings[k]=keep[k]; });
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
       S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; speakMigrate(); S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.readingLib.pdfDone=S.readingLib.pdfDone||{}; S.books=S.books||[]; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
-      save(); renderToday(); renderVocab(); alert("İçe aktarıldı."); e.target.value="";
-    }catch(err){ alert("Dosya okunamadı."); }
-  };
+  save(); renderToday(); renderVocab(); try{ renderStyleCards(); moonApply(document.body); }catch(e){} alert("İçe aktarıldı.");
+}
+document.getElementById("importFile").addEventListener("change",function(e){
+  var f=e.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(){ try{ importInc(JSON.parse(r.result)); e.target.value=""; }catch(err){ alert("Dosya okunamadı."); } };
   r.readAsText(f);
+});
+function exportObj(){ var ex=JSON.parse(JSON.stringify(S)); if(ex.settings){ delete ex.settings.geminiApiKey; delete ex.settings.spotifyClientId; delete ex.settings.spotify; delete ex.settings.passHash; delete ex.settings.nick; delete ex.settings.loggedIn; } return ex; }
+document.getElementById("xferCopy").addEventListener("click",function(){
+  var code="MOONIE1:"+btoa(unescape(encodeURIComponent(JSON.stringify(exportObj()))));
+  var b=this, done=function(){ var t=b.textContent; b.textContent="Kopyalandı"; setTimeout(function(){ b.textContent=t; },1600); };
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done,function(){ prompt("Kodu kopyala:",code); }); else prompt("Kodu kopyala:",code);
+});
+document.getElementById("xferPaste").addEventListener("click",function(){
+  var c=prompt("Diğer cihazdan kopyaladığın aktarım kodunu yapıştır:"); if(!c) return; c=c.trim();
+  try{ if(c.indexOf("MOONIE1:")!==0) throw new Error("x"); importInc(JSON.parse(decodeURIComponent(escape(atob(c.slice(8)))))); }catch(err){ alert("Kod okunamadı. Tamamını kopyaladığından emin ol."); }
 });
 
 /* ---------- SEGMENTED TABS (İlerleme: Genel Bakış / Beceriler) ---------- */
@@ -8476,6 +8488,8 @@ document.addEventListener("visibilitychange",function(){ if(!document.hidden){ s
 /* SW'ye son aktivite bilgisini yaz (Cache) */
 function pushAwayState(){ try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||"",focus:S.settings.style==="focus"}; caches.open("moonie-state").then(function(c){ return c.put("./__state.json",new Response(JSON.stringify(st),{headers:{"Content-Type":"application/json"}})); }).catch(function(){}); }catch(e){} }
 pushAwayState(); document.addEventListener("visibilitychange",function(){ if(document.hidden) pushAwayState(); });
+(function(){ var ios=/iphone|ipad|ipod/i.test(navigator.userAgent), st=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+  var w=document.getElementById("iosWarn"); if(w&&ios&&!st){ w.style.display="block"; document.getElementById("iosWarnBtn").addEventListener("click",function(){ var b=document.getElementById("remInstall"); if(b) b.click(); }); } })();
 if(/[?&#]onboarding/.test(location.href)){
   var st0=S.settings||{};
   obState.level=st0.level||null; obState.goals=(st0.goals||[]).map(function(g){return /Sınav/i.test(g)?"Sınav":g;}); obState.exam=st0.examType||""; obState.dailyMinutes=st0.dailyMinutes||null; obState.focus=(st0.focusSkills||[]).slice();
