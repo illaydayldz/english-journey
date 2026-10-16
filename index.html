@@ -1901,7 +1901,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
         <div class="th-msg" id="heroMsg">Bugünü harika bir öğrenme günü yapalım!</div>
         <button type="button" class="th-btn" id="thStart">Devam et</button>
       </div>
-      <img class="th-moon" src="assets/mascot/pose-hi.webp" data-hd="today-hero" alt="Moonie">
+      <img class="th-moon" src="assets/mascot/pose-goal.webp" data-hd="today-hero" alt="Moonie">
     </div>
 
     <div class="card coach" id="coachCard"></div>
@@ -3333,7 +3333,7 @@ function renderToday(){
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
   var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
   document.getElementById("missionDone").textContent=doneN+"/"+STEPS.length;
-  (function(){ var hr=dt.getHours(), pose=all?"pose-cheering":((hr>=22||hr<5)?"pose-sleepy":(doneN===0?"pose-hi":"pose-reading")), mi=document.querySelector(".th-moon"), want="assets/mascot/"+pose+".webp";
+  (function(){ var hr=dt.getHours(), pose=all?"pose-cheering":"pose-goal", mi=document.querySelector(".th-moon"), want="assets/mascot/"+pose+".webp";
     if(mi&&mi.getAttribute("data-pose")!==pose){ mi.setAttribute("data-pose",pose); mi.removeAttribute("data-rc0"); mi.removeAttribute("data-rc1"); mi.removeAttribute("data-rc2"); mi.setAttribute("src",want); } })();
   var dotsWrap=document.getElementById("goalDots"); dotsWrap.innerHTML="";
   STEPS.forEach(function(_,di){
@@ -5440,11 +5440,11 @@ var SPEAK_LEVELS=[
 ];
 
 var SPEAK_STAGE={
- A1:{n:"Yola Çıkış",story:"Moonie dünya turuna çıkıyor! Bavulunu hazırlıyor, havalimanına gidiyor; ona yardım et.",pose:"pose-newword.webp",sc:1,c:["color-mix(in srgb,var(--accent) 72%,#fff)","color-mix(in srgb,var(--accent) 92%,#fff)"]},
- A2:{n:"Şehir Keşfi",story:"Moonie yeni bir şehre vardı: otel, market, yol sorma. Günlük hayatta yolunu bulsun.",pose:"pose-reading.webp",sc:1,c:["color-mix(in srgb,var(--accent) 88%,#fff)","color-mix(in srgb,var(--accent) 90%,#000)"]},
- B1:{n:"Yerel Hayat",story:"Moonie yerel halkla tanışıyor; fikirlerini söylüyor, sorun çözüyor, planlar yapıyor.",pose:"pose-hi.webp",sc:1,c:["color-mix(in srgb,var(--accent) 94%,#000)","color-mix(in srgb,var(--accent) 78%,#000)"]},
- B2:{n:"Büyük Şehir",story:"Moonie metropoldeki bir toplantıda: müzakere ediyor, sunum yapıyor, tartışmayı yönetiyor.",pose:"pose-determined.webp",sc:1,c:["color-mix(in srgb,var(--accent) 78%,#000)","color-mix(in srgb,var(--accent) 60%,#000)"]},
- C1:{n:"Zirve",story:"Yolculuğun zirvesi! Moonie nüansları, deyimleri ve ikna etmeyi artık biliyor.",pose:"pose-cheering.webp",sc:1.05,c:["color-mix(in srgb,var(--accent) 52%,#000)","color-mix(in srgb,var(--accent) 32%,#000)"]}
+ A1:{n:"Yola Çıkış",story:"Moonie dünya turuna çıkıyor! Bavulunu hazırlıyor, havalimanına gidiyor; ona yardım et.",pose:"pose-speak.webp",sc:1,c:["color-mix(in srgb,var(--accent) 72%,#fff)","color-mix(in srgb,var(--accent) 92%,#fff)"]},
+ A2:{n:"Şehir Keşfi",story:"Moonie yeni bir şehre vardı: otel, market, yol sorma. Günlük hayatta yolunu bulsun.",pose:"pose-speak.webp",sc:1,c:["color-mix(in srgb,var(--accent) 88%,#fff)","color-mix(in srgb,var(--accent) 90%,#000)"]},
+ B1:{n:"Yerel Hayat",story:"Moonie yerel halkla tanışıyor; fikirlerini söylüyor, sorun çözüyor, planlar yapıyor.",pose:"pose-speak.webp",sc:1,c:["color-mix(in srgb,var(--accent) 94%,#000)","color-mix(in srgb,var(--accent) 78%,#000)"]},
+ B2:{n:"Büyük Şehir",story:"Moonie metropoldeki bir toplantıda: müzakere ediyor, sunum yapıyor, tartışmayı yönetiyor.",pose:"pose-speak.webp",sc:1,c:["color-mix(in srgb,var(--accent) 78%,#000)","color-mix(in srgb,var(--accent) 60%,#000)"]},
+ C1:{n:"Zirve",story:"Yolculuğun zirvesi! Moonie nüansları, deyimleri ve ikna etmeyi artık biliyor.",pose:"pose-speak.webp",sc:1.05,c:["color-mix(in srgb,var(--accent) 52%,#000)","color-mix(in srgb,var(--accent) 32%,#000)"]}
 };
 
 var MP_SVG={
@@ -6444,7 +6444,7 @@ function renderSpeaking(){
     '<div class="su-card"><div class="su-sh"><span class="su-n">1</span><div><b>Kalıpları öğren</b><small>Dinle, sonra sesli söyle</small></div></div>'+phrasesHtml+'</div>'+
     '<div class="su-card"><div class="su-sh"><span class="su-n">2</span><div><b>Moonie ile konuş</b><small>Senaryoyu birlikte canlandırın · +30 XP</small></div></div>'+
       '<div class="convo-partner" id="speakConvoIntro">'+
-        '<div class="cp-avatar"><span class="cp-pulse" aria-hidden="true"></span><div class="mchip"><img src="assets/mascot/pose-hi.webp" data-hd="speak-start" alt=""></div></div>'+
+        '<div class="cp-avatar"><span class="cp-pulse" aria-hidden="true"></span><div class="mchip"><img src="assets/mascot/pose-speak.webp" data-hd="speak-start" alt=""></div></div>'+
         '<span class="cp-sub">Başlamak için aşağıdaki butona dokun</span>'+
       '</div>'+
       '<div class="convo-log" id="speakConvoLog" style="display:none;"></div>'+
@@ -7932,7 +7932,7 @@ applyAccent(S.settings.accent||"purple");
 
 
 /* ---------- AVATAR: Moonie ruh hali + renk ---------- */
-var AV_MOODS=[["pose-hi","Selam"],["pose-heart","Sevgi"],["pose-cheering","Neşe"],["pose-newword","Oyun"],["pose-reading","Merak"],["pose-determined","Odak"],["pose-todo","Planlı"],["pose-sleepy","Uykulu"],["pose-worried","Endişeli"],["pose-error","Üzgün"]];
+var AV_MOODS=[["pose-hi","Selam"],["pose-heart","Sevgi"],["pose-speak","Konuşkan"],["pose-cheering","Neşe"],["pose-newword","Oyun"],["pose-reading","Merak"],["pose-determined","Odak"],["pose-goal","Hedefli"],["pose-todo","Planlı"],["pose-sleepy","Uykulu"],["pose-worried","Endişeli"],["pose-error","Üzgün"]];
 var AV_COLS=[["purple","Mor","#8B7FFF"],["ocean","Okyanus","#4D9DF0"],["amber","Kehribar","#F59A4A"]];
 var avCache={}, avSel=null;
 function mascotUrl(n){ return (window.__M&&window.__M[n+".webp"])||("assets/mascot/"+n+".webp"); }

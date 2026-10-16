@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v95-today";
+const CACHE = "english-app-v97-goal";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/reading-library.json",
@@ -12,6 +12,8 @@ const ASSETS = [
   "./assets/mascot/pose-goalachieved.webp",
   "./assets/mascot/pose-learning.webp",
   "./assets/mascot/pose-todo.webp",
+  "./assets/mascot/pose-speak.webp",
+  "./assets/mascot/pose-goal.webp",
   "./assets/mascot/pose-reading.webp",
   "./assets/mascot/pose-sleepy.webp",
   "./assets/mascot/pose-writing.webp",
