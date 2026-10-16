@@ -2213,7 +2213,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     </div>
     <div class="card" id="freeRes">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Ücretsiz okuma kaynakları</h2>
-      <p class="mut" style="margin:6px 0 10px;line-height:1.6;">Ücretsiz Kitaplık'taki masalların yanında daha fazlası için ücretsiz ya da telifi bitmiş kaynaklar. Metni kopyalayıp "Kendi okumanı ekle" ile kaydet; kitap dosyan varsa "Okuma için PDF ekle" ile ekle.</p>
+      <p class="mut" style="margin:6px 0 10px;line-height:1.6;">VOA Okuma'daki metinlerin yanında daha fazlası için ücretsiz ya da telifi bitmiş kaynaklar. Metni kopyalayıp "Kendi okumanı ekle" ile kaydet; kitap dosyan varsa "Okuma için PDF ekle" ile ekle.</p>
       <a class="fr-row" href="https://learningenglish.voanews.com" target="_blank" rel="noopener noreferrer"><b>VOA Learning English</b><small>Seviyeli haberler ve hikâyeler, sesli</small></a>
       <a class="fr-row" href="https://simple.wikipedia.org" target="_blank" rel="noopener noreferrer"><b>Simple English Wikipedia</b><small>Basit İngilizceyle yazılmış maddeler</small></a>
       <a class="fr-row" href="https://www.gutenberg.org" target="_blank" rel="noopener noreferrer"><b>Project Gutenberg</b><small>Telifi bitmiş binlerce klasik kitap</small></a>
@@ -2322,7 +2322,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     </div>
     <div class="row" style="align-items:center;gap:10px;margin-bottom:12px;">
       <div class="read-progress-bar" style="flex:1;margin-bottom:0;"><div class="fill" id="libReadProgressFill"></div></div>
-      <span class="mut" id="libReadSub" style="font-weight:700;font-size:12px;white-space:nowrap;">Ücretsiz Kitaplık</span>
+      <span class="mut" id="libReadSub" style="font-weight:700;font-size:12px;white-space:nowrap;">VOA Learning English</span>
     </div>
     <p class="hint" style="margin:0 2px 12px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
     <div class="read-body paper-card" id="libReadBody" style="margin-bottom:16px;"></div>
@@ -4024,7 +4024,7 @@ function renderReadingLib(){
   document.getElementById("libCount").textContent=(total&&doneN)?("· "+doneN+"/"+total):"";
   if(total){
     var b=document.createElement("button"); b.type="button"; b.className="book-btn";
-    b.innerHTML=bookCoverHtml("Ücretsiz Kitaplık",total+" metin",0,doneN>=total);
+    b.innerHTML=bookCoverHtml("VOA Okuma",total+" metin",0,doneN>=total);
     b.addEventListener("click",function(){ if(!READING_LIBRARY) return; OPEN_BOOK={kind:"lib"}; go("book"); });
     shelf.appendChild(b);
   }
@@ -4069,8 +4069,8 @@ function renderBook(){
   if(OPEN_BOOK.kind==="lib"){
     if(!READING_LIBRARY){ go("reading"); return; }
     var total=READING_LIBRARY.length, doneN=Object.keys(S.readingLib.completed).length;
-    document.getElementById("bookTitle").textContent="Ücretsiz Kitaplık";
-    document.getElementById("bookHeroCover").innerHTML=bookCoverHtml("Ücretsiz Kitaplık",total+" metin",0,false);
+    document.getElementById("bookTitle").textContent="VOA Okuma Kitaplığı";
+    document.getElementById("bookHeroCover").innerHTML=bookCoverHtml("VOA Okuma",total+" metin",0,false);
     document.getElementById("bookSub").textContent=doneN+"/"+total+" metin tamamlandı";
     document.getElementById("bookBar").style.width=Math.round(doneN/total*100)+"%";
     delBtn.style.display="none";
@@ -4598,7 +4598,7 @@ function renderLibRead(){
     if(!READING_LIBRARY||!READING_LIBRARY.length){ go("reading"); return; }
     var id=S.readingLib.openId||libFrontierId();
     r=READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
-    subText="Ücretsiz Kitaplık · "+r.id+"/"+READING_LIBRARY.length;
+    subText="VOA Learning English · "+r.id+"/"+READING_LIBRARY.length;
     pct=Math.round(r.id/READING_LIBRARY.length*100);
   }
   document.querySelector("#v-libread .page-head .back").onclick=function(){ go(OPEN_BOOK?"book":"reading"); };
@@ -4643,7 +4643,7 @@ function renderLibRead(){
   var completeBtn=document.getElementById("libReadCompleteBtn");
   completeBtn.onclick=function(){
     if(OPEN_PDF){ S.readingLib.pdfDone[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:OPEN_PDF.book.title}); }
-    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"Ücretsiz Kitaplık",libraryId:r.id}); }
+    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"VOA Learning English",libraryId:r.id}); }
     save();
     renderLibRead(); renderReadingLib(); renderLearnHub();
   };
