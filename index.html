@@ -1901,7 +1901,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
         <div class="th-msg" id="heroMsg">Bugünü harika bir öğrenme günü yapalım!</div>
         <button type="button" class="th-btn" id="thStart">Devam et</button>
       </div>
-      <img class="th-moon" src="assets/mascot/hero-happy.webp" data-hd="today-hero" alt="Moonie">
+      <img class="th-moon" src="assets/mascot/pose-hi.webp" data-hd="today-hero" alt="Moonie">
     </div>
 
     <div class="card coach" id="coachCard"></div>
@@ -3333,6 +3333,8 @@ function renderToday(){
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
   var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
   document.getElementById("missionDone").textContent=doneN+"/"+STEPS.length;
+  (function(){ var hr=dt.getHours(), pose=all?"pose-cheering":((hr>=22||hr<5)?"pose-sleepy":(doneN===0?"pose-hi":"pose-reading")), mi=document.querySelector(".th-moon"), want="assets/mascot/"+pose+".webp";
+    if(mi&&mi.getAttribute("data-pose")!==pose){ mi.setAttribute("data-pose",pose); mi.removeAttribute("data-rc0"); mi.removeAttribute("data-rc1"); mi.removeAttribute("data-rc2"); mi.setAttribute("src",want); } })();
   var dotsWrap=document.getElementById("goalDots"); dotsWrap.innerHTML="";
   STEPS.forEach(function(_,di){
     var dot=document.createElement("span");
