@@ -360,7 +360,7 @@
   .read-text{ font-size:13.5px; color:var(--ink); line-height:1.55; white-space:pre-wrap; }
   .read-att{ display:inline-flex; align-items:center; gap:6px; margin-top:8px; background:var(--tint); color:var(--purple-deep); font-size:12.5px; font-weight:700; padding:8px 12px; border-radius:12px; text-decoration:none; min-height:40px; }
 
-  /* ---- OKUMA: Kitaplığım (More to Read) ---- */
+  /* ---- OKUMA: Kitaplığım ---- */
   .lib-next{ display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,var(--tint) 0%,var(--accent-soft-2) 100%); border-radius:var(--radius-lg); padding:14px 15px; cursor:pointer; border:none; width:100%; text-align:left; font-family:inherit; }
   .lib-next .ln-num{ width:38px; height:38px; border-radius:50%; background:var(--btn); color:#fff; font-family:var(--font-display); font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .lib-next .ln-body{ flex:1; min-width:0; }
@@ -1596,6 +1596,9 @@
   .st-card img{ width:100%; max-width:130px; height:92px; object-fit:contain; }
   .st-card b{ font-size:15px; } .st-card small{ font-size:11.5px; color:var(--ink-soft); line-height:1.4; }
   .st-cards.sm .st-card{ padding:10px 8px; } .st-cards.sm .st-card img{ height:64px; } .st-cards.sm .st-card small{ display:none; }
+  .fr-row{display:flex;flex-direction:column;gap:2px;padding:10px 2px;border-top:1px solid var(--line,rgba(127,127,160,.2));text-decoration:none;color:inherit;}
+  .fr-row b{font-size:14px;}
+  .fr-row small{font-size:12px;opacity:.75;}
 </style>
 <script>
 /* Yüksek çözünürlüklü Moonie görselleri: assets/mascot/hd/ içine konan dosyalar index.json'da listelenirse otomatik kullanılır; liste yoksa mevcut görseller kalır. */
@@ -2198,12 +2201,21 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <input type="file" id="pdfFile" accept="application/pdf" style="display:none;">
       <p class="hint" id="pdfStatus" style="display:none;"></p>
     </div>
+    <div class="card" id="freeRes">
+      <h2><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg>Ücretsiz okuma kaynakları</h2>
+      <p class="mut" style="margin:6px 0 10px;line-height:1.6;">Ücretsiz ya da telifi bitmiş kaynaklar. Metni kopyalayıp "Kendi okumanı ekle" ile kaydet; kitap dosyan varsa "Okuma için PDF ekle" ile ekle.</p>
+      <a class="fr-row" href="https://learningenglish.voanews.com" target="_blank" rel="noopener noreferrer"><b>VOA Learning English</b><small>Seviyeli haberler ve hikâyeler, sesli</small></a>
+      <a class="fr-row" href="https://simple.wikipedia.org" target="_blank" rel="noopener noreferrer"><b>Simple English Wikipedia</b><small>Basit İngilizceyle yazılmış maddeler</small></a>
+      <a class="fr-row" href="https://www.gutenberg.org" target="_blank" rel="noopener noreferrer"><b>Project Gutenberg</b><small>Telifi bitmiş binlerce klasik kitap</small></a>
+      <a class="fr-row" href="https://standardebooks.org" target="_blank" rel="noopener noreferrer"><b>Standard Ebooks</b><small>Kamu malı kitaplar, temiz ve okunaklı baskılar</small></a>
+      <a class="fr-row" href="https://www.bbc.co.uk/learningenglish" target="_blank" rel="noopener noreferrer"><b>BBC Learning English</b><small>Ücretsiz okuma ve dinleme çalışmaları</small></a>
+    </div>
     <button type="button" class="radd-tile" id="rAddTile"><span class="radd-ic"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span><span class="radd-tx"><b>Kendi okumanı ekle</b><small>Metin, not, fotoğraf veya PDF</small></span><svg class="icon radd-chev" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button>
     <div class="card radd-form" id="rForm" style="display:none;">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>Yeni okuma kaydı</h2>
       <div class="row">
         <input class="f" type="date" id="rDate" style="flex:1;">
-        <input class="f" id="rSource" placeholder="Kaynak (ör. More to Read)" style="flex:1.4;">
+        <input class="f" id="rSource" placeholder="Kaynak (ör. VOA Learning English)" style="flex:1.4;">
       </div>
       <textarea class="f" id="rText" rows="4" placeholder="Okuduğun paragrafı ya da notlarını yaz... (fotoğraf/PDF ekliyorsan boş bırakabilirsin)"></textarea>
       <label class="btn sec" for="rFile" style="display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;">
@@ -2221,7 +2233,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
         <div class="empty-state">
           <div class="mchip"><img src="assets/mascot/pose-surprised.webp" data-hd="reading-empty" alt=""></div>
           <div class="t">Henüz okuma kaydın yok</div>
-          <div class="d">Kitaplığımdan bir metin aç ya da yukarıdan kendi notunu ekle.</div>
+          <div class="d">Okuduğun bir metni ya da notunu yukarıdan ekle.</div>
           <button type="button" class="btn sec sm" onclick="document.getElementById('rAddTile').click();">İlk kaydını ekle</button>
         </div>
       </div>
@@ -2300,7 +2312,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     </div>
     <div class="row" style="align-items:center;gap:10px;margin-bottom:12px;">
       <div class="read-progress-bar" style="flex:1;margin-bottom:0;"><div class="fill" id="libReadProgressFill"></div></div>
-      <span class="mut" id="libReadSub" style="font-weight:700;font-size:12px;white-space:nowrap;">More to Read I</span>
+      <span class="mut" id="libReadSub" style="font-weight:700;font-size:12px;white-space:nowrap;">Okuma kitabı</span>
     </div>
     <p class="hint" style="margin:0 2px 12px;text-align:left;">Bir kelimeye dokun: Türkçe anlamını gör, telaffuzunu dinle, istersen kelime defterine ekle.</p>
     <div class="read-body paper-card" id="libReadBody" style="margin-bottom:16px;"></div>
@@ -3245,7 +3257,7 @@ S.readingLib=S.readingLib||{completed:{}};
 S.books=S.books||[];
 S.readingLib.notes=S.readingLib.notes||{};
 S.readingLib.completed=S.readingLib.completed||{}; S.readingLib.pdfDone=S.readingLib.pdfDone||{};
-/* More to Read I artık hazır gelmez; kullanıcı kitaplığına kendisi ekler. Önceden kullananlar için otomatik açık. */
+/* Hazır metin kitaplığı kaldırıldı; kullanıcı kendi metinlerini/PDF'lerini ekler. */
 if(S.readingLib.added===undefined){ S.readingLib.added=!!(Object.keys(S.readingLib.completed||{}).length||S.readingLib.openId||Object.keys(S.readingLib.notes||{}).length); }
 S.listening=S.listening||{notes:"",transcript:""};
 migrateListeningToPodcasts();
@@ -3970,16 +3982,9 @@ function renderHowto(ob){
 document.querySelectorAll("#obHowtoTabs .seg").forEach(function(b){ b.addEventListener("click",function(){ howtoTab=b.dataset.t; renderHowto(true); }); });
 document.querySelectorAll("#howtoTabs .seg").forEach(function(b){ b.addEventListener("click",function(){ howtoTab=b.dataset.t; renderHowto(); }); });
 
-/* ---------- OKUMA: Kitaplığım (More to Read I) ---------- */
+/* ---------- OKUMA: Kitaplığım ---------- */
 var READING_LIBRARY=null;
-function loadReadingLibrary(){
-  if(READING_LIBRARY) return Promise.resolve(READING_LIBRARY);
-  return fetch("assets/reading-library.json").then(function(r){ return r.json(); }).then(function(d){
-    READING_LIBRARY=d;
-    if(document.getElementById("v-reading").classList.contains("active")) renderReadingLib();
-    return d;
-  }).catch(function(){ return null; });
-}
+function loadReadingLibrary(){ return Promise.resolve(null); }
 loadReadingLibrary();
 function libFrontierId(){
   if(!READING_LIBRARY) return 1;
@@ -3999,13 +4004,7 @@ function renderReadingLib(){
   shelf.innerHTML="";
   var total=READING_LIBRARY?READING_LIBRARY.length:0;
   var doneN=Object.keys(S.readingLib.completed).length;
-  document.getElementById("libCount").textContent=(total&&S.readingLib.added)?("· "+doneN+"/"+total):"";
-  if(S.readingLib.added){
-    var b=document.createElement("button"); b.type="button"; b.className="book-btn";
-    b.innerHTML=bookCoverHtml("More to Read I",total?(total+" metin"):"Yükleniyor...",0,total&&doneN>=total);
-    b.addEventListener("click",function(){ if(!READING_LIBRARY) return; OPEN_BOOK={kind:"lib"}; go("book"); });
-    shelf.appendChild(b);
-  }
+  document.getElementById("libCount").textContent="";
   var pshelf=shelf;
   S.books.filter(function(x){ return x.kind!=="study"; }).forEach(function(bk){
     var n=Object.keys(S.readingLib.pdfDone).filter(function(k){ return k.indexOf("pdf"+bk.id+"-")===0; }).length;
@@ -4018,12 +4017,6 @@ function renderReadingLib(){
   add.innerHTML='<span class="book"><span class="book-plus"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span><span class="book-sub" style="margin-top:6px;">Okuma için PDF ekle</span></span>';
   add.addEventListener("click",function(){ document.getElementById("pdfFile").click(); });
   pshelf.appendChild(add);
-  if(!S.readingLib.added){
-    var mtr=document.createElement("button"); mtr.type="button"; mtr.className="book-btn book-add";
-    mtr.innerHTML='<span class="book"><span class="book-plus"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span><span class="book-sub" style="margin-top:6px;">More to Read I ekle</span></span>';
-    mtr.addEventListener("click",function(){ S.readingLib.added=true; save(); renderReadingLib(); });
-    pshelf.appendChild(mtr);
-  }
 }
 function findBook(id){ return S.books.filter(function(x){return x.id===id;})[0]; }
 function loadBookChapters(bk){
@@ -4040,8 +4033,8 @@ function renderBook(){
   if(OPEN_BOOK.kind==="lib"){
     if(!READING_LIBRARY){ go("reading"); return; }
     var total=READING_LIBRARY.length, doneN=Object.keys(S.readingLib.completed).length;
-    document.getElementById("bookTitle").textContent="More to Read I";
-    document.getElementById("bookHeroCover").innerHTML=bookCoverHtml("More to Read I",total+" metin",0,false);
+    document.getElementById("bookTitle").textContent="Okuma kitabı";
+    document.getElementById("bookHeroCover").innerHTML=bookCoverHtml("Okuma kitabı",total+" metin",0,false);
     document.getElementById("bookSub").textContent=doneN+"/"+total+" metin tamamlandı";
     document.getElementById("bookBar").style.width=Math.round(doneN/total*100)+"%";
     delBtn.style.display="none";
@@ -4569,7 +4562,7 @@ function renderLibRead(){
     if(!READING_LIBRARY||!READING_LIBRARY.length){ go("reading"); return; }
     var id=S.readingLib.openId||libFrontierId();
     r=READING_LIBRARY.filter(function(x){return x.id===id;})[0]||READING_LIBRARY[0];
-    subText="More to Read I · "+r.id+"/"+READING_LIBRARY.length;
+    subText="Okuma kitabı · "+r.id+"/"+READING_LIBRARY.length;
     pct=Math.round(r.id/READING_LIBRARY.length*100);
   }
   document.querySelector("#v-libread .page-head .back").onclick=function(){ go(OPEN_BOOK?"book":"reading"); };
@@ -4613,7 +4606,7 @@ function renderLibRead(){
   var completeBtn=document.getElementById("libReadCompleteBtn");
   completeBtn.onclick=function(){
     if(OPEN_PDF){ S.readingLib.pdfDone[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:OPEN_PDF.book.title}); }
-    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"More to Read I",libraryId:r.id}); }
+    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"Okuma kitabı",libraryId:r.id}); }
     save();
     renderLibRead(); renderReadingLib(); renderLearnHub();
   };
@@ -6827,7 +6820,7 @@ function collectAllNotes(){
     var text=(S.readingLib.notes[key]||"").trim(); if(!text) return;
     var id=+key;
     var passage=READING_LIBRARY?READING_LIBRARY.filter(function(r){return r.id===id;})[0]:null;
-    items.push({cat:"Okuma",ic:"i-book-open",bg:"var(--green-tint)",fg:"var(--green)",title:passage?passage.title:("Metin #"+id),sub:"More to Read I",text:text,go:function(){ OPEN_PDF=null; OPEN_BOOK={kind:"lib"}; S.readingLib.openId=id; save(); go("libread"); }});
+    items.push({cat:"Okuma",ic:"i-book-open",bg:"var(--green-tint)",fg:"var(--green)",title:passage?passage.title:("Metin #"+id),sub:"Okuma notu",text:text,go:function(){ OPEN_PDF=null; OPEN_BOOK={kind:"lib"}; S.readingLib.openId=id; save(); go("libread"); }});
   });
   (S.writings||[]).forEach(function(w){
     var text=(w.feedback||"").trim(); if(!text) return;
