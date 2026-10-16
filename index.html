@@ -4578,20 +4578,87 @@ function wbNotesRender(){
   box.innerHTML=h;
   var wd=document.getElementById("wbDel"); if(wd) wd.addEventListener("click",function(){ if(!confirm("Bu kitap ve notları silinsin mi?")) return; var b=WB.bk; idbDelete("bookpdf-"+b.id); idbDelete("bookink-"+b.id); S.qnotes=(S.qnotes||[]).filter(function(n){ return String(n.ref||"").indexOf("wb:"+b.id+":")!==0; }); S.books=S.books.filter(function(x){ return x.id!==b.id; }); save(); WB.bk=null; WB.pdf=null; go("library"); });
   document.getElementById("wbAdd").addEventListener("click",function(){ wbPendingPos=null; qnOpen(null,wbRef(WB.page)); });
+  function wbRenderTxt(out,paras,pg){
+    var key=(S.settings.geminiApiKey||"").trim();
+    out.dataset.open="1";
+    out.innerHTML='<div class="paper-card" style="margin-top:10px;">'+paras.map(function(p){ return '<p class="rp">'+wrapWords(p)+'</p>'; }).join("")+'</div>'+
+      '<p class="hint" style="text-align:left;margin:6px 2px;">Bilmediğin kelimeye dokun: anlamı çıkar, kelime defterine eklersin.</p>'+
+      (key?'<button type="button" class="btn sec sm" id="wbTxtAI" style="margin:4px 0 0;">Karışıksa: Moonie temiz okusun</button>':'');
+    out.querySelectorAll(".rw").forEach(function(span){ span.addEventListener("click",function(){ span.classList.add("tapped"); openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:""); }); });
+    var ai=document.getElementById("wbTxtAI");
+    if(ai) ai.addEventListener("click",async function(){
+      ai.disabled=true; ai.textContent="Moonie sayfayı okuyor…";
+      try{
+        var ck=WB.bk.id+":"+pg; WB.aiTxt=WB.aiTxt||{};
+        if(!WB.aiTxt[ck]) WB.aiTxt[ck]=await wbGeminiPage();
+        if(WB.page===pg) wbRenderTxt(out,WB.aiTxt[ck],pg);
+      }catch(err){ ai.disabled=false; ai.textContent="Karışıksa: Moonie temiz okusun"; out.insertAdjacentHTML("beforeend",'<p class="store-warn" style="margin:8px 0;">'+esc(err.message||String(err))+'</p>'); }
+    });
+  }
+  /* sayfadaki metin parçalarından el yazısı/not/Türkçe çeviri gürültüsünü ayıklayıp temiz paragraflar üret */
+  function wbCleanParas(){
+    var items=(WB.items||[]).filter(function(it){ return it.str&&it.str.trim(); });
+    if(!items.length) return [];
+    var hist={}; items.forEach(function(it){ var k=Math.round(it.h); hist[k]=(hist[k]||0)+it.str.length; });
+    var body=0,bn=-1; Object.keys(hist).forEach(function(k){ if(hist[k]>bn){ bn=hist[k]; body=+k; } });
+    var keep=items.filter(function(it){
+      var t=it.str;
+      if(it.h<body*0.72||it.h>body*2.4) return false;
+      if(/[çğıöşüÇĞİÖŞÜ]/.test(t)) return false;
+      if(/[A-Za-z]!|![A-Za-z]/.test(t)) return false;
+      var letters=(t.match(/[A-Za-z]/g)||[]).length; if(letters<Math.max(1,t.replace(/\s/g,"").length*0.6)) return false;
+      return true;
+    });
+    keep.sort(function(a,b){ return a.y-b.y||a.x-b.x; });
+    var lines=[], tol=Math.max(3,body*0.55);
+    keep.forEach(function(it){ var l=lines[lines.length-1]; if(l&&Math.abs(it.y-l.y)<=tol){ l.its.push(it); l.y=(l.y+it.y)/2; } else lines.push({y:it.y,its:[it],h:it.h}); });
+    var out=[], cur="", prevY=null, gaps=[];
+    lines.forEach(function(l,i){ if(i) gaps.push(l.y-lines[i-1].y); });
+    gaps.sort(function(a,b){ return a-b; }); var med=gaps.length?gaps[Math.floor(gaps.length/2)]:body*1.3;
+    lines.forEach(function(l){
+      l.its.sort(function(a,b){ return a.x-b.x; });
+      var t=l.its.map(function(x){ return x.str.trim(); }).join(" ").replace(/\s{2,}/g," ").trim();
+      var words=t.split(/\s+/).filter(function(w){ return /[A-Za-z]{2,}|^(a|A|I)$/.test(w); });
+      if(words.length<2&&!(l.h>body*1.2&&words.length)){ return; }
+      var newPara=prevY!==null&&(l.y-prevY>med*1.55)||l.h>body*1.25;
+      if(cur&&newPara){ out.push(cur.trim()); cur=""; }
+      cur+=(cur?" ":"")+t; prevY=l.y;
+      if(l.h>body*1.25){ out.push(cur.trim()); cur=""; }
+    });
+    if(cur.trim()) out.push(cur.trim());
+    out=out.map(function(p){ return p.replace(/-\s+(?=[a-z])/g,""); }).filter(function(p){ return p.length>12; });
+    /* sayfa metni sorular başlamadan kesilir; sadece alıştırma varsa hepsi gösterilir */
+    var mk=/(?:\b[A-D][.,]\s+)?(?:Answer the following|Fill in|Mark the following|What do the following|Complete the following|Match the|Choose the|Are the following)/i, cut=[];
+    for(var i=0;i<out.length;i++){ var m=out[i].search(mk); if(m>=0){ if(m>40) cut.push(out[i].slice(0,m).trim()); break; } cut.push(out[i]); }
+    return cut.join(" ").length>=120?cut:out;
+  }
+  window.wbCleanParas=wbCleanParas;
+  async function wbGeminiPage(){
+    var key=(S.settings.geminiApiKey||"").trim(); if(!key) throw new Error("Gemini anahtarı yok.");
+    var cv=document.getElementById("wbCanvas"), sc=Math.min(1,1800/Math.max(cv.width,cv.height)), c2=document.createElement("canvas");
+    c2.width=Math.round(cv.width*sc); c2.height=Math.round(cv.height*sc); c2.getContext("2d").drawImage(cv,0,0,c2.width,c2.height);
+    var b64=c2.toDataURL("image/jpeg",0.85).split(",")[1];
+    var prompt="Transcribe ONLY the main PRINTED English text on this book page. Ignore handwritten notes, Turkish translations written in the margins, pen marks, underlines, highlights, page numbers and scanner artifacts. Keep natural reading order. Separate paragraphs with a blank line. Output ONLY the text, no commentary. If there is no readable printed text, output exactly: EMPTY";
+    var data=await geminiFetchJSON({contents:[{role:"user",parts:[{text:prompt},{inline_data:{mime_type:"image/jpeg",data:b64}}]}]},key);
+    var cand=data&&data.candidates&&data.candidates[0], t=cand&&cand.content&&cand.content.parts&&cand.content.parts.map(function(p){return p.text||"";}).join("");
+    if(!t) throw new Error((data&&data.error&&data.error.message)||"Moonie sayfayı okuyamadı, tekrar dene.");
+    t=t.replace(/^```[a-z]*\s*/i,"").replace(/```\s*$/,"").trim();
+    if(t==="EMPTY") return ["(Bu sayfada okunabilir basılı metin bulunamadı.)"];
+    return t.split(/\n\s*\n/).map(function(p){ return p.replace(/\s*\n\s*/g," ").trim(); }).filter(Boolean);
+  }
   document.getElementById("wbTxt").addEventListener("click",async function(){
     var out=document.getElementById("wbTxtOut"), pg=WB.page;
     if(out.dataset.open==="1"){ out.innerHTML=""; out.dataset.open=""; return; }
     out.innerHTML='<p class="hint" style="text-align:left;margin:8px 2px;">Sayfa metni hazırlanıyor…</p>';
     var paras=null;
     try{
-      var t=(WB.pageText||"").trim();
-      if(t.length>=60) paras=splitPdfParas(t);
+      var cl=wbCleanParas();
+      if(cl.join(" ").length>=80) paras=cl;
+      else if((WB.pageText||"").trim().length>=60) paras=splitPdfParas(WB.pageText.trim());
       else paras=await ocrPage(WB.bk,pg);
     }catch(err){ out.innerHTML='<p class="store-warn" style="margin:8px 0;">'+esc(err.message||String(err))+'</p>'; return; }
     if(WB.page!==pg) return;
-    out.dataset.open="1";
-    out.innerHTML='<div class="paper-card" style="margin-top:10px;">'+paras.map(function(p){ return '<p class="rp">'+wrapWords(p)+'</p>'; }).join("")+'</div><p class="hint" style="text-align:left;margin:6px 2px;">Bilmediğin kelimeye dokun: anlamı çıkar, kelime defterine eklersin.</p>';
-    out.querySelectorAll(".rw").forEach(function(span){ span.addEventListener("click",function(){ span.classList.add("tapped"); openWordSheet(span.dataset.w, span.closest(".rp")?span.closest(".rp").textContent:""); }); });
+    wbRenderTxt(out,paras,pg);
   });
   box.querySelectorAll(".gn-card").forEach(function(b){ b.addEventListener("click",function(){ qnOpen(b.dataset.id); }); });
   box.querySelectorAll(".wb-mk").forEach(function(b){ b.addEventListener("click",function(){ wbShow(b.dataset.p); window.scrollTo(0,0); }); });
