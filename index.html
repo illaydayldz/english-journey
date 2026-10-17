@@ -9463,10 +9463,44 @@ var PL_CAN={
  speaking:["Kendimi tanıtıp basit sorular sorup cevaplayabilirim.","Günlük konularda kısa bir sohbet yürütebilirim.","Deneyimlerimi, planlarımı ve nedenlerini anlatabilirim.","Hazırlıksız bir tartışmada görüşümü savunabilirim.","Karmaşık konularda akıcı ve doğal konuşabilirim; kelime aramam gerekmez."]
 };
 var PL_NAMES={grammar:"Gramer",vocab:"Kelime",reading:"Okuma",listening:"Dinleme",writing:"Yazma",speaking:"Konuşma"};
+
+/* Yazma ve konuşma: kendi beyanına ek olarak gerçek bir görev (yazı / sesli cevap) değerlendirilir */
+var PL_TASK={
+ writing:{title:"Yazma görevi",prompt:"Write 5–8 sentences: Describe a memorable day or trip. What happened, how did you feel, and what would you change if you could do it again?",min:15,hint:"Yaklaşık 60–100 kelime yaz. Elinden geldiğince doğal yaz; sözlük kullanma."},
+ speaking:{title:"Konuşma görevi",prompt:"Speak for about 40 seconds: Talk about your daily routine and tell us what you plan to do next weekend. Give reasons.",min:12,hint:"Mikrofon butonuna dokun ve konuş. Duraksaman sorun değil. Bitirince tekrar dokun."}
+};
+function plLocalLevel(text,mode){
+  var t=String(text||"").toLowerCase(), words=t.match(/[a-z']+/g)||[], n=words.length;
+  if(n<6) return "A1";
+  var sents=Math.max(1,(String(text).match(/[.!?]+/g)||[]).length), uniq={}; words.forEach(function(w){ uniq[w]=1; });
+  var ttr=Object.keys(uniq).length/n, longR=words.filter(function(w){ return w.length>=8; }).length/n;
+  var pts=0, k=mode==="speaking"?0.7:1;
+  pts+=n>=25*k?1:0; pts+=n>=50*k?1:0; pts+=n>=80*k?1:0;
+  if(mode!=="speaking"){ var asl=n/sents; pts+=asl>=8?1:0; pts+=asl>=12?1:0; }
+  pts+=(n>=30&&ttr>=0.6)?1:0; pts+=longR>=0.12?1:0; pts+=longR>=0.2?1:0;
+  var basic=(t.match(/\b(and|but|because|so|then|also)\b/g)||[]).length; pts+=basic>=2?1:0;
+  var adv=(t.match(/\b(however|although|though|whereas|despite|in spite of|moreover|furthermore|therefore|consequently|nevertheless|on the other hand|as a result|otherwise|unless|while|even though|besides|instead)\b/g)||[]).length; pts+=adv>=1?2:0; pts+=adv>=3?1:0;
+  pts+=/\b(was|were|went|had|did|saw|took|made|got|came)\b/.test(t)?1:0;
+  pts+=/\b(have|has|had)\s+(been|\w+(ed|en))\b/.test(t)?1:0;
+  pts+=/\bif\b[^.!?]*\b(would|will|could)\b|\b(would|could|might)\s+have\b/.test(t)?1:0;
+  pts+=/\b(is|are|was|were|been|be)\s+\w+(ed|en)\b/.test(t)?1:0;
+  pts+=/\b(who|which|whom|whose|where)\b/.test(t)?1:0;
+  pts+=/\b(should|could|might|must|would)\b/.test(t)?1:0;
+  pts+=/\b(wish|not only|had i|were i|would rather|had better|supposed to)\b/.test(t)?2:0;
+  return pts>=17?"C1":pts>=13?"B2":pts>=8?"B1":pts>=4?"A2":"A1";
+}
+function plAiLevel(text,sk){
+  var task=PL_TASK[sk];
+  var prompt="You are a strict CEFR examiner. Rate the English level (A1, A2, B1, B2 or C1) of the following "+(sk==="speaking"?"transcript of a spoken answer produced by speech recognition (ignore missing punctuation/capitalisation and recognition glitches)":"written text")+" by a Turkish-speaking learner. Task given to the learner: \""+task.prompt+"\". Judge grammar accuracy and range, vocabulary range, coherence and task completion. Do not give B2 or C1 unless the text shows varied, mostly accurate complex structures. If the text is very short or off-topic, rate lower. Return ONLY JSON: {\"level\":\"A1|A2|B1|B2|C1\",\"reason\":\"one short Turkish sentence\",\"fix\":\"one short Turkish sentence: the single most important thing to improve\"}.\n\nText:\n"+text;
+  return callGeminiJSON(prompt).then(function(r){
+    var lv=String(r&&r.level||"").toUpperCase().trim(); if(PL_LV.indexOf(lv)<0) throw new Error("bad level");
+    return {lv:lv,note:String(r.reason||"")+(r.fix?" Öneri: "+r.fix:""),src:"ai"};
+  });
+}
 var pl=null, plFromOb=false;
 function plFromOnboarding(){ plFromOb=true; go("placement"); }
 function plStart(){
-  pl={step:"intro",skills:["grammar","vocab","reading","listening","writing","speaking"],queue:[],i:0,ans:{},can:{},plays:{}};
+  pl={step:"intro",skills:["grammar","vocab","reading","listening","writing","speaking"],queue:[],i:0,ans:{},can:{},plays:{},perf:{},txt:{}};
   plRender();
 }
 document.getElementById("plBack").addEventListener("click",function(){ plExit(); });
@@ -9481,12 +9515,18 @@ function plBuildQueue(){
         var pass=hasPass?(it[1]||lastPass):""; if(hasPass&&it[1]) lastPass=it[1];
         q.push({sk:sk,ix:ix,lv:it[0],pass:pass,q:hasPass?it[2]:it[1],opts:hasPass?it[3]:it[2],a:hasPass?it[4]:it[3]});
       });
-    } else if(PL_CAN[sk]){ q.push({sk:sk,can:true}); }
+    } else if(PL_CAN[sk]){ q.push({sk:sk,can:true}); q.push({sk:sk,task:true}); }
   });
   pl.queue=q;
 }
 function plEstimate(sk){
-  if(PL_CAN[sk]){ var c=pl.can[sk]||[],lv="A1",got=false; for(var i=0;i<5;i++){ if(c[i]===1){ lv=PL_LV[i]; got=true; } else break; } return got?lv:"A1"; }
+  if(PL_CAN[sk]){
+    var c=pl.can[sk]||[],lv="A1",got=false; for(var i=0;i<5;i++){ if(c[i]===1){ lv=PL_LV[i]; got=true; } else break; }
+    var self=got?lv:"A1", pf=pl.perf&&pl.perf[sk];
+    if(!pf) return self;
+    if(pf.src==="ai") return pf.lv;
+    var cap=Math.min(PL_LV.indexOf(pf.lv),PL_LV.indexOf(self)+1); return PL_LV[Math.max(0,cap)];
+  }
   var by={}; pl.queue.filter(function(x){return x.sk===sk;}).forEach(function(x){ var k=x.lv; by[k]=by[k]||[0,0]; by[k][1]++; if(pl.ans[sk+x.ix]===x.a) by[k][0]++; });
   var res="A1";
   for(var i=0;i<PL_LV.length;i++){ var b=by[PL_LV[i]]; if(!b) continue; if(b[0]/b[1]>=0.6) res=PL_LV[i]; else break; }
@@ -9497,11 +9537,50 @@ function plSpeak(text,key){
   try{ var u=new SpeechSynthesisUtterance(text); u.lang="en-GB"; u.rate=.92; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
   plRender();
 }
+
+function plCountWords(t){ return (String(t||"").match(/[A-Za-z']+/g)||[]).length; }
+var plRec=null;
+function plStopRec(){ if(plRec){ plRec.stop(); plRec=null; } }
+function plWireTask(it){
+  var sk=it.sk, tk=PL_TASK[sk], msg=document.getElementById("plTaskMsg"), wc=document.getElementById("plWc");
+  function upd(){ var n=plCountWords(pl.txt[sk]); if(wc) wc.textContent=n+" kelime"+(n<tk.min?" (en az "+tk.min+")":""); }
+  upd();
+  if(sk==="writing"){
+    var ta=document.getElementById("plTxt"); ta.addEventListener("input",function(){ pl.txt.writing=ta.value; upd(); });
+  } else {
+    var SRc=window.SpeechRecognition||window.webkitSpeechRecognition, mic=document.getElementById("plMic"), live=document.getElementById("plLive");
+    if(!SRc){ msg.textContent="Bu tarayıcıda ses tanıma yok. Görevi atlayabilirsin; konuşma seviyesi sadece beyanından hesaplanır."; mic.disabled=true; }
+    else mic.addEventListener("click",function(){
+      if(plRec){ plStopRec(); mic.classList.remove("recording"); return; }
+      var rec=new SRc(); rec.lang="en-US"; rec.continuous=true; rec.interimResults=true; var fin=pl.txt.speaking||"", interim="", restarts=0, stopped=false;
+      plRec={stop:function(){ stopped=true; try{ rec.stop(); }catch(e){} }};
+      mic.classList.add("recording"); live.textContent=fin||"Dinliyorum…";
+      rec.onresult=function(e){ interim=""; for(var k=e.resultIndex;k<e.results.length;k++){ var r=e.results[k]; if(r.isFinal){ fin+=(fin?" ":"")+r[0].transcript.trim(); } else interim+=r[0].transcript; } pl.txt.speaking=fin; live.textContent=(fin+" "+interim).trim()||"Dinliyorum…"; upd(); };
+      rec.onerror=function(e){ if(e.error==="no-speech") return; stopped=true; if(e.error==="not-allowed"||e.error==="service-not-allowed") msg.textContent="Mikrofon izni gerekli. Tarayıcı ayarlarından izin ver."; };
+      rec.onend=function(){ if(!stopped&&restarts<30){ restarts++; try{ rec.start(); return; }catch(err){} } mic.classList.remove("recording"); plRec=null; if(interim){ pl.txt.speaking=(fin+" "+interim).trim(); live.textContent=pl.txt.speaking; upd(); } };
+      try{ rec.start(); }catch(err){ mic.classList.remove("recording"); plRec=null; }
+    });
+  }
+  function next(){ plStopRec(); pl.busy=false; pl.i++; plRender(); window.scrollTo(0,0); }
+  document.getElementById("plTaskSkip").addEventListener("click",next);
+  document.getElementById("plTaskGo").addEventListener("click",function(){
+    plStopRec();
+    var text=(pl.txt[sk]||"").trim(), n=plCountWords(text);
+    if(n<tk.min){ msg.textContent="Biraz daha uzun yaz/konuş (en az "+tk.min+" kelime) ya da görevi atla."; return; }
+    var local=plLocalLevel(text,sk);
+    var key=(S.settings.geminiApiKey||"").trim();
+    if(!key){ pl.perf[sk]={lv:local,src:"local",note:"Metnin uzunluğu, cümle çeşitliliği ve bağlaçlar gibi ölçütlerle tahmin edildi (Gemini anahtarı yoksa kaba bir ölçümdür)."}; next(); return; }
+    pl.busy=true; plRender();
+    plAiLevel(text,sk).then(function(r){ pl.perf[sk]=r; next(); }).catch(function(e){
+      pl.perf[sk]={lv:local,src:"local",note:"Moonie şu an değerlendiremedi ("+String(e&&e.message||"hata").slice(0,60)+"); kaba bir ölçümle tahmin edildi."}; next();
+    });
+  });
+}
 function plRender(){
   var el=document.getElementById("plBody"); if(!el||!pl) return;
   if(pl.step==="intro"){
     el.innerHTML='<div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">İsteğe bağlı</div><div class="pg-title">Seviyeni birlikte bulalım</div><div class="pg-sub">Yaklaşık 10 dakika. Her beceri için ayrı bir seviye çıkar.</div></div><img class="pg-moon" src="assets/mascot/pose-determined.webp" data-hd="placement-intro" alt=""></div>'+
-      '<div class="card"><p style="font-size:13px;color:var(--ink-2);line-height:1.7;margin:0 0 10px;">Seviyeni bilmiyorsan bu kısa sınavı çözebilirsin; bilmiyorsan <b>hiç çözmeden de</b> devam edebilirsin. Sorular A1–C1 (CEFR) kademelerine göre kolaydan zora doğru dizilidir. Gramer, kelime, okuma ve dinleme otomatik puanlanır; yazma ve konuşma için "yapabilir miyim?" ifadelerini işaretlersin.</p>'+
+      '<div class="card"><p style="font-size:13px;color:var(--ink-2);line-height:1.7;margin:0 0 10px;">Seviyeni bilmiyorsan bu kısa sınavı çözebilirsin; bilmiyorsan <b>hiç çözmeden de</b> devam edebilirsin. Sorular A1–C1 (CEFR) kademelerine göre kolaydan zora doğru dizilidir. Gramer, kelime, okuma ve dinleme otomatik puanlanır; yazma ve konuşma için önce "yapabilir miyim?" ifadelerini işaretler, sonra kısa bir yazı yazar ve kısa bir sesli cevap verirsin; seviye bunlara göre de hesaplanır.</p>'+
       '<p class="hint" style="text-align:left;margin:0;">Not: Soruları Oxford ve Cambridge yerleştirme testlerindeki kademeli formatı örnek alarak kendimiz yazdık. Bu resmî bir sınav değildir; sonuç yaklaşık bir tahmindir ve istediğin an değiştirebilirsin.</p></div>'+
       '<div class="card"><h2 style="font-size:13px;">Hangi beceriler?</h2>'+Object.keys(PL_NAMES).map(function(k){ return '<label class="pl-skill"><input type="checkbox" data-sk="'+k+'" '+(pl.skills.indexOf(k)>-1?"checked":"")+'><b>'+PL_NAMES[k]+'</b></label>'; }).join("")+'</div>'+
       '<button type="button" class="btn" id="plGo">Sınava başla</button><button type="button" class="btn sec" id="plSkip" style="margin-top:8px;">Şimdilik atla</button>';
@@ -9515,7 +9594,13 @@ function plRender(){
     if(!it){ pl.step="result"; plRender(); return; }
     var pct=Math.round(pl.i/pl.queue.length*100);
     var h='<div class="gr-top"><span class="cefr-badge lg">'+PL_NAMES[it.sk]+'</span><div class="gr-bar"><div style="width:'+pct+'%"></div></div><span class="mut">'+(pl.i+1)+'/'+pl.queue.length+'</span></div><div class="card">';
-    if(it.can){
+    if(it.task){
+      var tk=PL_TASK[it.sk], busy=!!pl.busy;
+      h+='<div class="pl-q">'+tk.title+'<br><span style="font-weight:600;font-size:14.5px;">'+esc(tk.prompt)+'</span></div><p class="hint" style="text-align:left;margin:0 0 8px;">'+esc(tk.hint)+'</p>';
+      if(it.sk==="writing") h+='<textarea class="f" id="plTxt" rows="7" placeholder="Write here…" style="width:100%;">'+esc(pl.txt.writing||"")+'</textarea><div class="mut" id="plWc" style="font-size:12px;margin:4px 0 8px;"></div>';
+      else h+='<div style="text-align:center;"><button type="button" class="mic-btn" id="plMic" aria-label="Konuş"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button></div><div id="plLive" class="mut" style="min-height:70px;margin:8px 0;padding:10px 12px;border-radius:14px;background:var(--tint);font-size:14px;line-height:1.5;">'+(pl.txt.speaking?esc(pl.txt.speaking):"Konuşmak için mikrofona dokun.")+'</div><div class="mut" id="plWc" style="font-size:12px;margin:0 0 8px;"></div>';
+      h+='<div id="plTaskMsg" class="mut" style="font-size:13px;margin-bottom:8px;"></div><button type="button" class="btn" id="plTaskGo"'+(busy?" disabled":"")+'>'+(busy?"Moonie değerlendiriyor…":"Gönder ve devam et")+'</button><button type="button" class="btn sec" id="plTaskSkip" style="margin-top:8px;"'+(busy?" disabled":"")+'>Bu görevi atla</button>';
+    } else if(it.can){
       var ci=(pl.can[it.sk]||[]).length;
       h+='<div class="pl-q">'+(it.sk==="writing"?"Yazma":"Konuşma")+' · '+(ci+1)+'/5<br>'+esc(PL_CAN[it.sk][ci])+'</div><button type="button" class="pl-opt" data-c="1">Evet, yapabilirim</button><button type="button" class="pl-opt" data-c="0">Hayır / henüz değil</button>';
     } else {
@@ -9525,6 +9610,7 @@ function plRender(){
     }
     h+='</div>';
     el.innerHTML=h;
+    if(it.task) plWireTask(it);
     var pp=document.getElementById("plPlay"); if(pp) pp.addEventListener("click",function(){ plSpeak(it.pass,it.pass.slice(0,12)); });
     el.querySelectorAll("[data-o]").forEach(function(b){ b.addEventListener("click",function(){ pl.ans[it.sk+it.ix]=parseInt(b.dataset.o,10); pl.i++; plRender(); window.scrollTo(0,0); }); });
     el.querySelectorAll("[data-c]").forEach(function(b){ b.addEventListener("click",function(){
@@ -9539,7 +9625,7 @@ function plRender(){
     var idx=pl.skills.map(function(sk){return PL_LV.indexOf(res[sk]);}), avg=Math.round(idx.reduce(function(a,b){return a+b;},0)/idx.length), overall=PL_LV[avg];
     pl.res=res; pl.overall=overall;
     el.innerHTML='<div class="pg-hero"><span class="pg-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div class="pg-body"><div class="pg-eyebrow">Tahmini genel seviye</div><div class="pg-title" style="font-size:34px;">'+overall+'</div><div class="pg-sub">Aşağıda her beceri için ayrı sonuç var.</div></div><img class="pg-moon" src="assets/mascot/pose-goalachieved.webp" data-hd="placement-result" alt=""></div>'+
-      '<div class="card">'+pl.skills.map(function(sk){ return '<div class="pl-skill"><b>'+PL_NAMES[sk]+'</b><span class="cefr-badge lg">'+res[sk]+'</span></div>'; }).join("")+'</div>'+
+      '<div class="card">'+pl.skills.map(function(sk){ var pf=pl.perf&&pl.perf[sk]; return '<div class="pl-skill"><b>'+PL_NAMES[sk]+'</b><span class="cefr-badge lg">'+res[sk]+'</span></div>'+(pf&&pf.note?'<div class="mut" style="font-size:12.5px;line-height:1.5;margin:-2px 0 8px;">'+esc(pf.note)+'</div>':''); }).join("")+'</div>'+
       '<p class="hint" style="text-align:left;margin:0 2px 12px;">Bu tahmin kısa bir sınava dayanır; çok kolay ya da çok zor geldiyse seviyeni sonradan Profil → Planım üzerinden değiştirebilirsin.</p>'+
       '<button type="button" class="btn" id="plApply">Seviyelerimi uygula</button><button type="button" class="btn sec" id="plDiscard" style="margin-top:8px;">Uygulama</button>';
     document.getElementById("plApply").addEventListener("click",function(){
