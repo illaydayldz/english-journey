@@ -2964,7 +2964,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
         <button type="button" data-c="bold" aria-label="Kalın"><b>B</b></button>
         <button type="button" data-c="italic" aria-label="İtalik"><i>I</i></button>
         <button type="button" data-c="underline" aria-label="Altı çizili"><u>U</u></button>
-        <button type="button" data-c="hl" aria-label="Fosforlu"><span class="qn-hl">F</span></button>
+        <span class="qn-pal" aria-label="Fosforlu renkler"><button type="button" class="qn-sw" data-c="hl:#FFE066" aria-label="Fosforlu Sarı" style="background:#FFE066"></button><button type="button" class="qn-sw" data-c="hl:#FFB8D6" aria-label="Fosforlu Pembe" style="background:#FFB8D6"></button><button type="button" class="qn-sw" data-c="hl:#B6F0C6" aria-label="Fosforlu Yeşil" style="background:#B6F0C6"></button><button type="button" class="qn-sw" data-c="hl:#BDE3FF" aria-label="Fosforlu Mavi" style="background:#BDE3FF"></button><button type="button" class="qn-sw" data-c="hl:#D8C8FF" aria-label="Fosforlu Mor" style="background:#D8C8FF"></button><button type="button" class="qn-sw" data-c="hl:#FFD2A6" aria-label="Fosforlu Turuncu" style="background:#FFD2A6"></button><button type="button" class="qn-sw qn-x" data-c="hl:none" aria-label="Fosforu kaldır">✕</button></span>
         <button type="button" data-c="ul" aria-label="Madde işareti">• Madde</button>
         <button type="button" data-c="big" aria-label="Yazıyı büyüt">A+</button>
         <button type="button" data-c="small" aria-label="Yazıyı küçült">A−</button>
@@ -7329,10 +7329,12 @@ function qnShow(n){ return n.html?qnClean(n.html):esc(n.text||"").replace(/\n/g,
     else if(c==="italic") document.execCommand("italic");
     else if(c==="underline") document.execCommand("underline");
     else if(c==="ul") document.execCommand("insertUnorderedList");
-    else if(c==="hl"){
-      var cur=""; try{ cur=String(document.queryCommandValue("backColor")||""); }catch(e){}
-      var on=/255,\s*224,\s*102|ffe066/i.test(cur);
-      document.execCommand("backColor",false,on?"transparent":"#FFE066");
+    else if(c.indexOf("hl:")===0){
+      var col=c.slice(3), cur="";
+      try{ cur=String(document.queryCommandValue("backColor")||"").replace(/\s+/g,"").toLowerCase(); }catch(e){}
+      function hex2rgb(h){ h=h.replace("#",""); return "rgb("+parseInt(h.slice(0,2),16)+","+parseInt(h.slice(2,4),16)+","+parseInt(h.slice(4,6),16)+")"; }
+      var same=col!=="none"&&(cur===col.toLowerCase()||cur===hex2rgb(col));
+      document.execCommand("backColor",false,(col==="none"||same)?"transparent":col);
     }
     else if(c==="big"||c==="small"){
       var v=3; try{ v=parseInt(document.queryCommandValue("fontSize"),10)||3; }catch(e){}
