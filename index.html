@@ -7305,11 +7305,13 @@ function qnClean(html){
       if(keep){ Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); }); return; }
       if(tag==="font"){
         var sz=c.getAttribute("size"), cl=(c.getAttribute("color")||"").trim().toLowerCase();
+        var fbg=((c.getAttribute("style")||"").match(/background(?:-color)?:\s*(rgb\([\d\s,.]+\)|#[0-9a-f]{3,8})/i)||[])[1];
         Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); });
         var okSz=/^[1-7]$/.test(sz||""), okCl=/^#[0-9a-f]{6}$/.test(cl)||/^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/.test(cl);
         if(okCl&&cl==="#010101") okCl=false;
         if(okSz) c.setAttribute("size",sz); if(okCl) c.setAttribute("color",cl);
-        if(okSz||okCl) return;
+        if(fbg) c.setAttribute("style","background-color:"+fbg);
+        if(okSz||okCl||fbg) return;
       }
       if(tag==="span"||tag==="mark"){
         var st=(c.getAttribute("style")||""), m=st.match(/background(?:-color)?:\s*(rgb\([\d\s,.]+\)|#[0-9a-f]{3,8})/i);
@@ -7347,6 +7349,7 @@ function qnShow(n){ return n.html?qnClean(n.html):esc(n.text||"").replace(/\n/g,
       try{ cur=String(document.queryCommandValue("backColor")||"").replace(/\s+/g,"").toLowerCase(); }catch(e){}
       function hex2rgb(h){ h=h.replace("#",""); return "rgb("+parseInt(h.slice(0,2),16)+","+parseInt(h.slice(2,4),16)+","+parseInt(h.slice(4,6),16)+")"; }
       var same=col!=="none"&&(cur===col.toLowerCase()||cur===hex2rgb(col));
+      try{ document.execCommand("styleWithCSS",false,true); }catch(e){}
       document.execCommand("backColor",false,(col==="none"||same)?"transparent":col);
     }
     else if(c==="big"||c==="small"){
@@ -7400,8 +7403,8 @@ function qnRenderOpts(){
 document.getElementById("qnFab").addEventListener("click",function(){ qnOpen(); });
 document.getElementById("ntAdd").addEventListener("click",function(){ qnOpen(); });
 document.getElementById("qnPin").addEventListener("click",function(){ qnPin=!qnPin; this.classList.toggle("on",qnPin); });
-document.getElementById("qnClose").addEventListener("click",qnClose);
-document.getElementById("qnBackdrop").addEventListener("click",qnClose);
+document.getElementById("qnClose").addEventListener("click",function(){ document.getElementById("qnSave").click(); });
+document.getElementById("qnBackdrop").addEventListener("click",function(){ document.getElementById("qnSave").click(); });
 document.getElementById("qnSave").addEventListener("click",function(){
   var ed=document.getElementById("qnRich"), t=qnPlain(ed); if(!t){ qnClose(); return; }
   var hh=qnClean(ed.innerHTML); if(!/<(b|strong|i|em|u|ul|ol|font|span)\b/i.test(hh)) hh="";
