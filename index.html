@@ -1546,6 +1546,7 @@
   .wb-wrap{ position:relative; margin:0 auto; line-height:0; }
   .wb-wrap canvas{ display:block; max-width:none; }
   .wbrow{ display:flex; flex-wrap:wrap; gap:2px 18px; padding:4px 0; border-bottom:1px dashed rgba(128,128,128,.25); line-height:1.5; } .wbrow.wbh{ font-weight:800; border-bottom:2px solid rgba(128,128,128,.35); margin-top:8px; } .wbcell{ min-width:0; }
+  .gh-me{ font-size:11px; font-weight:800; color:var(--accent-ink); background:var(--accent-soft); padding:2px 8px; border-radius:99px; margin-left:6px; } .gh-lv.mine{ border-color:var(--accent); } .gh-prev{ margin-top:14px; } .gh-prev>summary{ cursor:pointer; font-weight:700; color:var(--ink-soft); padding:10px 4px; } .gh-prev .gh-lv{ opacity:.85; }
   .wb-over{ position:absolute; inset:0; pointer-events:none; }
   .wb-pinmk{ position:absolute; transform:translate(-50%,-50%); pointer-events:auto; width:26px; height:26px; border-radius:50%; border:none; background:linear-gradient(160deg,#FFE9A6,#F2B94B); color:color-mix(in srgb,var(--accent) 30%,#000); font:800 12px var(--font-ui); box-shadow:0 3px 8px rgba(0,0,0,.35); cursor:pointer; }
   .wb-pinmk{ line-height:26px; padding:0; } 
@@ -7154,9 +7155,10 @@ function renderGrammarHub(){
   if(t) t.textContent=flv.cefr+" · "+flv.name; if(sb) sb.textContent=doneN+"/"+total+" konu tamamlandı";
   var h='<div class="gh-next"><div class="gh-nl">Sıradaki konu</div><div class="gh-nt">'+esc(fu.name)+'</div><div class="gh-nm">'+flv.cefr+' · Konu '+(fr.ui+1)+'/'+flv.units.length+' · Kural, örnek, test</div>'+
     '<button type="button" class="gh-start" id="ghStart">Başla<svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></button></div>';
-  GRAMMAR_LEVELS.forEach(function(lv,li){
+  function lvHtml(lv,li){
+    var h="";
     var unl=grammarLevelUnlocked(li), dn=lv.units.filter(function(_,ui){ return !!S.grammar.completed[grammarUnitKey(li,ui)]; }).length;
-    h+='<div class="gh-lv'+(unl?"":" lock")+'"><div class="gh-lh"><span class="cefr-badge'+(unl?"":" locked")+'">'+lv.cefr+'</span><b>'+esc(lv.name)+'</b><span class="mut">'+(unl?dn+"/"+lv.units.length:"Kilitli")+'</span></div>'+
+    h+='<div class="gh-lv'+(unl?"":" lock")+(li===si?" mine":"")+'"><div class="gh-lh"><span class="cefr-badge'+(unl?"":" locked")+'">'+lv.cefr+'</span><b>'+esc(lv.name)+'</b>'+(li===si?'<span class="gh-me">Senin seviyen</span>':'')+'<span class="mut">'+(unl?dn+"/"+lv.units.length:"Kilitli")+'</span></div>'+
       '<div class="gh-bar"><div style="width:'+Math.round(dn/lv.units.length*100)+'%"></div></div><div class="gh-grid">';
     lv.units.forEach(function(u,ui){
       var d=!!S.grammar.completed[grammarUnitKey(li,ui)], cur=unl&&!d&&li===fr.li&&ui===fr.ui;
@@ -7164,7 +7166,16 @@ function renderGrammarHub(){
       h+='<button type="button" class="gh-tile'+(d?" done":"")+(cur?" cur":"")+'" data-li="'+li+'" data-ui="'+ui+'"'+(unl?"":" disabled")+'><span class="gh-n">'+ic+'</span><span class="gh-tt">'+esc(u.name)+'</span><span class="gh-ts">'+(!unl?"Önce "+GRAMMAR_LEVELS[li-1].cefr+" bitir":(d?"Tamamlandı":(cur?"Sıradaki":"Hazır")))+'</span></button>';
     });
     h+='</div></div>';
-  });
+    return h;
+  }
+  var si=startLevelIdx(GRAMMAR_LEVELS,"grammar"), prevH="";
+  GRAMMAR_LEVELS.forEach(function(lv,li){ if(li>=si) h+=lvHtml(lv,li); });
+  if(si>0){
+    var pd=0,pt=0; GRAMMAR_LEVELS.forEach(function(lv,li){ if(li<si) lv.units.forEach(function(u,ui){ pt++; if(S.grammar.completed[grammarUnitKey(li,ui)]) pd++; }); });
+    GRAMMAR_LEVELS.forEach(function(lv,li){ if(li<si) prevH+=lvHtml(lv,li); });
+    h+='<details class="gh-prev"><summary>Önceki seviyeler · tekrar için ('+pd+'/'+pt+')</summary>'+prevH+'</details>';
+  }
+
   var el=document.getElementById("grHub"); el.innerHTML=h;
   function open(li,ui){ S.grammar.selected={li:li,ui:ui}; save(); go("grammarunit"); }
   document.getElementById("ghStart").addEventListener("click",function(){ open(fr.li,fr.ui); });
