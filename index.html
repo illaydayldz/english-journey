@@ -5510,7 +5510,7 @@ async function spotifySearch(q){
           S.listening.podcasts=S.listening.podcasts.filter(function(x){ return x.uri!==item.uri; });
           if(pod&&S.listening.selectedId===pod.id) S.listening.selectedId=null;
         }else{
-          S.listening.podcasts.push({id:"pod"+Date.now(),title:item.name,uri:item.uri,transcript:"",notes:"",createdAt:isoDate(new Date())});
+          S.listening.podcasts.push({id:"pod"+Date.now(),title:item.name,uri:item.uri,img:img||"",transcript:"",notes:"",createdAt:isoDate(new Date())});
         }
         save(); renderPodcastList(); paint();
       });
@@ -5561,6 +5561,12 @@ function renderListening(){
   if(!spLastError) st.style.color="";
   renderPodcastList();
 }
+function podFetchCover(p){
+  var m=/^spotify:(episode|track|show):([A-Za-z0-9]+)$/.exec(p.uri||""); if(!m) return;
+  fetch("https://open.spotify.com/oembed?url="+encodeURIComponent("https://open.spotify.com/"+m[1]+"/"+m[2])).then(function(r){ return r.json(); }).then(function(d){
+    if(d&&d.thumbnail_url&&/^https:\/\//.test(d.thumbnail_url)){ p.img=d.thumbnail_url; save(); renderPodcastList(); }
+  }).catch(function(){});
+}
 function renderPodcastList(){
   var wrap=document.getElementById("podcastList");
   var pods=S.listening.podcasts||[];
@@ -5570,7 +5576,10 @@ function renderPodcastList(){
     var hasTranscript=(p.transcript||"").trim().length>0;
     var c=BOOK_COLORS[(i+2)%BOOK_COLORS.length];
     var b=document.createElement("button"); b.type="button"; b.className="book-btn";
-    b.innerHTML='<span class="book pod-cover" style="--b1:'+c[0]+';--b2:'+c[1]+';"><span class="pod-eq"><i></i><i></i><i></i><i></i></span><span class="book-title" style="font-family:var(--font-display);font-size:13.5px;">'+esc(p.title)+'</span><span class="book-sub">'+(hasTranscript?"Transkript var":"Transkript yok")+'</span></span>';
+    var okImg=/^https:\/\/[^"'()\s]+$/.test(p.img||"");
+    var imgSt=okImg?'background-image:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.78)),url('+p.img+');background-size:cover;background-position:center;':'';
+    b.innerHTML='<span class="book pod-cover" style="--b1:'+c[0]+';--b2:'+c[1]+';'+imgSt+'">'+(okImg?'':'<span class="pod-eq"><i></i><i></i><i></i><i></i></span>')+'<span class="book-title" style="font-family:var(--font-display);font-size:13.5px;'+(okImg?'color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);':'')+'">'+esc(p.title)+'</span><span class="book-sub"'+(okImg?' style="color:#fff;"':'')+'>'+(hasTranscript?"Transkript var":"Transkript yok")+'</span></span>';
+    if(!okImg&&p.uri&&!p.imgTried){ p.imgTried=true; save(); podFetchCover(p); }
     b.addEventListener("click",function(){ S.listening.selectedId=p.id; save(); go("podcastdetail"); });
     var pw=document.createElement("div"); pw.className="shelf-item"; pw.appendChild(b);
     pw.appendChild(shelfX("Podcasti sil",function(){

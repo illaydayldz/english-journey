@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v152-podremove";
+const CACHE = "english-app-v153-podcover";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/free-library.json",
