@@ -8483,7 +8483,7 @@ applyAvatar();
 /* ---------- DESTEK / GERİ BİLDİRİM ---------- */
 /* Mesajlar FormSubmit üzerinden geliştiricinin e-postasına iletilir. İlk gönderimde FormSubmit, adrese bir onay e-postası yollar;
    onaylayınca size verdiği gizli kodu (ör. "a1b2c3…") SUPPORT_TOKEN'a yazarsanız e-posta adresiniz sayfa kodunda görünmez. */
-var SUPPORT_TO="aWxheWRhZXNtYW51cjg2QGdtYWlsLmNvbQ==", SUPPORT_TOKEN="005fe1356823324d730df1829b792b13";
+var SUPPORT_TO="aWxheWRhZXNtYW51cjg2QGdtYWlsLmNvbQ==", SUPPORT_TOKEN="";
 var supCat="Öneri", supLast=0;
 function supAddr(){ return SUPPORT_TOKEN||atob(SUPPORT_TO); }
 function renderSupport(){
@@ -8519,7 +8519,8 @@ document.getElementById("supSend").addEventListener("click",function(){
     document.getElementById("supDone").style.display="block"; window.scrollTo(0,0);
   }).catch(function(e){
     btn.disabled=false; btn.innerHTML=orig;
-    err.innerHTML='Mesaj şu an gönderilemedi. <a href="mailto:'+supAddr()+'?subject='+encodeURIComponent("[English Journey] "+supCat)+'&body='+encodeURIComponent(msg)+'" style="color:var(--accent-ink);font-weight:800;">E-posta uygulamasıyla gönder</a>';
+    var why=(e&&e.message&&e.message!=="timeout"&&e.message!=="Failed to fetch")?(' <span style="opacity:.75;">('+esc(String(e.message).slice(0,120))+')</span>'):"";
+    err.innerHTML='Mesaj şu an gönderilemedi.'+why+' <a href="mailto:'+supAddr()+'?subject='+encodeURIComponent("[English Journey] "+supCat)+'&body='+encodeURIComponent(msg)+'" style="color:var(--accent-ink);font-weight:800;">E-posta uygulamasıyla gönder</a>';
   });
 });
 
