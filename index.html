@@ -6296,6 +6296,234 @@ var GRAMMAR_LEVELS=[
    ]}
  ]}
 ];
+var GR_EXTRA={
+"Present Simple vs Present Continuous":[
+["My brother ___ in London at the moment.",["lives","is living","live","living"],1],
+["Water ___ at 100 degrees Celsius.",["boils","is boiling","boil","boiled"],0],
+["Why ___ you ___ that strange hat today?",["do / wear","are / wearing","does / wear","are / wear"],1],
+["He ___ football on Saturdays.",["plays","is playing","play","playing"],0],
+["I ___ you. Could you repeat that, please?",["am not hearing","don't hear","doesn't hear","not hear"],1],
+["Be quiet! The baby ___.",["sleeps","sleep","is sleeping","slept"],2],
+["___ she ___ English at university?",["Does / study","Is / study","Do / studies","Does / studies"],0],
+["The train to Ankara ___ at 9:15 every day.",["is leaving","leaves","leave","leaving"],1]],
+"Artikeller: a / an / the":[
+["She is ___ engineer.",["a","an","the","—"],1],
+["I saw a film yesterday. ___ film was really boring.",["A","An","The","—"],2],
+["___ sun rises in the east.",["A","An","The","—"],2],
+["He plays ___ guitar very well.",["a","an","the","—"],2],
+["I love ___ chocolate.",["a","an","the","—"],3],
+["Can you close ___ window, please? It's cold.",["a","an","the","—"],2],
+["She works as ___ English teacher.",["a","an","the","—"],1],
+["We had dinner at ___ restaurant near the station. ___ food was great.",["a / The","the / A","an / The","a / A"],0]],
+"Sayılabilen / Sayılamayan İsimler":[
+["I need some ___ for the cake.",["egg","eggs","an egg","a flour"],1],
+["How ___ money do you have?",["many","much","a few","few"],1],
+["There ___ any milk in the fridge.",["isn't","aren't","don't","hasn't"],0],
+["She gave me some good ___.",["advices","advice","an advice","advise"],1],
+["We have ___ time before the meeting.",["a few","a little","few","many"],1],
+["How ___ students are there in your class?",["much","many","little","a little"],1],
+["The news ___ very surprising.",["were","are","was","be"],2],
+["I'd like ___ water, please.",["a","an","some","many"],2]],
+"Comparatives & Superlatives":[
+["This book is ___ than that one.",["interesting","more interesting","most interesting","interestinger"],1],
+["She is the ___ student in the class.",["smarter","smartest","most smart","more smart"],1],
+["Today is ___ than yesterday.",["hot","hotter","more hot","the hottest"],1],
+["This is ___ film I have ever seen.",["the worse","worse","the worst","worst"],2],
+["My car is not as ___ as yours.",["fast","faster","fastest","more fast"],0],
+["He drives ___ than his father.",["more careful","more carefully","carefuller","most carefully"],1],
+["London is ___ than Istanbul.",["more expensive","expensiver","most expensive","the more expensive"],0],
+["The ___ you study, the better you do.",["more","much","most","many"],0]],
+"Temel Edatlar: Yer ve Zaman":[
+["The meeting is ___ 3 o'clock.",["in","on","at","by"],2],
+["I was born ___ 1998.",["in","on","at","of"],0],
+["We usually have a party ___ New Year's Eve.",["in","on","at","by"],1],
+["She lives ___ a small flat ___ the city centre.",["in / in","at / in","in / at","on / in"],0],
+["The book is ___ the table.",["in","on","at","to"],1],
+["He waited ___ the bus stop for an hour.",["in","on","at","to"],2],
+["I'll see you ___ Monday morning.",["in","on","at","by"],1],
+["I have been learning English ___ three years.",["since","for","during","at"],1]],
+"Past Simple (Düzenli / Düzensiz Fiiller)":[
+["She ___ to Paris last summer.",["go","goes","went","gone"],2],
+["I ___ my keys yesterday.",["lose","losed","lost","loosed"],2],
+["___ you ___ the film last night?",["Did / see","Did / saw","Do / saw","Were / see"],0],
+["He didn't ___ the answer.",["knew","know","known","knows"],1],
+["We ___ dinner at eight.",["have","had","haved","has"],1],
+["They ___ football when they were kids.",["play","played","plaied","plays"],1],
+["I ___ a strange noise and woke up.",["heard","heared","hear","hearing"],0],
+["When ___ you ___ this watch?",["did / buy","did / bought","do / bought","were / buy"],0]]
+};
+Object.assign(GR_EXTRA,{
+"Present Perfect vs Past Simple":[
+["I ___ my homework yet.",["didn't finish","haven't finished","hadn't finished","don't finish"],1],
+["She ___ in Berlin in 2015.",["has lived","lived","have lived","was living"],1],
+["___ you ever ___ sushi?",["Did / eat","Have / eaten","Have / ate","Do / eat"],1],
+["We ___ each other for ten years.",["know","knew","have known","are knowing"],2],
+["He ___ the company last month.",["has left","left","have left","leaves"],1],
+["I've lost my phone. I ___ it anywhere.",["can't find","couldn't find","didn't find","hadn't found"],0],
+["How long ___ you ___ here?",["did / work","have / worked","are / working","do / worked"],1],
+["They ___ to Spain three times this year.",["went","have been","were","go"],1]],
+"Future Forms: will / going to / present continuous":[
+["Look at those clouds! It ___ rain.",["will","is going to","is raining","rains"],1],
+["I ___ my dentist tomorrow at 10. I've already booked it.",["will see","am seeing","see","would see"],1],
+["A: The phone is ringing. B: I ___ it.",["am going to answer","will answer","answer","am answering"],1],
+["I think she ___ the exam easily.",["is passing","will pass","passes","is going pass"],1],
+["We ___ a party on Saturday. Would you like to come?",["will have","are having","have","had"],1],
+["The film ___ at 8 p.m. tonight.",["starts","will start","is going start","start"],0],
+["I've decided. I ___ a new car next month.",["will buy","am going to buy","buy","bought"],1],
+["Don't worry. I ___ you with the bags.",["help","am helping","will help","helped"],2]],
+"Reported Speech (Aktarılan Anlatım)":[
+["She said, \"I am tired.\" → She said that she ___ tired.",["is","was","has been","will be"],1],
+["He said, \"I will call you.\" → He said he ___ call me.",["will","would","can","did"],1],
+["\"Where do you live?\" → He asked me where I ___.",["live","lived","do live","am living"],1],
+["\"Have you seen him?\" → She asked ___ him.",["if I had seen","if I have seen","that I had seen","did I see"],0],
+["\"Close the door,\" he said. → He told me ___ the door.",["close","to close","closing","that close"],1],
+["\"I have finished,\" she said. → She said she ___ finished.",["has","had","have","was"],1],
+["\"I can swim,\" he said. → He said he ___ swim.",["can","could","would","can be"],1],
+["\"Don't be late,\" she said. → She told us ___ late.",["don't be","not to be","to not be","not being"],1]],
+"Relative Clauses (who / which / that / where)":[
+["The woman ___ lives next door is a doctor.",["which","who","where","whose"],1],
+["This is the book ___ I told you about.",["who","where","that","whom"],2],
+["That's the restaurant ___ we had our first date.",["which","who","where","when"],2],
+["The man ___ car was stolen called the police.",["who","whose","which","whom"],1],
+["Everything ___ she said was true.",["what","which","that","who"],2],
+["I met a girl ___ father is a famous actor.",["who","whose","which","that"],1],
+["The film, ___ was very long, won three awards.",["that","which","who","where"],1],
+["Is this the place ___ you grew up?",["which","who","where","that is"],2]],
+"Modals of Obligation & Advice":[
+["You ___ wear a seat belt. It's the law.",["should","must","might","could"],1],
+["You ___ see a doctor. You look terrible.",["must","have","should","can"],2],
+["You ___ park here. It's forbidden.",["don't have to","mustn't","needn't","shouldn't to"],1],
+["I ___ get up early tomorrow. It's a holiday.",["mustn't","don't have to","can't","shouldn't"],1],
+["Students ___ bring their phones to the exam.",["don't have to","aren't allowed to","needn't","have to"],1],
+["You ___ smoke so much. It's bad for you.",["shouldn't","mustn't to","don't must","haven't to"],0],
+["She ___ work on Sundays. The office is closed.",["has to","must","doesn't have to","shouldn't"],2],
+["If I were you, I ___ apply for that job.",["will","would","must","have to"],1]],
+"First & Second Conditionals":[
+["If it rains tomorrow, we ___ at home.",["stay","will stay","would stay","stayed"],1],
+["If I ___ rich, I would travel the world.",["am","was","were","will be"],2],
+["If you heat ice, it ___.",["will melt","melts","would melt","melted"],1],
+["What ___ you do if you won the lottery?",["will","would","did","do"],1],
+["She will be angry if you ___ her.",["don't help","won't help","wouldn't help","didn't help"],0],
+["If I ___ you, I would talk to him.",["am","was","were","be"],2],
+["I ___ call you if I have time.",["would","will","had","am"],1],
+["If he studied harder, he ___ the exam.",["will pass","would pass","passes","passed"],1]]
+});
+Object.assign(GR_EXTRA,{
+"Passive Voice (Edilgen Çatı)":[
+["The window ___ by a ball yesterday.",["broke","was broken","has broke","is broken"],1],
+["English ___ in many countries.",["speaks","is spoken","is speaking","spoke"],1],
+["The report ___ by tomorrow.",["will finish","will be finished","is finishing","finishes"],1],
+["My car ___ at the moment.",["is repairing","is being repaired","repairs","has repaired"],1],
+["These pyramids ___ over 4,000 years ago.",["built","were built","are built","have built"],1],
+["The thief ___ by the police last night.",["caught","was caught","has caught","is catching"],1],
+["The room ___ yet.",["hasn't cleaned","hasn't been cleaned","isn't cleaning","wasn't clean"],1],
+["She ___ to the party, but she didn't go.",["invited","was invited","has invited","is inviting"],1]],
+"Past Perfect vs Past Simple":[
+["When I arrived, the film ___.",["already started","had already started","has already started","was already start"],1],
+["She ___ the door after she had entered.",["closed","had closed","closes","has closed"],0],
+["I couldn't get in because I ___ my key.",["lost","had lost","have lost","was losing"],1],
+["By the time we got to the station, the train ___.",["left","had left","has left","leaves"],1],
+["He told me he ___ that book before.",["read","had read","reads","has read"],1],
+["After she ___ dinner, she watched TV.",["had cooked","cooks","has cooked","was cook"],0],
+["They ___ already ___ when I called.",["have / eaten","had / eaten","were / eat","did / eaten"],1],
+["I was tired because I ___ all night.",["worked","had been working","have worked","work"],1]],
+"Third Conditional & Mixed Conditionals":[
+["If I ___ harder, I would have passed the exam.",["studied","had studied","have studied","would study"],1],
+["If she ___ the bus, she wouldn't have been late.",["didn't miss","hadn't missed","wouldn't miss","doesn't miss"],1],
+["We ___ the match if we had played better.",["would win","would have won","will win","had won"],1],
+["If I had known about the party, I ___ there.",["would be","would have been","will be","was"],1],
+["If he ___ more careful, he wouldn't have broken it.",["was","were","had been","would be"],2],
+["If I hadn't eaten so much, I ___ sick now.",["wouldn't have felt","wouldn't feel","won't feel","didn't feel"],1],
+["She ___ here now if she had taken the earlier flight.",["would have been","would be","will be","is"],1],
+["What ___ if you hadn't taken that job?",["would you have done","will you do","did you do","would you do"],0]],
+"Gerunds vs Infinitives":[
+["I enjoy ___ to music.",["to listen","listening","listen","listened"],1],
+["She decided ___ abroad.",["studying","to study","study","studied"],1],
+["He avoided ___ the question.",["to answer","answering","answer","answered"],1],
+["I'm looking forward to ___ you.",["see","seeing","to see","saw"],1],
+["They agreed ___ us.",["helping","to help","help","helped"],1],
+["He stopped ___ because he was tired. (He ended the activity.)",["to run","running","run","ran"],1],
+["I forgot ___ the door, so it was open all night.",["locking","to lock","lock","locked"],1],
+["She suggested ___ a taxi.",["to take","taking","take","took"],1]],
+"Phrasal Verbs & Edat Kesinliği":[
+["Please ___ your shoes before you enter.",["take off","take out","take on","take up"],0],
+["I can't ___ this noise any longer.",["put up with","put off","put on","put away"],0],
+["We ran ___ milk, so I went to the shop.",["of","out of","off","from"],1],
+["She ___ the offer because the salary was too low.",["turned down","turned up","turned on","turned in"],0],
+["Could you ___ the music? It's too loud.",["turn down","turn up","turn out","turn in"],0],
+["He ___ smoking last year.",["gave up","gave in","gave out","gave away"],0],
+["I'm ___ forward to the holidays.",["looking","watching","seeing","waiting"],0],
+["The meeting was ___ because the manager was ill.",["called off","called on","called up","called at"],0]],
+"Advanced Modals: Speculation (must have / might have / can't have)":[
+["He's not answering. He ___ asleep. (I'm almost sure.)",["must be","can't be","might have","should be"],0],
+["She ___ the answer. She was out of the country. (impossible)",["must have known","can't have known","might know","should have known"],1],
+["The lights are on. They ___ at home.",["must be","can't have been","might be","shouldn't be"],0],
+["I don't know where he is. He ___ gone home.",["must have","might have","can't have","should have"],1],
+["You ___ me earlier! Now it's too late.",["should have told","must have told","can't have told","might tell"],0],
+["The streets are wet. It ___ last night.",["must have rained","can't rain","might rain","should rain"],0],
+["She ___ the exam. She studied for weeks. (I'm sure she passed.)",["can't have failed","must have failed","might fail","should fail"],0],
+["They ___ lost. They've been driving for hours! (possible)",["might have got","must have got","can't have got","shouldn't get"],0]]
+});
+Object.assign(GR_EXTRA,{
+"Inversion for Emphasis (Devrik Cümle ile Vurgu)":[
+["Never ___ such a beautiful view.",["I have seen","have I seen","I saw","did I seen"],1],
+["Not only ___ late, but he also forgot the documents.",["he arrived","did he arrive","he did arrive","arrived he"],1],
+["Hardly ___ the house when it started to rain.",["had we left","we had left","we left","did we left"],0],
+["Rarely ___ such generosity.",["you see","do you see","you do see","see you"],1],
+["Under no circumstances ___ the door.",["you should open","should you open","you open","open should you"],1],
+["No sooner had she sat down ___ the phone rang.",["when","than","that","then"],1],
+["Only after the meeting ___ the truth.",["I learned","did I learn","I did learn","learned I"],1],
+["Little ___ that he was being watched.",["he knew","did he know","he did know","knew he"],1]],
+"Cleft Sentences (Vurgulu Bölünmüş Cümleler)":[
+["___ I need is a good night's sleep.",["It","What","That","Which"],1],
+["It was Tom ___ broke the window.",["what","who","whom he","which is"],1],
+["What annoys me most ___ his constant complaining.",["is","are","does","has"],0],
+["It was in 2010 ___ we first met.",["that","what","who","when is"],0],
+["___ she wanted was to be left alone.",["That","All","It","Where"],1],
+["The thing that surprised me ___ how quiet it was.",["were","was","is being","are"],1],
+["It's the noise ___ drives me crazy.",["what","that","who","whom"],1],
+["What I'd like to do ___ visit Japan.",["is","are","has","be"],0]],
+"Nüanslı Artikel ve Edat Kullanımı":[
+["She is at ___ university studying law.",["a","the","—","an"],2],
+["He was taken to ___ hospital after the accident.",["a","the","—","an"],2],
+["___ unemployed often struggle to find housing.",["An","The","—","A"],1],
+["I'm afraid ___ spiders.",["from","of","with","at"],1],
+["She is good ___ solving problems.",["in","at","on","for"],1],
+["It depends ___ the weather.",["of","from","on","at"],2],
+["He's been ___ prison for two years.",["in","at","the","to"],0],
+["The company is responsible ___ the damage.",["of","for","to","about"],1]],
+"Aktarılan Anlatımda İnce Farklar (Hedging & Reporting Verbs)":[
+["She ___ to have made a mistake. (She said it was her fault.)",["admitted","denied","suggested","insisted"],0],
+["He ___ stealing the money. (He said he didn't do it.)",["admitted","denied","promised","warned"],1],
+["The doctor ___ me to rest for a week.",["suggested","advised","said","admitted"],1],
+["They ___ that the project would finish on time.",["promised","accused","denied","apologised"],0],
+["It ___ that prices will rise next year.",["appears","denies","agrees","threatens"],0],
+["She ___ him of lying.",["accused","blamed","admitted","suggested"],0],
+["The results ___ to suggest a link between sleep and memory.",["tend","are tending","insist","warn"],0],
+["He ___ for being late.",["apologised","admitted","accused","threatened"],0]],
+"Participle Clauses (Ortaç Cümlecikleri)":[
+["___ the news, she burst into tears.",["Hearing","Heard","Having hear","To hear"],0],
+["___ by the noise, the baby started to cry.",["Frightening","Frightened","To frighten","Frighten"],1],
+["___ his homework, he went out to play.",["Finished","Having finished","Finishing","To finish"],1],
+["The man ___ at the door is my uncle.",["stands","standing","stood","stand"],1],
+["Not ___ what to do, she asked for help.",["knowing","known","know","to know"],0],
+["___ in 1850, the bridge is still in use.",["Building","Built","Having build","Being build"],1],
+["___ left the house, he realised he had forgotten his wallet.",["Having","Had","Have","Has"],0],
+["The letter ___ yesterday has not arrived.",["posting","posted","post","to post"],1]],
+"Advanced Passive: Reporting Structures":[
+["It is said ___ he is a millionaire.",["that","what","which","who"],0],
+["He is believed ___ the country last year.",["to leave","to have left","leaving","having leave"],1],
+["She is reported ___ in London at the moment.",["to be living","to have live","live","lived"],0],
+["The new law is expected ___ next month.",["introduce","to be introduced","introducing","to introduced"],1],
+["They are thought ___ the building two days ago.",["to leave","to have left","leaving","to be left"],1],
+["It was announced ___ the match had been cancelled.",["that","what","to","for"],0],
+["The painting is believed ___ stolen in 1990.",["to be","to have been","being","have been"],1],
+["He is said ___ five languages.",["speaking","to speak","speak","spoke"],1]]
+});
+
+GRAMMAR_LEVELS.forEach(function(l){ l.units.forEach(function(u){ var ex=(GR_EXTRA[u.name]||[]).map(function(x){ return {q:x[0],opts:x[1],a:x[2]}; }); u.pool=u.exercises.concat(ex); }); });
+function grPick(arr,n){ var a=arr.slice(); for(var i=a.length-1;i>0;i--){ var k=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[k]; a[k]=t; } return a.slice(0,n); }
+
 function grammarUnitKey(li,ui){ return li+"-"+ui; }
 function grammarLevelUnlocked(li){
   if(li<=startLevelIdx(GRAMMAR_LEVELS,"grammar")) return true;
@@ -7123,9 +7351,10 @@ function renderGrammar(){
     box.querySelectorAll(".gn-card").forEach(function(b){ b.addEventListener("click",function(){ qnOpen(b.dataset.id); }); });
   }
   qnAfter=grNotesRender; grNotesRender();
+  var qset=grPick(unit.pool||unit.exercises,10);
   var qz={i:0,picked:null,score:0,wrong:[]};
   function qzRender(){
-    var box=document.getElementById("grQuiz"), N=unit.exercises.length;
+    var box=document.getElementById("grQuiz"), N=qset.length;
     if(qz.i>=N){
       var pct=Math.round(qz.score/N*100);
       S.grammar.scores[gKey]=Math.max(S.grammar.scores[gKey]||0,pct); save(); grUnlockComplete();
@@ -7134,11 +7363,11 @@ function renderGrammar(){
       box.innerHTML='<div class="qz-res"><img src="assets/mascot/'+pose+'" alt=""><div class="qz-score">'+qz.score+'<small>/'+N+'</small></div><div class="qz-msg">'+msg+'</div>'+
         (qz.wrong.length?'<div class="qz-wl"><b>Gözden geçir</b>'+qz.wrong.map(function(w){ return '<div class="qz-w"><div class="qz-wq">'+esc(w.q)+'</div><div class="qz-wa"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>'+esc(w.a)+'</div></div>'; }).join("")+'</div>':'')+
         '<div style="display:flex;gap:8px;"><button type="button" class="btn sec" id="qzAgain" style="flex:1;">Tekrar dene</button><button type="button" class="btn" id="qzRule" style="flex:1;">Kuralı oku</button></div></div>';
-      document.getElementById("qzAgain").addEventListener("click",function(){ qz={i:0,picked:null,score:0,wrong:[]}; qzRender(); });
+      document.getElementById("qzAgain").addEventListener("click",function(){ qset=grPick(unit.pool||unit.exercises,10); qz={i:0,picked:null,score:0,wrong:[]}; qzRender(); });
       document.getElementById("qzRule").addEventListener("click",function(){ grTab("rule"); window.scrollTo(0,0); });
       return;
     }
-    var ex=unit.exercises[qz.i], ans=qz.picked!==null;
+    var ex=qset[qz.i], ans=qz.picked!==null;
     var dots="";
     for(var d=0;d<N;d++) dots+='<i class="'+(d<qz.i?"done":(d===qz.i?"cur":""))+'"></i>';
     box.innerHTML='<div class="qz-top"><span>Soru '+(qz.i+1)+'/'+N+'</span><span class="qz-sc">'+qz.score+' doğru</span></div><div class="qz-dots">'+dots+'</div>'+
