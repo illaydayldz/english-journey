@@ -2965,6 +2965,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
         <button type="button" data-c="italic" aria-label="İtalik"><i>I</i></button>
         <button type="button" data-c="underline" aria-label="Altı çizili"><u>U</u></button>
         <span class="qn-pal" aria-label="Fosforlu renkler"><button type="button" class="qn-sw" data-c="hl:#FFE066" aria-label="Fosforlu Sarı" style="background:#FFE066"></button><button type="button" class="qn-sw" data-c="hl:#FFB8D6" aria-label="Fosforlu Pembe" style="background:#FFB8D6"></button><button type="button" class="qn-sw" data-c="hl:#B6F0C6" aria-label="Fosforlu Yeşil" style="background:#B6F0C6"></button><button type="button" class="qn-sw" data-c="hl:#BDE3FF" aria-label="Fosforlu Mavi" style="background:#BDE3FF"></button><button type="button" class="qn-sw" data-c="hl:#D8C8FF" aria-label="Fosforlu Mor" style="background:#D8C8FF"></button><button type="button" class="qn-sw" data-c="hl:#FFD2A6" aria-label="Fosforlu Turuncu" style="background:#FFD2A6"></button><button type="button" class="qn-sw qn-x" data-c="hl:none" aria-label="Fosforu kaldır">✕</button></span>
+        <span class="qn-pal" aria-label="Yazı rengi"><button type="button" class="qn-sw qn-tc" data-c="fc:none" aria-label="Yazı rengi Normal" style="color:var(--ink);border-color:var(--gray-300)">A</button><button type="button" class="qn-sw qn-tc" data-c="fc:#E53935" aria-label="Yazı rengi Kırmızı" style="color:#E53935;border-color:#E53935">A</button><button type="button" class="qn-sw qn-tc" data-c="fc:#1E64E6" aria-label="Yazı rengi Mavi" style="color:#1E64E6;border-color:#1E64E6">A</button><button type="button" class="qn-sw qn-tc" data-c="fc:#1B9E5A" aria-label="Yazı rengi Yeşil" style="color:#1B9E5A;border-color:#1B9E5A">A</button><button type="button" class="qn-sw qn-tc" data-c="fc:#7B4DDB" aria-label="Yazı rengi Mor" style="color:#7B4DDB;border-color:#7B4DDB">A</button><button type="button" class="qn-sw qn-tc" data-c="fc:#F07A12" aria-label="Yazı rengi Turuncu" style="color:#F07A12;border-color:#F07A12">A</button><button type="button" class="qn-sw qn-tc" data-c="fc:#E0287A" aria-label="Yazı rengi Pembe" style="color:#E0287A;border-color:#E0287A">A</button></span>
         <button type="button" data-c="ul" aria-label="Madde işareti">• Madde</button>
         <button type="button" data-c="big" aria-label="Yazıyı büyüt">A+</button>
         <button type="button" data-c="small" aria-label="Yazıyı küçült">A−</button>
@@ -7301,7 +7302,14 @@ function qnClean(html){
       var tag=c.tagName.toLowerCase(); walk(c);
       var keep=["b","strong","i","em","u","ul","ol","li","br","div","p"].indexOf(tag)>=0;
       if(keep){ Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); }); return; }
-      if(tag==="font"){ var sz=c.getAttribute("size"); Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); }); if(/^[1-7]$/.test(sz||"")){ c.setAttribute("size",sz); return; } }
+      if(tag==="font"){
+        var sz=c.getAttribute("size"), cl=(c.getAttribute("color")||"").trim().toLowerCase();
+        Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); });
+        var okSz=/^[1-7]$/.test(sz||""), okCl=/^#[0-9a-f]{6}$/.test(cl)||/^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/.test(cl);
+        if(okCl&&cl==="#010101") okCl=false;
+        if(okSz) c.setAttribute("size",sz); if(okCl) c.setAttribute("color",cl);
+        if(okSz||okCl) return;
+      }
       if(tag==="span"||tag==="mark"){
         var st=(c.getAttribute("style")||""), m=st.match(/background(?:-color)?:\s*(rgb\([\d\s,.]+\)|#[0-9a-f]{3,8})/i);
         Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); });
@@ -7329,6 +7337,10 @@ function qnShow(n){ return n.html?qnClean(n.html):esc(n.text||"").replace(/\n/g,
     else if(c==="italic") document.execCommand("italic");
     else if(c==="underline") document.execCommand("underline");
     else if(c==="ul") document.execCommand("insertUnorderedList");
+    else if(c.indexOf("fc:")===0){
+      try{ document.execCommand("styleWithCSS",false,false); }catch(e){}
+      var fcol=c.slice(3); document.execCommand("foreColor",false,fcol==="none"?"#010101":fcol);
+    }
     else if(c.indexOf("hl:")===0){
       var col=c.slice(3), cur="";
       try{ cur=String(document.queryCommandValue("backColor")||"").replace(/\s+/g,"").toLowerCase(); }catch(e){}
