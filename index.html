@@ -1547,6 +1547,8 @@
   .wb-wrap canvas{ display:block; max-width:none; }
   .wbrow{ display:flex; flex-wrap:wrap; gap:2px 18px; padding:4px 0; border-bottom:1px dashed rgba(128,128,128,.25); line-height:1.5; } .wbrow.wbh{ font-weight:800; border-bottom:2px solid rgba(128,128,128,.35); margin-top:8px; } .wbcell{ min-width:0; }
   .gh-me{ font-size:11px; font-weight:800; color:var(--accent-ink); background:var(--accent-soft); padding:2px 8px; border-radius:99px; margin-left:6px; } .gh-lv.mine{ border-color:var(--accent); } .gh-prev{ margin-top:14px; } .gh-prev>summary{ cursor:pointer; font-weight:700; color:var(--ink-soft); padding:10px 4px; } .gh-prev .gh-lv{ opacity:.85; }
+  .qn-bar{ display:flex; gap:6px; flex-wrap:wrap; margin:0 0 8px; } .qn-bar button{ border:1.5px solid var(--line,rgba(128,128,128,.3)); background:var(--tint); color:var(--ink); border-radius:12px; padding:7px 11px; font:inherit; font-size:14px; font-weight:700; cursor:pointer; min-width:38px; } .qn-bar button:active{ transform:scale(.95); } .qn-hl{ background:#FFE066; color:#222; padding:0 5px; border-radius:4px; }
+  #qnRich{ width:100%; min-height:120px; max-height:38vh; overflow:auto; padding:12px 13px; border:1.5px solid var(--line); border-radius:var(--radius-md); font-size:15px; line-height:1.5; font-family:inherit; background:var(--gray-100); color:var(--ink); white-space:pre-wrap; word-break:break-word; -webkit-user-select:text; user-select:text; } #qnRich:focus{ outline:none; border-color:var(--purple); background:var(--surface); } #qnRich:empty:before{ content:attr(data-ph); opacity:.5; } #qnRich ul,#qnRich ol,.gn-t ul{ padding-left:22px; margin:4px 0; white-space:normal; } #qnRich div{ min-height:1em; }
   .wb-over{ position:absolute; inset:0; pointer-events:none; }
   .wb-pinmk{ position:absolute; transform:translate(-50%,-50%); pointer-events:auto; width:26px; height:26px; border-radius:50%; border:none; background:linear-gradient(160deg,#FFE9A6,#F2B94B); color:color-mix(in srgb,var(--accent) 30%,#000); font:800 12px var(--font-ui); box-shadow:0 3px 8px rgba(0,0,0,.35); cursor:pointer; }
   .wb-pinmk{ line-height:26px; padding:0; } 
@@ -2958,7 +2960,17 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <div class="jr-grab"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><b id="qnTitle" style="font-family:var(--font-display);font-size:16px;">Yeni not</b><button type="button" class="jr-tool" id="qnClose" style="flex:none;padding:8px 12px;">Kapat</button></div>
       <div class="nt-chips" id="qnCats" style="margin-bottom:8px;"></div>
-      <textarea class="f" id="qnText" rows="5" placeholder="Notunu yaz…"></textarea>
+      <div class="qn-bar" id="qnBar" role="toolbar" aria-label="Yazı biçimi">
+        <button type="button" data-c="bold" aria-label="Kalın"><b>B</b></button>
+        <button type="button" data-c="italic" aria-label="İtalik"><i>I</i></button>
+        <button type="button" data-c="underline" aria-label="Altı çizili"><u>U</u></button>
+        <button type="button" data-c="hl" aria-label="Fosforlu"><span class="qn-hl">F</span></button>
+        <button type="button" data-c="ul" aria-label="Madde işareti">• Madde</button>
+        <button type="button" data-c="big" aria-label="Yazıyı büyüt">A+</button>
+        <button type="button" data-c="small" aria-label="Yazıyı küçült">A−</button>
+        <button type="button" data-c="clear" aria-label="Biçimi temizle">Temizle</button>
+      </div>
+      <div id="qnRich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="Notunu yaz…"></div>
       <div class="jr-tray col" id="qnCols" style="display:flex;margin-top:8px;"></div>
       <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" id="qnSave" style="flex:1;">Kaydet</button><button type="button" class="jr-tool" id="qnPin" style="flex:none;">Sabitle</button><button type="button" class="jr-tool" id="qnDel" style="flex:none;display:none;">Sil</button></div>
     </div>
@@ -4580,7 +4592,7 @@ function wbNotesRender(){
     '<button type="button" class="gn-add" id="wbAdd"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Bu sayfaya not ekle</button>'+
     '<button type="button" class="gn-add" id="wbTxt" style="margin-top:8px;"><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Sayfa metnini aç (kelimeye dokun)</button><div id="wbTxtOut"></div>';
   if(!list.length) h+='<p class="hint" style="text-align:left;margin:8px 2px;">Bu sayfada henüz not yok. İstersen sayfanın üstüne iğne ile de not bırakabilirsin (kalem düğmesi).</p>';
-  list.forEach(function(n,i){ var c=n.color||"#8B7FFF"; h+='<button type="button" class="gn-card" data-id="'+n.id+'" style="background:linear-gradient(180deg,'+c+'33,'+c+'0d);border-color:'+c+'66;"><span class="gn-t">'+(n.pos?'<b class="wb-num">'+(i+1)+'</b> ':'')+esc(n.text)+'</span><span class="gn-d">'+esc(fmtDate((n.ts||"").slice(0,10)))+'</span></button>'; });
+  list.forEach(function(n,i){ var c=n.color||"#8B7FFF"; h+='<button type="button" class="gn-card" data-id="'+n.id+'" style="background:linear-gradient(180deg,'+c+'33,'+c+'0d);border-color:'+c+'66;"><span class="gn-t">'+(n.pos?'<b class="wb-num">'+(i+1)+'</b> ':'')+qnShow(n)+'</span><span class="gn-d">'+esc(fmtDate((n.ts||"").slice(0,10)))+'</span></button>'; });
   if(marks.length) h+='<h3 style="font-size:13px;margin:14px 0 6px;color:var(--ink-soft);">Yer imleri</h3><div class="nt-chips">'+marks.map(function(m){ return '<button type="button" class="nt-chip wb-mk" data-p="'+m+'">s.'+m+'</button>'; }).join("")+'</div>';
   if(WB.bk.kind==="study") h+='<button type="button" class="btn sec sm" id="wbDel" style="margin-top:14px;">Kitabı kütüphaneden sil</button>';
   box.innerHTML=h;
@@ -7098,7 +7110,7 @@ function renderGrammar(){
     var box=document.getElementById("grNotes"); if(!box) return;
     var h='<button type="button" class="gn-add" id="gnAdd"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Bu konuya not ekle</button>';
     if(!list.length) h+='<div class="gn-empty"><img src="assets/mascot/pose-writing.webp" data-hd="grammar-notes-empty" alt=""><div><b>Henüz notun yok</b><span>Kuralı kendi cümlenle yaz, örnek ekle ya da Moonie geri bildirimini kaydet.</span></div></div>';
-    list.forEach(function(n,i){ var c=n.color||"#4FD1C5"; h+='<button type="button" class="gn-card" data-id="'+n.id+'" style="background:linear-gradient(180deg,'+c+'33,'+c+'0d);border-color:'+c+'66;"><span class="gn-t">'+esc(n.text)+'</span><span class="gn-d">'+esc(fmtDate((n.ts||"").slice(0,10)))+'</span></button>'; });
+    list.forEach(function(n,i){ var c=n.color||"#4FD1C5"; h+='<button type="button" class="gn-card" data-id="'+n.id+'" style="background:linear-gradient(180deg,'+c+'33,'+c+'0d);border-color:'+c+'66;"><span class="gn-t">'+qnShow(n)+'</span><span class="gn-d">'+esc(fmtDate((n.ts||"").slice(0,10)))+'</span></button>'; });
     box.innerHTML=h;
     document.getElementById("gnAdd").addEventListener("click",function(){ qnOpen(null,gKey); });
     box.querySelectorAll(".gn-card").forEach(function(b){ b.addEventListener("click",function(){ qnOpen(b.dataset.id); }); });
@@ -7279,10 +7291,63 @@ var qnAfter=null, qnRef="", qnPin=false, curView="today", qnEdit=null, qnCat="ge
 var _go=go; go=function(v){ curView=v; _go(v); qnFabUpdate(); };
 function qnFabUpdate(){ var f=document.getElementById("qnFab"); if(!f) return; var hide=/^(onb|auth|register|login|ob|splash|journal|notes|placement)/.test(curView); f.style.display=hide?"none":"flex"; }
 function qnCatName(c){ var r=QN_CATS.filter(function(x){return x[1]===c;})[0]; return r?r[0]:"Genel"; }
+/* zengin metin notları: kalın / italik / altı çizili / fosforlu / madde / boyut */
+function qnClean(html){
+  var t=document.createElement("template"); t.innerHTML=String(html||"");
+  (function walk(n){
+    Array.prototype.slice.call(n.childNodes).forEach(function(c){
+      if(c.nodeType===3) return;
+      if(c.nodeType!==1){ c.remove(); return; }
+      var tag=c.tagName.toLowerCase(); walk(c);
+      var keep=["b","strong","i","em","u","ul","ol","li","br","div","p"].indexOf(tag)>=0;
+      if(keep){ Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); }); return; }
+      if(tag==="font"){ var sz=c.getAttribute("size"); Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); }); if(/^[1-7]$/.test(sz||"")){ c.setAttribute("size",sz); return; } }
+      if(tag==="span"||tag==="mark"){
+        var st=(c.getAttribute("style")||""), m=st.match(/background(?:-color)?:\s*(rgb\([\d\s,.]+\)|#[0-9a-f]{3,8})/i);
+        Array.prototype.slice.call(c.attributes).forEach(function(a){ c.removeAttribute(a.name); });
+        if(m||tag==="mark"){ c.setAttribute("style","background-color:"+(m?m[1]:"#FFE066")); return; }
+      }
+      while(c.firstChild) c.parentNode.insertBefore(c.firstChild,c); c.remove();
+    });
+  })(t.content);
+  return t.innerHTML;
+}
+function qnPlain(el){
+  var c=el.cloneNode(true);
+  c.querySelectorAll("ul,ol").forEach(function(u){ u.parentNode.insertBefore(document.createTextNode("\n"),u); });
+  c.querySelectorAll("li").forEach(function(li){ li.insertBefore(document.createTextNode("• "),li.firstChild); li.appendChild(document.createTextNode("\n")); });
+  c.querySelectorAll("div,p").forEach(function(d){ d.appendChild(document.createTextNode("\n")); });
+  c.querySelectorAll("br").forEach(function(b){ b.replaceWith("\n"); });
+  return (c.textContent||"").replace(/\n{3,}/g,"\n\n").trim();
+}
+function qnShow(n){ return n.html?qnClean(n.html):esc(n.text||"").replace(/\n/g,"<br>"); }
+(function(){
+  var bar=document.getElementById("qnBar"), ed=document.getElementById("qnRich");
+  function run(c){
+    ed.focus();
+    if(c==="bold") document.execCommand("bold");
+    else if(c==="italic") document.execCommand("italic");
+    else if(c==="underline") document.execCommand("underline");
+    else if(c==="ul") document.execCommand("insertUnorderedList");
+    else if(c==="hl"){
+      var cur=""; try{ cur=String(document.queryCommandValue("backColor")||""); }catch(e){}
+      var on=/255,\s*224,\s*102|ffe066/i.test(cur);
+      document.execCommand("backColor",false,on?"transparent":"#FFE066");
+    }
+    else if(c==="big"||c==="small"){
+      var v=3; try{ v=parseInt(document.queryCommandValue("fontSize"),10)||3; }catch(e){}
+      document.execCommand("fontSize",false,String(Math.max(1,Math.min(7,v+(c==="big"?1:-1)))));
+    }
+    else if(c==="clear"){ document.execCommand("removeFormat"); document.execCommand("backColor",false,"transparent"); }
+  }
+  ["mousedown","touchstart"].forEach(function(ev){ bar.addEventListener(ev,function(e){ if(e.target.closest("button")) e.preventDefault(); },{passive:false}); });
+  bar.addEventListener("click",function(e){ var b=e.target.closest("button"); if(b) run(b.dataset.c); });
+  ed.addEventListener("paste",function(e){ e.preventDefault(); var t=(e.clipboardData||window.clipboardData).getData("text/plain"); document.execCommand("insertText",false,t); });
+})();
 function qnOpen(id,ref){
   qnEdit=id||null; qnRef=ref||""; var n=id?S.qnotes.filter(function(x){return x.id===id;})[0]:null;
   qnCat=n?n.cat:(ref&&/^\d+-\d+$/.test(ref)?"grammar":(QN_VIEWCAT[curView]||"genel")); if(n) qnRef=n.ref||""; qnColor=n?(n.color||""):""; qnPin=!!(n&&n.pin); document.getElementById("qnPin").classList.toggle("on",qnPin);
-  document.getElementById("qnText").value=n?n.text:"";
+  document.getElementById("qnRich").innerHTML=n?qnShow(n):"";
   document.getElementById("qnTitle").textContent=n?"Notu düzenle":"Yeni not";
   document.getElementById("qnDel").style.display=n?"":"none";
   qnRenderOpts();
@@ -7304,9 +7369,10 @@ document.getElementById("qnPin").addEventListener("click",function(){ qnPin=!qnP
 document.getElementById("qnClose").addEventListener("click",qnClose);
 document.getElementById("qnBackdrop").addEventListener("click",qnClose);
 document.getElementById("qnSave").addEventListener("click",function(){
-  var t=document.getElementById("qnText").value.trim(); if(!t){ qnClose(); return; }
-  if(qnEdit){ var n=S.qnotes.filter(function(x){return x.id===qnEdit;})[0]; if(n){ n.text=t; n.cat=qnCat; n.color=qnColor; n.pin=qnPin; } }
-  else { S.qnotes.unshift({id:"q"+Date.now(),ref:qnRef,text:t,cat:qnCat,color:qnColor,pin:qnPin,ts:new Date().toISOString()}); if(wbPendingPos){ S.qnotes[0].pos=wbPendingPos; } }
+  var ed=document.getElementById("qnRich"), t=qnPlain(ed); if(!t){ qnClose(); return; }
+  var hh=qnClean(ed.innerHTML); if(!/<(b|strong|i|em|u|ul|ol|font|span)\b/i.test(hh)) hh="";
+  if(qnEdit){ var n=S.qnotes.filter(function(x){return x.id===qnEdit;})[0]; if(n){ n.text=t; if(hh) n.html=hh; else delete n.html; n.cat=qnCat; n.color=qnColor; n.pin=qnPin; } }
+  else { var nn={id:"q"+Date.now(),ref:qnRef,text:t,cat:qnCat,color:qnColor,pin:qnPin,ts:new Date().toISOString()}; if(hh) nn.html=hh; S.qnotes.unshift(nn); if(wbPendingPos){ S.qnotes[0].pos=wbPendingPos; } }
   wbPendingPos=null;
   save(); qnClose(); if(curView==="notes") renderNotes(); if(qnAfter&&(curView==="grammarunit"||curView==="workbook")) qnAfter();
 });
