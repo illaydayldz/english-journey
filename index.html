@@ -5494,12 +5494,25 @@ async function spotifySearch(q){
         '<button type="button" class="pod-add" aria-label="Listeme ekle"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg></button>'+
         '<button type="button" class="pod-play" aria-label="Çal"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-play"></use></svg></button>';
       row.querySelector(".pod-play").addEventListener("click",function(){ spotifyPlayUri(item.uri); });
-      row.querySelector(".pod-add").addEventListener("click",function(){
-        if(!S.listening.podcasts.some(function(x){ return x.uri&&x.uri===item.uri; })) S.listening.podcasts.push({id:"pod"+Date.now(),title:item.name,uri:item.uri,transcript:"",notes:"",createdAt:isoDate(new Date())});
-        save(); renderPodcastList();
-        var addBtn=row.querySelector(".pod-add");
-        addBtn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>';
-        addBtn.disabled=true;
+      var addBtn=row.querySelector(".pod-add");
+      function inLib(){ return (S.listening.podcasts||[]).some(function(x){ return x.uri&&x.uri===item.uri; }); }
+      function paint(){
+        var on=inLib();
+        addBtn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#'+(on?"i-check":"i-plus")+'"></use></svg>';
+        addBtn.setAttribute("aria-label",on?"Listemden kaldır":"Listeme ekle"); addBtn.title=on?"Listemden kaldır":"Listeme ekle";
+      }
+      paint();
+      addBtn.addEventListener("click",function(){
+        if(inLib()){
+          var pod=S.listening.podcasts.filter(function(x){ return x.uri===item.uri; })[0];
+          var hasData=pod&&((pod.transcript||"").trim()||(pod.notes||"").trim());
+          if(!confirm('"'+item.name+'" listenden kaldırılsın mı?'+(hasData?" Transkript ve notları da silinecek.":""))) return;
+          S.listening.podcasts=S.listening.podcasts.filter(function(x){ return x.uri!==item.uri; });
+          if(pod&&S.listening.selectedId===pod.id) S.listening.selectedId=null;
+        }else{
+          S.listening.podcasts.push({id:"pod"+Date.now(),title:item.name,uri:item.uri,transcript:"",notes:"",createdAt:isoDate(new Date())});
+        }
+        save(); renderPodcastList(); paint();
       });
       list.appendChild(row);
     });
