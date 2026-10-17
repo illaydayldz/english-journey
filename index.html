@@ -1610,6 +1610,7 @@
   .fr-row small{font-size:12px;opacity:.75;}
   .shelf-item{position:relative;flex-shrink:0;}
   .shelf-x{position:absolute;top:-4px;right:-4px;width:26px;height:26px;border-radius:50%;border:none;background:#e5484d;color:#fff;font-size:17px;line-height:1;cursor:pointer;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;padding:0;}
+.nt-rich{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;font-size:13px;line-height:1.4;}.nt-rich ul,.nt-rich ol{margin:2px 0;padding-left:18px;}
 </style>
 <script>
 /* Yüksek çözünürlüklü Moonie görselleri: assets/mascot/hd/ içine konan dosyalar index.json'da listelenirse otomatik kullanılır; liste yoksa mevcut görseller kalır. */
@@ -7421,7 +7422,7 @@ function ntCard(it){
   var d=document.createElement("div"); d.className="nt-card"; d.setAttribute("role","button"); d.tabIndex=0;
   d.style.background="linear-gradient(180deg,"+c+"40,"+c+"0d 70%)"; d.style.borderColor=c+"55";
   d.innerHTML=(it.own&&it.n.pin?'<span class="nt-pinmark"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg></span>':'')+
-    '<div class="nt-ct">'+esc(title)+'</div>'+(rest?'<div class="nt-cs">'+esc(rest.slice(0,110))+'</div>':'')+
+    (it.own&&it.n.html?(it.title?'<div class="nt-ct">'+esc(title)+'</div>':'')+'<div class="nt-cs nt-rich">'+qnShow(it.n)+'</div>':'<div class="nt-ct">'+esc(title)+'</div>'+(rest?'<div class="nt-cs">'+esc(rest.slice(0,110))+'</div>':''))+
     '<div class="nt-cf"><span>'+esc(it.sub||it.cat)+'</span><span class="nt-go"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span></div>';
   d.addEventListener("click",function(){ if(it.own) qnOpen(it.n.id); else it.go(); });
   return d;
