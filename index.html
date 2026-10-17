@@ -3564,7 +3564,11 @@ function renderVocab(){
         function chk(){ typedAnswer=ti.value.trim(); studyTyped=true; flipped=true; cardAnim="flip"; renderVocab(); }
         document.getElementById("vcCheck").addEventListener("click",chk);
         ti.addEventListener("keydown",function(e){ if(e.key==="Enter") chk(); });
-      } else document.getElementById("flipBtn").addEventListener("click",function(){ studyTyped=false; flipped=true; cardAnim="flip"; renderVocab(); });
+      } else {
+        document.getElementById("flipBtn").addEventListener("click",function(){ studyTyped=false; flipped=true; cardAnim="flip"; renderVocab(); });
+        var fcF=sa.querySelector(".vc-front"); fcF.style.cursor="pointer";
+        fcF.addEventListener("click",function(){ studyTyped=false; flipped=true; cardAnim="flip"; renderVocab(); });
+      }
     } else {
       var norm=function(x){ return (x||"").toLowerCase().replace(/[^a-z0-9ğüşöçıİ' ]/gi,"").trim(); };
       var fb="";
@@ -3578,7 +3582,9 @@ function renderVocab(){
         '<button data-g="1"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-3"></use></svg></span><span class="vc-gl">Orta</span></button>'+
         '<button data-g="2"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-4"></use></svg></span><span class="vc-gl">Kolay</span></button>'+
         '</div>';
-      document.getElementById("flashSpeakBtn").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
+      document.getElementById("flashSpeakBtn").addEventListener("click",function(e){ e.stopPropagation(); speakEnglish(w.en,S.settings.ttsRate||0.95); });
+      var fcB=sa.querySelector(".vc-front"); fcB.style.cursor="pointer";
+      fcB.addEventListener("click",function(){ flipped=false; studyTyped=false; cardAnim="flip"; renderVocab(); });
       sa.querySelectorAll(".vc-grade button").forEach(function(b){
         b.addEventListener("click",function(){
           var g=parseInt(b.dataset.g,10), fc=sa.querySelector(".vc-front");
