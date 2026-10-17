@@ -6994,34 +6994,81 @@ function renderWritingList(){
 
 /* ---------- 4/3/2 AKICILIK SAYACI ---------- */
 var timer432Interval=null;
+var t432={rec:null,text:"",interim:"",on:false,total:0,topic:""};
+function t432Listen(){
+  var SRc=window.SpeechRecognition||window.webkitSpeechRecognition; var live=document.getElementById("timer432Live");
+  if(!SRc){ if(live){ live.style.display="block"; live.textContent="Bu tarayıcıda ses tanıma yok; sadece süre tutuluyor (Chrome/Safari dene)."; } return; }
+  var rec=new SRc(); rec.lang="en-US"; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=1;
+  var restarts=0; t432.rec=rec; t432.on=true; t432.text=""; t432.interim="";
+  function show(){ if(!live) return; live.style.display="block"; var t=(t432.text+" "+t432.interim).trim(); live.textContent=t||"Dinliyorum… konuşmaya başla."; live.scrollTop=live.scrollHeight; }
+  rec.onresult=function(e){
+    t432.interim="";
+    for(var k=e.resultIndex;k<e.results.length;k++){ var r=e.results[k]; if(r.isFinal) t432.text+=(t432.text?" ":"")+r[0].transcript.trim(); else t432.interim+=r[0].transcript; }
+    show();
+  };
+  rec.onerror=function(e){ if(e.error==="no-speech") return; if(e.error==="not-allowed"||e.error==="service-not-allowed"){ t432.on=false; if(live){ live.style.display="block"; live.textContent="Mikrofon izni gerekli. Tarayıcı ayarlarından mikrofona izin ver."; } } };
+  rec.onend=function(){ if(t432.on&&restarts<60){ restarts++; t432.interim=""; try{ rec.start(); }catch(err){} } };
+  show();
+  try{ rec.start(); }catch(err){}
+}
+function t432Stop(){
+  t432.on=false; if(t432.rec){ try{ t432.rec.stop(); }catch(e){} t432.rec=null; }
+}
+function t432Result(elapsedSec){
+  var box=document.getElementById("timer432Result"); if(!box) return;
+  var txt=(t432.text+" "+t432.interim).trim(), words=txt?txt.split(/\s+/).length:0, mins=Math.max(elapsedSec,1)/60;
+  var wpm=Math.round(words/mins);
+  box.style.display="block";
+  if(!words){ box.innerHTML='<div class="result bad">Konuşman algılanmadı. Mikrofona izin verdiğinden ve sessiz bir yerde olduğundan emin ol.</div>'; return; }
+  var low=txt.toLowerCase(), sug=((t432.unit&&t432.unit.phrases)||[]).filter(function(ph){ var k=ph[0].toLowerCase().replace(/[…\/].*$/,"").replace(/[^a-z' ]/g,"").trim().split(/\s+/).slice(0,3).join(" "); return k&&low.indexOf(k)<0; }).slice(0,5);
+  var sugHtml=sug.length?'<div class="su-card" style="margin-top:8px;"><div class="su-sh"><span class="su-n">+</span><div><b>Şu kalıpları da kullanabilirdin</b><small>Bir sonraki turda dene</small></div></div>'+sug.map(function(ph,i){ return '<div class="su-phrase"><div class="su-ptx"><div class="su-en">'+esc(ph[0])+'</div><div class="su-tr">'+esc(ph[1])+'</div></div><button type="button" class="su-pb" data-t432say="'+i+'" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button></div>'; }).join("")+'</div>':'';
+  box.innerHTML='<div class="result ok"><b>'+words+' kelime · dakikada ~'+wpm+'</b><div class="heard">'+esc(txt)+'</div><small>Akıcı konuşma genelde dakikada 100–150 kelimedir. Tur tekrarlarında bu sayıyı artırmaya çalış.</small></div>'+sugHtml+
+    ((S.settings.geminiApiKey||"").trim()?'<button type="button" class="btn sec sm" id="t432Fb" style="margin-top:6px;">Moonie geri bildirim versin</button><div id="t432FbOut" class="mut" style="margin-top:6px;font-size:13px;line-height:1.5;"></div>':'');
+  box.querySelectorAll("[data-t432say]").forEach(function(bt){ bt.addEventListener("click",function(){ speakEnglish(sug[parseInt(bt.dataset.t432say,10)][0].replace(/…/g,"").replace(/\s*\/\s*.*$/,""),.9); }); });
+  var fb=document.getElementById("t432Fb");
+  if(fb) fb.addEventListener("click",function(){
+    fb.disabled=true; fb.textContent="Moonie inceliyor…";
+    var prompt="Aşağıda bir İngilizce öğrencisinin '"+t432.topic+"' konusunda "+Math.round(elapsedSec/60*10)/10+" dakika boyunca yaptığı konuşmanın metni var (ses tanımadan geldiği için noktalama yok). Türkçe olarak, en fazla 6 kısa madde ile: 1) iki güçlü yan, 2) en önemli 3 dil hatası ve doğruları, 3) bir sonraki tur için tek öneri, 4) konuşmasını daha doğal ve zengin yapacak 5 kalıp ya da bağlaç öner (her biri: İngilizce ifade — Türkçe anlamı — kısa örnek cümle) ver.\n\nMetin: "+txt;
+    callGeminiText([{role:"user",parts:[{text:prompt}]}]).then(function(t){ fb.style.display="none"; document.getElementById("t432FbOut").textContent=t; }).catch(function(e){ fb.disabled=false; fb.textContent="Moonie geri bildirim versin"; document.getElementById("t432FbOut").textContent=e.message; });
+  });
+}
 function start432Timer(minutes){
-  stop432Timer();
+  stop432Timer(true);
   var remaining=minutes*60;
+  t432.total=minutes*60; t432.topic=(function(){ var el=document.querySelector("#speakCurrent .su-sh small"); var all=document.querySelectorAll("#speakCurrent .su-sh small"); for(var k=0;k<all.length;k++){ if(/^Konu:/.test(all[k].textContent)) return all[k].textContent.replace(/^Konu:\s*/,""); } return "serbest konu"; })();
   var disp=document.getElementById("timer432Display"), stopBtn=document.getElementById("timer432Stop");
   if(!disp||!stopBtn) return;
+  var res=document.getElementById("timer432Result"); if(res){ res.style.display="none"; res.innerHTML=""; }
   disp.style.display="block"; stopBtn.style.display="block";
   function render(){
     var m=Math.floor(remaining/60), s=remaining%60;
     disp.textContent=m+":"+(s<10?"0":"")+s;
   }
   render();
+  t432Listen();
   timer432Interval=setInterval(function(){
     remaining--;
     if(remaining<0){
-      stop432Timer();
+      stop432Timer(true);
+      t432Result(t432.total);
       if(disp) disp.textContent="Bitti — şimdi bir sonraki turu dene.";
       awardXp(20,"timer");
       if(disp) disp.style.display="block";
       if(navigator.vibrate) navigator.vibrate([200,100,200]);
       return;
     }
+    t432.elapsed=t432.total-remaining;
     render();
   },1000);
 }
-function stop432Timer(){
+function stop432Timer(silent){
+  var wasRunning=!!timer432Interval;
   if(timer432Interval){ clearInterval(timer432Interval); timer432Interval=null; }
+  t432Stop();
   var stopBtn=document.getElementById("timer432Stop");
   if(stopBtn) stopBtn.style.display="none";
+  if(wasRunning&&silent!==true){ t432Result(t432.elapsed||1); }
+  if(silent===true) t432.elapsed=0;
 }
 function addUnitPhrasesToVocab(unit){
   var addedN=0;
@@ -7450,7 +7497,7 @@ function renderSpeaking(){
   stop432Timer();
   resetSpeakConvo();
   var sel=S.speaking.selected||speakFrontier();
-  var level=SPEAK_LEVELS[sel.li], unit=level.units[sel.ui];
+  var level=SPEAK_LEVELS[sel.li], unit=level.units[sel.ui]; t432.unit=unit;
   var done=!!S.speaking.completed[unitKey(sel.li,sel.ui)];
   var stg=SPEAK_STAGE[level.cefr]||SPEAK_STAGE.B1;
   var icoK=(MP_UNIT_ICON[level.cefr]||MP_UNIT_ICON.B1)[sel.ui%5];
@@ -7489,6 +7536,7 @@ function renderSpeaking(){
         '<button type="button" class="su-time" data-min="2"><b>2</b><span>dakika</span></button>'+
       '</div>'+
       '<div id="timer432Display" style="display:none;text-align:center;font-family:var(--font-display);font-size:38px;font-weight:800;color:var(--ink);padding:10px 0 2px;"></div>'+
+      '<div id="timer432Live" class="mut" style="display:none;min-height:44px;max-height:120px;overflow:auto;margin:6px 0;padding:10px 12px;border-radius:14px;background:var(--tint);font-size:14px;line-height:1.5;"></div><div id="timer432Result" style="display:none;margin:6px 0;"></div>'+
       '<button type="button" class="btn sec" id="timer432Stop" style="display:none;">Durdur</button>'+
     '</div>'+
     '<details class="note-details" id="speakNoteDetails"'+(S.speaking.notes[unitKey(sel.li,sel.ui)]?" open":"")+'>'+
