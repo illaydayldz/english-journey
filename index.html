@@ -7049,7 +7049,7 @@ function splitMoonieReply(text){
   if(m) return {speak:text.slice(0,m.index).trim(),note:m[1].trim()};
   return {speak:text.trim(),note:""};
 }
-var GEMINI_FALLBACKS=["gemini-3.7-flash","gemini-flash-latest"];
+var GEMINI_FALLBACKS=["gemini-3.7-flash","gemini-flash-latest","gemini-flash-lite-latest"];
 function geminiFetchJSON(body,apiKey){
   var models=[GEMINI_MODEL].concat(GEMINI_FALLBACKS.filter(function(m){ return m!==GEMINI_MODEL; }));
   function attempt(i){
@@ -7059,8 +7059,10 @@ function geminiFetchJSON(body,apiKey){
     .then(function(res){
       var d=res.data||{}, msg=d.error&&d.error.message||"";
       var modelProblem=(res.status===404||/not found|not supported|no longer available|deprecated/i.test(msg));
-      if(!res.ok&&modelProblem&&i+1<models.length) return attempt(i+1);
-      if(i>0&&res.ok) GEMINI_MODEL=models[i];
+      var quotaProblem=(res.status===429||/quota|exhausted|rate.?limit/i.test(msg));
+      if(!res.ok&&(modelProblem||quotaProblem)&&i+1<models.length) return attempt(i+1);
+      if(i>0&&res.ok&&modelProblem) GEMINI_MODEL=models[i];
+      if(!res.ok&&quotaProblem&&d.error) d.error.message="Gemini'nin ücretsiz kullanım sınırı doldu (tüm modeller denendi). Bir süre bekle: dakikalık sınır birkaç dakikada, günlük sınır gece yarısı (Pasifik saati, sabaha karşı) sıfırlanır. Ayarlar'dan yeni bir anahtar girmek de çözer. Ayrıntı: "+msg.slice(0,120);
       return d;
     },function(){ throw new Error("Bağlantı kurulamadı. İnternetini kontrol et."); });
   }
