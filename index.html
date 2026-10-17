@@ -2938,7 +2938,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
 <div class="word-backdrop" id="vaBackdrop"></div>
 <div class="jr-sheet" id="vaSheet">
   <div class="jr-grab"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><b style="font-family:var(--font-display);font-size:16px;">Yeni kelime</b><button type="button" class="jr-tool" id="vaClose" style="flex:none;padding:8px 12px;">Kapat</button></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><b id="vaTitle" style="font-family:var(--font-display);font-size:16px;">Yeni kelime</b><button type="button" class="jr-tool" id="vaClose" style="flex:none;padding:8px 12px;">Kapat</button></div>
   <input class="f" id="wEn" placeholder="English" autocomplete="off">
   <input class="f" id="wTr" placeholder="Türkçe" autocomplete="off" style="margin-top:8px;">
   <input class="f" id="wEx" placeholder="Örnek cümle (opsiyonel)" autocomplete="off" style="margin-top:8px;">
@@ -3492,13 +3492,16 @@ function addWord(en,tr,ex){
   S.words.push({en:en,tr:tr,ex:ex.trim(),ef:2.5,reps:0,interval:0,due:today0()});
   save(); renderVocab();
 }
-function vaOpen(){ document.getElementById("vaSheet").classList.add("open"); document.getElementById("vaBackdrop").classList.add("open"); setTimeout(function(){ document.getElementById("wEn").focus(); },250); }
-function vaClose(){ document.getElementById("vaSheet").classList.remove("open"); document.getElementById("vaBackdrop").classList.remove("open"); }
+function vaOpen(){ if(vaEditIdx>=0){ vaEditIdx=-1; } document.getElementById("vaSheet").classList.add("open"); document.getElementById("vaBackdrop").classList.add("open"); setTimeout(function(){ document.getElementById("wEn").focus(); },250); }
+var vaEditIdx=-1;
+function vaClose(){ document.getElementById("vaSheet").classList.remove("open"); document.getElementById("vaBackdrop").classList.remove("open"); if(vaEditIdx>=0){ document.getElementById("wEn").value=document.getElementById("wTr").value=document.getElementById("wEx").value=""; } vaEditIdx=-1; document.getElementById("vaTitle").textContent="Yeni kelime"; document.getElementById("addWord").textContent="Kelimeyi ekle"; }
+function vaEdit(i){ var w=S.words[i]; if(!w) return; vaEditIdx=i; document.getElementById("wEn").value=w.en||""; document.getElementById("wTr").value=w.tr||""; document.getElementById("wEx").value=w.ex||""; document.getElementById("vaTitle").textContent="Kelimeyi düzenle"; document.getElementById("addWord").textContent="Kaydet"; document.getElementById("vaSheet").classList.add("open"); document.getElementById("vaBackdrop").classList.add("open"); }
 document.getElementById("vaOpen").addEventListener("click",vaOpen);
 document.getElementById("vaClose").addEventListener("click",vaClose);
 document.getElementById("vaBackdrop").addEventListener("click",vaClose);
 document.getElementById("addWord").addEventListener("click",function(){
   var en=document.getElementById("wEn"),tr=document.getElementById("wTr"),ex=document.getElementById("wEx");
+  if(vaEditIdx>=0){ var ew=S.words[vaEditIdx]; if(ew&&en.value.trim()&&tr.value.trim()){ ew.en=en.value.trim(); ew.tr=tr.value.trim(); ew.ex=ex.value.trim(); save(); renderVocab(); } en.value=tr.value=ex.value=""; vaClose(); return; }
   var addedEn=en.value.trim(), okAdd=!!(addedEn&&tr.value.trim()); addWord(en.value,tr.value,ex.value); en.value=tr.value=ex.value=""; vaClose(); if(okAdd) vaToast(S.words.length-1);
 });
 function dueWords(){ var t=today0(); return S.words.filter(function(w){return w.due<=t;}); }
@@ -3622,6 +3625,8 @@ function renderVocab(){
         '<button class="del" data-i="'+idx+'" aria-label="Sil">'+DEL_ICON+'</button>';
       row.querySelector(".wc-sp").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
       row.querySelector(".wc-pr").addEventListener("click",function(){ wpOpen(idx); });
+      row.querySelector(".wc-b").addEventListener("click",function(e){ if(e.target.closest("button")) return; vaEdit(S.words.indexOf(w)); });
+      row.querySelector(".wc-en").style.cursor="pointer";
       row.querySelector(".del").addEventListener("click",function(){
         if(confirm('"'+w.en+'" silinsin mi?')){ S.words.splice(idx,1); save(); renderVocab(); }
       });
