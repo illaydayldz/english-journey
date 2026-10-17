@@ -5940,6 +5940,55 @@ var SPEAK_LEVELS=[
  ]}
 ];
 
+var SP_TRAVEL=[
+{cefr:"A2",name:"Havalimanı: Check-in & Bagaj",
+phrases:[["I'd like to check in for my flight to London.","Londra uçuşum için check-in yaptırmak istiyorum."],["Here is my passport and booking reference.","İşte pasaportum ve rezervasyon kodum."],["I have one bag to check in and one carry-on.","Bir bavul teslim edeceğim, bir de kabin çantam var."],["Is there a weight limit for the checked bag?","Teslim edilen bavul için ağırlık sınırı var mı?"],["Could I have a window seat / an aisle seat, please?","Cam kenarı / koridor tarafı bir koltuk alabilir miyim?"],["Which gate does the flight leave from?","Uçuş hangi kapıdan kalkıyor?"],["What time does boarding start?","Biniş saat kaçta başlıyor?"],["My bag is slightly overweight. Can I pay the extra fee?","Bavulum biraz fazla ağır. Fazla ücreti ödeyebilir miyim?"]],
+dialog:[["Agent","Good morning. Where are you flying to today?","Günaydın. Bugün nereye uçuyorsunuz?"],["You","Good morning. I'm flying to London.","Günaydın. Londra'ya uçuyorum."],["Agent","May I see your passport, please?","Pasaportunuzu görebilir miyim?"],["You","Sure, here you are.","Tabii, buyurun."],["Agent","Are you checking in any bags?","Teslim edeceğiniz bavul var mı?"],["You","Yes, one suitcase. And I have this small bag as hand luggage.","Evet, bir bavul. Bir de el bagajı olarak şu küçük çanta."],["Agent","Please put the suitcase on the scale. It's 23 kilos, that's fine.","Bavulu teraziye koyun. 23 kilo, sorun yok."],["Agent","Here is your boarding pass. Boarding starts at 10:40 at gate 12.","İşte biniş kartınız. Biniş 10:40'ta 12 numaralı kapıda."],["You","Thank you very much.","Çok teşekkürler."]],
+scenario:"Havalimanında check-in gişesindesin. Görevli uçuşunu, pasaportunu ve bavullarını soracak; sen de koltuk ve kapı gibi şeyleri öğren.",
+topic:"Check-in gişesinde bavul teslim et, koltuk iste ve biniş kapısını öğren."},
+{cefr:"A2",name:"Pasaport Kontrolü (Immigration)",
+phrases:[["Good morning. Here is my passport.","Günaydın. İşte pasaportum."],["I'm here for tourism. / I'm here on business. / I'm here to visit family.","Turizm / iş / aile ziyareti için buradayım."],["I'll be staying for ten days.","On gün kalacağım."],["I'm staying at the Hilton Hotel. Here is my reservation.","Hilton Otel'de kalacağım. İşte rezervasyonum."],["This is my first visit.","Bu benim ilk ziyaretim."],["I'm travelling alone. / I'm travelling with my family.","Yalnız / ailemle seyahat ediyorum."],["I have a return ticket for the 20th.","20'sine dönüş biletim var."],["Sorry, could you repeat that, please?","Pardon, tekrar eder misiniz?"]],
+dialog:[["Officer","Good evening. May I see your passport?","İyi akşamlar. Pasaportunuzu görebilir miyim?"],["You","Here you are.","Buyurun."],["Officer","What is the purpose of your visit?","Ziyaretinizin amacı nedir?"],["You","I'm here for tourism.","Turizm için buradayım."],["Officer","How long are you planning to stay?","Ne kadar kalmayı planlıyorsunuz?"],["You","For one week. I have a return ticket.","Bir hafta. Dönüş biletim var."],["Officer","Where will you be staying?","Nerede kalacaksınız?"],["You","At a hotel in the city centre. I have the booking here.","Şehir merkezinde bir otelde. Rezervasyonum burada."],["Officer","Is this your first visit?","İlk ziyaretiniz mi?"],["You","Yes, it is.","Evet."],["Officer","Enjoy your stay.","İyi tatiller."]],
+scenario:"Varış havalimanında pasaport kontrolündesin. Memur ziyaret amacını, kalış süreni ve nerede kalacağını soracak. Net ve kısa cevap ver.",
+topic:"Pasaport kontrolünde ziyaret amacını, kalış süreni ve konaklama yerini anlat."},
+{cefr:"A2",name:"Güvenlik Kontrolü",
+phrases:[["Do I need to take out my laptop?","Laptopumu çıkarmam gerekiyor mu?"],["Should I take off my belt and shoes?","Kemerimi ve ayakkabılarımı çıkarmalı mıyım?"],["I have some liquids in a clear plastic bag.","Şeffaf poşette sıvılarım var."],["Is this allowed in my hand luggage?","Bu el bagajında serbest mi?"],["I need to carry my medication with me.","İlacımı yanımda taşımam gerekiyor."],["Sorry, did I set off the alarm?","Pardon, alarmı ben mi çaldırdım?"],["Of course, I can open my bag.","Tabii, çantamı açabilirim."],["Where can I repack my things?","Eşyalarımı nerede toparlayabilirim?"]],
+dialog:[["Officer","Please put your bag, laptop and jacket in the tray.","Çantanızı, laptopunuzu ve ceketinizi sepete koyun."],["You","Should I take off my belt as well?","Kemerimi de çıkarmalı mıyım?"],["Officer","Yes, please. Do you have any liquids?","Evet, lütfen. Sıvınız var mı?"],["You","Yes, a small bottle of water.","Evet, küçük bir su şişesi."],["Officer","Liquids over 100 millilitres are not allowed. You'll have to leave it here.","100 mililitreyi aşan sıvılar yasak. Burada bırakmanız gerekecek."],["You","Oh, I didn't know. That's fine.","Ah, bilmiyordum. Sorun değil."],["Officer","Please step through the scanner.","Lütfen tarayıcıdan geçin."],["Officer","Please step aside. I need to check your bag.","Lütfen kenara çekilin. Çantanıza bakmam gerekiyor."],["You","Of course.","Tabii."]],
+scenario:"Güvenlik kontrolündesin. Görevli eşyalarını taramaya koymanı, sıvıları sormanı ve bazen çantanı açmanı isteyecek.",
+topic:"Güvenlikte neleri çıkaracağını sor, sıvıların için bilgi ver ve görevlinin isteklerini yerine getir."},
+{cefr:"A2",name:"Bagaj Teslim Alma & Kayıp Bavul",
+phrases:[["Which carousel is the baggage from flight TK 1983?","TK 1983 uçuşunun bavulları hangi bantta?"],["I can't find my suitcase.","Bavulumu bulamıyorum."],["My luggage hasn't arrived.","Bavulum gelmedi."],["It's a medium black suitcase with a red ribbon on the handle.","Orta boy siyah bir bavul, sapında kırmızı kurdele var."],["Here is my baggage claim tag.","İşte bagaj fişim."],["Could you deliver it to my hotel, please?","Otelime teslim edebilir misiniz?"],["How long will it take to find it?","Bulunması ne kadar sürer?"],["My suitcase is damaged. I'd like to make a complaint.","Bavulum hasarlı. Şikayette bulunmak istiyorum."]],
+dialog:[["Agent","Hello, how can I help you?","Merhaba, nasıl yardımcı olabilirim?"],["You","My suitcase didn't arrive.","Bavulum gelmedi."],["Agent","Can I see your baggage tag and your passport, please?","Bagaj fişinizi ve pasaportunuzu görebilir miyim?"],["You","Here you are.","Buyurun."],["Agent","Can you describe your bag?","Bavulunuzu tarif edebilir misiniz?"],["You","It's a large blue suitcase with a name tag on it.","Üzerinde isim etiketi olan büyük mavi bir bavul."],["Agent","Please fill in this form. Where can we deliver it?","Bu formu doldurun. Nereye teslim edelim?"],["You","To the Grand Hotel in the city centre. Here is my phone number.","Şehir merkezindeki Grand Otel'e. Telefon numaram burada."],["You","How long will it take?","Ne kadar sürer?"],["Agent","Usually within 24 to 48 hours. We'll call you as soon as we find it.","Genelde 24 ile 48 saat içinde. Bulur bulmaz sizi arayacağız."]],
+scenario:"Varış havalimanında bavulun gelmedi. Bagaj bürosundaki görevliye bavulunu tarif et ve nereye teslim edileceğini söyle.",
+topic:"Kayıp bavulunu tarif et, otel adresini ver ve ne kadar süreceğini sor."},
+{cefr:"A2",name:"Gümrük (Customs)",
+phrases:[["I have nothing to declare.","Beyan edecek bir şeyim yok."],["I have something to declare.","Beyan edeceğim bir şey var."],["These are gifts for my friends.","Bunlar arkadaşlarım için hediyeler."],["It's for personal use.","Kişisel kullanım için."],["I'm carrying some medication. I have a prescription.","Biraz ilaç taşıyorum. Reçetem var."],["I'm bringing about 500 euros in cash.","Yaklaşık 500 euro nakit getiriyorum."],["Do I have to pay duty on this?","Bunun için gümrük vergisi ödemem gerekiyor mu?"],["Would you like me to open my suitcase?","Bavulumu açmamı ister misiniz?"]],
+dialog:[["Officer","Good afternoon. Do you have anything to declare?","İyi günler. Beyan edeceğiniz bir şey var mı?"],["You","No, I have nothing to declare.","Hayır, beyan edeceğim bir şey yok."],["Officer","What's in the bag?","Çantada ne var?"],["You","Just clothes, some books and a few gifts.","Sadece kıyafetler, birkaç kitap ve birkaç hediye."],["Officer","Are you carrying any food?","Yiyecek taşıyor musunuz?"],["You","Only some chocolate and Turkish delight for my friends.","Sadece arkadaşlarım için biraz çikolata ve lokum."],["Officer","That's fine. Could you open this bag, please?","Sorun yok. Bu çantayı açar mısınız?"],["You","Of course.","Tabii."],["Officer","Thank you. You may go.","Teşekkürler. Gidebilirsiniz."]],
+scenario:"Gümrük kapısındasın. Görevli bavulundaki şeyleri, yiyecek ve nakit para taşıyıp taşımadığını soracak.",
+topic:"Gümrükte bavulunda neler olduğunu, hediyelerini ve ilaçlarını anlat."},
+{cefr:"B1",name:"Aktarma, Rötar & Uçuş İptali",
+phrases:[["Excuse me, my flight has been delayed. What's the new departure time?","Pardon, uçuşum rötar yaptı. Yeni kalkış saati nedir?"],["I missed my connecting flight. What are my options?","Aktarma uçağımı kaçırdım. Seçeneklerim neler?"],["Could you rebook me on the next flight, please?","Beni bir sonraki uçuşa aktarabilir misiniz?"],["Is the airline providing a meal voucher or a hotel?","Havayolu yemek kuponu ya da otel sağlıyor mu?"],["My flight has been cancelled. Am I entitled to compensation?","Uçuşum iptal edildi. Tazminat hakkım var mı?"],["How long is the layover?","Aktarma bekleme süresi ne kadar?"],["Which gate should I go to for my connection?","Aktarma için hangi kapıya gitmeliyim?"],["Could I speak to a supervisor, please?","Bir amirle görüşebilir miyim?"]],
+dialog:[["You","Excuse me, I missed my connecting flight because the first one was late.","Pardon, ilk uçuş geciktiği için aktarma uçağımı kaçırdım."],["Agent","I'm sorry to hear that. May I see your boarding pass?","Üzüldüm. Biniş kartınızı görebilir miyim?"],["You","Here it is. What are my options?","Buyurun. Seçeneklerim neler?"],["Agent","I can put you on the 6 p.m. flight tonight.","Sizi bu akşamki 18:00 uçuşuna alabilirim."],["You","Is the airline providing a meal voucher?","Havayolu yemek kuponu veriyor mu?"],["Agent","Yes, here is a voucher for the airport restaurants.","Evet, havalimanı restoranları için bir kupon."],["You","Thank you. Which gate should I go to?","Teşekkürler. Hangi kapıya gitmeliyim?"]],
+scenario:"Uçuşun gecikti ve aktarma uçağını kaçırdın. Havayolu bürosunda seçeneklerini öğren, yemek ve konaklama iste.",
+topic:"Kaçırdığın aktarma uçuşu için çözüm iste ve haklarını sor."},
+{cefr:"B1",name:"Otelde Check-in & Sorun Çözme",
+phrases:[["I have a reservation under the name Yıldız.","Yıldız adına rezervasyonum var."],["Could I see the room first?","Önce odayı görebilir miyim?"],["The air conditioning isn't working.","Klima çalışmıyor."],["Could you send someone to fix it?","Birini gönderip tamir ettirebilir misiniz?"],["What time is breakfast served?","Kahvaltı saat kaçta?"],["Could I have a late check-out?","Geç check-out yapabilir miyim?"],["Is Wi-Fi included in the price?","Wi-Fi fiyata dahil mi?"],["Could you call a taxi for me?","Benim için taksi çağırabilir misiniz?"]],
+dialog:[["Receptionist","Good evening. Do you have a reservation?","İyi akşamlar. Rezervasyonunuz var mı?"],["You","Yes, under the name Yıldız, for three nights.","Evet, Yıldız adına, üç gece için."],["Receptionist","May I see your passport? Your room is 412 on the fourth floor.","Pasaportunuzu görebilir miyim? Odanız dördüncü katta, 412."],["You","What time is breakfast served?","Kahvaltı saat kaçta?"],["Receptionist","From 7 to 10 in the restaurant.","Restoranda 7 ile 10 arası."],["You","The air conditioning in my room isn't working. Could you send someone?","Odamdaki klima çalışmıyor. Birini gönderebilir misiniz?"],["Receptionist","Of course. I'll send a technician right away.","Tabii. Hemen bir teknisyen gönderiyorum."]],
+scenario:"Otele geldin. Resepsiyonda check-in yap, kahvaltı saatini sor ve odandaki bir sorunu çöz.",
+topic:"Check-in yap, bir hizmet iste ve odandaki bir sorunu kibarca bildir."},
+{cefr:"B1",name:"Taksi & Toplu Taşıma",
+phrases:[["Could you take me to this address, please?","Beni bu adrese götürür müsünüz?"],["How long will it take?","Ne kadar sürer?"],["How much is the fare to the city centre?","Şehir merkezine ücret ne kadar?"],["Could you stop here, please?","Burada durabilir misiniz?"],["Keep the change.","Üstü kalsın."],["Which bus goes to the city centre?","Hangi otobüs şehir merkezine gidiyor?"],["A single ticket / a return ticket, please.","Tek gidiş / gidiş-dönüş bilet lütfen."],["Does this train stop at Central Station?","Bu tren Central Station'da durur mu?"]],
+dialog:[["You","Could you take me to the Grand Hotel, please?","Beni Grand Otel'e götürür müsünüz?"],["Driver","Sure. Do you have the address?","Tabii. Adresi var mı?"],["You","Yes, here it is. How long will it take?","Evet, buyurun. Ne kadar sürer?"],["Driver","About twenty minutes, depending on traffic.","Trafiğe bağlı olarak yirmi dakika kadar."],["You","How much will it cost?","Ne kadar tutar?"],["Driver","Around thirty pounds.","Yaklaşık otuz pound."],["You","Could you stop here, please? Keep the change.","Burada durabilir misiniz? Üstü kalsın."]],
+scenario:"Havalimanından şehre gitmek için taksiye biniyor ve toplu taşıma bilgisi soruyorsun.",
+topic:"Taksiye adresi söyle, süre ve ücreti sor, sonra toplu taşıma ile ilgili bir şey öğren."},
+{cefr:"B1",name:"Restoranda Sipariş & Şikayet",
+phrases:[["A table for two, please.","İki kişilik bir masa lütfen."],["Could we see the menu, please?","Menüyü görebilir miyiz?"],["I'm allergic to nuts. Does this dish contain any?","Fıstığa/kuruyemişe alerjim var. Bu yemekte var mı?"],["I'll have the grilled chicken, please. No onions.","Izgara tavuk alayım lütfen. Soğansız."],["Could we have some more water, please?","Biraz daha su alabilir miyiz?"],["The food is cold. Could you heat it up?","Yemek soğuk. Isıtabilir misiniz?"],["Excuse me, I think there's a mistake in the bill.","Pardon, hesapta bir hata olduğunu düşünüyorum."],["Could we have the bill, please?","Hesabı alabilir miyiz?"]],
+dialog:[["Waiter","Good evening. How many people?","İyi akşamlar. Kaç kişisiniz?"],["You","A table for two, please.","İki kişilik masa lütfen."],["Waiter","Here is the menu. Are you ready to order?","Menü burada. Sipariş vermeye hazır mısınız?"],["You","I'll have the grilled chicken, please. I'm allergic to nuts, so no sauce with nuts.","Izgara tavuk alayım lütfen. Kuruyemişe alerjim var, o yüzden kuruyemişli sos olmasın."],["Waiter","Of course. Anything to drink?","Tabii. İçecek?"],["You","Just water, please.","Sadece su lütfen."],["You","Excuse me, could we have the bill, please?","Pardon, hesabı alabilir miyiz?"]],
+scenario:"Bir restorandasın. Masa iste, alerjini belirterek sipariş ver ve gerekirse nazikçe şikayet et.",
+topic:"Sipariş ver, bir istekte bulun ve hesabı iste."}
+];
+SP_TRAVEL.forEach(function(u){ var lv=SPEAK_LEVELS.filter(function(l){ return l.cefr===u.cefr; })[0]; if(lv) lv.units.push({name:u.name,phrases:u.phrases,dialog:u.dialog,scenario:u.scenario,topic:u.topic}); });
+
 var SPEAK_STAGE={
  A1:{n:"Yola Çıkış",story:"Moonie dünya turuna çıkıyor! Bavulunu hazırlıyor, havalimanına gidiyor; ona yardım et.",pose:"pose-speak.webp",sc:1,c:["color-mix(in srgb,var(--accent) 72%,#fff)","color-mix(in srgb,var(--accent) 92%,#fff)"]},
  A2:{n:"Şehir Keşfi",story:"Moonie yeni bir şehre vardı: otel, market, yol sorma. Günlük hayatta yolunu bulsun.",pose:"pose-speak.webp",sc:1,c:["color-mix(in srgb,var(--accent) 88%,#fff)","color-mix(in srgb,var(--accent) 90%,#000)"]},
@@ -6986,12 +7035,13 @@ function addUnitPhrasesToVocab(unit){
 /* ---------- Moonie ile sesli sohbet (Gemini, çok turlu rol yapma) ---------- */
 var speakConvo={active:false,recognizing:false,recognizer:null};
 function buildSpeakConvoSystemPrompt(level,unit){
-  return "Sen Moonie adında dostane bir İngilizce konuşma partnerisin. Öğrencinle sesli bir rol yapma (role-play) alıştırması yapıyorsun.\n"+
+  var dlg=(unit.dialog&&unit.dialog.length)?("\nÖrnek diyalog (sadece referans, birebir tekrarlama):\n"+unit.dialog.map(function(d){ return d[0]+": "+d[1]; }).join("\n")+"\n"):"";
+  return "Sen Moonie adında dostane ve sabırlı bir İngilizce konuşma partnerisin. Öğrencinle sesli bir rol yapma (role-play) alıştırması yapıyorsun.\n"+
     "Seviye: "+level.cefr+" ("+level.name+"). Senaryo: "+unit.scenario+"\n"+
     "Konuşma konusu: "+unit.topic+"\n"+
-    "Kullanmasını istediğin kalıp ifadeler: "+unit.phrases.map(function(p){return p[0];}).join("; ")+"\n\n"+
-    "Kurallar: SADECE İngilizce konuş; senaryodaki karakteri oynuyormuş gibi doğal, kısa (1-3 cümle) cevaplar ver; öğrenciyi konuşturmak için soru sor. "+
-    "Öğrencinin son mesajında belirgin bir dilbilgisi/kelime hatası varsa, cevabının en altına YENİ SATIRDA \"Not: \" ile başlayan kısa bir Türkçe düzeltme ekle (hata yoksa bu satırı hiç ekleme). "+
+    "Kullanmasını istediğin kalıp ifadeler: "+unit.phrases.map(function(p){return p[0];}).join("; ")+"\n"+dlg+"\n"+
+    "Kurallar: SADECE İngilizce konuş; senaryodaki karakteri (memur, görevli, garson vb.) gerçekçi şekilde oyna ve gerçek hayatta sorulan takip sorularını da sor (ör. pasaport kontrolünde kalış süresi, amaç, konaklama yeri, dönüş bileti). Cevapların kısa (1-3 cümle) olsun ve her seferinde tek soru sor. Öğrenci cümlesini yarım bıraktıysa ya da duraksadıysa sabırlı ol, anlamaya çalış. "+
+    "Öğrencinin son mesajında dilbilgisi/kelime/telaffuz kaynaklı bir hata varsa: (1) önce senaryodaki karakter olarak doğal biçimde cevap ver; (2) cevabının en altına YENİ SATIRDA \"Not: \" ile başlayan kısa bir Türkçe açıklama yaz ve DOĞRU cümleyi tırnak içinde ver (ör. Not: Doğrusu \"I'm here for tourism.\" — 'for' kullanılır); (3) İngilizce kısmını \"Let's try that again: <doğru cümle>\" ile bitir ve öğrencinin bu cümleyi tekrar söylemesini bekle; tekrar söyleyene kadar senaryoda ilerleme. Hata yoksa Not satırı ekleme. "+
     "Şimdi senaryoya uygun kısa, doğal bir açılış cümlesiyle konuşmayı SEN başlat (öğrenci henüz bir şey söylemedi).";
 }
 function splitMoonieReply(text){
@@ -7193,6 +7243,8 @@ function appendConvoBubble(role,text,note){
   var b=document.createElement("div");
   b.className="convo-bubble "+(role==="model"?"moonie":"me");
   b.innerHTML=esc(text)+(note?'<span class="cb-note">'+esc(note)+"</span>":"");
+  var cm=note&&note.match(/["“]([^"”]{4,})["”]/);
+  if(cm){ var lb=document.createElement("button"); lb.type="button"; lb.className="btn sec sm"; lb.style.marginTop="6px"; lb.textContent="Doğrusunu dinle"; lb.addEventListener("click",function(){ speakEnglish(cm[1],.85); }); b.appendChild(lb); }
   log.appendChild(b); log.scrollTop=log.scrollHeight;
   return b;
 }
@@ -7235,40 +7287,71 @@ function wireSpeakConvo(level,unit,sel){
     timerEl.textContent=label||"Konuşmak için dokun";
   }
 
+  function sendSaid(said){
+    appendConvoBubble("user",said,"");
+    speakConvo.contents.push({role:"user",parts:[{text:said}]});
+    appendConvoLoading("Moonie düşünüyor...");
+    talkBtn.disabled=true; stopTimer("Moonie yanıtlıyor...");
+    callGeminiText(speakConvo.contents).then(function(text){
+      removeConvoLoading();
+      speakConvo.contents.push({role:"model",parts:[{text:text}]});
+      var parts=splitMoonieReply(text);
+      appendConvoBubble("model",parts.speak,parts.note);
+      speakEnglish(parts.speak,.95);
+      talkBtn.disabled=false; stopTimer();
+    }).catch(function(err){
+      removeConvoLoading();
+      appendConvoBubble("model","(Bağlantı hatası: "+err.message+")","");
+      talkBtn.disabled=false; stopTimer();
+    });
+  }
+  /* Sürekli dinleme: duraksasan da cümlen yarım kalmaz. Bitirmek için butona tekrar dokun ya da ~4 sn sessiz kal. */
   function talkTurn(){
     if(!SRClass) return;
-    var rec=new SRClass(); rec.lang="en-US"; rec.interimResults=false; rec.maxAlternatives=1;
+    var rec=new SRClass(); rec.lang="en-US"; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=1;
+    var finalT="", interimT="", sent=false, stopping=false, silenceT=null, live=null, restarts=0;
     speakConvo.recognizer=rec; speakConvo.recognizing=true;
     talkBtn.classList.add("recording");
     startTimer();
+    function showLive(){
+      var t=(finalT+" "+interimT).trim();
+      if(!live){ live=appendConvoBubble("user","",""); live.classList.add("live"); live.style.opacity=".75"; }
+      live.textContent=t||"…"; log.scrollTop=log.scrollHeight;
+    }
+    function armSilence(ms){ clearTimeout(silenceT); silenceT=setTimeout(function(){ finish(); },ms); }
+    function finish(){ if(sent) return; stopping=true; clearTimeout(silenceT); try{ rec.stop(); }catch(e){ complete(); } }
+    function complete(){
+      if(sent) return; sent=true; clearTimeout(silenceT);
+      speakConvo.recognizing=false; talkBtn.classList.remove("recording");
+      var said=(finalT+" "+interimT).trim();
+      if(live){ live.remove(); live=null; }
+      if(!speakConvo.active){ stopTimer(); return; }
+      if(!said){ stopTimer(); return; }
+      sendSaid(said);
+    }
+    speakConvo.finish=finish;
     rec.onresult=function(e){
-      var said=e.results[0][0].transcript;
-      appendConvoBubble("user",said,"");
-      speakConvo.contents.push({role:"user",parts:[{text:said}]});
-      appendConvoLoading("Moonie düşünüyor...");
-      talkBtn.disabled=true; stopTimer("Moonie yanıtlıyor...");
-      callGeminiText(speakConvo.contents).then(function(text){
-        removeConvoLoading();
-        speakConvo.contents.push({role:"model",parts:[{text:text}]});
-        var parts=splitMoonieReply(text);
-        appendConvoBubble("model",parts.speak,parts.note);
-        speakEnglish(parts.speak,.95);
-        talkBtn.disabled=false; stopTimer();
-      }).catch(function(err){
-        removeConvoLoading();
-        appendConvoBubble("model","(Bağlantı hatası: "+err.message+")","");
-        talkBtn.disabled=false; stopTimer();
-      });
+      interimT="";
+      for(var k=e.resultIndex;k<e.results.length;k++){
+        var r=e.results[k];
+        if(r.isFinal) finalT+=(finalT?" ":"")+r[0].transcript.trim(); else interimT+=r[0].transcript;
+      }
+      showLive(); armSilence(4000);
     };
     rec.onerror=function(e){
-      speakConvo.recognizing=false; talkBtn.classList.remove("recording"); stopTimer();
-      if(e.error!=="aborted"&&e.error!=="no-speech") alert("Hata: "+e.error);
+      if(e.error==="no-speech") return;
+      stopping=true;
+      if(e.error!=="aborted") alert("Hata: "+e.error+" (mikrofon izni gerekli olabilir)");
     };
     rec.onend=function(){
-      speakConvo.recognizing=false; talkBtn.classList.remove("recording");
-      if(timerInterval) stopTimer();
+      if(!stopping&&!sent&&speakConvo.active&&restarts<6){
+        restarts++; interimT="";
+        try{ rec.start(); return; }catch(err){}
+      }
+      complete();
     };
-    rec.start();
+    armSilence(9000);
+    try{ rec.start(); }catch(err){ complete(); }
   }
 
   startBtn.addEventListener("click",function(){
@@ -7295,7 +7378,7 @@ function wireSpeakConvo(level,unit,sel){
   });
 
   talkBtn.addEventListener("click",function(){
-    if(speakConvo.recognizing){ if(speakConvo.recognizer) speakConvo.recognizer.stop(); return; }
+    if(speakConvo.recognizing){ if(speakConvo.finish) speakConvo.finish(); else if(speakConvo.recognizer) speakConvo.recognizer.stop(); return; }
     talkTurn();
   });
 
@@ -7382,6 +7465,7 @@ function renderSpeaking(){
       '<div class="su-prog">Görev '+(sel.ui+1)+'/'+level.units.length+(done?' · Tamamlandı':'')+'</div>'+
     '</div>'+
     '<div class="su-card"><div class="su-sh"><span class="su-n">1</span><div><b>Kalıpları öğren</b><small>Dinle, sonra sesli söyle</small></div></div>'+phrasesHtml+'</div>'+
+    (unit.dialog&&unit.dialog.length?'<details class="su-card su-dlg"><summary style="cursor:pointer;font-weight:800;">Örnek diyalog <small style="font-weight:600;opacity:.7;">(dinle ve rol yap)</small></summary>'+unit.dialog.map(function(d,i){ return '<div class="su-phrase"><div class="su-ptx"><div class="su-tr" style="font-weight:800;">'+esc(d[0])+'</div><div class="su-en">'+esc(d[1])+'</div><div class="su-tr">'+esc(d[2]||"")+'</div></div><button type="button" class="su-pb" data-dsay="'+i+'" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button></div>'; }).join("")+'</details>':'')+
     '<div class="su-card"><div class="su-sh"><span class="su-n">2</span><div><b>Moonie ile konuş</b><small>Senaryoyu birlikte canlandırın · +30 XP</small></div></div>'+
       '<div class="convo-partner" id="speakConvoIntro">'+
         '<div class="cp-avatar"><span class="cp-pulse" aria-hidden="true"></span><div class="mchip"><img src="assets/mascot/pose-speak.webp" data-hd="speak-start" alt=""></div></div>'+
@@ -7391,7 +7475,7 @@ function renderSpeaking(){
       '<button type="button" class="btn gold" id="speakConvoStart" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>Sohbeti başlat</button>'+
       '<div id="speakConvoControls" style="display:none;text-align:center;">'+
         '<button type="button" class="mic-btn" id="speakConvoTalk" aria-label="Konuş"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></button>'+
-        '<p class="hint" id="speakConvoTimer" style="margin-top:8px;">Konuşmak için dokun</p>'+
+        '<p class="hint" id="speakConvoTimer" style="margin-top:8px;">Konuşmak için dokun</p><p class="hint" style="margin-top:2px;font-size:11.5px;">Duraksasan seni kesmez. Bitirince butona tekrar dokun.</p>'+
         '<button type="button" class="btn sec sm" id="speakConvoEnd" style="margin-top:6px;">Sohbeti bitir</button>'+
       '</div>'+
     '</div>'+
@@ -7419,6 +7503,7 @@ function renderSpeaking(){
     pronText.value=ph; syncTarget(); go("speaking");
     var pc=document.querySelector("#v-speaking .pron"); if(pc) pc.scrollIntoView({behavior:"smooth",block:"start"});
   }); });
+  document.querySelectorAll("#speakCurrent [data-dsay]").forEach(function(bt){ bt.addEventListener("click",function(){ speakEnglish(unit.dialog[parseInt(bt.dataset.dsay,10)][1],.9); }); });
   wireSpeakConvo(level,unit,sel);
   document.getElementById("speakConvoEnd").addEventListener("click",function(){ var lg=document.getElementById("speakConvoLog"); if(lg&&lg.children.length>0) awardXp(30,"convo"); });
   document.getElementById("speakNoteTa").value=S.speaking.notes[unitKey(sel.li,sel.ui)]||"";
