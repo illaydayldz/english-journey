@@ -3290,7 +3290,17 @@ migrateListeningToPodcasts();
 S.pronunciationNotes=S.pronunciationNotes||[];
 S.tasks=S.tasks||{};
 S.trCache=S.trCache||{};
-if(S.checksDate!==dstr(new Date())){ S.checks={}; S.checksDate=dstr(new Date()); }
+/* Gün değişince bugünün görevlerini sıfırla. Uygulama gece boyunca açık/arka planda kaldıysa yükleme olmaz,
+   bu yüzden hem açılışta hem de öne gelince / bugün ekranına girince kontrol edilir. */
+function dayRollover(){
+  var d=dstr(new Date());
+  if(S.checksDate===d) return false;
+  S.checks={}; S.checksDate=d;
+  try{ STEPS=buildPlan(); }catch(e){}
+  try{ save(); }catch(e){}
+  return true;
+}
+dayRollover();
 
 /* ---------- THEME ---------- */
 /* Default is ALWAYS light — a brand new user (S.settings.theme unset) or a
@@ -3337,6 +3347,7 @@ function trimHistory(){
 /* ---------- NAV ---------- */
 var NAVMAP={workbook:"today",library:"today",today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",grammarunit:"today",vocabstudy:"today",vocabgames:"today",support:"profile",wordpractice:"today",journal:"journal",profile:"profile",settings:"profile"};
 function go(v){
+  if(v==="today"){ try{ dayRollover(); renderToday(); }catch(e){} }
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
   var el=document.getElementById("v-"+v);
@@ -9785,6 +9796,12 @@ function awayShow(){
 document.getElementById("awayGo").addEventListener("click",function(){ document.getElementById("awayOv").classList.remove("on"); go("today"); });
 document.getElementById("awayLater").addEventListener("click",function(){ document.getElementById("awayOv").classList.remove("on"); });
 document.addEventListener("visibilitychange",function(){ if(!document.hidden){ setTimeout(awayShow,400); } });
+(function(){
+  function dayCheck(){ try{ if(dayRollover()){ var t=document.getElementById("v-today"); if(t&&t.classList.contains("active")) renderToday(); else renderToday(); } }catch(e){} }
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) dayCheck(); });
+  window.addEventListener("pageshow",dayCheck); window.addEventListener("focus",dayCheck);
+  setInterval(dayCheck,60000);
+})();
 (function(){ var m=/[?&]go=([a-z]+)/.exec(location.search); if(m&&document.getElementById("v-"+m[1])&&S.settings.onboardDone&&!document.body.classList.contains("onb-active")){ setTimeout(function(){ go(m[1]); },60); } else setTimeout(awayShow,900); try{ if(document.getElementById("v-today").classList.contains("active")) renderToday(); }catch(e){} })();
 
 /* ===== Hatırlatıcı & kısayollar ===== */
