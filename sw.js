@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v160-dayroll";
+const CACHE = "english-app-v163-qafix2";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/free-library.json",

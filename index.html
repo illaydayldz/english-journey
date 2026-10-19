@@ -124,6 +124,8 @@
   /* ---- screen header (back button + title only — no mascot/subtitle;
      used by every non-Home screen) ---- */
   .page-head{ display:flex; align-items:center; gap:12px; margin:4px 2px 18px; min-height:44px; }
+  .page-head .back::after,.onb-back-btn::after,.auth-back::after{ content:""; position:absolute; inset:-10px; }
+  .page-head .back,.onb-back-btn,.auth-back{ position:relative; }
   .page-head .back{ background:var(--card); border:none; width:44px; height:44px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .page-head h1{ font-family:var(--font-ui); font-size:20px; font-weight:800; color:var(--ink); letter-spacing:-.2px; }
   .page-head h1.tight{ font-size:16.5px; line-height:1.3; }
@@ -1621,6 +1623,24 @@
 .wcard.picked{outline:2px solid var(--accent);}.wcard.picked .vs-ck{background:var(--accent);color:#fff;border-color:var(--accent);}
 </style>
 <script>
+/* Açılışta bir hata uygulamayı splash'ta bırakırsa kurtarma düğmesi */
+window.addEventListener("error",function(){
+  setTimeout(function(){
+    try{
+      var sp=document.getElementById("v-splash"); if(!sp||!sp.classList.contains("active")||document.getElementById("recBtn")) return;
+      var b=document.createElement("button"); b.id="recBtn"; b.textContent="Uygulama açılmadı. Verini kurtar";
+      b.style.cssText="position:fixed;left:16px;right:16px;bottom:32px;z-index:99999;padding:14px;border:0;border-radius:14px;background:#6D5BD0;color:#fff;font:600 15px system-ui";
+      b.onclick=function(){
+        var K="my_english_app_v1", pv=null; try{ pv=JSON.parse(localStorage.getItem(K+"-prev")); }catch(e){}
+        if(pv&&pv.d&&confirm("Son içe aktarmadan önceki yedek geri yüklensin mi?")){ localStorage.setItem(K,pv.d); location.reload(); return; }
+        if(confirm("Bozuk veri bu cihazdan silinsin ve uygulama sıfırdan açılsın mı? Bu işlem geri alınamaz.")){ try{ localStorage.setItem(K+"-bad",localStorage.getItem(K)); }catch(e){} localStorage.removeItem(K); location.reload(); }
+      };
+      document.body.appendChild(b);
+    }catch(e){}
+  },3000);
+});
+</script>
+<script>
 /* Yüksek çözünürlüklü Moonie görselleri: assets/mascot/hd/ içine konan dosyalar index.json'da listelenirse otomatik kullanılır; liste yoksa mevcut görseller kalır. */
 var MASCOT_HD={};
 function mascotUpgrade(root){
@@ -1841,7 +1861,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
 
   <section class="view" id="v-obbasics">
     <div class="onb-wrap" style="padding-left:16px;padding-right:16px;overflow-y:auto;">
-      <button type="button" class="onb-back-btn" onclick="obGo('authchoice')"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <button type="button" class="onb-back-btn" onclick="obBasicsBack()"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <div class="onb-steplabel">Adım 1/3</div>
       <div class="onb-h">Seviyen ve günlük süren</div>
       <div class="onb-p">Daha sonra Profil'den değiştirebilirsin.</div>
@@ -3252,11 +3272,33 @@ function accDel(nick){ var a=accList(); delete a[nick]; localStorage.setItem(ACC
 function save(){
   var j=JSON.stringify(S);
   try{ localStorage.setItem(KEY,j); }catch(e){ saveFail(); return; }
-  if(S.settings&&S.settings.nick){ try{ localStorage.setItem(KEY+":u:"+S.settings.nick,j); }catch(e){} }
+}
+/* Hesap bölmesi yalnızca hesap değiştirirken yazılır (her kayıtta ikinci kopya kotayı yarıya indiriyordu). */
+function accSnapshot(){
+  try{
+    if(!(S.settings&&S.settings.nick)) return !((S.words&&S.words.length)||S.totalDays||S.streak); /* sahipsiz ama dolu veri yedeklenemez */
+    localStorage.setItem(KEY+":u:"+S.settings.nick,JSON.stringify(S)); return true;
+  }catch(e){ return false; }
+}
+function normalizeState(){
+  ["words","readings","writings","books","qnotes","pronunciationNotes"].forEach(function(k){ if(S[k]!==undefined&&!Array.isArray(S[k])) S[k]=[]; });
+  ["history","checks","tasks","journal","trCache"].forEach(function(k){ if(S[k]!==undefined&&(S[k]===null||typeof S[k]!=="object"||Array.isArray(S[k]))) S[k]={}; });
+  if(!S.settings||typeof S.settings!=="object"||Array.isArray(S.settings)) S.settings={};
+  ["streak","totalDays","longestStreak","pronCount"].forEach(function(k){ if(S[k]!==undefined&&(typeof S[k]!=="number"||!isFinite(S[k]))) S[k]=0; });
+  function O(x){ return x&&typeof x==="object"&&!Array.isArray(x)?x:{}; }
+  S.words=(Array.isArray(S.words)?S.words:[]).filter(function(w){ return w&&typeof w==="object"&&!Array.isArray(w)&&w.en!==undefined&&w.en!==null&&String(w.en).trim()!==""; }).map(function(w){ w.en=String(w.en); w.tr=(w.tr===undefined||w.tr===null)?"":String(w.tr); return w; });
+  S.grammar=O(S.grammar); S.grammar.completed=O(S.grammar.completed);
+  S.speaking=O(S.speaking); S.speaking.completed=O(S.speaking.completed);
+  S.readingLib=O(S.readingLib); S.listening=O(S.listening);
+  ["goals","focusSkills"].forEach(function(k){ if(S.settings[k]!==undefined&&!Array.isArray(S.settings[k])) S.settings[k]=[]; });
+  ["lastDone","lastActive","checksDate"].forEach(function(k){ if(S[k]!==undefined&&typeof S[k]!=="string") delete S[k]; });
 }
 var S=load();
+if(!S||typeof S!=="object"||Array.isArray(S)) S={};
 S.settings=S.settings||{};
-(function(){ if(S.settings.nick&&S.settings.passHash){ var a=accList(); if(!a[S.settings.nick]) accSet(S.settings.nick,S.settings.passHash); try{ localStorage.setItem(KEY+":u:"+S.settings.nick,JSON.stringify(S)); }catch(e){} } })();
+normalizeState();
+try{ var _pv=localStorage.getItem(KEY+"-prev"); if(_pv){ var _po=JSON.parse(_pv); if(!_po||!_po.t||Date.now()-_po.t>7*86400000) localStorage.removeItem(KEY+"-prev"); } }catch(e){ try{ localStorage.removeItem(KEY+"-prev"); }catch(_){} }
+(function(){ if(S.settings.nick&&S.settings.passHash){ var a=accList(); if(!a[S.settings.nick]) accSet(S.settings.nick,S.settings.passHash); try{ localStorage.removeItem(KEY+":u:"+S.settings.nick); }catch(e){} } })();
 S.streak=S.streak||0; S.totalDays=S.totalDays||0; S.checks=S.checks||{};
 S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
 STEPS=buildPlan();
@@ -3292,9 +3334,21 @@ S.tasks=S.tasks||{};
 S.trCache=S.trCache||{};
 /* Gün değişince bugünün görevlerini sıfırla. Uygulama gece boyunca açık/arka planda kaldıysa yükleme olmaz,
    bu yüzden hem açılışta hem de öne gelince / bugün ekranına girince kontrol edilir. */
+function finishDay(d){
+  var _ld=parseD(S.lastDone), _cd=parseD(d);
+  if(!_cd||(_ld&&_ld.getTime()>=_cd.getTime())) return false; /* aynı gün ya da lastDone gelecekte (saat geri alındı) */
+  var cur=parseD(d)||new Date(); var y=new Date(cur); y.setDate(y.getDate()-1);
+  S.streak=(S.lastDone===dstr(y))?(S.streak||0)+1:1;
+  S.longestStreak=Math.max(S.longestStreak||0,S.streak);
+  S.totalDays=(S.totalDays||0)+1; S.lastDone=d; S.lastActive=d;
+  return true;
+}
 function dayRollover(){
   var d=dstr(new Date());
   if(S.checksDate===d) return false;
+  if(!S.checksDate){ S.checksDate=d; try{ save(); }catch(e){} return false; }
+  /* dün bütün adımlar bittiyse ama "tamamla"ya basılmadıysa günü yine de say */
+  try{ var _c0=parseD(S.checksDate), _t0=parseD(d); if(_c0&&_t0&&_c0<_t0&&STEPS.length&&STEPS.every(function(_,i){return S.checks[i];})) finishDay(S.checksDate); }catch(e){}
   S.checks={}; S.checksDate=d;
   try{ STEPS=buildPlan(); }catch(e){}
   try{ save(); }catch(e){}
@@ -3341,12 +3395,15 @@ function fmtDstrKey(k){ function pad(n){ return (n.length<2?"0":"")+n; } var p=k
 function parseDstr(k){ var p=k.split("-"); return new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10)); }
 function trimHistory(){
   var keys=Object.keys(S.history);
-  if(keys.length>60){ keys.sort(); keys.slice(0,keys.length-60).forEach(function(k){ delete S.history[k]; }); }
+  if(keys.length>120){ keys.sort(function(a,b){ var x=parseD(a),y=parseD(b); return (x?x.getTime():0)-(y?y.getTime():0); }); keys.slice(0,keys.length-120).forEach(function(k){ delete S.history[k]; }); }
 }
 
 /* ---------- NAV ---------- */
 var NAVMAP={workbook:"today",library:"today",today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",grammarunit:"today",vocabstudy:"today",vocabgames:"today",support:"profile",wordpractice:"today",journal:"journal",profile:"profile",settings:"profile"};
+var _lisT=null;
 function go(v){
+  clearTimeout(_lisT);
+  if(v==="podcastdetail"){ _lisT=setTimeout(function(){ markAct("listening"); },120000); } /* 2 dk podcast ekranında kalmak = dinleme yapıldı */
   if(v==="today"){ try{ dayRollover(); renderToday(); }catch(e){} }
   if(v!=="podcastdetail") stopSyncTicker();
   document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
@@ -3438,7 +3495,7 @@ function renderToday(){
   STEPS.forEach(function(s,i){
     var done=!!S.checks[i];
     var lab=document.createElement("label"); lab.className="check"+(done?" done":"");
-    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+(done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(i+1))+'</span><span class="t">'+s[0]+'<small>'+s[1]+' · '+s[3]+' dk</small></span>';
+    lab.innerHTML='<input type="checkbox" '+(done?"checked":"")+'><span class="chip-num">'+(done?'<svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>':(i+1))+'</span><span class="t">'+s[0]+'<small>'+((s[2]==='vocab'&&dueWords().length)?(dueWords().length+' kart bekliyor · '):'')+s[1]+' · '+s[3]+' dk</small></span>';
     lab.querySelector("input").addEventListener("change",function(e){ S.checks[i]=e.target.checked; if(e.target.checked) S.lastActive=dstr(new Date()); save(); pushAwayState(); renderToday(); });
     cl.appendChild(lab);
   });
@@ -3485,10 +3542,7 @@ document.getElementById("thStart").addEventListener("click",function(){
 });
 document.getElementById("completeBtn").addEventListener("click",function(){
   if(S.lastDone===dstr(new Date())) return;
-  var y=new Date(); y.setDate(y.getDate()-1);
-  S.streak=(S.lastDone===dstr(y))?S.streak+1:1;
-  S.longestStreak=Math.max(S.longestStreak||0,S.streak);
-  S.totalDays+=1; S.lastDone=dstr(new Date()); S.lastActive=S.lastDone;
+  finishDay(dstr(new Date()));
   save(); renderToday();
 });
 
@@ -3935,6 +3989,7 @@ function wpRenderDict(w){
   var nx=document.getElementById("wpDNext"); if(nx) nx.addEventListener("click",function(){ wpState.di=i+1; wpState.dr=null; wpState.dv=""; wpRenderDict(w); });
 }
 function gradeCard(w,g){
+  try{ var _d=dstr(new Date()); if(S.vocabDay!==_d){ S.vocabDay=_d; S.vocabN=0; } S.vocabN=(S.vocabN||0)+1; if(S.vocabN>=5) markAct("vocab"); }catch(e){}
   // SM-2; "Zor" kartlar aynı oturumda 2 kereye kadar tekrar sorulur (yalnızca ilk cevap programı etkiler)
   var key=w.en, seen=studyRe[key]||0;
   if(seen===0){
@@ -5086,8 +5141,8 @@ function renderLibRead(){
   });
   var completeBtn=document.getElementById("libReadCompleteBtn");
   completeBtn.onclick=function(){
-    if(OPEN_PDF){ S.readingLib.pdfDone[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:OPEN_PDF.book.title}); }
-    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"VOA Learning English",libraryId:r.id}); }
+    if(OPEN_PDF){ S.readingLib.pdfDone[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:OPEN_PDF.book.title}); markAct("reading"); }
+    else { S.readingLib.completed[r.id]=true; S.readings.push({date:isoDate(new Date()),text:r.title,source:"VOA Learning English",libraryId:r.id}); markAct("reading"); }
     save();
     renderLibRead(); renderReadingLib(); renderLearnHub();
   };
@@ -5400,7 +5455,7 @@ document.getElementById("addReading").addEventListener("click",async function(){
       entry.attachmentId=attId; entry.attachmentType=isImage?"image":"pdf"; entry.attachmentName=file.name;
     }catch(e){ alert("Dosya kaydedilemedi: "+e.message); }
   }
-  S.readings.push(entry);
+  S.readings.push(entry); markAct("reading");
   save(); src.value=""; tx.value="";
   if(pendingAttachment&&pendingAttachment.previewUrl) URL.revokeObjectURL(pendingAttachment.previewUrl);
   pendingAttachment=null;
@@ -7006,7 +7061,7 @@ function renderWriting(){
         var existing=S.writings.filter(function(w){ return w.prompt===promptText && w.text===text; }).pop();
         if(!existing){
           existing={date:isoDate(new Date()),prompt:promptText,text:text};
-          S.writings.push(existing);
+          S.writings.push(existing); markAct("writing");
         }
         existing.feedback=feedback; if(scoreObj) existing.score=scoreObj;
         save();
@@ -7025,7 +7080,7 @@ function renderWriting(){
     var gr=document.getElementById("writingGeminiResult");
     if((S.settings.geminiApiKey||"").trim()&&gr.style.display==="none"&&text.split(/\s+/).length>=15&&!confirm("Moonie ile test etmeden kaydetmek istiyor musun? Test etmen hatalarını görmen için önerilir.")) return;
     S.writings=S.writings||[];
-    S.writings.push({date:isoDate(new Date()),prompt:promptText,text:text});
+    S.writings.push({date:isoDate(new Date()),prompt:promptText,text:text}); markAct("writing");
     save();
     document.getElementById("writingText").value="";
     renderWritingList();
@@ -7641,7 +7696,7 @@ function renderSpeaking(){
   document.getElementById("timer432Stop").addEventListener("click",stop432Timer);
   var cb=document.getElementById("speakCompleteBtn");
   if(cb) cb.addEventListener("click",function(){
-    S.speaking.completed[unitKey(sel.li,sel.ui)]=true;
+    S.speaking.completed[unitKey(sel.li,sel.ui)]=true; markAct("speaking");
     awardXp(50);
     if(level.units.every(function(_,ui){return !!S.speaking.completed[unitKey(sel.li,ui)];})){
       var nx=SPEAK_LEVELS[sel.li+1]; S.speaking.openLv=nx?sel.li+1:sel.li;
@@ -7810,7 +7865,7 @@ function renderGrammar(){
   var cb=document.getElementById("grammarCompleteBtn"); grUnlockComplete();
   if(cb) cb.addEventListener("click",function(){
     if(!(S.grammar.scores[gKey]>=70)) return;
-    S.grammar.completed[grammarUnitKey(sel.li,sel.ui)]=true;
+    S.grammar.completed[grammarUnitKey(sel.li,sel.ui)]=true; markAct("grammar");
     S.grammar.selected={li:sel.li,ui:sel.ui};
     save(); renderGrammar(); renderLearnHub();
   });
@@ -8728,8 +8783,13 @@ function renderPlanView(){
   document.getElementById("planBody").innerHTML=h;
   document.getElementById("planRedo").addEventListener("click",function(){
     obState.level=st.level||null; obState.goals=(st.goals||[]).map(function(g){return /Sınav/i.test(g)?"Sınav":g;}); obState.exam=st.examType||""; obState.dailyMinutes=st.dailyMinutes||null; obState.focus=(st.focusSkills||[]).slice();
-    document.body.classList.add("onb-active"); obGo("obbasics");
+    obRedo=true; document.body.classList.add("onb-active"); obGo("obbasics");
   });
+}
+var obRedo=false;
+function obBasicsBack(){
+  if(obRedo){ obRedo=false; document.body.classList.remove("onb-active"); go("plan"); }
+  else obGo("obstyle");
 }
 function renderProfile(){
   try{ applyAvatar(); }catch(e){}
@@ -8842,13 +8902,19 @@ document.getElementById("exportBtn").addEventListener("click",function(){
 document.getElementById("importBtn").addEventListener("click",function(){ document.getElementById("importFile").click(); });
 function importInc(inc,quiet){
   if(!inc||typeof inc!=="object"||Array.isArray(inc)) throw new Error("bad");
+  if((inc.words!==undefined&&!Array.isArray(inc.words))||(inc.history!==undefined&&(typeof inc.history!=="object"||inc.history===null||Array.isArray(inc.history)))||(inc.settings!==undefined&&(typeof inc.settings!=="object"||inc.settings===null||Array.isArray(inc.settings)))) throw new Error("bad");
       var keep={}; ["nick","passHash","loggedIn","geminiApiKey","spotifyClientId","spotify","onboardDone"].forEach(function(k){ if(S.settings&&S.settings[k]!==undefined) keep[k]=S.settings[k]; });
       if(!quiet&&!confirm("Bu dosya şu anki ilerlemenin, kelimelerin ve notların YERİNE geçecek. Devam edilsin mi?")) return;
+      var bak=JSON.stringify(S);
+      try{ if(bak.length<400000) localStorage.setItem(KEY+"-prev",JSON.stringify({t:Date.now(),d:bak})); }catch(e){}
+      try{
       S=inc; S.settings=S.settings||{}; Object.keys(keep).forEach(function(k){ S.settings[k]=keep[k]; });
+      normalizeState(); S.words=S.words||[]; S.checks={}; S.checksDate=dstr(new Date());
       S.history=S.history||{}; S.readings=S.readings||[]; S.journal=S.journal||{}; S.settings=S.settings||{}; S.pronCount=S.pronCount||0;
       S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.notes=S.speaking.notes||{}; speakMigrate(); S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.notes=S.grammar.notes||{}; S.writings=S.writings||[]; S.readingLib=S.readingLib||{completed:{}}; S.readingLib.notes=S.readingLib.notes||{}; S.readingLib.pdfDone=S.readingLib.pdfDone||{}; S.books=S.books||[]; S.listening=S.listening||{notes:"",transcript:""}; migrateListeningToPodcasts(); S.pronunciationNotes=S.pronunciationNotes||[]; S.tasks=S.tasks||{};
       S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
   save(); renderToday(); renderVocab(); try{ renderStyleCards(); moonApply(document.body); }catch(e){} if(!quiet) alert("İçe aktarıldı.");
+      }catch(err){ try{ S=JSON.parse(bak); save(); renderToday(); }catch(e2){} throw err; }
 }
 document.getElementById("importFile").addEventListener("change",function(e){
   var f=e.target.files[0]; if(!f) return;
@@ -8906,7 +8972,16 @@ var OB_GOALS=["Günlük konuşma","Sınav","İş İngilizcesi","Akademik","Seyah
 var OB_TIMES=[[10,"10 dakika"],[20,"20 dakika"],[30,"30 dakika"],[45,"45 dakika"],[60,"1 saat+"]];
 var OB_FOCUS=["Reading","Listening","Speaking","Grammar","Vocabulary","Writing"];
 
+function obSaveDraft(){
+  try{ if(S.settings&&S.settings.nick&&!S.settings.onboardDone){
+    var empty=!obState.level&&!obState.dailyMinutes&&!(obState.goals||[]).length&&!(obState.focus||[]).length&&!obState.interest;
+    if(empty&&S.settings.obDraft&&(S.settings.obDraft.level||S.settings.obDraft.dailyMinutes||(S.settings.obDraft.goals||[]).length)) return; /* boş durum dolu taslağı ezmesin */
+    S.settings.obDraft={level:obState.level,goals:obState.goals,exam:obState.exam,dailyMinutes:obState.dailyMinutes,focus:obState.focus,interest:obState.interest,step:S.settings.obDraft&&S.settings.obDraft.step}; save(); } }catch(e){}
+}
 function obGo(id){
+  /* kayıt olmuş ve giriş yapmış biri kayıt/giriş ekranlarına geri düşmesin: kaldığı adıma dönsün */
+  if((id==="authchoice"||id==="register"||id==="login")&&S.settings&&S.settings.nick&&S.settings.loggedIn&&!S.settings.onboardDone) id="obbasics";
+  if(/^ob/.test(id)&&id!=="obbasics"||id==="obbasics"){ try{ if(S.settings&&S.settings.nick&&!S.settings.onboardDone){ S.settings.obDraft=S.settings.obDraft||{}; S.settings.obDraft.step=id; } }catch(e){} }
   document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
   var el=document.getElementById("v-"+id);
   if(el) el.classList.add("active");
@@ -8917,6 +8992,7 @@ function obGo(id){
   if(id==="obmeet") obRenderMeet();
   if(id==="obready") obRenderReady();
   if(id==="obpod"){ obRenderPod(); renderHowto(true); }
+  if(/^ob/.test(id)) obSaveDraft();
 }
 function obCheckIcon(){ return '<span class="ob-check"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>'; }
 
@@ -8945,7 +9021,7 @@ function obRenderGoals(){
       var i=obState.goals.indexOf(g);
       if(i===-1) obState.goals.push(g); else obState.goals.splice(i,1);
       if(g==="Sınav"&&obState.goals.indexOf(g)===-1) obState.exam="";
-      obRenderGoals(); obRenderFocus();
+      obSaveDraft(); obRenderGoals(); obRenderFocus();
     });
     wrap.appendChild(btn);
   });
@@ -8994,7 +9070,7 @@ function obRenderFocus(){
       var i=obState.focus.indexOf(f);
       if(i!==-1){ obState.focus.splice(i,1); }
       else{ obState.focus.push(f); }
-      obRenderFocus();
+      obSaveDraft(); obRenderFocus();
     });
     wrap.appendChild(btn);
   });
@@ -9370,9 +9446,10 @@ document.getElementById("obRegSubmit").addEventListener("click",async function()
   var hash=await pwHash(nick,p1);
   if(S.settings.nick&&S.settings.nick!==nick){
     /* bu cihazda başka bir hesap var: yeni kullanıcı için tertemiz bir bölüm aç (anahtarlar, ilerleme, notlar kopyalanmaz) */
+    if(!accSnapshot()) return bad("Bu cihazdaki mevcut verinin yedeği alınamadı (depolama dolu ya da veri hiçbir hesaba bağlı değil). Önce eski hesabınla giriş yapıp verini dışa aktar.");
     accSet(nick,hash);
     var fresh={settings:{nick:nick,passHash:hash,userName:nick,loggedIn:true}};
-    localStorage.setItem(KEY+":u:"+nick,JSON.stringify(fresh)); localStorage.setItem(KEY,JSON.stringify(fresh));
+    try{ localStorage.setItem(KEY,JSON.stringify(fresh)); }catch(e){ try{ localStorage.removeItem(KEY+":u:"+S.settings.nick); }catch(_){} return bad("Depolama dolu; hesap değiştirilemedi. Fotoğraf/ekleri azaltıp tekrar dene."); }
     try{ sessionStorage.setItem("moonie_sess","1"); sessionStorage.setItem("moonie_newacct","1"); }catch(e){}
     location.reload(); return;
   }
@@ -9393,20 +9470,21 @@ document.getElementById("obLoginSubmit").addEventListener("click",async function
   err.style.display="none";
   var remember=document.getElementById("obLoginRemember").checked;
   if(nick!==S.settings.nick){
+    if(!accSnapshot()) return bad("Bu cihazdaki mevcut verinin yedeği alınamadı (depolama dolu ya da veri hiçbir hesaba bağlı değil). Önce eski takma adınla yeniden kayıt ol ya da eski hesabınla giriş yapıp verini dışa aktar.");
     var slot=localStorage.getItem(KEY+":u:"+nick);
     var data; try{ data=JSON.parse(slot); }catch(e){ data=null; }
     if(!data||!data.settings) data={settings:{nick:nick,passHash:accs[nick].hash,userName:nick}};
     data.settings.loggedIn=!!remember;
-    localStorage.setItem(KEY,JSON.stringify(data)); localStorage.setItem(KEY+":u:"+nick,JSON.stringify(data));
+    try{ localStorage.setItem(KEY,JSON.stringify(data)); }catch(e){ return bad("Depolama dolu; hesap değiştirilemedi. Fotoğraf/ekleri azaltıp tekrar dene."); }
     try{ sessionStorage.setItem("moonie_sess","1"); }catch(e){}
     location.reload(); return;
   }
   setSession(remember);
-  if(S.settings.onboardDone) enterApp(); else obGo("obbasics");
+  if(S.settings.onboardDone) enterApp(); else obGo(obRestoreDraft());
 });
 function obUpdateBasics(){ document.getElementById("obBasicsNext").disabled=!(obState.level&&obState.dailyMinutes); }
-document.getElementById("obLevelOpts").addEventListener("click",function(){ setTimeout(obUpdateBasics,0); });
-document.getElementById("obTimeOpts").addEventListener("click",function(){ setTimeout(obUpdateBasics,0); });
+document.getElementById("obLevelOpts").addEventListener("click",function(){ setTimeout(function(){ obUpdateBasics(); obSaveDraft(); },0); });
+document.getElementById("obTimeOpts").addEventListener("click",function(){ setTimeout(function(){ obUpdateBasics(); obSaveDraft(); },0); });
 document.getElementById("obBasicsNext").addEventListener("click",function(){ obGo("obgoals"); });
 document.getElementById("obGoalsDone").addEventListener("click",function(){ if(obState.goals.indexOf("Sınav")!==-1&&!obState.exam) obState.exam="YDS / YÖKDİL"; obGo("obpod"); });
 document.getElementById("obLevelNext").addEventListener("click",function(){ obGo("obgoals"); });
@@ -9430,12 +9508,12 @@ document.getElementById("obFinishBtn").addEventListener("click",function(){
   S.settings.examType=obState.goals.indexOf("Sınav")!==-1?(obState.exam||"YDS / YÖKDİL"):"";
   S.checks={}; STEPS=buildPlan();
   S.grammar=S.grammar||{completed:{},selected:null}; S.grammar.selected=null; S.speaking=S.speaking||{completed:{},selected:null}; S.speaking.selected=null;
-  S.settings.userInterest=obState.interest;
+  if(obState.interest||!S.settings.userInterest) S.settings.userInterest=obState.interest;
   if(obState.podcastPick){
     S.listening=S.listening||{podcasts:[]}; S.listening.podcasts=S.listening.podcasts||[];
     S.listening.podcasts.push({id:"pod"+Date.now(),title:obState.podcastPick.title,uri:obState.podcastPick.uri,transcript:"",notes:"",createdAt:isoDate(new Date())});
   }
-  S.settings.onboardDone=true;
+  obRedo=false; S.settings.onboardDone=true; delete S.settings.obDraft;
   S.settings.onboardShown=true;
   save();
   document.body.classList.remove("onb-active");
@@ -9682,9 +9760,10 @@ function plRender(){
     document.getElementById("plApply").addEventListener("click",function(){
       S.settings.skillLevels=S.settings.skillLevels||{};
       pl.skills.forEach(function(sk){ S.settings.skillLevels[sk]=res[sk]; });
-      S.settings.level=overall; S.settings.placementDate=isoDate(new Date());
-      S.grammar.selected=null; S.speaking.selected=null; S.checks={}; STEPS=buildPlan(); save();
-      if(plFromOb){ obState.level=overall; plExit(); if(typeof obRenderLevel==="function") obRenderLevel(); if(typeof obUpdateBasics==="function") obUpdateBasics(); }
+      S.settings.placementDate=isoDate(new Date());
+      if(!plFromOb){ S.settings.level=overall; S.grammar.selected=null; S.speaking.selected=null; S.checks={}; STEPS=buildPlan(); }
+      save();
+      if(plFromOb){ obState.level=overall; obSaveDraft(); plExit(); if(typeof obRenderLevel==="function") obRenderLevel(); if(typeof obUpdateBasics==="function") obUpdateBasics(); }
       else go("progress");
     });
     document.getElementById("plDiscard").addEventListener("click",plExit);
@@ -9735,6 +9814,11 @@ try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(
     }
   }
 })();
+function obRestoreDraft(){
+  var dr=(S.settings&&S.settings.obDraft)||{};
+  obState.level=dr.level||obState.level||null; obState.goals=dr.goals||obState.goals||[]; obState.exam=dr.exam||obState.exam||""; obState.dailyMinutes=dr.dailyMinutes||obState.dailyMinutes||null; obState.focus=dr.focus||obState.focus||[]; obState.interest=dr.interest||obState.interest||"";
+  var st=dr.step; return (st&&document.getElementById("v-"+st)&&st!=="obready"&&st!=="obmeet")?st:"obstyle";
+}
 /* new onboarding gate */
 var newAcct=false; try{ newAcct=sessionStorage.getItem("moonie_newacct")==="1"; sessionStorage.removeItem("moonie_newacct"); }catch(e){}
 var sessOk=false; try{ sessOk=sessionStorage.getItem("moonie_sess")==="1"; }catch(e){}
@@ -9744,6 +9828,12 @@ if(newAcct&&!S.settings.onboardDone){
   document.body.classList.add("onb-active");
   obGo("login");
   document.getElementById("obLoginNick").value=S.settings.nick;
+} else if(S.settings.nick&&!S.settings.onboardDone&&(S.settings.obDraft||!S.settings.level)){
+  /* kayıt olmuş ama kurulumu bitirmemiş: kaldığı yerden devam et, hesabı "tamamlanmış" sayma */
+  var rs=obRestoreDraft();
+  document.body.classList.add("onb-active");
+  document.getElementById("v-splash").classList.remove("active");
+  obGo(rs);
 } else if(S.settings.onboardDone||S.settings.userEmail||S.settings.nick){
   S.settings.onboardDone=true; save();
   document.body.classList.remove("onb-active");
@@ -9751,6 +9841,32 @@ if(newAcct&&!S.settings.onboardDone){
   document.getElementById("v-today").classList.add("active");
 } else {
   document.body.classList.add("onb-active");
+}
+
+/* Sol kenardan sağa kaydırınca geri (ana ekrana eklenen uygulamada tarayıcı geri jesti yok) */
+(function(){
+  var sx=0,sy=0,t0=0,ok=false;
+  document.addEventListener("touchstart",function(e){ var t=e.touches[0]; sx=t.clientX; sy=t.clientY; t0=Date.now(); ok=sx<30&&e.touches.length===1; },{passive:true});
+  document.addEventListener("touchend",function(e){
+    if(!ok) return; ok=false; var t=e.changedTouches[0], dx=t.clientX-sx, dy=Math.abs(t.clientY-sy);
+    if(dx<70||dy>60||Date.now()-t0>700) return;
+    var v=document.querySelector(".view.active"); if(!v) return;
+    var b=v.querySelector(".back, .onb-back-btn, .auth-back"); if(b) b.click();
+  },{passive:true});
+})();
+
+/* Bugünün adımları: ilgili çalışmayı gerçekten yapınca otomatik işaretlenir */
+function markAct(key){
+  try{
+    var d=dstr(new Date()); if(S.checksDate!==d){ dayRollover(); }
+    S.lastActive=d; var hit=false;
+    STEPS.forEach(function(st,i){ if(st[2]===key&&!S.checks[i]){ S.checks[i]=true; hit=true; } });
+    var nDone=STEPS.filter(function(_,i){return S.checks[i];}).length;
+    S.history[d]=Math.max(S.history[d]||0,nDone);
+    if(STEPS.length&&nDone===STEPS.length) finishDay(d);
+    save();
+    var tv=document.getElementById("v-today"); if(hit&&tv&&tv.classList.contains("active")) renderToday();
+  }catch(e){}
 }
 
 /* ===== Geri dönüş: Moonie küsüyor ===== */
