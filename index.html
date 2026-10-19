@@ -1982,6 +1982,8 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     <div class="card coach" id="coachCard"></div>
     <div id="bkNudge"></div>
     <div id="mkCard"></div>
+    <div id="wkCard"></div>
+    <div id="frzCard"></div>
 
     <div class="quickgrid">
       <button type="button" class="quick-item" onclick="go('reading')"><span class="hub-ic hub-purple"><svg class="icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span><span class="qi-t">Reading</span></button>
@@ -3175,7 +3177,7 @@ function trackPackAdd(){
   var n=0, d0=today0();
   pack.words.forEach(function(x){
     if(have[x[0].toLowerCase()]) return;
-    S.words.push({en:x[0],tr:x[1],ex:x[2],ef:2.5,reps:0,interval:0,due:d0}); n++;
+    S.words.push({en:x[0],tr:x[1],ex:x[2],ef:2.5,reps:0,interval:0,due:d0,added:Date.now()}); n++;
   });
   save(); return n;
 }
@@ -3354,7 +3356,10 @@ function finishDay(d){
   var _ld=parseD(S.lastDone), _cd=parseD(d);
   if(!_cd||(_ld&&_ld.getTime()>=_cd.getTime())) return false; /* aynı gün ya da lastDone gelecekte (saat geri alındı) */
   var cur=parseD(d)||new Date(); var y=new Date(cur); y.setDate(y.getDate()-1);
-  S.streak=(S.lastDone===dstr(y))?(S.streak||0)+1:1;
+  var y2=new Date(cur); y2.setDate(y2.getDate()-2);
+  if(S.lastDone===dstr(y)) S.streak=(S.streak||0)+1;
+  else if(S.lastDone===dstr(y2)&&(S.streak||0)>=2&&S.freezeWeek!==wkKey(cur)){ S.streak=(S.streak||0)+1; S.freezeWeek=wkKey(cur); S.freezeUsed=dstr(y); } /* haftada 1 gün atlama hakkı */
+  else S.streak=1;
   S.longestStreak=Math.max(S.longestStreak||0,S.streak);
   S.totalDays=(S.totalDays||0)+1; S.lastDone=d; S.lastActive=d;
   return true;
@@ -3371,6 +3376,22 @@ function dayRollover(){
   return true;
 }
 dayRollover();
+/* Tek seferlik: geçmiş kullanım günlerinden seriyi yeniden hesapla (eski kural tüm adımları şart koşuyordu) */
+function streakMigrate(){
+  try{
+    if(!S.settings||S.settings.streakMig) return;
+    S.settings.streakMig=1;
+    var H=S.history||{}, act={}, n=0; Object.keys(H).forEach(function(k){ if(H[k]>0&&parseD(k)){ act[dstr(parseD(k))]=1; n++; } });
+    if(!n){ save(); return; }
+    var t=new Date(); t=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+    var c=0, d=new Date(t); if(!act[dstr(d)]) d.setDate(d.getDate()-1);
+    var last=dstr(d); while(act[dstr(d)]){ c++; d.setDate(d.getDate()-1); }
+    if(c>(S.streak||0)){ S.streak=c; S.lastDone=last; S.lastActive=last; }
+    S.totalDays=Math.max(S.totalDays||0,n); S.longestStreak=Math.max(S.longestStreak||0,S.streak||0);
+    save();
+  }catch(e){}
+}
+streakMigrate();
 
 /* ---------- THEME ---------- */
 /* Default is ALWAYS light — a brand new user (S.settings.theme unset) or a
@@ -3540,7 +3561,7 @@ function renderToday(){
   var pct=Math.min(100,Math.round(S.totalDays/GOAL*100));
   document.getElementById("progBar").style.width=pct+"%";
   document.getElementById("progressLabel").textContent=S.totalDays+" / "+GOAL+" gün · alışkanlık hedefi";
-  renderContinueList(); renderCoach(); try{ renderMkCard(); renderBkNudge(); }catch(e){}
+  renderContinueList(); renderCoach(); try{ renderMkCard(); renderBkNudge(); renderWkCard(); renderFrzCard(); }catch(e){}
   S.history[dstr(new Date())]=doneN;
   trimHistory();
   save();
@@ -3580,7 +3601,7 @@ S.words.forEach(function(w){
 });
 function addWord(en,tr,ex){
   en=en.trim(); tr=tr.trim(); if(!en||!tr) return;
-  S.words.push({en:en,tr:tr,ex:ex.trim(),ef:2.5,reps:0,interval:0,due:today0()});
+  S.words.push({en:en,tr:tr,ex:ex.trim(),ef:2.5,reps:0,interval:0,due:today0(),added:Date.now()});
   save(); renderVocab();
 }
 function vaOpen(){ if(vaEditIdx>=0){ vaEditIdx=-1; } document.getElementById("vaSheet").classList.add("open"); document.getElementById("vaBackdrop").classList.add("open"); setTimeout(function(){ document.getElementById("wEn").focus(); },250); }
@@ -3829,7 +3850,7 @@ function renderVocabGames(){
       box.innerHTML='<div class="empty-state"><div class="mchip"><img src="assets/mascot/pose-newword.webp" data-hd="vocab-start" alt=""></div><div class="t">Add a few words first</div><div class="d">You need at least 4 words for the exercises. You have '+pool.length+' now.</div><button type="button" class="btn sec sm" onclick="go(\'vocab\')">Back to words</button></div>';
       return;
     }
-    var ms=[["mc1","Word → Meaning","Pick the right English definition"],["mc2","Meaning → Word","Which word fits this definition?"],["listen","Listen & choose","Hear the word, pick the spelling"],["match","Match","Match each word with its meaning"],["cloze","Fill the gap","Choose the missing word in a sentence"]];
+    var ms=[["mc1","Word → Meaning","Pick the right English definition"],["mc2","Meaning → Word","Which word fits this definition?"],["listen","Listen & choose","Hear the word, pick the spelling"],["match","Match","Match each word with its meaning"],["cloze","Fill the gap","Choose the missing word in a sentence"],["type","Type it","See the meaning, write the word"],["dict","Dictation","Hear the word, type the spelling"]];
     box.innerHTML='<p class="hint" style="text-align:left;margin-top:0;">Practice beyond typing: recognition, listening and context. Questions come from your own words.</p><div class="vg-menu">'+ms.map(function(m){ return '<button type="button" data-m="'+m[0]+'"><span class="vg-ic"><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></span><b>'+m[1]+'</b><small>'+m[2]+'</small></button>'; }).join("")+'</div>';
     box.querySelectorAll(".vg-menu button").forEach(function(b){ b.addEventListener("click",function(){ vgStart(b.dataset.m); }); });
     return;
@@ -3844,6 +3865,7 @@ function renderVocabGames(){
   }
   var q=vgQ[vgI], pct2=Math.round(vgI/vgQ.length*100);
   var head='<div class="vg-prog"><span>'+(vgI+1)+'/'+vgQ.length+'</span><div class="vc-bar"><div style="width:'+Math.max(6,pct2)+'%"></div></div></div>';
+  if(q.kind==="type"||q.kind==="dict"){ vgRenderTyped(box,q,head); return; }
   var body='';
   if(q.kind==="listen") body='<div class="vg-sub">Listen and choose the correct spelling</div><button type="button" class="vg-listen" id="vgSpeak" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>';
   else if(q.kind==="cloze") body='<div class="vg-sub">Choose the word that fits the gap</div><div class="vg-q" style="font-size:19px;line-height:1.4;">'+esc(q.text)+'</div><div class="vg-sub">'+esc(q.hint)+'</div>';
@@ -3855,15 +3877,40 @@ function renderVocabGames(){
   box.querySelectorAll(".qz-opt").forEach(function(b){ b.addEventListener("click",function(){
     if(vgAns) return; vgAns=true; var o=q.opts[+b.dataset.i];
     box.querySelectorAll(".qz-opt").forEach(function(x,i){ x.disabled=true; if(q.opts[i].ok) x.classList.add("correct"); else if(x===b) x.classList.add("wrong"); else x.classList.add("dim"); });
-    if(o.ok) vgScore++;
+    if(o.ok) vgScore++; else mkAddVocab(q);
     S.vocabGames=S.vocabGames||{right:0,total:0}; S.vocabGames.total++; if(o.ok) S.vocabGames.right++; save();
     document.getElementById("vgFb").innerHTML='<div class="qz-fb '+(o.ok?"ok":"no")+'">'+(o.ok?"Correct!":"Answer: "+esc(q.word.en+" — "+vgMean(q.word))+(vgLow()&&q.word.tr?" ("+esc(q.word.tr)+")":""))+'</div><button type="button" class="btn" id="vgNext">'+(vgI+1>=vgQ.length?"See result":"Next")+'</button>';
     document.getElementById("vgNext").addEventListener("click",function(){ vgI++; renderVocabGames(); });
   }); });
 }
+
+function vgNorm(x){ return String(x||"").toLowerCase().replace(/[^a-z' -]/g,"").replace(/\s+/g," ").trim(); }
+function vgLev(a,b){ var m=a.length,n=b.length,d=[],i,j; for(i=0;i<=m;i++){ d[i]=[i]; } for(j=1;j<=n;j++) d[0][j]=j; for(i=1;i<=m;i++) for(j=1;j<=n;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1)); return d[m][n]; }
+function vgRenderTyped(box,q,head){
+  var isD=q.kind==="dict";
+  var body=isD?'<div class="vg-sub">Listen and type the spelling</div><button type="button" class="vg-listen" id="vgSpeak" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>':'<div class="vg-sub">Write the English word</div><div class="vg-q">'+esc(q.word.tr||vgMean(q.word))+'</div>'+(q.word.def?'<div class="vg-sub">'+esc(q.word.def)+'</div>':'');
+  box.innerHTML=head+body+'<input class="f" id="vgTyped" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Type here" style="margin:12px 0 8px;"><div id="vgFb"></div><button type="button" class="btn" id="vgCheck">Check</button>';
+  var sp=document.getElementById("vgSpeak"); if(sp){ sp.addEventListener("click",function(){ speakEnglish(q.word.en,S.settings.ttsRate||0.95); }); setTimeout(function(){ speakEnglish(q.word.en,S.settings.ttsRate||0.95); },250); }
+  var inp=document.getElementById("vgTyped"), btn=document.getElementById("vgCheck"), done=false;
+  if(!isD) setTimeout(function(){ try{ inp.focus(); }catch(e){} },100);
+  function check(){
+    if(done){ vgI++; renderVocabGames(); return; }
+    var a=vgNorm(inp.value), c=vgNorm(q.word.en); if(!a) return;
+    var exact=a===c, near=!exact&&c.length>=6&&vgLev(a,c)<=1;
+    done=true; inp.disabled=true;
+    S.vocabGames=S.vocabGames||{right:0,total:0}; S.vocabGames.total++;
+    if(exact||near){ vgScore++; S.vocabGames.right++; }
+    else mkAddRaw(isD?("Dinleyip yazılacak kelime: "+q.word.en):('"'+(q.word.tr||vgMean(q.word))+'" kelimesinin İngilizcesi: '+q.word.en),[],"","Kelime","note");
+    save();
+    document.getElementById("vgFb").innerHTML='<div class="qz-fb '+(exact?"ok":(near?"ok":"no"))+'">'+(exact?"Correct!":(near?"Almost! Spelling: "+esc(q.word.en):"Answer: "+esc(q.word.en)))+'</div>';
+    btn.textContent=vgI+1>=vgQ.length?"See result":"Next";
+  }
+  btn.addEventListener("click",check);
+  inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); check(); } });
+}
 function vgStart(mode){
   var bx=document.getElementById("vgBody");
-  if(mode!=="cloze"&&mode!=="listen"){
+  if(mode!=="cloze"&&mode!=="listen"&&mode!=="dict"){
     var pl=vgPool(), need=pl.some(function(w){ return !w.def; });
     if(need&&(S.settings.geminiApiKey||"").trim()){
       if(bx) bx.innerHTML='<div class="vg-res"><p class="hint">Moonie is preparing English definitions…</p></div>';
@@ -3883,6 +3930,8 @@ function vgStart2(mode){
     picks.slice(0,10).forEach(function(w){
       if(mode==="mc1") vgQ.push({kind:"mc1",word:w,prompt:w.en,opts:vgOptions(w,"def",pool)});
       else if(mode==="mc2") vgQ.push({kind:"mc2",word:w,prompt:vgMean(w),opts:vgOptions(w,"en",pool)});
+      else if(mode==="type") vgQ.push({kind:"type",word:w});
+      else if(mode==="dict") vgQ.push({kind:"dict",word:w});
       else vgQ.push({kind:"listen",word:w,opts:vgOptions(w,"en",pool)});
     });
   }
@@ -5373,7 +5422,7 @@ document.getElementById("wsAdd").addEventListener("click",function(){
   var btn=document.getElementById("wsAdd");
   if(exists){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Zaten defterinde'; setTimeout(function(){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime defterine ekle'; },1800); return; }
   var nw={en:en,tr:tr,ex:wsCurrentEx,ef:2.5,reps:0,interval:0,due:today0()}; if(wsInfo&&wsInfo.def) nw.def=wsInfo.def; if(wsInfo&&wsInfo.pos) nw.pos=wsInfo.pos;
-  S.words.push(nw);
+  nw.added=Date.now(); S.words.push(nw);
   save();
   btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg>Eklendi!';
   setTimeout(function(){ btn.innerHTML='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Kelime defterine ekle'; },1800);
@@ -7073,7 +7122,7 @@ function renderWriting(){
       resultEl.style.display="block";
       var scoreBox=document.createElement("div"); scoreBox.className="wr-score"; scoreBox.textContent="Seviye ve puanlar hesaplanıyor…"; resultEl.insertBefore(scoreBox,resultEl.children[1]||null);
       var scoreObj=null;
-      callGeminiJSON(buildWritingScorePrompt(promptText,text)).then(function(o){ if(Array.isArray(o)) o=o[0]; if(!o||typeof o!=="object"||!o.scores) throw new Error("x"); scoreObj=o; scoreBox.innerHTML=wrScoreHtml(o); })
+      callGeminiJSON(buildWritingScorePrompt(promptText,text)).then(function(o){ if(Array.isArray(o)) o=o[0]; if(!o||typeof o!=="object"||!o.scores) throw new Error("x"); scoreObj=o; scoreBox.innerHTML=wrScoreHtml(o); mkAddNotes(o.duzelt); })
         .catch(function(){ scoreBox.remove(); });
       document.getElementById("scReveal").addEventListener("click",function(){ document.getElementById("scBody").style.display="block"; this.parentNode.style.display="none"; });
       resultEl.querySelector(".gr-save-btn").addEventListener("click",function(){
@@ -7112,13 +7161,22 @@ function renderWriting(){
 
 /* ===== Hata defteri + yedek hatırlatma ===== */
 function mkList(){ if(!Array.isArray(S.mistakes)) S.mistakes=[]; return S.mistakes; }
-function mkAdd(unitName,ex){
-  var L=mkList(), q=String(ex.q||""), ans=ex.opts[ex.a]; if(!q||ans===undefined) return;
+function mkAddRaw(q,opts,ans,unitName,kind){
+  var L=mkList(); q=String(q||"").trim(); if(!q||ans===undefined||ans===null) return;
   var f=L.filter(function(m){ return m.q===q; })[0];
   if(f){ f.n=(f.n||1)+1; f.s=0; f.t=Date.now(); }
-  else { L.push({q:q,o:ex.opts.slice(),a:String(ans),u:String(unitName||""),n:1,s:0,t:Date.now()}); if(L.length>80) L.shift(); }
+  else { var m={q:q,o:opts.slice(),a:String(ans),u:String(unitName||""),n:1,s:0,t:Date.now()}; if(kind) m.k=kind; L.push(m); if(L.length>80) L.shift(); }
   save();
 }
+function mkAdd(unitName,ex){ var ans=ex.opts[ex.a]; if(ans===undefined) return; mkAddRaw(ex.q,ex.opts,ans,unitName); }
+function mkAddVocab(q){
+  try{
+    var txt=q.kind==="mc1"?('"'+q.word.en+'" ne demek? (What does it mean?)'):(q.kind==="cloze"?q.text:(q.kind==="mc2"?q.prompt:""));
+    var ok=q.opts.filter(function(o){ return o.ok; })[0]; if(!txt||!ok) return;
+    mkAddRaw(txt,q.opts.map(function(o){ return o.t; }),ok.t,"Kelime");
+  }catch(e){}
+}
+function mkAddNotes(arr){ (Array.isArray(arr)?arr:[]).slice(0,3).forEach(function(x){ x=String(x||"").trim(); if(x.length>3&&x.length<300) mkAddRaw(x,[],"","Yazma","note"); }); }
 function renderMkCard(){
   var box=document.getElementById("mkCard"); if(!box) return;
   var n=mkList().length;
@@ -7136,7 +7194,7 @@ function renderMistakes(){
 function mkRender(){
   var box=document.getElementById("mkBody"); if(!box) return;
   var L=mkList();
-  if(!L.length){ box.innerHTML='<div class="empty-state"><div class="t">Hata defterin boş</div><div class="d">Grammar testlerinde yanlış yaptığın sorular buraya düşer, burada tekrar edersin.</div></div><button type="button" class="btn" id="mkBack">Bugün\'e dön</button>'; document.getElementById("mkBack").addEventListener("click",function(){ go("today"); }); return; }
+  if(!L.length){ box.innerHTML='<div class="empty-state"><div class="t">Hata defterin boş</div><div class="d">Grammar, kelime alıştırmalarında ve yazı değerlendirmesinde yaptığın hatalar buraya düşer, burada tekrar edersin.</div></div><button type="button" class="btn" id="mkBack">Bugün\'e dön</button>'; document.getElementById("mkBack").addEventListener("click",function(){ go("today"); }); return; }
   var r=mkRun;
   if(!r||r.i>=r.items.length){
     box.innerHTML='<div class="qz-res"><div class="qz-score">'+(r?r.ok:0)+'<small>/'+(r?r.items.length:0)+'</small></div><div class="qz-msg">'+(L.length?L.length+" soru defterde kaldı. Bir soruyu iki kez doğru yapınca defterden çıkar.":"Defter temizlendi!")+'</div><div style="display:flex;gap:8px;"><button type="button" class="btn sec" id="mkAgain" style="flex:1;">Yeniden tekrar et</button><button type="button" class="btn" id="mkDone" style="flex:1;">Bitir</button></div></div>';
@@ -7145,6 +7203,13 @@ function mkRender(){
     return;
   }
   var m=r.items[r.i], ans=r.picked!==null;
+  if(m.k==="note"){
+    box.innerHTML='<div class="qz-top"><span>Soru '+(r.i+1)+'/'+r.items.length+'</span><span class="qz-sc">'+esc(m.u)+'</span></div><div class="qz-card"><div class="qz-sub" style="font-size:12.5px;opacity:.75;margin-bottom:6px;">'+(m.u==="Yazma"?"Yazında şunu düzeltmen gerekiyordu:":"Bunu hatırla:")+'</div><div class="qz-q">'+esc(m.q)+'</div></div><div style="display:flex;gap:8px;"><button type="button" class="btn sec" id="mkNoteNo" style="flex:1;">Tekrar göster</button><button type="button" class="btn" id="mkNoteYes" style="flex:1;">Hatırlıyorum</button></div>';
+    var nd=function(yes){ if(yes){ r.ok++; m.s=(m.s||0)+1; if(m.s>=2){ var ix=L.indexOf(m); if(ix>=0) L.splice(ix,1); } } else m.s=0; save(); r.i++; r.picked=null; mkRender(); window.scrollTo(0,0); };
+    document.getElementById("mkNoteYes").addEventListener("click",function(){ nd(true); });
+    document.getElementById("mkNoteNo").addEventListener("click",function(){ nd(false); });
+    return;
+  }
   if(!m.sh) m.sh=mkShuffle(m.o);
   box.innerHTML='<div class="qz-top"><span>Soru '+(r.i+1)+'/'+r.items.length+'</span><span class="qz-sc">'+esc(m.u)+'</span></div><div class="qz-card"><div class="qz-q">'+esc(m.q)+'</div>'+
     m.sh.map(function(o,oi){ var cls="qz-opt"; if(ans){ if(o===m.a) cls+=" correct"; else if(oi===r.picked) cls+=" wrong"; else cls+=" dim"; }
@@ -7174,6 +7239,41 @@ function renderBkNudge(){
   box.innerHTML='<div class="card"><b>İlerlemeni yedekle</b><div class="mut" style="font-size:12.5px;margin:2px 0 10px;">Verin yalnızca bu telefonda duruyor. Tarayıcı verisi silinirse kaybolur. Dosya olarak yedeklemen 10 saniye sürer.</div><div style="display:flex;gap:8px;"><button type="button" class="btn sm" id="bkGo" style="flex:1;margin:0;">Yedekle</button><button type="button" class="btn sec sm" id="bkLater" style="flex:1;margin:0;">1 hafta sonra</button></div></div>';
   document.getElementById("bkGo").addEventListener("click",function(){ document.getElementById("exportBtn").click(); });
   document.getElementById("bkLater").addEventListener("click",function(){ S.settings.bkSnooze=Date.now()+7*86400000; save(); renderBkNudge(); });
+}
+
+/* ===== Seri koruma (haftada 1 gün atlama hakkı) ===== */
+function renderFrzCard(){
+  var box=document.getElementById("frzCard"); if(!box) return;
+  var t=new Date(), y2=new Date(t.getFullYear(),t.getMonth(),t.getDate()-2);
+  var show=(S.streak||0)>=2&&S.lastDone===dstr(y2)&&S.lastDone!==dstr(t);
+  if(!show){ box.innerHTML=""; return; }
+  var ok=S.freezeWeek!==wkKey();
+  box.innerHTML='<div class="card"><b>'+(ok?"Serin korunuyor":"Seri sıfırlandı")+'</b><div class="mut" style="font-size:12.5px;margin-top:2px;">'+(ok?"Dün çalışamadın ama haftalık atlama hakkın hazır. Bugün bir günü tamamlarsan "+S.streak+" günlük serin devam eder.":"Bu haftaki atlama hakkını kullandın, seri 1'den yeniden başlayacak. Bugün başlamak için güzel bir gün.")+'</div></div>';
+}
+
+/* ===== Haftalık özet ===== */
+function wkData(){
+  var now=new Date(), t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()), from=t0.getTime()-6*86400000, act=0, steps=0, k;
+  for(var i=0;i<7;i++){ var d=new Date(t0.getTime()-i*86400000), v=(S.history||{})[dstr(d)]||0; if(v>0){ act++; steps+=v; } }
+  var inW=function(x){ var p=parseD(String(x||"")); return !!p&&p.getTime()>=from; };
+  var nw=(S.words||[]).filter(function(w){ return w&&w.added&&w.added>=from; }).length;
+  var wr=(S.writings||[]).filter(function(w){ return inW(w.date); }).length;
+  var rd=(S.readings||[]).filter(function(w){ return inW(w.date); }).length;
+  var cnt={}, top=""; mkList().forEach(function(m){ var u=m.u||""; if(u){ cnt[u]=(cnt[u]||0)+(m.n||1); if(!top||cnt[u]>cnt[top]) top=u; } });
+  return {act:act,steps:steps,nw:nw,wr:wr,rd:rd,top:top,streak:S.streak||0,miss:mkList().length};
+}
+function wkKey(dt){ var d=dt||new Date(); d=new Date(d.getFullYear(),d.getMonth(),d.getDate()); d.setDate(d.getDate()-((d.getDay()+6)%7)); return dstr(d); }
+function renderWkCard(){
+  var box=document.getElementById("wkCard"); if(!box) return;
+  var dow=new Date().getDay();
+  if((dow!==0&&dow!==1)||S.settings.wkSeen===wkKey()){ box.innerHTML=""; return; }
+  var o=wkData(); if(!o.act&&!o.nw&&!o.wr) { box.innerHTML=""; return; }
+  var msg=o.act>=6?"Harika bir hafta! Neredeyse hiç boşluk bırakmadın.":(o.act>=4?"Güzel tempo. Bir gün daha eklersen çok iyi olur.":(o.act>=2?"Başlangıç iyi. Küçük adımlar birikiyor.":"Bu hafta sakin geçti. Yeni haftada 5 dakikayla başlayalım."));
+  var goal=Math.min(7,Math.max(3,o.act+1));
+  var rows=[["Aktif gün",o.act+"/7"],["Tamamlanan adım",String(o.steps)],["Yeni kelime",String(o.nw)],["Yazı",String(o.wr)],["Okuma",String(o.rd)],["Seri",o.streak+" gün"]];
+  box.innerHTML='<div class="card"><b>Haftalık özet</b><div class="mut" style="font-size:12.5px;margin:2px 0 10px;">Son 7 gün</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">'+rows.map(function(r){ return '<div style="background:var(--tint);border-radius:14px;padding:10px 8px;text-align:center;"><div style="font-weight:800;font-size:17px;">'+r[1]+'</div><div class="mut" style="font-size:11.5px;">'+r[0]+'</div></div>'; }).join("")+'</div><div style="font-size:13.5px;line-height:1.5;">'+msg+(o.top?' En çok hata yaptığın alan: <b>'+esc(o.top)+'</b>.':'')+' Gelecek hafta hedefin: <b>'+goal+' gün</b>.</div><div style="display:flex;gap:8px;margin-top:12px;">'+(o.miss?'<button type="button" class="btn sec sm" id="wkMk" style="flex:1;margin:0;">Hata defteri</button>':'')+'<button type="button" class="btn sm" id="wkHide" style="flex:1;margin:0;">Tamam</button></div></div>';
+  var mk=document.getElementById("wkMk"); if(mk) mk.addEventListener("click",function(){ go("mistakes"); });
+  document.getElementById("wkHide").addEventListener("click",function(){ S.settings.wkSeen=wkKey(); save(); renderWkCard(); });
 }
 
 /* ===== Kelimelerimle yaz ===== */
@@ -7365,7 +7465,7 @@ function addUnitPhrasesToVocab(unit){
   unit.phrases.forEach(function(p){
     var en=p[0].trim(), tr=p[1].trim();
     var exists=S.words.some(function(w){ return w.en.toLowerCase()===en.toLowerCase(); });
-    if(!exists){ S.words.push({en:en,tr:tr,ex:"",ef:2.5,reps:0,interval:0,due:today0()}); addedN++; }
+    if(!exists){ S.words.push({en:en,tr:tr,ex:"",ef:2.5,reps:0,interval:0,due:today0(),added:Date.now()}); addedN++; }
   });
   return addedN;
 }
@@ -10027,7 +10127,7 @@ function markAct(key){
     STEPS.forEach(function(st,i){ if(st[2]===key&&!S.checks[i]){ S.checks[i]=true; hit=true; } });
     var nDone=STEPS.filter(function(_,i){return S.checks[i];}).length;
     S.history[d]=Math.max(S.history[d]||0,nDone);
-    if(STEPS.length&&nDone===STEPS.length) finishDay(d);
+    if(nDone>=1) finishDay(d); /* gün, en az 1 adım yapılınca seriye sayılır */
     save();
     var tv=document.getElementById("v-today"); if(hit&&tv&&tv.classList.contains("active")) renderToday();
   }catch(e){}
