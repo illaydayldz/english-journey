@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v163-qafix2";
+const CACHE = "english-app-v166-wotd";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/free-library.json",
@@ -99,7 +99,7 @@ const DAILY = ["Bugünkü hedef seni bekliyor. 5 dakika yeter.", "Küçük bir a
 const DAILY_F = ["Bugünkü hedef: 1 görev, 5 dakika.", "Odaklan, bitir, devam et.", "Planın seni bekliyor. Başla.", "Seriyi koru. Bugünkü görevi yap."];
 self.addEventListener("push", (e) => {
   e.waitUntil((async () => {
-    let title = "Moonie", body = DAILY[new Date().getDay() % DAILY.length], focus = false;
+    let title = "Moonie", body = DAILY[new Date().getDay() % DAILY.length], focus = false, awayHit = false;
     try {
       const c = await caches.open("moonie-state");
       const r = await c.match("./__state.json");
@@ -110,7 +110,7 @@ self.addEventListener("push", (e) => {
         const days = ref ? Math.round((t - ref) / 86400000) : 0;
         const tier = AWAY_TXT.find((x) => days >= x[0]);
         if (tier) {
-          const f = FOCUS_TXT[tier[0]];
+          awayHit = true; const f = FOCUS_TXT[tier[0]];
           if (focus && f) { title = f[0]; body = f[1]; }
           else { const pool = [tier[2]].concat(ALT_BODY[tier[0]] || []); title = tier[1]; body = pool[new Date().getDate() % pool.length]; }
         } else {
@@ -121,6 +121,11 @@ self.addEventListener("push", (e) => {
     try {
       const c2 = await caches.open("moonie-state"); const r2 = await c2.match("./__state.json"); const st2 = r2 ? await r2.json() : {};
       const td = new Date().toDateString(); const n = st2.shownD === td ? (st2.shownN || 0) : 0;
+      if (st2.wotd && Array.isArray(st2.words) && st2.words.length && !awayHit) {
+        const dn = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+        const w = st2.words[(dn + n) % st2.words.length];
+        title = n >= 1 ? "Bir kelime daha" : "Günün kelimesi"; body = w[0] + " · " + w[1];
+      } else
       if (n >= 1) { body = (focus ? "Bugünkü görev hâlâ açık. 5 dakikanı ayır." : "Bugün henüz görüşmedik. Küçük bir adım yeter, olur mu?"); }
       st2.shownD = td; st2.shownN = n + 1;
       await c2.put("./__state.json", new Response(JSON.stringify(st2), { headers: { "Content-Type": "application/json" } }));
