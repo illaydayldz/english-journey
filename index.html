@@ -3440,6 +3440,7 @@ var NAVMAP={workbook:"today",library:"today",today:"today",progress:"progress",l
 var _lisT=null;
 function go(v){
   clearTimeout(_lisT);
+  if(v!=="speakunit"&&speakConvo&&speakConvo.active){ speakConvo.active=false; try{ if(speakConvo.recognizer&&speakConvo.recognizing) speakConvo.recognizer.stop(); }catch(e){} stopConvoSpeech(); }
   if(v==="podcastdetail"){ _lisT=setTimeout(function(){ markAct("listening"); },120000); } /* 2 dk podcast ekranında kalmak = dinleme yapıldı */
   if(v==="today"){ try{ dayRollover(); renderToday(); }catch(e){} }
   if(v!=="podcastdetail") stopSyncTicker();
@@ -7471,6 +7472,7 @@ function addUnitPhrasesToVocab(unit){
 }
 /* ---------- Moonie ile sesli sohbet (Gemini, çok turlu rol yapma) ---------- */
 var speakConvo={active:false,recognizing:false,recognizer:null};
+function stopConvoSpeech(){ try{ if("speechSynthesis" in window){ speechSynthesis.cancel(); setTimeout(function(){ speechSynthesis.cancel(); },150); } }catch(e){} }
 function buildSpeakConvoSystemPrompt(level,unit){
   var dlg=(unit.dialog&&unit.dialog.length)?("\nÖrnek diyalog (sadece referans, birebir tekrarlama):\n"+unit.dialog.map(function(d){ return d[0]+": "+d[1]; }).join("\n")+"\n"):"";
   return "Sen Moonie adında dostane ve sabırlı bir İngilizce konuşma partnerisin. Öğrencinle sesli bir rol yapma (role-play) alıştırması yapıyorsun.\n"+
@@ -7702,6 +7704,7 @@ function resetSpeakConvo(){
   speakConvo={active:false,recognizing:false,recognizer:null};
 }
 function wireSpeakConvo(level,unit,sel){
+  var micIcon='<svg class="icon icon-sm" aria-hidden="true"><use href="#i-mic"></use></svg>';
   var startBtn=document.getElementById("speakConvoStart");
   var talkBtn=document.getElementById("speakConvoTalk");
   var endBtn=document.getElementById("speakConvoEnd");
@@ -7727,12 +7730,15 @@ function wireSpeakConvo(level,unit,sel){
   }
 
   function sendSaid(said){
+    if(!speakConvo.active) return;
     appendConvoBubble("user",said,"");
     speakConvo.contents.push({role:"user",parts:[{text:said}]});
     appendConvoLoading("Moonie düşünüyor...");
     talkBtn.disabled=true; stopTimer("Moonie yanıtlıyor...");
+    var _cv=speakConvo;
     callGeminiText(speakConvo.contents).then(function(text){
       removeConvoLoading();
+      if(speakConvo!==_cv||!_cv.active) return; /* sohbet bitirildi: yanıtı okuma */
       speakConvo.contents.push({role:"model",parts:[{text:text}]});
       var parts=splitMoonieReply(text);
       appendConvoBubble("model",parts.speak,parts.note);
@@ -7740,6 +7746,7 @@ function wireSpeakConvo(level,unit,sel){
       talkBtn.disabled=false; stopTimer();
     }).catch(function(err){
       removeConvoLoading();
+      if(speakConvo!==_cv||!_cv.active) return;
       appendConvoBubble("model","(Bağlantı hatası: "+err.message+")","");
       talkBtn.disabled=false; stopTimer();
     });
@@ -7801,8 +7808,10 @@ function wireSpeakConvo(level,unit,sel){
     startBtn.style.display="none";
     log.innerHTML=""; log.style.display="flex";
     appendConvoLoading("Moonie hazırlanıyor...");
+    var _cv0=speakConvo;
     callGeminiText(speakConvo.contents).then(function(text){
       removeConvoLoading();
+      if(speakConvo!==_cv0||!_cv0.active) return;
       speakConvo.contents.push({role:"model",parts:[{text:text}]});
       var parts=splitMoonieReply(text);
       appendConvoBubble("model",parts.speak,parts.note);
@@ -7823,9 +7832,10 @@ function wireSpeakConvo(level,unit,sel){
 
   endBtn.addEventListener("click",function(){
     if(speakConvo.recognizer&&speakConvo.recognizing){ try{ speakConvo.recognizer.stop(); }catch(e){} }
-    if("speechSynthesis" in window) speechSynthesis.cancel();
     var finishedContents=speakConvo.contents;
-    speakConvo.active=false;
+    speakConvo.active=false; stopConvoSpeech();
+    try{ removeConvoLoading(); }catch(e){}
+    talkBtn.disabled=false; stopTimer();
     controls.style.display="none";
     var saveBtn=document.createElement("button");
     saveBtn.type="button"; saveBtn.className="btn sec sm"; saveBtn.style.marginTop="6px";
