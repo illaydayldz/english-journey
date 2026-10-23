@@ -3539,7 +3539,7 @@ function renderToday(){
     cl.appendChild(lab);
   });
   var doneN=STEPS.filter(function(_,i){return S.checks[i];}).length;
-  var all=doneN===STEPS.length, doneToday=S.lastDone===dstr(new Date());
+  var all=doneN===STEPS.length&&STEPS.length>0, doneToday=all&&S.lastDone===dstr(new Date()); /* seri 1 adımla sayılır; "tamamlandı" yalnızca tüm adımlar bitince */
   document.getElementById("missionDone").textContent=doneN+"/"+STEPS.length;
   renderAwayCard(doneN,doneToday);
   (function(){ var hr=dt.getHours(), pose=all?"pose-cheering":"pose-goal", aw=awayInfo(); if(aw&&!doneToday&&!doneN){ pose=aw.pose; } var mi=document.querySelector(".th-moon"), want="assets/mascot/"+pose+".webp";
