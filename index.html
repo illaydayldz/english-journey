@@ -2903,7 +2903,8 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <div class="sh-lbl" style="margin:0 0 6px;">Arka plan bildirimi (iPhone ve Android)</div>
       <button type="button" class="btn sec" id="remBg" style="margin:0;">Bildirimi aç</button>
       <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:13.5px;"><input type="checkbox" id="remTwo"> Günde 2 bildirim <input type="time" id="remTime2" aria-label="İkinci hatırlatma saati" value="12:30" style="margin-left:auto;padding:8px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:14px;"></label>
-      <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:13.5px;"><input type="checkbox" id="remWord"> Bildirimde günün kelimesini göster</label>
+      <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:13.5px;"><input type="checkbox" id="remWord"> Bildirimde günün kelimesini ve örnek cümlesini göster</label>
+      <button type="button" class="btn sec sm" id="remWordTest" style="margin:8px 0 0;">Örnek bildirimi göster</button>
       <p class="mut" id="remBgNote" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte hatırlatır, 2+ gün çalışmazsan Moonie küser. iPhone'da ana ekrana eklemen gerekir.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Ana ekran kısayolları</div>
       <div id="remLinks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
@@ -7293,6 +7294,41 @@ function renderWkCard(){
   document.getElementById("wkHide").addEventListener("click",function(){ S.settings.wkSeen=wkKey(); save(); renderWkCard(); });
 }
 
+/* ===== Kelime bildirimi: örnek cümleler + önizleme ===== */
+function wnList(){
+  var arr=(S.words||[]).filter(function(w){ return w&&w.en&&w.tr; }).slice().sort(function(a,b){ return (a.reps||0)-(b.reps||0); });
+  var withEx=arr.filter(function(w){ return (w.ex||"").trim(); }), noEx=arr.filter(function(w){ return !(w.ex||"").trim(); });
+  return withEx.concat(noEx).slice(0,40).map(function(w){ return [String(w.en),String(w.tr),String(w.ex||"").trim().slice(0,140)]; });
+}
+function wnBody(w){ return w[0]+" · "+w[1]+(w[2]?"\n"+w[2]:""); }
+function wnFillExamples(force){
+  try{
+    var key=(S.settings.geminiApiKey||"").trim(); if(!key||S.settings.wotd===false) return;
+    var now=Date.now(); if(!force&&S.settings.wnT&&now-S.settings.wnT<12*3600*1000) return;
+    var need=(S.words||[]).filter(function(w){ return w&&w.en&&w.tr&&!(w.ex||"").trim(); }).slice(0,15);
+    if(!need.length){ S.settings.wnT=now; save(); return; }
+    S.settings.wnT=now; save();
+    var lv=S.settings.level||"B1";
+    var p="You are an English teacher for a Turkish-speaking learner at CEFR level "+lv+". For EACH word or phrase below write ONE natural example sentence (max 12 words, everyday context) that uses it correctly. Return ONLY a JSON array of strings in the same order.\nWords: "+need.map(function(w){ return w.en+" ("+w.tr+")"; }).join("; ");
+    callGeminiJSON(p).then(function(o){
+      if(!Array.isArray(o)&&o&&Array.isArray(o.sentences)) o=o.sentences;
+      if(!Array.isArray(o)) return;
+      need.forEach(function(w,i){ var t=typeof o[i]==="string"?o[i]:(o[i]&&o[i].en); if(t&&String(t).trim()&&!(w.ex||"").trim()) w.ex=String(t).trim().slice(0,160); });
+      save(); pushAwayState();
+    }).catch(function(){ S.settings.wnT=0; });
+  }catch(e){}
+}
+function wnPreview(btn){
+  var lst=wnList(); var w=lst[0];
+  if(!w){ flashMsg("Önce kelime defterine birkaç kelime ekle."); return; }
+  if(!("Notification" in window)||!("serviceWorker" in navigator)){ flashMsg("Bu cihaz bildirim göstermiyor."); return; }
+  var show=function(){ navigator.serviceWorker.ready.then(function(r){ return r.showNotification("Günün kelimesi",{body:wnBody(w),icon:"./icon-192-v4.png",badge:"./icon-192-v4.png",tag:"moonie-preview",data:{url:"./index.html?go=vocab"}}); }).then(function(){ flashMsg("Örnek bildirim gönderildi."); }).catch(function(){ flashMsg("Bildirim gösterilemedi."); }); };
+  if(Notification.permission==="granted") show();
+  else if(Notification.permission==="denied") flashMsg("Bildirim izni kapalı. Telefon ayarlarından aç.");
+  else Notification.requestPermission().then(function(p){ if(p==="granted") show(); else flashMsg("Bildirim izni verilmedi."); });
+}
+setTimeout(wnFillExamples,6000);
+
 /* ===== Kelimelerimle yaz ===== */
 var writingWords=null, writingWordsFor=null, wwSet=[], wwSents=null, wwBusy=false;
 function wwStems(en){ return String(en||"").toLowerCase().split(/[\s\-\/]+/).filter(Boolean).map(function(t){ t=t.replace(/[^a-z']/g,""); return t.length>4?t.replace(/(ing|ed|es|ly|s|e|y)$/,""):(t.length===4?t.replace(/e$/,""):t); }).filter(Boolean); }
@@ -10261,7 +10297,8 @@ var PUSH_URL="https://moonie-push.ilaydaesmanur86.workers.dev", PUSH_KEY="BOEBSg
     bg.disabled=false; bg.textContent=S.settings.bgRem?"Bildirim açık · kapat":"Bildirimi aç"; }
   bgState();
   var two=document.getElementById("remTwo"), t2=document.getElementById("remTime2");
-  var rw=document.getElementById("remWord"); rw.checked=!!S.settings.wotd; rw.addEventListener("change",function(){ S.settings.wotd=rw.checked; save(); pushAwayState(); });
+  var rw=document.getElementById("remWord"); rw.checked=S.settings.wotd!==false; rw.addEventListener("change",function(){ S.settings.wotd=rw.checked; save(); pushAwayState(); if(rw.checked) wnFillExamples(); });
+  document.getElementById("remWordTest").addEventListener("click",function(){ wnPreview(this); });
   two.checked=!!S.settings.remTwo; t2.value=S.settings.remTime2||"12:30"; t2.disabled=!two.checked;
   function utcH(v){ var p=(v||"20:00").split(":"), d=new Date(); d.setHours(+p[0],+p[1],0,0); return d.getUTCHours(); }
   window.pushSync=function(){ if(!S.settings.pushOn||!PUSH_URL) return; navigator.serviceWorker.ready.then(function(r){ return r.pushManager.getSubscription(); }).then(function(sub){ if(!sub) return;
@@ -10288,7 +10325,7 @@ var PUSH_URL="https://moonie-push.ilaydaesmanur86.workers.dev", PUSH_KEY="BOEBSg
   setTimeout(function(){ window.pushSync(); },2500);
 })();
 /* SW'ye son aktivite bilgisini yaz (Cache) */
-function pushAwayState(){ try{ if(typeof lnSchedule==="function") setTimeout(lnSchedule,300); if(window.pushSync) setTimeout(window.pushSync,600); }catch(e){} try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||"",focus:S.settings.style==="focus",wotd:!!S.settings.wotd,words:(S.settings.wotd?(S.words||[]).filter(function(w){ return w&&w.en&&w.tr; }).slice().sort(function(a,b){ return (a.reps||0)-(b.reps||0); }).slice(0,40).map(function(w){ return [String(w.en),String(w.tr)]; }):[])}; caches.open("moonie-state").then(function(c){ return c.match("./__state.json").then(function(r){ return r?r.json():{}; }).catch(function(){ return {}; }).then(function(o){ o=o||{}; Object.keys(st).forEach(function(k){ o[k]=st[k]; }); return c.put("./__state.json",new Response(JSON.stringify(o),{headers:{"Content-Type":"application/json"}})); }); }).catch(function(){}); }catch(e){} }
+function pushAwayState(){ try{ if(typeof lnSchedule==="function") setTimeout(lnSchedule,300); if(window.pushSync) setTimeout(window.pushSync,600); }catch(e){} try{ if(!("caches" in window)) return; var st={lastActive:S.lastActive||S.lastDone||dstr(new Date()),lastDone:S.lastDone||"",on:!!S.settings.bgRem,name:S.settings.userName||"",focus:S.settings.style==="focus",wotd:S.settings.wotd!==false,words:(S.settings.wotd!==false?wnList():[])}; caches.open("moonie-state").then(function(c){ return c.match("./__state.json").then(function(r){ return r?r.json():{}; }).catch(function(){ return {}; }).then(function(o){ o=o||{}; Object.keys(st).forEach(function(k){ o[k]=st[k]; }); return c.put("./__state.json",new Response(JSON.stringify(o),{headers:{"Content-Type":"application/json"}})); }); }).catch(function(){}); }catch(e){} }
 pushAwayState(); document.addEventListener("visibilitychange",function(){ if(document.hidden) pushAwayState(); });
 (function(){ var ios=/iphone|ipad|ipod/i.test(navigator.userAgent), st=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
   var w=document.getElementById("iosWarn"); if(w&&ios&&!st){ w.style.display="block"; document.getElementById("iosWarnBtn").addEventListener("click",function(){ var b=document.getElementById("remInstall"); if(b) b.click(); }); } })();

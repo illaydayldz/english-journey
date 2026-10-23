@@ -1,5 +1,5 @@
 // Basit çevrimdışı önbellek — app kabuğunu saklar
-const CACHE = "english-app-v172-usability";
+const CACHE = "english-app-v173-wordnotif";
 const ASSETS = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192-v4.png", "./icon-512-v4.png",
   "./assets/free-library.json",
@@ -124,7 +124,7 @@ self.addEventListener("push", (e) => {
       if (st2.wotd && Array.isArray(st2.words) && st2.words.length && !awayHit) {
         const dn = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
         const w = st2.words[(dn + n) % st2.words.length];
-        title = n >= 1 ? "Bir kelime daha" : "Günün kelimesi"; body = w[0] + " · " + w[1];
+        title = n >= 1 ? "Bir kelime daha" : "Günün kelimesi"; body = w[0] + " · " + w[1] + (w[2] ? "\n" + w[2] : "");
       } else
       if (n >= 1) { body = (focus ? "Bugünkü görev hâlâ açık. 5 dakikanı ayır." : "Bugün henüz görüşmedik. Küçük bir adım yeter, olur mu?"); }
       st2.shownD = td; st2.shownN = n + 1;
