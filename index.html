@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="author" content="İlayda Yıldız">
 <meta name="copyright" content="© 2026 İlayda Yıldız. Tüm hakları saklıdır.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#121016" id="themeColorMeta">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1621,6 +1621,13 @@
 .wcard.selmode{cursor:pointer;}.wcard.selmode button{pointer-events:none;opacity:.5;}
 .wcard .vs-ck{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent) 60%,transparent);display:flex;align-items:center;justify-content:center;margin-top:2px;color:transparent;}
 .wcard.picked{outline:2px solid var(--accent);}.wcard.picked .vs-ck{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+  /* ===== Erişilebilirlik: yakınlaştırma, 16px alanlar, 44px dokunma hedefleri ===== */
+  html{ touch-action:manipulation; }
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),textarea,select{ font-size:16px !important; }
+  .btn.sm,#thStart,#mkOpen,#acctSave,#remTime,#remTime2{ min-height:44px; }
+  .wc-pr,.nt-chip,#vpackBtn,#vSelToggle,#vaOpen,#spotifyConnectBtn,#wpStart{ position:relative; }
+  .wc-pr::after,.nt-chip::after,#vpackBtn::after,#vSelToggle::after,#vaOpen::after,#spotifyConnectBtn::after,#wpStart::after{ content:""; position:absolute; inset:-8px -4px; }
 </style>
 <script>
 /* Açılışta bir hata uygulamayı splash'ta bırakırsa kurtarma düğmesi */
@@ -2596,7 +2603,6 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <h1 id="writingHead">Yazma</h1>
     </div>
     <div id="wPhaseA">
-      <div class="wcount-card"><span class="wc-lbl"><svg class="icon icon-sm wg-i" aria-hidden="true"><use href="#i-calendar"></use></svg>Bugünün konusu</span><span class="wc-time" id="wCountdown">--</span></div>
       <div class="wprompt-card"><img class="wp-moon" src="assets/mascot/pose-determined.webp" alt="" aria-hidden="true">
         <div class="wp-body">
           <h2 class="wp-title" id="wpTitle">—</h2>
@@ -2892,11 +2898,11 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <button type="button" class="btn sec" id="tourAgain" style="margin:0 0 8px;">Tanıtım turunu tekrar göster</button>
       <button type="button" class="btn" id="remInstall" style="margin:0 0 4px;">Moonie'yi ana ekrana ekle</button><p class="mut" id="remInstNote" style="margin:0 0 14px;font-size:12px;">Ana ekrana ekleyince bildirim ve kısayollar çalışır.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Takvim hatırlatıcısı (iPhone ve Android)</div>
-      <div style="display:flex;gap:8px;align-items:center;"><input type="time" id="remTime" value="20:00" style="flex:0 0 120px;padding:10px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:15px;"><button type="button" class="btn" id="remIcs" style="flex:1;margin:0;">Takvime ekle</button></div>
+      <div style="display:flex;gap:8px;align-items:center;"><input type="time" id="remTime" aria-label="Hatırlatma saati" value="20:00" style="flex:0 0 120px;padding:10px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:15px;"><button type="button" class="btn" id="remIcs" style="flex:1;margin:0;">Takvime ekle</button></div>
       <p class="mut" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte, haftanın 7 gününe ayrı Moonie mesajı gelir. Açılan takvim penceresinde "Ekle"ye dokun.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Arka plan bildirimi (iPhone ve Android)</div>
       <button type="button" class="btn sec" id="remBg" style="margin:0;">Bildirimi aç</button>
-      <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:13.5px;"><input type="checkbox" id="remTwo"> Günde 2 bildirim <input type="time" id="remTime2" value="12:30" style="margin-left:auto;padding:8px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:14px;"></label>
+      <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:13.5px;"><input type="checkbox" id="remTwo"> Günde 2 bildirim <input type="time" id="remTime2" aria-label="İkinci hatırlatma saati" value="12:30" style="margin-left:auto;padding:8px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.15));background:var(--surface);color:var(--ink);font-size:14px;"></label>
       <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:13.5px;"><input type="checkbox" id="remWord"> Bildirimde günün kelimesini göster</label>
       <p class="mut" id="remBgNote" style="margin:6px 0 14px;font-size:12px;">Her gün seçtiğin saatte hatırlatır, 2+ gün çalışmazsan Moonie küser. iPhone'da ana ekrana eklemen gerekir.</p>
       <div class="sh-lbl" style="margin:0 0 6px;">Ana ekran kısayolları</div>
@@ -2907,7 +2913,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     <div class="card">
       <h2><svg class="icon" aria-hidden="true"><use href="#i-target"></use></svg>Sınav Tarihi</h2>
       <p class="mut" style="margin-bottom:10px;">Bugün ve Profil'deki "sınava X gün" sayacı bu tarihe göre hesaplanır.</p>
-      <input class="f" type="date" id="examDateInput">
+      <input class="f" type="date" id="examDateInput" aria-label="Sınav tarihi">
       <button class="btn sec" id="examDateSave">Kaydet</button>
     </div>
     <div class="card">
@@ -3424,6 +3430,16 @@ try{
 
 function dstr(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
 function daysBetween(a,b){ return Math.round((a-b)/86400000); }
+function flashMsg(msg){
+  var n=document.getElementById("flashMsg");
+  if(!n){ n=document.createElement("div"); n.id="flashMsg"; n.className="va-toast"; n.setAttribute("role","status"); n.style.cssText="display:none;justify-content:center;text-align:center;pointer-events:none;"; document.body.appendChild(n); }
+  n.textContent=msg; n.style.display="flex"; clearTimeout(flashMsg.t); flashMsg.t=setTimeout(function(){ n.style.display="none"; },2400);
+}
+document.addEventListener("click",function(e){
+  var t=e.target&&e.target.closest?e.target:null; if(!t) return;
+  var c=t.closest(".mp-chest"); if(c){ flashMsg(c.classList.contains("open")?"Bu durağın ödülünü kazandın!":"Bu durağın tüm ünitelerini bitirince sandık açılır."); return; }
+  var b=t.closest(".bell-btn"); if(b){ go("settings"); setTimeout(function(){ var r=document.getElementById("remBg"); if(r){ var cd=r.closest(".card")||r; try{ cd.scrollIntoView({block:"start"}); }catch(x){} } },120); }
+});
 function today0(){ var d=new Date(); d.setHours(0,0,0,0); return d.getTime(); }
 function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function isoDate(d){ function pad(n){ return (n<10?"0":"")+n; } return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
@@ -4101,7 +4117,7 @@ function renderReading(){
       '</a>') : "";
     row.innerHTML='<div class="read-top"><span class="read-date">'+fmtDate(r.date)+'</span>'+
       (r.source?'<span class="read-src">'+esc(r.source)+'</span>':'')+
-      '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>'+
+      '<button class="del" data-i="'+idx+'" aria-label="Sil">'+DEL_ICON+'</button></div>'+
       (r.text?'<p class="read-text">'+esc(r.text)+'</p>':'')+attHtml+
       ((r.text&&r.text.trim().split(/\s+/).length>=20)?'<button type="button" class="btn gold sm read-quiz" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-list-check"></use></svg>Anlama testi çöz</button>':'');
     var rq=row.querySelector(".read-quiz"); if(rq) rq.addEventListener("click",function(){ startQuiz(r.text,"reading"); });
@@ -5510,7 +5526,7 @@ document.getElementById("rFormClose").addEventListener("click",function(){ docum
 document.getElementById("addReading").addEventListener("click",async function(){
   var d=document.getElementById("rDate"), src=document.getElementById("rSource"), tx=document.getElementById("rText");
   var text=tx.value.trim();
-  if(!text&&!pendingAttachment) return;
+  if(!text&&!pendingAttachment){ flashMsg("Önce bir metin yaz ya da dosya ekle."); tx.focus(); return; }
   var entry={date:d.value||isoDate(new Date()), text:text, source:src.value.trim()};
   if(pendingAttachment){
     var file=pendingAttachment.file, isImage=file.type.indexOf("image/")===0;
@@ -7093,7 +7109,7 @@ function renderWriting(){
   });
   document.getElementById("wMoreBtn").onclick=function(){ var pk=document.getElementById("wPicker"); pk.style.display=pk.style.display==="none"?"block":"none"; };
   document.getElementById("wOwnBtn").onclick=function(){ var o=document.getElementById("wOwn"); o.style.display=o.style.display==="none"?"block":"none"; };
-  document.getElementById("wOwnUse").onclick=function(){ var v=document.getElementById("wOwnInput").value.trim(); if(!v) return; writingCur=v; document.getElementById("wOwn").style.display="none"; renderWriting(); };
+  document.getElementById("wOwnUse").onclick=function(){ var v=document.getElementById("wOwnInput").value.trim(); if(!v){ flashMsg("Önce yazmak istediğin konuyu yaz."); document.getElementById("wOwnInput").focus(); return; } writingCur=v; document.getElementById("wOwn").style.display="none"; renderWriting(); };
   document.getElementById("writingPrompt").textContent=promptText;
   document.getElementById("writingText").value="";
   updateWritingWordCount(); wwRenderChips();
@@ -7362,7 +7378,7 @@ function renderWritingList(){
     var idx=S.writings.indexOf(w);
     var row=document.createElement("div"); row.className="read-item";
     row.innerHTML='<div class="read-top"><span class="read-date">'+fmtDate(w.date)+'</span>'+
-      '<button class="del" data-i="'+idx+'">'+DEL_ICON+'</button></div>'+
+      '<button class="del" data-i="'+idx+'" aria-label="Sil">'+DEL_ICON+'</button></div>'+
       '<div class="mut" style="margin-bottom:4px;">'+esc(w.prompt)+'</div>'+
       '<p class="read-text">'+esc(w.text)+'</p>'+
       '<details class="note-details"'+(w.feedback?" open":"")+'>'+
