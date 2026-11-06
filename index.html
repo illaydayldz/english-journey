@@ -4140,7 +4140,7 @@ function wpBindGen(w){
     if(!(S.settings.geminiApiKey||"").trim()){ err.textContent="Önce Ayarlar'dan Gemini API anahtarını gir."; err.style.display="block"; return; }
     b.disabled=true; b.textContent="Moonie yazıyor…";
     callGeminiJSON("\""+w.en+"\" ("+w.tr+") kelimesini içeren, B1 seviyesinde, birbirinden farklı 4 kısa İngilizce cümle yaz. Kelime cümlede aynen (gerekirse çekimli) geçsin. Sadece JSON dizi döndür: [\"cümle1\",\"cümle2\",\"cümle3\",\"cümle4\"]")
-    .then(function(arr){ if(!Array.isArray(arr)) throw new Error("Cümleler okunamadı, tekrar dene."); w.gen=(w.gen||[]).concat(arr.filter(function(x){ return typeof x==="string"; })).slice(-12); save(); wpState.ci=0; wpState.cs=0; wpState.cd=false; renderWordPractice(); })
+    .then(function(arr){ if(arr&&!Array.isArray(arr)&&typeof arr==="object"){ var ks=Object.keys(arr),f=null; for(var q=0;q<ks.length;q++){ if(Array.isArray(arr[ks[q]])){ f=arr[ks[q]]; break; } } if(!f){ f=ks.map(function(k){ return arr[k]; }); } arr=f; } if(typeof arr==="string") arr=[arr]; if(Array.isArray(arr)) arr=arr.map(function(x){ return x&&typeof x==="object"?(x.sentence||x.text||x.en||""):x; }).filter(function(x){ return typeof x==="string"&&x.trim(); }); if(!Array.isArray(arr)||!arr.length) throw new Error("Moonie bu sefer cümle üretemedi, tekrar dene."); w.gen=(w.gen||[]).concat(arr.filter(function(x){ return typeof x==="string"; })).slice(-12); save(); wpState.ci=0; wpState.cs=0; wpState.cd=false; renderWordPractice(); })
     .catch(function(e){ b.disabled=false; b.textContent="Moonie'den yeni örnek cümleler iste"; err.textContent=e.message||String(e); err.style.display="block"; });
   });
 }
@@ -7874,6 +7874,7 @@ function geminiFetchJSON(body,apiKey){
       var d=res.data||{}, msg=d.error&&d.error.message||"";
       var modelProblem=(res.status===404||/not found|not supported|no longer available|deprecated/i.test(msg));
       var quotaProblem=(res.status===429||/quota|exhausted|rate.?limit/i.test(msg));
+      if(!res.ok&&(res.status===503||res.status===500||/overload|unavailable|high demand/i.test(msg))&&i+1<models.length) return attempt(i+1);
       if(!res.ok&&(modelProblem||quotaProblem)&&i+1<models.length) return attempt(i+1);
       if(i>0&&res.ok&&modelProblem) GEMINI_MODEL=models[i];
       if(!res.ok&&quotaProblem&&d.error) d.error.message="Gemini'nin ücretsiz kullanım sınırı doldu (tüm modeller denendi). Bir süre bekle: dakikalık sınır birkaç dakikada, günlük sınır gece yarısı (Pasifik saati, sabaha karşı) sıfırlanır. Ayarlar'dan yeni bir anahtar girmek de çözer. Ayrıntı: "+msg.slice(0,120);
