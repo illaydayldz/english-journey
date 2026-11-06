@@ -1639,6 +1639,10 @@
   .vc-grade button{ min-width:92px; max-width:112px; }
   .vc-gl{ font-size:12.5px; font-weight:800; text-align:center; line-height:1.2; }
   .vc-gh{ font-size:11px; opacity:.7; margin-top:-3px; text-align:center; }
+.hubcard.is-focus{box-shadow:0 0 0 1.5px var(--gold,#e8b84a);position:relative}
+.hub-focus{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--gold,#e8b84a);color:#1b1630;margin-bottom:4px;align-self:flex-start}
+.jr-head .back{ background:var(--card); border:none; width:44px; height:44px; border-radius:50%; color:var(--purple-deep); box-shadow:var(--shadow-sm); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.jr-head .back .icon{ width:20px; height:20px; }
 </style>
 <script>
 /* Açılışta bir hata uygulamayı splash'ta bırakırsa kurtarma düğmesi */
@@ -2730,6 +2734,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
   <!-- ===== GÜNLÜK ===== -->
   <section class="view" id="v-journal">
     <div class="jr-head">
+      <button class="back" onclick="go('profile')" aria-label="Geri" style="margin-right:6px;"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
       <span class="jr-av"><img src="assets/mascot/pose-writing.webp" data-hd="journal-avatar" alt=""></span>
       <input class="jr-title" id="jrTitle" value="Günlüğüm" maxlength="28" aria-label="Günlük adı">
       <svg class="icon jr-pen" aria-hidden="true"><use href="#i-edit"></use></svg>
@@ -3285,6 +3290,15 @@ function buildPlan(){
   var lv=st.level||"B1", mins=st.dailyMinutes||30, ex=planExam();
   var w=planWeights(lv,ex,st.focusSkills);
   var keys=Object.keys(w).sort(function(a,b){return w[b]-w[a];});
+  (function(){ var fm={Reading:"reading",Listening:"listening",Speaking:"speaking",Grammar:"grammar",Vocabulary:"vocab",Writing:"writing"}, fk=[];
+    (st.focusSkills||[]).forEach(function(f){ var k=fm[f]; if(k&&w[k]&&fk.indexOf(k)<0) fk.push(k); });
+    if(!fk.length) return;
+    if(fk.indexOf("vocab")<0&&w.vocab) fk.push("vocab");
+    if(w.translate&&(fk.indexOf("reading")>=0||fk.indexOf("writing")>=0)) fk.push("translate");
+    var rest=keys.filter(function(k){ return fk.indexOf(k)<0; });
+    while(fk.length<3&&rest.length) fk.push(rest.shift());
+    keys=keys.filter(function(k){ return fk.indexOf(k)>=0; });
+  })();
   var maxN=Math.max(2,Math.min(keys.length,Math.floor(mins/5)));
   if(mins<=10) maxN=Math.min(maxN,3);
   keys=keys.slice(0,maxN);
@@ -9202,6 +9216,17 @@ function renderProgress(){
 
 /* ---------- LEARN HUB ---------- */
 function renderLearnHub(){
+  (function(){ try{ var g=document.querySelector("#v-learn .hubgrid"); if(!g) return;
+    var fm={"Kelime":"Vocabulary","Okuma":"Reading","Dinleme":"Listening","Konuşma":"Speaking","Gramer Yolu":"Grammar","Yazma":"Writing"};
+    var foc=(S.settings.focusSkills||[]);
+    var cards=[].slice.call(g.querySelectorAll(":scope > .hubcard"));
+    cards.forEach(function(c,i){ if(c.dataset.o===undefined) c.dataset.o=i; });
+    cards.forEach(function(c){ var t=c.querySelector(".hub-t"); var sk=t&&fm[t.textContent.trim()]; var on=!!sk&&foc.indexOf(sk)>=0; c.classList.toggle("is-focus",on);
+      var bd=c.querySelector(".hub-focus"); if(on&&!bd&&t){ bd=document.createElement("span"); bd.className="hub-focus"; bd.textContent="Odağın"; t.parentNode.insertBefore(bd,t); } if(!on&&bd) bd.remove(); });
+    if(foc.length){ cards.sort(function(a,b){ var fa=a.classList.contains("is-focus")?0:1, fb=b.classList.contains("is-focus")?0:1; return fa-fb||(+a.dataset.o)-(+b.dataset.o); }); }
+    else cards.sort(function(a,b){ return (+a.dataset.o)-(+b.dataset.o); });
+    cards.forEach(function(c){ g.appendChild(c); });
+  }catch(e){} })();
   (function(){ var e=document.getElementById("hubLibSub"); if(e){ var n=S.books.filter(function(b){ return b.kind==="study"; }).length; e.textContent=n?(n+" çalışma kitabı"):"Çalışma kitapların ve notların"; } })();
   (function(){ var dn=STEPS.filter(function(_,i){return S.checks[i];}).length; var a=document.getElementById("hubHeroSub"), c=document.getElementById("hubHeroChip"); if(a) a.textContent="Bugünün planı: "+dn+"/"+STEPS.length+" adım tamam"; if(c) c.textContent=(S.streak||0)+" gün seri"; })();
   var due=dueWords().length;
