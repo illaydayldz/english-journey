@@ -1634,6 +1634,11 @@
   .th-streak.risk{ background:rgba(255,211,107,.22); }
   .qn-fab{ width:42px; height:42px; opacity:.92; transition:transform .2s, opacity .2s; }
   .qn-fab.away{ transform:translateY(90px); opacity:0; pointer-events:none; }
+
+  .vc-grade{ gap:10px !important; }
+  .vc-grade button{ min-width:92px; max-width:112px; }
+  .vc-gl{ font-size:12.5px; font-weight:800; text-align:center; line-height:1.2; }
+  .vc-gh{ font-size:11px; opacity:.7; margin-top:-3px; text-align:center; }
 </style>
 <script>
 /* Açılışta bir hata uygulamayı splash'ta bırakırsa kurtarma düğmesi */
@@ -2210,6 +2215,7 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
     <div class="vh-due" id="vhDue"></div>
     <div id="vgEntry"></div>
     <div class="vh-sec">
+      <div id="wxBar"></div>
       <div class="vh-sh"><b>Kelimelerim <span class="mut" id="wordCount"></span></b><span style="display:flex;gap:6px;"><button type="button" class="vh-add vh-sel" id="vSelToggle">Seç</button><button type="button" class="vh-add" id="vaOpen"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"></use></svg>Ekle</button></span></div>
       <div class="nt-search"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-search"></use></svg><input id="vocabSearch" placeholder="Kelime ara"></div>
       <div class="nt-chips" id="vocabFilterChips">
@@ -2554,6 +2560,11 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <h1>Konuşma</h1>
     </div>
     <div id="spGame"></div>
+    <button type="button" class="card" id="phEntry" style="width:100%;text-align:left;display:flex;align-items:center;gap:12px;cursor:pointer;border:none;font:inherit;color:inherit;">
+      <span class="hub-ic hub-gold"><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg></span>
+      <span style="flex:1;"><b>Temel kalıplar</b><span class="mut" style="display:block;font-size:12.5px;margin-top:2px;">Yurtdışında günlük hayatta işine yarayan kalıplar: restoran, otobüs, otel, alışveriş ve daha fazlası.</span></span>
+      <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+    </button>
     <div class="card" style="padding:16px 12px;">
       <h2 style="padding:0 6px;"><svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg>Moonie'nin dünya turu</h2>
       <div id="speakLevelList" style="margin-top:6px;"></div>
@@ -2655,6 +2666,16 @@ document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="
       <h1>Hata defterim</h1>
     </div>
     <div id="mkBody"></div>
+  </section>
+
+  <section class="view" id="v-phrases">
+    <div class="page-head">
+      <button class="back" onclick="go('speaking')" aria-label="Geri"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+      <h1>Temel kalıplar</h1>
+    </div>
+    <div class="nt-search"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-search"></use></svg><input id="phSearch" type="search" placeholder="Kalıplarda ara (İngilizce ya da Türkçe)" aria-label="Kalıplarda ara"></div>
+    <div id="phChips" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px;"></div>
+    <div id="phList"></div>
   </section>
 
   <section class="view" id="v-notes">
@@ -3460,7 +3481,7 @@ function trimHistory(){
 }
 
 /* ---------- NAV ---------- */
-var NAVMAP={workbook:"today",library:"today",today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",mistakes:"today",grammarunit:"today",vocabstudy:"today",vocabgames:"today",support:"profile",wordpractice:"today",journal:"journal",profile:"profile",settings:"profile"};
+var NAVMAP={workbook:"today",library:"today",today:"today",progress:"progress",learn:"today",vocab:"today",howto:"profile",speakunit:"today",plan:"profile",placement:"profile",reading:"today",book:"today",libread:"today",listening:"today",podcastdetail:"today",speaking:"today",grammar:"today",writing:"today",quiz:"today",achievements:"profile",notes:"profile",mistakes:"today",phrases:"today",grammarunit:"today",vocabstudy:"today",vocabgames:"today",support:"profile",wordpractice:"today",journal:"journal",profile:"profile",settings:"profile"};
 var _lisT=null;
 function go(v){
   clearTimeout(_lisT);
@@ -3494,6 +3515,7 @@ function go(v){
   if(v==="achievements") renderAchievements();
   if(v==="notes") renderNotes();
   if(v==="mistakes") renderMistakes();
+  if(v==="phrases") renderPhrases();
   if(v==="journal") renderJournal();
   if(v==="profile") renderProfile();
   if(v==="settings") renderSettings();
@@ -3626,8 +3648,9 @@ S.words.forEach(function(w){
 });
 function addWord(en,tr,ex){
   en=en.trim(); tr=tr.trim(); if(!en||!tr) return;
-  S.words.push({en:en,tr:tr,ex:ex.trim(),ef:2.5,reps:0,interval:0,due:today0(),added:Date.now()});
+  var nwd={en:en,tr:tr,ex:ex.trim(),ef:2.5,reps:0,interval:0,due:today0(),added:Date.now()}; S.words.push(nwd);
   save(); renderVocab();
+  try{ if((S.settings.geminiApiKey||"").trim()) setTimeout(function(){ wxFill([nwd],function(){ renderVocab(); }); },400); }catch(e){}
 }
 function vaOpen(){ if(vaEditIdx>=0){ vaEditIdx=-1; } document.getElementById("vaSheet").classList.add("open"); document.getElementById("vaBackdrop").classList.add("open"); setTimeout(function(){ document.getElementById("wEn").focus(); },250); }
 var vaEditIdx=-1;
@@ -3704,11 +3727,11 @@ function renderVocab(){
       sa.innerHTML=progLabel+'<div class="vc-stack">'+stack+'<div class="vc-card vc-front">'+
         '<button type="button" class="vc-speak" id="flashSpeakBtn" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
         '<div class="vc-word">'+esc(w.en)+'</div><div class="vc-mean">'+esc(w.tr)+'</div></div></div>'+fb+
-        (w.ex?'<div class="vc-use"><div class="vc-use-t"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Örnek cümle</div><div class="vc-use-b">'+esc(w.ex)+'</div></div>':'')+
+        (w.ex?'<div class="vc-use"><div class="vc-use-t"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"></use></svg>Örnek cümle</div><div class="vc-use-b">'+esc(w.ex)+'</div>'+(w.exTr?'<div class="vc-use-b" style="opacity:.75;font-size:12.5px;margin-top:3px;">'+esc(w.exTr)+'</div>':'')+(w.ctx?'<div class="vc-use-b" style="margin-top:5px;font-size:12.5px;"><b>Cümledeki anlamı:</b> '+esc(w.ctx)+'</div>':'')+'</div>':'')+
         '<div class="vc-grade">'+
-        '<button data-g="0"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-1"></use></svg></span><span class="vc-gl">Zor</span></button>'+
-        '<button data-g="1"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-3"></use></svg></span><span class="vc-gl">Orta</span></button>'+
-        '<button data-g="2"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-4"></use></svg></span><span class="vc-gl">Kolay</span></button>'+
+        '<button data-g="0"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-1"></use></svg></span><span class="vc-gl">Hatırlamadım</span><span class="vc-gh">'+gradeHint(w,0)+'</span></button>'+
+        '<button data-g="1"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-3"></use></svg></span><span class="vc-gl">Zor hatırladım</span><span class="vc-gh">'+gradeHint(w,1)+'</span></button>'+
+        '<button data-g="2"><span class="vc-face"><svg class="icon" aria-hidden="true"><use href="#i-mood-4"></use></svg></span><span class="vc-gl">Hatırladım</span><span class="vc-gh">'+gradeHint(w,2)+'</span></button>'+
         '</div>';
       document.getElementById("flashSpeakBtn").addEventListener("click",function(e){ e.stopPropagation(); speakEnglish(w.en,S.settings.ttsRate||0.95); });
       var fcB=sa.querySelector(".vc-front"); fcB.style.cursor="pointer";
@@ -3764,7 +3787,7 @@ function renderVocab(){
       var known=w.reps>=2, st=known?"Biliniyor":(w.reps>=1?"Öğreniliyor":"Yeni"), col=known?"#58C98B":(w.reps>=1?"#F2B94B":"#8B7FFF");
       var row=document.createElement("div"); row.className="wcard"+(vSelMode?" selmode":"")+(vSelMode&&vSel.indexOf(w)>=0?" picked":"");
       row.innerHTML=(vSelMode?'<span class="vs-ck"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"></use></svg></span>':"")+'<button type="button" class="wc-sp" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>'+
-        '<div class="wc-b"><div class="wc-en">'+esc(w.en)+'</div><div class="wc-tr">'+esc(w.tr)+'</div>'+(w.ex?'<div class="wc-ex">'+esc(w.ex)+'</div>':'')+
+        '<div class="wc-b"><div class="wc-en">'+esc(w.en)+'</div><div class="wc-tr">'+esc(w.tr)+'</div>'+(w.ex?'<div class="wc-ex">'+esc(w.ex)+'</div>':'')+(w.ctx?'<div class="wc-ex" style="font-style:normal;opacity:.85;">Cümlede: '+esc(w.ctx)+'</div>':'')+
         '<div class="wc-m"><span class="wc-st" style="background:'+col+'26;color:'+col+';">'+st+'</span><span class="wc-due">'+(isDue?"Bugün":dueLabel)+'</span><button type="button" class="wc-pr">Alıştır</button></div></div>'+
         '<button class="del" data-i="'+idx+'" aria-label="Sil">'+DEL_ICON+'</button>';
       row.querySelector(".wc-sp").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
@@ -3832,7 +3855,7 @@ function wpAll(w){
 function renderWordPractice(){
   var w=wpWord(); if(!w){ go("vocab"); return; }
   document.getElementById("wprTitle").textContent=w.en;
-  document.getElementById("wpHero").innerHTML='<div class="wp-hero"><button type="button" class="wc-sp" id="wpSpeak" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button><div><div class="wc-en" style="font-size:20px;">'+esc(w.en)+'</div><div class="wc-tr">'+esc(w.tr)+'</div>'+(w.ex?'<div class="wc-ex">'+esc(w.ex)+'</div>':'')+'</div></div>';
+  document.getElementById("wpHero").innerHTML='<div class="wp-hero"><button type="button" class="wc-sp" id="wpSpeak" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button><div><div class="wc-en" style="font-size:20px;">'+esc(w.en)+'</div><div class="wc-tr">'+esc(w.tr)+'</div>'+(w.ex?'<div class="wc-ex">'+esc(w.ex)+'</div>':'')+(w.ctx?'<div class="wc-ex" style="font-style:normal;opacity:.85;">Cümlede: '+esc(w.ctx)+'</div>':'')+'</div></div>';
   document.getElementById("wpSpeak").addEventListener("click",function(){ speakEnglish(w.en,S.settings.ttsRate||0.95); });
   document.querySelectorAll("#wpTabs .seg").forEach(function(b){ b.classList.toggle("active",b.dataset.wt===wpTab); });
   if(wpTab==="sent") wpRenderSent(w); else if(wpTab==="cloze") wpRenderCloze(w); else wpRenderDict(w);
@@ -3875,7 +3898,7 @@ function renderVocabGames(){
       box.innerHTML='<div class="empty-state"><div class="mchip"><img src="assets/mascot/pose-newword.webp" data-hd="vocab-start" alt=""></div><div class="t">Önce birkaç kelime ekle</div><div class="d">Alıştırmalar için en az 4 kelime gerekir. Şu an '+pool.length+' kelimen var.</div><button type="button" class="btn sec sm" onclick="go(\'vocab\')">Kelimelere dön</button></div>';
       return;
     }
-    var ms=[["mc1","Kelime → Anlam","Doğru tanımı seç"],["mc2","Anlam → Kelime","Hangi kelime bu tanıma uyuyor?"],["listen","Dinle ve seç","Kelimeyi duy, doğru yazılışı seç"],["match","Eşleştir","Her kelimeyi anlamıyla eşleştir"],["cloze","Boşluğu doldur","Cümledeki boşluğa uyan kelimeyi seç"],["type","Yazarak bul","Anlamı gör, kelimeyi yaz"],["dict","Dinle ve yaz","Kelimeyi duy, yazılışını yaz"]];
+    var ms=[["mc1","Kelime → Anlam","Doğru tanımı seç"],["mc2","Anlam → Kelime","Hangi kelime bu tanıma uyuyor?"],["listen","Dinle ve seç","Kelimeyi duy, doğru yazılışı seç"],["match","Eşleştir","Her kelimeyi anlamıyla eşleştir"],["cloze","Boşluğu doldur","Cümledeki boşluğa uyan kelimeyi seç"],["type","Yazarak bul","Anlamı gör, kelimeyi yaz"],["dict","Dinle ve yaz","Kelimeyi duy, yazılışını yaz"],["syn","Eş ve zıt anlam","Eş ya da zıt anlamlı kelimeyi bul"],["build","Cümle kur","Karışık kelimelerden cümleyi oluştur"]];
     box.innerHTML='<p class="hint" style="text-align:left;margin-top:0;">Yazmanın ötesinde pratik: tanıma, dinleme ve bağlam. Sorular kendi kelimelerinden gelir.</p><div class="vg-menu">'+ms.map(function(m){ return '<button type="button" data-m="'+m[0]+'"><span class="vg-ic"><svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg></span><b>'+m[1]+'</b><small>'+m[2]+'</small></button>'; }).join("")+'</div>';
     box.querySelectorAll(".vg-menu button").forEach(function(b){ b.addEventListener("click",function(){ vgStart(b.dataset.m); }); });
     return;
@@ -3891,9 +3914,11 @@ function renderVocabGames(){
   var q=vgQ[vgI], pct2=Math.round(vgI/vgQ.length*100);
   var head='<div class="vg-prog"><span>'+(vgI+1)+'/'+vgQ.length+'</span><div class="vc-bar"><div style="width:'+Math.max(6,pct2)+'%"></div></div></div>';
   if(q.kind==="type"||q.kind==="dict"){ vgRenderTyped(box,q,head); return; }
+  if(q.kind==="build"){ vgRenderBuild(box,q,head); return; }
   var body='';
   if(q.kind==="listen") body='<div class="vg-sub">Dinle, doğru yazılışı seç</div><button type="button" class="vg-listen" id="vgSpeak" aria-label="Dinle"><svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>';
   else if(q.kind==="cloze") body='<div class="vg-sub">Boşluğa uyan kelimeyi seç</div><div class="vg-q" style="font-size:19px;line-height:1.4;">'+esc(q.text)+'</div><div class="vg-sub">'+esc(q.hint)+'</div>';
+  else if(q.kind==="syn") body='<div class="vg-sub">'+(q.rel==="syn"?"Eş anlamlısını seç":"Zıt anlamlısını seç")+'</div><div class="vg-q">'+esc(q.word.en)+'</div><div class="vg-sub">'+esc(q.word.tr||"")+'</div>';
   else body='<div class="vg-sub">'+(q.kind==="mc1"?"Bu kelime ne demek?":"Hangi kelime bu anlama uyuyor?")+'</div><div class="vg-q">'+esc(q.prompt)+'</div>';
   box.innerHTML=head+body+q.opts.map(function(o,i){ return '<button type="button" class="qz-opt" data-i="'+i+'"><span class="qz-l">'+String.fromCharCode(65+i)+'</span><span>'+esc(o.t)+'</span></button>'; }).join("")+'<div id="vgFb"></div>';
   var sp=document.getElementById("vgSpeak"); if(sp){ sp.addEventListener("click",function(){ speakEnglish(q.word.en,S.settings.ttsRate||0.95); }); setTimeout(function(){ speakEnglish(q.word.en,S.settings.ttsRate||0.95); },250); }
@@ -3904,7 +3929,7 @@ function renderVocabGames(){
     box.querySelectorAll(".qz-opt").forEach(function(x,i){ x.disabled=true; if(q.opts[i].ok) x.classList.add("correct"); else if(x===b) x.classList.add("wrong"); else x.classList.add("dim"); });
     if(o.ok) vgScore++; else mkAddVocab(q);
     S.vocabGames=S.vocabGames||{right:0,total:0}; S.vocabGames.total++; if(o.ok) S.vocabGames.right++; save();
-    document.getElementById("vgFb").innerHTML='<div class="qz-fb '+(o.ok?"ok":"no")+'">'+(o.ok?"Doğru!":"Cevap: "+esc(q.word.en+" — "+vgMean(q.word))+(vgLow()&&q.word.tr?" ("+esc(q.word.tr)+")":""))+'</div><button type="button" class="btn" id="vgNext">'+(vgI+1>=vgQ.length?"Sonucu gör":"Sonraki")+'</button>';
+    document.getElementById("vgFb").innerHTML='<div class="qz-fb '+(o.ok?"ok":"no")+'">'+(o.ok?"Doğru!":"Cevap: "+esc(q.kind==="syn"?(q.word.en+(q.rel==="syn"?" ≈ ":" ≠ ")+q.answer):(q.word.en+" — "+vgMean(q.word)))+(vgLow()&&q.word.tr?" ("+esc(q.word.tr)+")":""))+'</div><button type="button" class="btn" id="vgNext">'+(vgI+1>=vgQ.length?"Sonucu gör":"Sonraki")+'</button>';
     document.getElementById("vgNext").addEventListener("click",function(){ vgI++; renderVocabGames(); });
   }); });
 }
@@ -3925,7 +3950,7 @@ function vgRenderTyped(box,q,head){
     done=true; inp.disabled=true;
     S.vocabGames=S.vocabGames||{right:0,total:0}; S.vocabGames.total++;
     if(exact||near){ vgScore++; S.vocabGames.right++; }
-    else mkAddRaw(isD?("Dinleyip yazılacak kelime: "+q.word.en):('"'+(q.word.tr||vgMean(q.word))+'" kelimesinin İngilizcesi: '+q.word.en),[],"","Kelime","note");
+    else mkAddRaw(isD?("Dinleyerek yazdığın bir kelimeyi yanlış yazdın. Dinle ve hatırla."):('"'+(q.word.tr||vgMean(q.word))+'" kelimesinin İngilizcesi neydi?'),[],q.word.en,"Kelime","note");
     save();
     document.getElementById("vgFb").innerHTML='<div class="qz-fb '+(exact?"ok":(near?"ok":"no"))+'">'+(exact?"Doğru!":(near?"Neredeyse! Yazılışı: "+esc(q.word.en):"Cevap: "+esc(q.word.en)))+'</div>';
     btn.textContent=vgI+1>=vgQ.length?"Sonucu gör":"Sonraki";
@@ -3933,9 +3958,54 @@ function vgRenderTyped(box,q,head){
   btn.addEventListener("click",check);
   inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); check(); } });
 }
+
+function wsEnsure(words,cb){
+  var need=words.filter(function(w){ return !w.sa; });
+  if(!need.length||!(S.settings.geminiApiKey||"").trim()){ cb(); return; }
+  var lv=S.settings.level||"B1";
+  var p="You are an English teacher. For EACH word below (learner level "+lv+") give up to 3 common synonyms and up to 2 common antonyms for the meaning given (single English words or very short phrases; use [] if there is no good one). Return ONLY a JSON array in the same order: [{\"syn\":[\"..\"],\"ant\":[\"..\"]}].\nWords:\n"+need.map(function(w,k){ return (k+1)+". "+w.en+" ("+w.tr+")"; }).join("\n");
+  callGeminiJSON(p).then(function(o){
+    if(!Array.isArray(o)&&o&&Array.isArray(o.items)) o=o.items;
+    if(!Array.isArray(o)) throw new Error("x");
+    need.forEach(function(w,k){ var r=o[k]; if(!r||typeof r!=="object") return;
+      var cl=function(a){ return (Array.isArray(a)?a:[]).map(function(x){ return String(x||"").trim(); }).filter(function(x){ return x&&x.length<30&&x.toLowerCase()!==w.en.toLowerCase(); }).slice(0,3); };
+      w.syn=cl(r.syn); w.ant=cl(r.ant); w.sa=1; });
+    save(); cb();
+  }).catch(function(){ cb(); });
+}
+function vgRenderBuild(box,q,head){
+  var target=q.sent.trim(), toks=target.split(/\s+/);
+  var bank=vgShuffle(toks.map(function(t,i){ return {t:t,i:i}; })); var ans=[], done=false;
+  box.innerHTML=head+'<div class="vg-sub">Kelimelere dokunarak cümleyi sırala</div><div class="vg-q" style="font-size:16px;">'+esc(q.hint||"")+'</div><div id="vbAns" style="min-height:56px;border:2px dashed var(--line,rgba(255,255,255,.2));border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;"></div><div id="vbBank" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div><div id="vgFb"></div><div style="display:flex;gap:8px;"><button type="button" class="btn sec" id="vbReset" style="flex:1;">Sıfırla</button><button type="button" class="btn" id="vbCheck" style="flex:1;">Kontrol et</button></div>';
+  function chip(o,fromAns){ var b=document.createElement("button"); b.type="button"; b.className="nt-chip"+(fromAns?" on":""); b.style.cssText="font-size:15px;padding:10px 14px;"; b.textContent=o.t; b.addEventListener("click",function(){ if(done) return; if(fromAns){ ans.splice(ans.indexOf(o),1); bank.push(o); } else { bank.splice(bank.indexOf(o),1); ans.push(o); } draw(); }); return b; }
+  function draw(){ var a=document.getElementById("vbAns"), b=document.getElementById("vbBank"); a.innerHTML=""; b.innerHTML=""; ans.forEach(function(o){ a.appendChild(chip(o,true)); }); bank.forEach(function(o){ b.appendChild(chip(o,false)); }); }
+  draw();
+  document.getElementById("vbReset").addEventListener("click",function(){ if(done) return; bank=bank.concat(ans); ans=[]; draw(); });
+  var cb=document.getElementById("vbCheck");
+  cb.addEventListener("click",function(){
+    if(done){ vgI++; renderVocabGames(); return; }
+    if(ans.length<toks.length){ flashMsg("Önce tüm kelimeleri yerleştir."); return; }
+    var norm=function(x){ return x.join(" ").toLowerCase().replace(/[.,!?;:]/g,"").replace(/\s+/g," ").trim(); };
+    var ok=norm(ans.map(function(o){ return o.t; }))===norm(toks);
+    done=true; S.vocabGames=S.vocabGames||{right:0,total:0}; S.vocabGames.total++;
+    if(ok){ vgScore++; S.vocabGames.right++; } else mkAddRaw('Cümleyi doğru sırala: "'+(q.hint||"")+'"',[],target,"Kelime","note");
+    save();
+    document.getElementById("vgFb").innerHTML='<div class="qz-fb '+(ok?"ok":"no")+'">'+(ok?"Doğru!":"Doğrusu: "+esc(target))+'</div>';
+    document.getElementById("vbReset").style.display="none";
+    cb.textContent=vgI+1>=vgQ.length?"Sonucu gör":"Sonraki";
+    if(ok) speakEnglish(target,S.settings.ttsRate||0.95);
+  });
+}
 function vgStart(mode){
   var bx=document.getElementById("vgBody");
-  if(mode!=="cloze"&&mode!=="listen"&&mode!=="dict"){
+  if(mode==="syn"){
+    var sp=vgPool();
+    if(!(S.settings.geminiApiKey||"").trim()&&!sp.some(function(w){ return (w.syn&&w.syn.length)||(w.ant&&w.ant.length); })){ flashMsg("Bu alıştırma için Ayarlar'dan Gemini anahtarını gir."); return; }
+    var ns=vgShuffle(sp).slice(0,12);
+    if(bx) bx.innerHTML='<div class="vg-res"><p class="hint">Moonie eş ve zıt anlamları hazırlıyor…</p></div>';
+    wsEnsure(ns,function(){ vgStart2(mode); }); return;
+  }
+  if(mode!=="cloze"&&mode!=="listen"&&mode!=="dict"&&mode!=="build"){
     var pl=vgPool(), need=pl.some(function(w){ return !w.def; });
     if(need&&(S.settings.geminiApiKey||"").trim()){
       if(bx) bx.innerHTML='<div class="vg-res"><p class="hint">Moonie İngilizce tanımları hazırlıyor…</p></div>';
@@ -3948,7 +4018,22 @@ function vgStart2(mode){
   vgMode=mode; vgI=0; vgScore=0; vgQ=[]; var pool=vgPool();
   if(mode==="match"){ vgMatch=null; renderVocabGames(); return; }
   var picks=vgShuffle(pool);
-  if(mode==="cloze"){
+  if(mode==="build"){
+    var cand=[]; picks.forEach(function(w){ var e=(w.ex||"").trim(), n=e.split(/\s+/).length; if(e&&n>=3&&n<=12) cand.push({en:e,hint:(w.exTr||w.tr||""),word:w}); });
+    if(cand.length<6){ var extra=[]; PH_DATA.forEach(function(c){ c.items.forEach(function(it){ if(it[0].split(/\s+/).length<=9) extra.push({en:it[0],hint:it[1],word:null}); }); }); vgShuffle(extra).slice(0,8-cand.length).forEach(function(x){ cand.push(x); }); }
+    vgShuffle(cand).slice(0,8).forEach(function(c){ vgQ.push({kind:"build",word:c.word||{en:c.en,tr:c.hint},sent:c.en,hint:c.hint}); });
+  } else if(mode==="syn"){
+    var allT=[]; pool.forEach(function(w){ allT.push(w.en); (w.syn||[]).concat(w.ant||[]).forEach(function(x){ allT.push(x); }); });
+    picks.forEach(function(w){ if(vgQ.length>=10) return;
+      var opts=[]; if(w.syn&&w.syn.length) opts.push("syn"); if(w.ant&&w.ant.length) opts.push("ant"); if(!opts.length) return;
+      var rel=opts[Math.floor(Math.random()*opts.length)], list=rel==="syn"?w.syn:w.ant, ans=list[Math.floor(Math.random()*list.length)];
+      var ban={}; ban[w.en.toLowerCase()]=1; (w.syn||[]).concat(w.ant||[]).forEach(function(x){ ban[String(x).toLowerCase()]=1; });
+      var dis=vgShuffle(allT.filter(function(x,i){ return !ban[String(x).toLowerCase()]&&allT.indexOf(x)===i; })).slice(0,3);
+      if(dis.length<3) return;
+      vgQ.push({kind:"syn",word:w,rel:rel,answer:ans,opts:vgShuffle([{t:ans,ok:true}].concat(dis.map(function(x){ return {t:x,ok:false}; })))});
+    });
+    if(!vgQ.length){ vgMode=null; var bx2=document.getElementById("vgBody"); renderVocabGames(); if(bx2) bx2.insertAdjacentHTML("afterbegin",'<p class="sp-err" style="margin-bottom:10px;">Eş/zıt anlam hazırlanamadı. Biraz sonra tekrar dene.</p>'); return; }
+  } else if(mode==="cloze"){
     picks.forEach(function(w){ var b=vgClozeOf(w); if(b&&vgQ.length<8) vgQ.push({kind:"cloze",word:w,text:b.text,hint:vgMean(w),opts:vgOptions(w,"en",pool)}); });
     if(!vgQ.length){ vgMode=null; var box=document.getElementById("vgBody"); renderVocabGames(); box.insertAdjacentHTML("afterbegin",'<p class="sp-err" style="margin-bottom:10px;">Kelimelerinin hiçbirinde henüz örnek cümle yok. Örnek cümle ekleyip tekrar dene.</p>'); return; }
   } else {
@@ -4079,6 +4164,18 @@ function wpRenderDict(w){
   if(chk){ var c=function(){ var v=inp.value.trim(); if(!v) return; var pct=Math.round(similarity(norm(v),norm(target))*100); wpState.dv=v; wpState.dr={ok:pct>=95,pct:pct}; if(wpState.dr.ok) wpState.ds=(wpState.ds||0)+1; wpRenderDict(w); }; chk.addEventListener("click",c); inp.addEventListener("keydown",function(e){ if(e.key==="Enter") c(); }); }
   var nx=document.getElementById("wpDNext"); if(nx) nx.addEventListener("click",function(){ wpState.di=i+1; wpState.dr=null; wpState.dv=""; wpRenderDict(w); });
 }
+function gradeHint(w,g){
+  try{
+    if(g===0) return "yarın";
+    if((studyRe[w.en]||0)>0) return "bugün bitti";
+    var r=w.reps||0, iv=w.interval||1, n;
+    if(r===0) n=1; else if(g===1) n=r===1?3:Math.max(iv+1,Math.round(iv*1.2)); else n=r===1?6:Math.round(iv*(w.ef||2.5));
+    if(n<=1) return "yarın";
+    if(n<7) return n+" gün sonra";
+    if(n<30) return Math.round(n/7)+" hafta sonra";
+    return Math.round(n/30)+" ay sonra";
+  }catch(e){ return ""; }
+}
 function gradeCard(w,g){
   try{ var _d=dstr(new Date()); if(S.vocabDay!==_d){ S.vocabDay=_d; S.vocabN=0; } S.vocabN=(S.vocabN||0)+1; if(S.vocabN>=5) markAct("vocab"); }catch(e){}
   // SM-2; "Zor" kartlar aynı oturumda 2 kereye kadar tekrar sorulur (yalnızca ilk cevap programı etkiler)
@@ -4088,6 +4185,7 @@ function gradeCard(w,g){
     if(quality<3){ w.reps=0; w.interval=1; }
     else {
       if(w.reps===0) w.interval=1;
+      else if(g===1) w.interval=w.reps===1?3:Math.max((w.interval||1)+1,Math.round((w.interval||1)*1.2)); /* "Zor hatırladım": daha yavaş büyür */
       else if(w.reps===1) w.interval=6;
       else w.interval=Math.round(w.interval*w.ef);
       w.reps=(w.reps||0)+1;
@@ -7196,7 +7294,7 @@ function mkAddRaw(q,opts,ans,unitName,kind){
 function mkAdd(unitName,ex){ var ans=ex.opts[ex.a]; if(ans===undefined) return; mkAddRaw(ex.q,ex.opts,ans,unitName); }
 function mkAddVocab(q){
   try{
-    var txt=q.kind==="mc1"?('"'+q.word.en+'" ne demek? (What does it mean?)'):(q.kind==="cloze"?q.text:(q.kind==="mc2"?q.prompt:""));
+    var txt=q.kind==="syn"?('"'+q.word.en+'" kelimesinin '+(q.rel==="syn"?"eş":"zıt")+" anlamlısı hangisi?"):q.kind==="mc1"?('"'+q.word.en+'" ne demek? (What does it mean?)'):(q.kind==="cloze"?q.text:(q.kind==="mc2"?q.prompt:""));
     var ok=q.opts.filter(function(o){ return o.ok; })[0]; if(!txt||!ok) return;
     mkAddRaw(txt,q.opts.map(function(o){ return o.t; }),ok.t,"Kelime");
   }catch(e){}
@@ -7213,6 +7311,7 @@ var mkRun=null;
 function mkShuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var k=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[k]; a[k]=t; } return a; }
 function renderMistakes(){
   var L=mkList();
+  L.forEach(function(m){ delete m.again; delete m.rv; });
   mkRun={items:mkShuffle(L).sort(function(a,b){ return (a.s||0)-(b.s||0); }).slice(0,5),i:0,picked:null,ok:0};
   mkRender();
 }
@@ -7229,10 +7328,23 @@ function mkRender(){
   }
   var m=r.items[r.i], ans=r.picked!==null;
   if(m.k==="note"){
-    box.innerHTML='<div class="qz-top"><span>Soru '+(r.i+1)+'/'+r.items.length+'</span><span class="qz-sc">'+esc(m.u)+'</span></div><div class="qz-card"><div class="qz-sub" style="font-size:12.5px;opacity:.75;margin-bottom:6px;">'+(m.u==="Yazma"?"Yazında şunu düzeltmen gerekiyordu:":"Bunu hatırla:")+'</div><div class="qz-q">'+esc(m.q)+'</div></div><div style="display:flex;gap:8px;"><button type="button" class="btn sec" id="mkNoteNo" style="flex:1;">Tekrar göster</button><button type="button" class="btn" id="mkNoteYes" style="flex:1;">Hatırlıyorum</button></div>';
-    var nd=function(yes){ if(yes){ r.ok++; m.s=(m.s||0)+1; if(m.s>=2){ var ix=L.indexOf(m); if(ix>=0) L.splice(ix,1); } } else m.s=0; save(); r.i++; r.picked=null; mkRender(); window.scrollTo(0,0); };
-    document.getElementById("mkNoteYes").addEventListener("click",function(){ nd(true); });
-    document.getElementById("mkNoteNo").addEventListener("click",function(){ nd(false); });
+    var hasA=!!(m.a||"").trim(), shown=!hasA||m.rv;
+    var hd='<div class="qz-top"><span>Soru '+(r.i+1)+'/'+r.items.length+'</span><span class="qz-sc">'+esc(m.u)+'</span></div>';
+    var lbl=m.u==="Yazma"?"Yazında şunu düzeltmen gerekiyordu:":(hasA?"Hatırlıyor musun?":"Bunu hatırla:");
+    box.innerHTML=hd+'<div class="qz-card"><div class="qz-sub" style="font-size:12.5px;opacity:.75;margin-bottom:6px;">'+lbl+'</div><div class="qz-q">'+esc(m.q)+'</div>'+
+      (hasA&&m.u==="Kelime"?'<button type="button" class="btn sec sm" id="mkNoteSay" style="margin:10px 0 0;">Dinle</button>':'')+
+      (hasA&&m.rv?'<div class="qz-fb ok" style="margin-top:12px;">Cevap: '+esc(m.a)+'</div>':'')+'</div>'+
+      (shown?'<div style="display:flex;gap:8px;"><button type="button" class="btn sec" id="mkNoteNo" style="flex:1;">Hatırlamıyorum</button><button type="button" class="btn" id="mkNoteYes" style="flex:1;">Hatırlıyorum</button></div>':'<button type="button" class="btn" id="mkNoteShow">Cevabı göster</button>');
+    var sy=document.getElementById("mkNoteSay"); if(sy) sy.addEventListener("click",function(){ speakEnglish(m.a,S.settings.ttsRate||0.95); });
+    var sh=document.getElementById("mkNoteShow"); if(sh) sh.addEventListener("click",function(){ m.rv=1; mkRender(); });
+    var nd=function(yes){
+      delete m.rv;
+      if(yes){ r.ok++; m.s=(m.s||0)+1; if(m.s>=2){ var ix=L.indexOf(m); if(ix>=0) L.splice(ix,1); } }
+      else { m.s=0; m.n=(m.n||1)+1; if(!m.again){ m.again=1; r.items.push(m); } }
+      save(); r.i++; r.picked=null; mkRender(); window.scrollTo(0,0);
+    };
+    var y=document.getElementById("mkNoteYes"), nn=document.getElementById("mkNoteNo");
+    if(y) y.addEventListener("click",function(){ nd(true); }); if(nn) nn.addEventListener("click",function(){ nd(false); });
     return;
   }
   if(!m.sh) m.sh=mkShuffle(m.o);
@@ -7326,6 +7438,42 @@ function renderWkCard(){
   document.getElementById("wkHide").addEventListener("click",function(){ S.settings.wkSeen=wkKey(); save(); renderWkCard(); });
 }
 
+/* ===== Moonie: örnek cümle + cümledeki anlam ===== */
+var wxBusy=false;
+function wxMissing(){ return (S.words||[]).filter(function(w){ return w&&w.en&&w.tr&&(!(w.ex||"").trim()||!(w.ctx||"").trim()); }); }
+function wxFill(list,done,prog){
+  var key=(S.settings.geminiApiKey||"").trim(); if(!key||!list.length){ if(done) done(0); return; }
+  var lv=S.settings.level||"B1", n=0, i=0;
+  function next(){
+    if(i>=list.length){ save(); if(done) done(n); return; }
+    var batch=list.slice(i,i+8); i+=8;
+    var p="You are an English teacher for a Turkish-speaking learner at CEFR level "+lv+". For EACH item below, give: \"ex\" = one natural English example sentence (max 14 words) using the word in the meaning given in Turkish (if a sentence is already provided, KEEP it unchanged), \"tr\" = the Turkish translation of that sentence, \"ctx\" = the meaning of the word AS USED IN THAT SENTENCE, in Turkish, short (1-4 words; may differ from the dictionary meaning). Return ONLY a JSON array in the same order: [{\"ex\":\"...\",\"tr\":\"...\",\"ctx\":\"...\"}].\nItems:\n"+batch.map(function(w,k){ return (k+1)+". "+w.en+" (Turkish meaning: "+w.tr+")"+((w.ex||"").trim()?" | sentence: "+w.ex.trim():""); }).join("\n");
+    callGeminiJSON(p).then(function(o){
+      if(!Array.isArray(o)&&o&&Array.isArray(o.items)) o=o.items;
+      if(!Array.isArray(o)) throw new Error("x");
+      batch.forEach(function(w,k){ var r=o[k]; if(!r||typeof r!=="object") return;
+        if(!(w.ex||"").trim()&&r.ex) w.ex=String(r.ex).trim().slice(0,160);
+        if(r.tr) w.exTr=String(r.tr).trim().slice(0,180);
+        if(r.ctx) w.ctx=String(r.ctx).trim().slice(0,60);
+        n++; });
+      save(); if(prog) prog(Math.min(i,list.length),list.length); next();
+    }).catch(function(e){ save(); if(done) done(n,e); });
+  }
+  next();
+}
+function wxRenderBar(){
+  var box=document.getElementById("wxBar"); if(!box) return;
+  var miss=wxMissing();
+  if(!miss.length){ box.innerHTML=""; return; }
+  box.innerHTML='<div class="card" style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><div style="flex:1;font-size:13px;line-height:1.4;"><b>Cümle ve anlam eksik</b><div class="mut" style="font-size:12.5px;">'+miss.length+' kelimede örnek cümle ya da cümledeki anlam yok. Moonie tamamlasın.</div></div><button type="button" class="btn sm" id="wxGo" style="margin:0;">Tamamla</button></div>';
+  document.getElementById("wxGo").addEventListener("click",function(){
+    if(!(S.settings.geminiApiKey||"").trim()){ flashMsg("Önce Ayarlar'dan Gemini anahtarını gir."); return; }
+    if(wxBusy) return; wxBusy=true; var b=this; b.disabled=true; b.textContent="Hazırlanıyor…";
+    wxFill(miss.slice(0,40),function(n,err){ wxBusy=false; renderVocab(); flashMsg(err&&!n?"Şu an tamamlanamadı, biraz sonra tekrar dene.":(n+" kelime tamamlandı.")); },function(a,t){ b.textContent=a+"/"+t; });
+  });
+}
+var _rvx=renderVocab; renderVocab=function(){ _rvx.apply(this,arguments); try{ wxRenderBar(); }catch(e){} };
+
 /* ===== Kelime bildirimi: örnek cümleler + önizleme ===== */
 function wnList(){
   var arr=(S.words||[]).filter(function(w){ return w&&w.en&&w.tr; }).slice().sort(function(a,b){ return (a.reps||0)-(b.reps||0); });
@@ -7337,17 +7485,9 @@ function wnFillExamples(force){
   try{
     var key=(S.settings.geminiApiKey||"").trim(); if(!key||S.settings.wotd===false) return;
     var now=Date.now(); if(!force&&S.settings.wnT&&now-S.settings.wnT<12*3600*1000) return;
-    var need=(S.words||[]).filter(function(w){ return w&&w.en&&w.tr&&!(w.ex||"").trim(); }).slice(0,15);
-    if(!need.length){ S.settings.wnT=now; save(); return; }
-    S.settings.wnT=now; save();
-    var lv=S.settings.level||"B1";
-    var p="You are an English teacher for a Turkish-speaking learner at CEFR level "+lv+". For EACH word or phrase below write ONE natural example sentence (max 12 words, everyday context) that uses it correctly. Return ONLY a JSON array of strings in the same order.\nWords: "+need.map(function(w){ return w.en+" ("+w.tr+")"; }).join("; ");
-    callGeminiJSON(p).then(function(o){
-      if(!Array.isArray(o)&&o&&Array.isArray(o.sentences)) o=o.sentences;
-      if(!Array.isArray(o)) return;
-      need.forEach(function(w,i){ var t=typeof o[i]==="string"?o[i]:(o[i]&&o[i].en); if(t&&String(t).trim()&&!(w.ex||"").trim()) w.ex=String(t).trim().slice(0,160); });
-      save(); pushAwayState();
-    }).catch(function(){ S.settings.wnT=0; });
+    var need=wxMissing().slice(0,16); S.settings.wnT=now; save();
+    if(!need.length) return;
+    wxFill(need,function(n){ if(n){ pushAwayState(); } else S.settings.wnT=0; });
   }catch(e){}
 }
 function wnPreview(btn){
@@ -7360,6 +7500,157 @@ function wnPreview(btn){
   else Notification.requestPermission().then(function(p){ if(p==="granted") show(); else flashMsg("Bildirim izni verilmedi."); });
 }
 setTimeout(wnFillExamples,6000);
+var PH_DATA=[
+{id:"intro",name:"Tanışma ve selamlaşma",ic:"i-chat",items:[
+["Nice to meet you.","Memnun oldum.","Nice to meet you too."],
+["How are you doing?","Nasılsın? / Nasıl gidiyor?","I'm good, thanks. And you?"],
+["Where are you from?","Nerelisin?","I'm from Turkey."],
+["I'm from Turkey. I'm here on holiday.","Türkiye'denim. Tatil için buradayım.",""],
+["Could you speak more slowly, please?","Biraz daha yavaş konuşabilir misiniz?",""],
+["Sorry, I didn't catch that. Could you repeat it?","Pardon, anlamadım. Tekrar eder misiniz?","Sure. I said…"],
+["I don't speak English very well.","İngilizcem çok iyi değil.","No problem. I'll speak slowly."],
+["What does this word mean?","Bu kelime ne demek?",""],
+["How do you say this in English?","Bunu İngilizce nasıl söylersiniz?",""],
+["Could you write it down for me?","Benim için yazabilir misiniz?",""]]},
+{id:"food",name:"Restoran ve yemek",ic:"i-book",items:[
+["A table for two, please.","İki kişilik bir masa lütfen.","Right this way."],
+["Could we see the menu, please?","Menüyü görebilir miyiz?",""],
+["What do you recommend?","Ne önerirsiniz?","I'd recommend the grilled fish."],
+["I'd like the grilled chicken, please.","Izgara tavuk alayım lütfen.","Anything to drink?"],
+["I'm allergic to nuts. Does this dish contain any?","Fıstığa/kuruyemişe alerjim var. Bu yemekte var mı?",""],
+["No onions, please.","Soğansız olsun lütfen.",""],
+["Could I have some water, please?","Biraz su alabilir miyim lütfen?",""],
+["This isn't what I ordered.","Bu benim sipariş ettiğim şey değil.","I'm so sorry. I'll fix it right away."],
+["Could I have the bill, please?","Hesabı alabilir miyim lütfen?","Sure. I'll bring it right away."],
+["Is service included?","Servis ücreti dahil mi?",""],
+["Can we pay separately?","Ayrı ayrı ödeyebilir miyiz?",""],
+["Can I pay by card?","Kartla ödeyebilir miyim?","Yes, of course."],
+["Could I get this to go?","Bunu paket yapabilir misiniz?",""]]},
+{id:"transit",name:"Otobüs, metro ve tren",ic:"i-layers",items:[
+["Does this bus go to the city center?","Bu otobüs şehir merkezine gidiyor mu?","Yes, it does."],
+["Does this bus stop at this station?","Bu otobüs bu durakta/bu konumda duruyor mu?",""],
+["Does this bus pass through Taksim?","Bu otobüs Taksim'den geçiyor mu?","No, you need the number 25."],
+["Which bus goes to the airport?","Havalimanına hangi otobüs gidiyor?",""],
+["Where can I buy a ticket?","Nereden bilet alabilirim?",""],
+["How much is a ticket to the center?","Merkeze bilet ne kadar?",""],
+["Which platform does the train leave from?","Tren hangi perondan kalkıyor?",""],
+["What's the next stop?","Sonraki durak neresi?",""],
+["Could you tell me when we get to Central Station?","Merkez İstasyonu'na geldiğimizde söyler misiniz?",""],
+["Is this seat taken?","Bu koltuk dolu mu?","No, go ahead."],
+["I missed my stop.","İneceğim durağı kaçırdım.",""],
+["How often do the buses run?","Otobüsler ne sıklıkla geçiyor?","Every ten minutes."],
+["Where do I need to change?","Nerede aktarma yapmam gerekiyor?",""]]},
+{id:"directions",name:"Yol sorma",ic:"i-globe",items:[
+["Excuse me, how do I get to the train station?","Affedersiniz, tren istasyonuna nasıl gidebilirim?",""],
+["Is it far from here?","Buradan uzak mı?","No, it's about five minutes on foot."],
+["Is it within walking distance?","Yürüyerek gidilebilir mi?",""],
+["Could you show me on the map?","Haritada gösterebilir misiniz?",""],
+["Go straight and turn left at the corner.","Düz gidin ve köşeden sola dönün.",""],
+["I think I'm lost.","Sanırım kayboldum.",""],
+["Where is the nearest metro station?","En yakın metro istasyonu nerede?",""],
+["Where is the restroom?","Tuvalet nerede?","It's down the hall, on the right."]]},
+{id:"taxi",name:"Taksi",ic:"i-play",items:[
+["Could you take me to this address, please?","Beni bu adrese götürebilir misiniz?",""],
+["How much will it cost to the airport?","Havalimanına ne kadar tutar?",""],
+["Could you use the meter, please?","Taksimetreyi açar mısınız?",""],
+["How long will it take?","Ne kadar sürer?","About twenty minutes."],
+["Please stop here.","Lütfen burada durun.",""],
+["Could you wait for me here?","Burada beni bekleyebilir misiniz?",""],
+["Keep the change.","Üstü kalsın.",""]]},
+{id:"shopping",name:"Alışveriş",ic:"i-star",items:[
+["How much is this?","Bu ne kadar?",""],
+["I'm just looking, thank you.","Sadece bakıyorum, teşekkürler.",""],
+["Do you have this in a bigger size?","Bunun daha büyük bedeni var mı?",""],
+["Can I try this on?","Bunu deneyebilir miyim?","Sure. The fitting rooms are over there."],
+["Do you have it in another color?","Başka rengi var mı?",""],
+["Do you accept credit cards?","Kredi kartı kabul ediyor musunuz?",""],
+["Could I get a discount?","İndirim yapabilir misiniz?",""],
+["Could I have a bag, please?","Poşet alabilir miyim lütfen?",""],
+["I'd like to return this.","Bunu iade etmek istiyorum.","Do you have the receipt?"],
+["Can I get a tax refund?","Vergi iadesi alabilir miyim?",""]]},
+{id:"hotel",name:"Otel",ic:"i-calendar",items:[
+["I have a reservation under the name Yıldız.","Yıldız adına rezervasyonum var.",""],
+["Could I check in, please?","Giriş yapabilir miyim?",""],
+["What time is breakfast?","Kahvaltı saat kaçta?",""],
+["What's the Wi-Fi password?","Wi-Fi şifresi nedir?",""],
+["The air conditioning isn't working.","Klima çalışmıyor.",""],
+["Could I have an extra towel, please?","Fazladan havlu alabilir miyim?",""],
+["Could I have a late check-out?","Geç çıkış yapabilir miyim?",""],
+["Could you call a taxi for me?","Benim için taksi çağırabilir misiniz?",""],
+["Could you keep my luggage until this evening?","Bavulumu akşama kadar saklayabilir misiniz?",""]]},
+{id:"airport",name:"Havalimanı ve uçuş",ic:"i-headphones",items:[
+["Where is the check-in counter?","Check-in gişesi nerede?",""],
+["I'd like a window seat, please.","Cam kenarı bir koltuk istiyorum.",""],
+["Is my flight on time?","Uçuşum zamanında mı?",""],
+["Which gate does my flight leave from?","Uçuşum hangi kapıdan kalkıyor?",""],
+["I'm here for tourism. I'll stay for ten days.","Turizm için buradayım. On gün kalacağım.","Where will you be staying?"],
+["I have nothing to declare.","Beyan edecek bir şeyim yok.",""],
+["My luggage hasn't arrived.","Bavulum gelmedi.",""],
+["I missed my connecting flight.","Aktarma uçağımı kaçırdım.",""],
+["Where can I pick up my baggage?","Bagajımı nereden alabilirim?",""]]},
+{id:"emergency",name:"Acil durum ve sağlık",ic:"i-mic",items:[
+["I need a doctor.","Doktora ihtiyacım var.",""],
+["Please call an ambulance.","Lütfen ambulans çağırın.",""],
+["I don't feel well.","Kendimi iyi hissetmiyorum.",""],
+["I have a headache.","Başım ağrıyor.",""],
+["I'm allergic to penicillin.","Penisiline alerjim var.",""],
+["Where is the nearest pharmacy?","En yakın eczane nerede?",""],
+["I've lost my passport.","Pasaportumu kaybettim.",""],
+["My wallet was stolen.","Cüzdanım çalındı.",""],
+["Could you help me, please?","Bana yardım edebilir misiniz?","Of course. What's the problem?"]]},
+{id:"money",name:"Para ve ödeme",ic:"i-chart",items:[
+["Can I pay in cash?","Nakit ödeyebilir miyim?",""],
+["Is there an ATM nearby?","Yakınlarda ATM var mı?",""],
+["Where can I exchange money?","Nerede para bozdurabilirim?",""],
+["What's the exchange rate today?","Bugünkü döviz kuru nedir?",""],
+["I think there's a mistake in the bill.","Sanırım hesapta bir hata var.",""],
+["Could I have a receipt, please?","Fiş/makbuz alabilir miyim?",""],
+["Do you have change for twenty?","Yirmilik bozuk var mı?",""]]},
+{id:"daily",name:"Nezaket ve günlük",ic:"i-edit",items:[
+["Excuse me.","Affedersiniz.",""],
+["I'm sorry.","Özür dilerim.","That's okay."],
+["Thank you so much.","Çok teşekkür ederim.","You're welcome."],
+["Could you do me a favor?","Bir iyilik yapar mısınız?",""],
+["Just a moment, please.","Bir saniye lütfen.",""],
+["Is this seat free?","Bu yer boş mu?",""],
+["Could you take a photo of us?","Fotoğrafımızı çeker misiniz?",""],
+["Is there Wi-Fi here?","Burada Wi-Fi var mı?",""],
+["Could I charge my phone here?","Telefonumu burada şarj edebilir miyim?",""],
+["What time do you open/close?","Saat kaçta açılıyor/kapanıyor?",""]]}
+];
+
+var phCat="intro", phQ="";
+function phFav(){ if(!S.phraseFav||typeof S.phraseFav!=="object"||Array.isArray(S.phraseFav)) S.phraseFav={}; return S.phraseFav; }
+function renderPhrases(){
+  var chips=document.getElementById("phChips"), list=document.getElementById("phList"); if(!chips||!list) return;
+  var fav=phFav(), nFav=Object.keys(fav).length;
+  var cats=PH_DATA.map(function(c){ return [c.id,c.name]; }); cats.push(["fav","Favorilerim"+(nFav?" ("+nFav+")":"")]);
+  chips.innerHTML=cats.map(function(c){ return '<button type="button" class="nt-chip'+(phCat===c[0]&&!phQ?" on":"")+'" data-c="'+c[0]+'">'+esc(c[1])+'</button>'; }).join("");
+  chips.querySelectorAll(".nt-chip").forEach(function(b){ b.addEventListener("click",function(){ phCat=b.dataset.c; phQ=""; document.getElementById("phSearch").value=""; renderPhrases(); window.scrollTo(0,0); }); });
+  var items=[];
+  var q=phQ.trim().toLowerCase();
+  PH_DATA.forEach(function(c){ c.items.forEach(function(it){ it=it.slice(); it.cat=c.name; it.cid=c.id;
+    if(q){ if((it[0]+" "+it[1]+" "+(it[2]||"")).toLowerCase().indexOf(q)>=0) items.push(it); }
+    else if(phCat==="fav"){ if(fav[it[0]]) items.push(it); }
+    else if(c.id===phCat) items.push(it); }); });
+  if(!items.length){ list.innerHTML='<div class="empty-state"><div class="t">'+(q?"Eşleşen kalıp yok":(phCat==="fav"?"Henüz favorin yok":"Kalıp yok"))+'</div><div class="d">'+(phCat==="fav"&&!q?"Kalıpların yanındaki yıldıza dokunarak favori ekle.":"Başka bir kelimeyle ara.")+'</div></div>'; return; }
+  list.innerHTML=items.map(function(it,i){
+    var f=!!fav[it[0]];
+    return '<div class="card ph-row" data-i="'+i+'" style="padding:12px 14px;margin-bottom:10px;"><div style="display:flex;gap:10px;align-items:flex-start;"><div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:15.5px;line-height:1.35;">'+esc(it[0])+'</div><div class="mut" style="font-size:13.5px;margin-top:3px;">'+esc(it[1])+'</div>'+(it[2]?'<div style="font-size:12.5px;margin-top:6px;opacity:.85;"><b>Yanıt:</b> '+esc(it[2])+'</div>':'')+((q||phCat==="fav")?'<div class="mut" style="font-size:11.5px;margin-top:4px;">'+esc(it.cat)+'</div>':'')+'</div><button type="button" class="ph-fav" data-a="fav" aria-label="'+(f?"Favoriden çıkar":"Favori ekle")+'" aria-pressed="'+f+'" style="border:none;background:none;font-size:22px;line-height:1;color:'+(f?"#F2B94B":"var(--ink-2)")+';cursor:pointer;padding:4px 6px;">'+(f?"★":"☆")+'</button></div>'+
+      '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"><button type="button" class="btn sec sm" data-a="say" style="margin:0;flex:1 1 90px;">Dinle</button><button type="button" class="btn sec sm" data-a="practice" style="margin:0;flex:1 1 90px;">Söyle</button><button type="button" class="btn sec sm" data-a="add" style="margin:0;flex:1 1 90px;">Deftere ekle</button></div></div>';
+  }).join("");
+  list.querySelectorAll(".ph-row").forEach(function(row){
+    var it=items[+row.dataset.i];
+    row.querySelectorAll("button").forEach(function(b){ b.addEventListener("click",function(){
+      var a=b.dataset.a;
+      if(a==="say"){ speakEnglish(it[0],S.settings.ttsRate||0.9); }
+      else if(a==="practice"){ var pt=document.getElementById("pronText"); if(pt){ pt.value=it[0]; pt.dispatchEvent(new Event("input")); } go("speaking"); setTimeout(function(){ var c=document.querySelector("#v-speaking .pron"); if(c){ try{ c.scrollIntoView({block:"start"}); }catch(e){} } },150); flashMsg("Cümle telaffuz antrenmanına eklendi."); }
+      else if(a==="add"){ var ex=S.words.some(function(w){ return String(w.en).toLowerCase()===it[0].toLowerCase(); }); if(ex){ flashMsg("Zaten kelime defterinde."); } else { S.words.push({en:it[0],tr:it[1],ex:"",ef:2.5,reps:0,interval:0,due:today0(),added:Date.now()}); save(); flashMsg("Kelime defterine eklendi."); } }
+      else if(a==="fav"){ var F=phFav(); if(F[it[0]]) delete F[it[0]]; else F[it[0]]=1; save(); renderPhrases(); }
+    }); });
+  });
+}
+(function(){ var si=document.getElementById("phSearch"); if(si) si.addEventListener("input",function(){ phQ=si.value; renderPhrases(); }); var pe=document.getElementById("phEntry"); if(pe) pe.addEventListener("click",function(){ go("phrases"); }); })();
 
 /* ===== Kelimelerimle yaz ===== */
 var writingWords=null, writingWordsFor=null, wwSet=[], wwSents=null, wwBusy=false;
